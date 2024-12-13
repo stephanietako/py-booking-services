@@ -35,13 +35,15 @@ a {
   text-decoration: none;
 }
 
-/* .calendar_container {
+.signup_page,
+.signin_page {
   display: flex;
   width: auto;
   height: 100vh;
   justify-content: center;
   align-items: center;
-} */
+  border: 4px solid blue;
+}
 
 /* /////////////////////////// */
 @media (prefers-color-scheme: dark) {

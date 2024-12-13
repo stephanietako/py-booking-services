@@ -1,12 +1,20 @@
 import Image from "next/image";
+import { currentUser } from "@clerk/nextjs/server";
 import styles from "./page.module.css";
 
-export default function Home() {
+export default async function Home() {
+  const user = await currentUser();
+  const firstName = user?.firstName;
+  const id = user?.id;
+
+  const welcomeSuffix = firstName ? `, ${firstName} ${id}` : ``;
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <h1>HELLO WORLD BOOKING APP</h1>
         <h2>Starting project</h2>
+        <br />
+        <div>Welcome {welcomeSuffix}</div>
       </main>
       <footer className={styles.footer}>
         <a
