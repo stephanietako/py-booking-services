@@ -22,3 +22,11 @@ datasource db {
       createdAt DateTime @default(now())
       updatedAt DateTime @updatedAt
      }   
+//clerk
+model Secret {
+  id String @id @default(cuid())
+  userId String @unique
+  content String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
