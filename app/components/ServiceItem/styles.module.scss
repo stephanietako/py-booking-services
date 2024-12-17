@@ -1,0 +1,81 @@
+.serviceItem {
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 2px solid #e5e7eb;
+  list-style: none;
+  margin: 1rem;
+
+  &.hoverEnabled {
+    &:hover {
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      border-color: #38bdf8;
+    }
+  }
+}
+
+.serviceItemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.serviceItemDetails {
+  display: flex;
+  align-items: center;
+}
+
+.serviceItemInfo {
+  display: flex;
+  flex-direction: column;
+  margin-left: 0.75rem;
+}
+
+.serviceItemTitle {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.serviceItemTransactionCount {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.serviceItemAmount {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #38bdf8;
+}
+
+.serviceItemStats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.serviceItemProgress {
+  width: 100%;
+  margin-top: 1rem;
+
+  & progress {
+    width: 100%;
+    appearance: none;
+
+    &::-webkit-progress-bar {
+      background-color: #e5e7eb;
+      border-radius: 0.5rem;
+    }
+
+    &::-webkit-progress-value {
+      background-color: #38bdf8;
+      border-radius: 0.5rem;
+    }
+
+    &::-moz-progress-bar {
+      background-color: #38bdf8;
+      border-radius: 0.5rem;
+    }
+  }
+}

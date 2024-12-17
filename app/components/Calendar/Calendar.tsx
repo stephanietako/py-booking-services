@@ -10,7 +10,7 @@ import {
 } from "@/app/constants/config";
 // Styles
 import "react-calendar/dist/Calendar.css";
-import "./Calendar.css";
+import "./Calendar.scss";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CalendarProps {

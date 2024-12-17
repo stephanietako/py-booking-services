@@ -1,0 +1,152 @@
+// .navbar {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 1rem 2rem;
+//   background-color: #333;
+//   color: #fff;
+
+//   .logo a {
+//     font-size: 1.5rem;
+//     font-weight: bold;
+//     color: white;
+//     text-decoration: none;
+//   }
+
+//   .navLinks {
+//     display: flex;
+//     gap: 1rem;
+//     align-items: center;
+
+//     .navLink {
+//       color: #fff;
+//       text-decoration: none;
+//       padding: 0.5rem 1rem;
+//       border: 1px solid transparent;
+//       background: none;
+//       cursor: pointer;
+//       transition: all 0.3s ease;
+//       align-items: center;
+
+//       &:hover {
+//         border: 1px solid white;
+//         border-radius: 5px;
+//       }
+//     }
+
+//     // Styles spécifiques pour les boutons de Clerk
+//     .clerk-sign-in-button,
+//     .clerk-user-button {
+//       .clerk-button {
+//         color: white;
+//         padding: 0.5rem 1rem;
+//         border: 1px solid transparent;
+//         background: none;
+//         cursor: pointer;
+//         transition: all 0.3s ease;
+
+//         &:hover {
+//           border: 1px solid white;
+//           border-radius: 5px;
+//         }
+//       }
+//     }
+//   }
+// }
+
+// @media (max-width: 768px) {
+//   .navLinks {
+//     display: none !important;
+//   }
+// }
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #333;
+  color: #fff;
+
+  .logo a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .menuToggle {
+    display: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  .navLinks {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
+    .navLink {
+      color: #fff;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border: 1px solid transparent;
+      background: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      align-items: center;
+
+      &:hover {
+        border: 1px solid #fff;
+        border-radius: 5px;
+      }
+    }
+
+    .clerk-sign-in-button,
+    .clerk-user-button {
+      .clerk-button {
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border: 1px solid transparent;
+        background: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border: 1px solid #fff;
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .menuToggle {
+      display: block;
+    }
+
+    .navLinks {
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      position: absolute;
+      top: 4rem;
+      right: 0;
+      background-color: #333;
+      width: 100%;
+      text-align: center;
+
+      &.showMenu {
+        display: flex;
+        border: 4px solid red;
+      }
+
+      .navLink,
+      .clerk-sign-in-button .clerk-button,
+      .clerk-user-button .clerk-button {
+        padding: 1rem;
+        border-top: 1px solid #444;
+      }
+    }
+  }
+}
