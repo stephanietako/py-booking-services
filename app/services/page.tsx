@@ -36,9 +36,16 @@ const ServicesPage = () => {
         serviceName,
         amount
       );
-      // fermer le modul quand l'ajout s'est bien passé
+      fetchServices();
+      // Fermer le modul quand l'ajout s'est bien passé
+      // closeModal();
+      if (isModalOpen) {
+        closeModal();
+      }
 
-      closeModal();
+      setServiceName("");
+      setServiceAmount("");
+      console.log("Nouveau service créé avec succès");
     } catch (error) {
       console.error("Erreur lors de l'ajout du service:", error);
     }
@@ -90,7 +97,7 @@ const ServicesPage = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
-          title="Création d'un budget"
+          title="Création d'un service"
         >
           <h3 className={styles.text_service__title}>
             Création d&apos;un service

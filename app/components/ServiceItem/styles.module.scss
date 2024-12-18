@@ -4,6 +4,7 @@
   border: 2px solid #e5e7eb;
   list-style: none;
   margin: 1rem;
+  min-width: 32rem;
 
   &.hoverEnabled {
     &:hover {
@@ -48,7 +49,7 @@
 
 .serviceItemStats {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
   margin-top: 1rem;
   color: #6b7280;

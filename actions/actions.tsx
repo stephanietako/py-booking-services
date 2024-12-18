@@ -74,3 +74,75 @@ export async function getServicesByUser(email: string) {
     throw error;
   }
 }
+
+// Récupérer la liste des transaction d'un service
+export async function getTransactionsByServiceId(serviceId: string) {
+  try {
+    const service = await prisma.service.findUnique({
+      where: {
+        id: serviceId,
+      },
+      include: {
+        transactions: true,
+      },
+    });
+
+    if (!service) {
+      throw new Error("Service non trouvé");
+    }
+
+    return service;
+  } catch (error) {
+    console.log("Erreur lors de la récupération des transactions", error);
+  }
+}
+
+// Ajouter une nouvelle transaction à un service
+export async function addTransactionToService(
+  serviceId: string,
+  amount: number,
+  description: string
+) {
+  try {
+    const service = await prisma.service.findUnique({
+      where: {
+        id: serviceId,
+      },
+      include: {
+        transactions: true,
+      },
+    });
+    if (!service) {
+      throw new Error("Service non trouvé");
+    }
+
+    const totalTransactions = service.transactions.reduce(
+      (sum, transaction) => {
+        return sum + transaction.amount;
+      },
+      0
+    );
+    // Mais attention la transaction ne doit pas dépasser le montant du service
+    const totalWidthNewTransaction = totalTransactions + amount;
+    if (totalWidthNewTransaction > service.amount) {
+      throw Error(
+        "Le montant total des transactions dépasse le montant du service"
+      );
+    }
+    // Mais par contre si on passe c'est que le montant n'est pas superieur alors on créer la nouvelle transaction
+    const newTransaction = await prisma.transaction.create({
+      data: {
+        amount,
+        description,
+        service: {
+          connect: {
+            id: service.id,
+          },
+        },
+      },
+    });
+    // Si ce service exsiste on va calculer le totale des transactions exsistantes pour ce service
+  } catch (error) {
+    console.log("Eurreur lors de l'ajout de la transaction", error);
+  }
+}

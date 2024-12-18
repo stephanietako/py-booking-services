@@ -11,6 +11,6 @@ export interface Transaction {
   amount: number;
   description: string;
   createdAt: Date;
-  budgetName?: string;
-  budgetId?: string | null;
+  serviceName?: string;
+  serviceId?: string | null;
 }
