@@ -23,6 +23,9 @@ const ServicesPage = () => {
   const [serviceAmount, setServiceAmount] = useState<string>("");
   // Ça va contenir nos services (vide par defaut)
   const [services, setServices] = useState<Service[]>([]);
+  ///////
+  const [loading, setLoading] = useState<boolean>(false);
+  ////////
 
   const handleAddService = async () => {
     try {
@@ -54,11 +57,13 @@ const ServicesPage = () => {
   // Fonction qui va nous permettre de récupérer les services
   const fetchServices = async () => {
     if (user?.primaryEmailAddress?.emailAddress) {
+      setLoading(true);
       try {
         const userServices = await getServicesByUser(
           user?.primaryEmailAddress?.emailAddress
         );
         setServices(userServices);
+        setLoading(false);
       } catch (error) {
         console.log("Erreur lors de la récupération des services", error);
       }
@@ -133,11 +138,27 @@ const ServicesPage = () => {
         </Modal>
 
         <ul className={styles.list_services}>
-          {services.map((service) => (
+          {/* {services.map((service) => (
             <Link key={service.id} href={`/manage/${service.id}`}>
               <ServiceItem service={service} enableHover={1}></ServiceItem>
             </Link>
-          ))}
+          ))} */}
+          <ul className={styles.list_services}>
+            {loading ? (
+              <div className="loading">Loading...</div>
+            ) : services.length === 0 ? (
+              <div>
+                <span>Aucune transaction à afficher</span>
+              </div>
+            ) : (
+              // Si des services sont disponibles, on les affiche dans une liste
+              services.map((service) => (
+                <Link key={service.id} href={`/manage/${service.id}`}>
+                  <ServiceItem service={service} enableHover={1}></ServiceItem>
+                </Link>
+              ))
+            )}
+          </ul>
         </ul>
       </div>
     </Wrapper>

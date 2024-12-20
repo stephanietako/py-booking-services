@@ -4,7 +4,8 @@
   border: 2px solid #e5e7eb;
   list-style: none;
   margin: 1rem;
-  min-width: 32rem;
+  width: 45rem;
+  max-width: 22rem;
 
   &.hoverEnabled {
     &:hover {
