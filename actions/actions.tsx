@@ -226,7 +226,7 @@ export async function getTransactionsByEmailAndPeriod(
       case "last365":
         // pour les 365 derniers jours (1 an)
         dateLimit = new Date(now);
-        dateLimit.setDate(now.getFullYear() - 1);
+        dateLimit.setFullYear(now.getFullYear() - 1);
         break;
       default:
         throw new Error("Période invalide");
@@ -275,3 +275,126 @@ export async function getTransactionsByEmailAndPeriod(
     throw error;
   }
 }
+
+// dashboard
+// fonction qui va me permettre de calculer le montant total de toutes les transactions de l'utilisateur en utilisant son e-mail
+export async function getTotalTransactionAmount(email: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        services: {
+          include: {
+            transactions: true,
+          },
+        },
+      },
+    });
+
+    if (!user) throw new Error("Utilisateur non trouvés");
+
+    const totalAmount = user.services.reduce((sum, services) => {
+      return (
+        sum +
+        services.transactions.reduce(
+          (serviceSum, transaction) => serviceSum + transaction.amount,
+          0
+        )
+      );
+    }, 0);
+
+    return totalAmount;
+  } catch (error) {
+    console.error(
+      "Erreur lors du calcul du montant total des transactions:",
+      error
+    );
+    throw error;
+  }
+}
+
+// comptage des transactions
+export async function getTotalTransactionCount(email: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        services: {
+          include: {
+            transactions: true,
+          },
+        },
+      },
+    });
+    if (!user) throw new Error("Utilisateur non trouvés");
+
+    const totalCount = user.services.reduce((count, service) => {
+      return count + service.transactions.length;
+    }, 0);
+
+    return totalCount;
+  } catch (error) {
+    console.error("Erreur lors du comptage des transactions:", error);
+    throw error;
+  }
+}
+
+// calculer le nombre de services atteints
+export async function getReachedServices(email: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        services: {
+          include: {
+            transactions: true,
+          },
+        },
+      },
+    });
+
+    if (!user) throw new Error("Utilisateur non trouvés");
+
+    const totalServices = user.services.length;
+    const reachedServices = user.services.filter((service) => {
+      const totalTransactionsAmount = service.transactions.reduce(
+        (sum, transaction) => sum + transaction.amount,
+        0
+      );
+      return totalTransactionsAmount >= service.amount;
+    }).length;
+
+    return `${reachedServices}/${totalServices}`;
+  } catch (error) {
+    console.error("Erreur du calcul des services atteints:", error);
+    throw error;
+  }
+}
+
+//////////////
+export const getLastServices = async (email: string) => {
+  try {
+    const services = await prisma.service.findMany({
+      where: {
+        user: {
+          email,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 3,
+      include: {
+        transactions: true,
+      },
+    });
+
+    return services;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des derniers services: ",
+      error
+    );
+    throw error;
+  }
+};

@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
             <Link href="/transactions">
               <div className="btn_secret">Mes Transactions</div>
             </Link>
-            <Link href="/">
+            <Link href="/dashboard">
               <div className="btn_secret">Mon Tableau de bord</div>
             </Link>
             <Link href="/secret">

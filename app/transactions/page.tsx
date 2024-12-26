@@ -40,6 +40,18 @@ const TransactionsPage = () => {
 
   return (
     <Wrapper>
+      <div className="transactions_select">
+        <select
+          className="transactions_select__input"
+          defaultValue="last30"
+          onChange={(e) => fetchTransactions(e.target.value)}
+        >
+          <option value="last7">Derniers 7 jours</option>
+          <option value="last30">Derniers 30 jours</option>
+          <option value="last90">Derniers 90 jours</option>
+          <option value="last365">Derniers 365 jours</option>
+        </select>
+      </div>
       <div className="transactions_container">
         {loading ? (
           <div className="loading">Loading...</div>

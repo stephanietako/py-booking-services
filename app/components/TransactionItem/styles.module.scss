@@ -4,11 +4,11 @@
   width: auto;
   height: auto;
   align-items: center;
-  border: 4px solid rgb(0, 255, 30);
+  //border: 4px solid rgb(0, 255, 30);
 
   .transaction_item_list__bloc {
     display: flex;
-    border: 4px solid rgb(255, 0, 230);
+    //border: 4px solid rgb(255, 0, 230);
     margin: 0.5rem;
 
     .btn_transaction_item {
@@ -29,11 +29,12 @@
 
     .transaction_item__badge {
       display: flex;
-      background: rgba(210, 215, 211);
+      background: rgba(234, 234, 234);
       padding: 2px;
       border-radius: 30px;
       margin: 4px;
       width: 3rem;
+      color: blue;
     }
   }
 
@@ -42,7 +43,7 @@
     align-items: center;
     width: auto;
     flex-direction: column;
-    border: 3px solid blue;
+    //border: 3px solid blue;
 
     .transaction_item__description {
       font-weight: bold;
@@ -51,14 +52,13 @@
       //width: 32rem;
       padding: 0.3rem;
       width: 100%;
-      border: 1px solid rgb(228, 8, 8);
+      //border: 1px solid rgb(228, 8, 8);
     }
     .transaction_item__date_time {
-      font-weight: bold;
       display: inline-flex;
       padding: 0.3rem;
       width: 22rem;
-      border: 1px solid #02081d;
+      //border: 1px solid #02081d;
       justify-content: center;
     }
   }
