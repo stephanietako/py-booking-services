@@ -46,7 +46,6 @@ const Secret = () => {
     }
   };
 
-  // Interface utilisateur
   return (
     <div className="secret_container">
       <form onSubmit={handleSubmit} className="space-y-4">

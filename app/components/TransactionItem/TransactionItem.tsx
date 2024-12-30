@@ -14,7 +14,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
       <div className={styles.transaction_item_list__bloc}>
         <button className={styles.btn_transaction_item}>
           <div className={styles.transaction_item__badge}>
-            - {transaction.amount}€
+            + {transaction.amount}€
           </div>
           {transaction.serviceName}
         </button>

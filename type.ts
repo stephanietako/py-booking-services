@@ -14,3 +14,8 @@ export interface Transaction {
   serviceName?: string;
   serviceId?: string | null;
 }
+
+export type DateTime = {
+  justDate: Date | null;
+  dateTime: Date | null;
+};

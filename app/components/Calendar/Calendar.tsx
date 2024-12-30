@@ -1,6 +1,6 @@
 "use client";
 
-import { type FC, useState } from "react";
+import { Dispatch, type FC, SetStateAction } from "react";
 import ReactCalendar from "react-calendar";
 import { add, format } from "date-fns";
 import {
@@ -11,28 +11,19 @@ import {
 // Styles
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.scss";
+import { DateTime } from "@/type";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CalendarProps {
-  //minDate?: Date;
-  //className?: string;
-  //view?: "month" | "year" | "decade";
-  //   onClickDay?: (value: Date) => Date;
+  date: DateTime;
+  setDate: Dispatch<SetStateAction<DateTime>>;
 }
 
-interface DateType {
-  justDate: Date | null;
-  dateTime: Date | null;
-}
+// interface DateType {
+//   justDate: Date | null;
+//   dateTime: Date | null;
+// }
 
-const Calendar: FC<CalendarProps> = ({}) => {
-  const [date, setDate] = useState<DateType>({
-    justDate: null,
-    dateTime: null,
-  });
-
-  console.log(date.dateTime);
-
+const Calendar: FC<CalendarProps> = ({ setDate, date }) => {
   const getTimes = () => {
     if (!date.justDate) return;
 

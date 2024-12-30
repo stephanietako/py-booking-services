@@ -24,8 +24,7 @@ const DashboardPage = () => {
   const [reachedServicesRatio, setReachedServicesRatio] = useState<
     string | null
   >(null);
-  //   const [budgetData, setBudgetData] = useState<any[]>([]);
-  //   const [transactions, setTransactions] = useState<Transaction[]>([]);
+
   const [services, setService] = useState<Service[]>([]);
 
   const fetchData = async () => {
