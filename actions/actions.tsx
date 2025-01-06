@@ -1,406 +1,9 @@
-// "use server";
-
-// import prisma from "@/app/lib/prisma";
-
-// // Va nous permettre de vérifier si un user existe déjà dans la BD sinon on l'ajoute
-// export async function checkAndAddUser(email: string | undefined) {
-//   if (!email) return;
-//   try {
-//     const existingUser = await prisma.user.findUnique({
-//       where: {
-//         email,
-//       },
-//     });
-
-//     if (!existingUser) {
-//       await prisma.user.create({
-//         data: {
-//           email,
-//         },
-//       });
-//       console.log("Nouvel utilisateur ajouté dans la base de données");
-//     } else {
-//       console.log("Utilisateur déjà présent dans la base de données");
-//     }
-//   } catch (error) {
-//     console.error("Erreur lors de la vérification de l'utilisateur:", error);
-//   }
-// }
-
-// // Ajouter les services
-// export async function addService(email: string, name: string, amount: number) {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { email },
-//     });
-//     if (!user) {
-//       throw new Error("Utilisateur non trouvé");
-//     }
-//     await prisma.service.create({
-//       data: {
-//         name,
-//         amount,
-//         userId: user.id,
-//       },
-//     });
-//     console.log("Service ajouté avec succès");
-//   } catch (error) {
-//     console.error("Erreur lors de l'ajout du service:", error);
-//     throw error;
-//   }
-// }
-
-// // Afficher les services
-// export async function getServicesByUser(email: string) {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: {
-//         email,
-//       },
-//       include: {
-//         services: {
-//           include: {
-//             transactions: true,
-//           },
-//         },
-//       },
-//     });
-
-//     if (!user) {
-//       throw new Error("Utilisateur non trouvé");
-//     }
-//     // On va retourner la liste de tous les services
-//     return user.services;
-//   } catch (error) {
-//     console.error("Erreur lors de la récupération des services:", error);
-//     throw error;
-//   }
-// }
-
-// // Récupérer la liste des transactions d'un service
-// export async function getTransactionsByServiceId(serviceId: string) {
-//   try {
-//     const service = await prisma.service.findUnique({
-//       where: {
-//         id: serviceId,
-//       },
-//       include: {
-//         transactions: true,
-//       },
-//     });
-
-//     if (!service) {
-//       throw new Error("Service non trouvé");
-//     }
-
-//     return service;
-//   } catch (error) {
-//     console.error("Erreur lors de la récupération des transactions:", error);
-//     throw error;
-//   }
-// }
-
-// // Ajouter une nouvelle transaction à un service
-// export async function addTransactionToService(
-//   serviceId: string,
-//   amount: number,
-//   description: string
-// ) {
-//   try {
-//     const service = await prisma.service.findUnique({
-//       where: {
-//         id: serviceId,
-//       },
-//       include: {
-//         transactions: true,
-//       },
-//     });
-//     if (!service) {
-//       throw new Error("Service non trouvé");
-//     }
-
-//     const totalTransactions = service.transactions.reduce(
-//       (sum, transaction) => sum + transaction.amount,
-//       0
-//     );
-
-//     // La transaction ne doit pas dépasser le montant du service
-//     const totalWithNewTransaction = totalTransactions + amount;
-//     if (totalWithNewTransaction > service.amount) {
-//       throw new Error(
-//         "Le montant total des transactions dépasse le montant du service"
-//       );
-//     }
-
-//     // Si le montant n'est pas supérieur, on crée la nouvelle transaction
-//     const newTransaction = await prisma.transaction.create({
-//       data: {
-//         amount,
-//         description,
-//         service: {
-//           connect: {
-//             id: service.id,
-//           },
-//         },
-//       },
-//     });
-
-//     console.log("Transaction ajoutée avec succès");
-//     return newTransaction;
-//   } catch (error) {
-//     console.error("Erreur lors de l'ajout de la transaction", error);
-//     throw error;
-//   }
-// }
-
-// // fonction qui sert à suppimer un service et ses transactions
-// export const deleteService = async (serviceId: string) => {
-//   try {
-//     // plusieurs
-//     await prisma.transaction.deleteMany({
-//       where: { serviceId },
-//     });
-//     // un seul
-//     await prisma.service.delete({
-//       where: {
-//         id: serviceId,
-//       },
-//     });
-//   } catch (error) {
-//     console.error(
-//       "Erreur lors de la suppréssion du service et de ses transactions associées",
-//       error
-//     );
-//     throw error;
-//   }
-// };
-
-// // supprimer une transaction
-// export async function deleteTransaction(transactionId: string) {
-//   try {
-//     const transaction = await prisma.transaction.findUnique({
-//       where: {
-//         id: transactionId,
-//       },
-//     });
-
-//     if (!transaction) {
-//       throw new Error("Transaction non trouvées");
-//     }
-
-//     await prisma.transaction.delete({
-//       where: {
-//         id: transactionId,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Erreur lors de la suppréssion de la transaction ", error);
-//     throw error;
-//   }
-// }
-
-// // liste des transactions
-// export async function getTransactionsByEmailAndPeriod(
-//   email: string,
-//   period: string
-// ) {
-//   try {
-//     // obtient la date et l'heure actuelles
-//     const now = new Date();
-//     let dateLimit;
-
-//     switch (period) {
-//       case "last30":
-//         // pour les 30 derniers jours
-//         dateLimit = new Date(now);
-//         dateLimit.setDate(now.getDate() - 30);
-//         break;
-//       case "last90":
-//         dateLimit = new Date(now);
-//         dateLimit.setDate(now.getDate() - 90);
-//         break;
-//       case "last7":
-//         dateLimit = new Date(now);
-//         dateLimit.setDate(now.getDate() - 7);
-//         break;
-//       case "last365":
-//         // pour les 365 derniers jours (1 an)
-//         dateLimit = new Date(now);
-//         dateLimit.setFullYear(now.getFullYear() - 1);
-//         break;
-//       default:
-//         throw new Error("Période invalide");
-//     }
-
-//     // récupérer l'utilisateur par email avec ses services et les transactions de ces services
-//     const user = await prisma.user.findUnique({
-//       where: { email },
-//       include: {
-//         services: {
-//           include: {
-//             transactions: {
-//               where: {
-//                 createdAt: {
-//                   // filtre les transactions créées après la date limite déterminée
-//                   // gte c'est greater
-//                   gte: dateLimit,
-//                 },
-//               },
-//               // trie les transactions par date de création de la plus récente à la plus ancienne
-//               orderBy: {
-//                 createdAt: "desc",
-//               },
-//             },
-//           },
-//         },
-//       },
-//     });
-
-//     if (!user) {
-//       throw new Error("Utilisateur non trouvé");
-//     }
-
-//     // rassembler toutes les transactions à partir des services en incluant le nom du service sans avoir à chq fois à renvoyer tous les services
-//     const transactions = user.services.flatMap((service) =>
-//       service.transactions.map((transaction) => ({
-//         ...transaction,
-//         serviceName: service.name,
-//         serviceId: service.id,
-//       }))
-//     );
-
-//     return transactions;
-//   } catch (error) {
-//     console.error("Erreur lors de la récupération des transactions ", error);
-//     throw error;
-//   }
-// }
-
-// // dashboard
-// // fonction qui va me permettre de calculer le montant total de toutes les transactions de l'utilisateur en utilisant son e-mail
-// export async function getTotalTransactionAmount(email: string) {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { email },
-//       include: {
-//         services: {
-//           include: {
-//             transactions: true,
-//           },
-//         },
-//       },
-//     });
-
-//     if (!user) throw new Error("Utilisateur non trouvés");
-
-//     const totalAmount = user.services.reduce((sum, services) => {
-//       return (
-//         sum +
-//         services.transactions.reduce(
-//           (serviceSum, transaction) => serviceSum + transaction.amount,
-//           0
-//         )
-//       );
-//     }, 0);
-
-//     return totalAmount;
-//   } catch (error) {
-//     console.error(
-//       "Erreur lors du calcul du montant total des transactions:",
-//       error
-//     );
-//     throw error;
-//   }
-// }
-
-// // comptage des transactions
-// export async function getTotalTransactionCount(email: string) {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { email },
-//       include: {
-//         services: {
-//           include: {
-//             transactions: true,
-//           },
-//         },
-//       },
-//     });
-//     if (!user) throw new Error("Utilisateur non trouvés");
-
-//     const totalCount = user.services.reduce((count, service) => {
-//       return count + service.transactions.length;
-//     }, 0);
-
-//     return totalCount;
-//   } catch (error) {
-//     console.error("Erreur lors du comptage des transactions:", error);
-//     throw error;
-//   }
-// }
-
-// // calculer le nombre de services atteints
-// export async function getReachedServices(email: string) {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { email },
-//       include: {
-//         services: {
-//           include: {
-//             transactions: true,
-//           },
-//         },
-//       },
-//     });
-
-//     if (!user) throw new Error("Utilisateur non trouvés");
-
-//     const totalServices = user.services.length;
-//     const reachedServices = user.services.filter((service) => {
-//       const totalTransactionsAmount = service.transactions.reduce(
-//         (sum, transaction) => sum + transaction.amount,
-//         0
-//       );
-//       return totalTransactionsAmount >= service.amount;
-//     }).length;
-
-//     return `${reachedServices}/${totalServices}`;
-//   } catch (error) {
-//     console.error("Erreur du calcul des services atteints:", error);
-//     throw error;
-//   }
-// }
-
-// //////////////
-// export const getLastServices = async (email: string) => {
-//   try {
-//     const services = await prisma.service.findMany({
-//       where: {
-//         user: {
-//           email,
-//         },
-//       },
-//       orderBy: {
-//         createdAt: "desc",
-//       },
-//       take: 3,
-//       include: {
-//         transactions: true,
-//       },
-//     });
-
-//     return services;
-//   } catch (error) {
-//     console.error(
-//       "Erreur lors de la récupération des derniers services: ",
-//       error
-//     );
-//     throw error;
-//   }
-// };
 "use server";
 
 import prisma from "@/app/lib/prisma";
+// import fs from "fs";
+// import path from "path";
+//import supabase from "@/app/utils/supabase";
 
 // Va nous permettre de vérifier si un user existe déjà dans la BD sinon on l'ajoute
 export async function checkAndAddUser(email: string | undefined) {
@@ -441,6 +44,7 @@ export async function addService(email: string, name: string, amount: number) {
         name,
         amount,
         userId: user.id,
+        imageUrl: "", // Provide a default or actual imageUrl value
       },
     });
     console.log("Service ajouté avec succès");
@@ -499,69 +103,6 @@ export async function getTransactionsByServiceId(serviceId: string) {
     throw error;
   }
 }
-
-// Ajouter une nouvelle transaction à un service
-// export async function addTransactionToService(
-//   serviceId: string,
-//   amount: number,
-//   description: string
-// ) {
-//   try {
-//     const service = await prisma.service.findUnique({
-//       where: {
-//         id: serviceId,
-//       },
-//       include: {
-//         transactions: true,
-//       },
-//     });
-//     if (!service) {
-//       throw new Error("Service non trouvé");
-//     }
-
-//     const totalTransactions = service.transactions.reduce(
-//       (sum, transaction) => sum + transaction.amount,
-//       0
-//     );
-
-//     // La transaction ne doit pas dépasser le montant du service
-//     const totalWithNewTransaction = totalTransactions + amount;
-//     if (totalWithNewTransaction > service.amount) {
-//       throw new Error(
-//         "Le montant total des transactions dépasse le montant du service"
-//       );
-//     }
-
-//     // Si le montant n'est pas supérieur, on crée la nouvelle transaction
-//     const newTransaction = await prisma.transaction.create({
-//       data: {
-//         amount,
-//         description,
-//         service: {
-//           connect: {
-//             id: service.id,
-//           },
-//         },
-//       },
-//     });
-
-//     // Mettre à jour le montant du service en ajoutant le montant de l'option
-//     await prisma.service.update({
-//       where: {
-//         id: service.id,
-//       },
-//       data: {
-//         amount: service.amount + amount,
-//       },
-//     });
-
-//     console.log("Transaction ajoutée avec succès");
-//     return newTransaction;
-//   } catch (error) {
-//     console.error("Erreur lors de l'ajout de la transaction", error);
-//     throw error;
-//   }
-// }
 
 export async function addTransactionToService(
   serviceId: string,
@@ -646,7 +187,36 @@ export const deleteService = async (serviceId: string) => {
     throw error;
   }
 };
+// Fonction pour supprimer un service et ses transactions
+// export const deleteService = async ({
+//   imagePath,
+//   id,
+// }: {
+//   imagePath: string;
+//   id: string;
+// }) => {
+//   try {
+//     // Suppression de l'image si nécessaire
+//     await deleteImageFromStorage(imagePath);
 
+//     // Suppression des transactions associées au service
+//     await prisma.transaction.deleteMany({
+//       where: { serviceId: id },
+//     });
+
+//     // Suppression du service de la base de données
+//     await prisma.service.delete({
+//       where: {
+//         id: id,
+//       },
+//     });
+
+//     console.log("Service supprimé avec succès");
+//   } catch (error) {
+//     console.error("Erreur lors de la suppression du service:", error);
+//     throw error;
+//   }
+// };
 // supprimer une transaction
 export async function deleteTransaction(transactionId: string) {
   try {
@@ -748,7 +318,7 @@ export async function getTransactionsByEmailAndPeriod(
   }
 }
 
-// dashboard
+// dashboard /////////////////////
 // fonction qui va me permettre de calculer le montant total de toutes les transactions de l'utilisateur en utilisant son e-mail
 export async function getTotalTransactionAmount(email: string) {
   try {
@@ -843,7 +413,7 @@ export async function getReachedServices(email: string) {
   }
 }
 
-//////////////
+////////////////
 export const getLastServices = async (email: string) => {
   try {
     const services = await prisma.service.findMany({
@@ -870,3 +440,72 @@ export const getLastServices = async (email: string) => {
     throw error;
   }
 };
+/////////////////////////////////
+// file upload
+// export async function handleFileUpload(
+//   file: File
+// ): Promise<string | undefined> {
+//   return new Promise((resolve, reject) => {
+//     const uploadDir = path.join(process.cwd(), "uploads");
+
+//     // Vérifier si le dossier "uploads" existe, sinon le créer
+//     if (!fs.existsSync(uploadDir)) {
+//       fs.mkdirSync(uploadDir);
+//     }
+
+//     const filePath = path.join(uploadDir, file.name);
+
+//     // Lire le fichier en tant que buffer et l'écrire sur le disque
+//     const reader = new FileReader();
+//     reader.onload = () => {
+//       fs.writeFile(
+//         filePath,
+//         Buffer.from(reader.result as ArrayBuffer),
+//         (err) => {
+//           if (err) {
+//             reject(err);
+//           } else {
+//             resolve(filePath);
+//           }
+//         }
+//       );
+//     };
+//     reader.onerror = (err) => {
+//       reject(err);
+//     };
+//     reader.readAsArrayBuffer(file);
+//   });
+// }
+
+//upload image
+// export async function uploadImageToSupabase(
+//   file: File,
+//   userId: string
+// ): Promise<string> {
+//   const fileName = `${Date.now()}-${file.name}`;
+//   const { data, error } = await supabase.storage
+//     .from("images")
+//     .upload(fileName, file, {
+//       metadata: {
+//         userId: userId,
+//       },
+//     });
+
+//   if (error) {
+//     throw new Error(error.message);
+//   }
+
+//   if (!data) {
+//     throw new Error("Erreur lors du téléchargement de l'image");
+//   }
+
+//   const { data: publicUrlData } = supabase.storage
+//     .from("images")
+//     .getPublicUrl(data.path);
+
+//   if (!publicUrlData || !publicUrlData.publicUrl) {
+//     throw new Error("Erreur lors de la récupération de l'URL publique");
+//   }
+
+//   return publicUrlData.publicUrl;
+// }

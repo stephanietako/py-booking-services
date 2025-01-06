@@ -216,7 +216,12 @@ const ServicesPage = () => {
         const userServices = await getServicesByUser(
           user?.primaryEmailAddress?.emailAddress
         );
-        setServices(userServices);
+        setServices(
+          userServices.map((service) => ({
+            ...service,
+            imageKey: service.imageUrl, // Assuming imageKey can be derived from imageUrl
+          }))
+        );
         setLoading(false);
       } catch (error) {
         console.log("Erreur lors de la récupération des services", error);

@@ -605,6 +605,20 @@ a {
   cursor: pointer;
   margin-top: 20px;
 }
+/* /////////////// */
+.image_preview {
+  width: 100px; /* Ajuste la largeur de l'image */
+  height: 100px; /* Ajuste la hauteur de l'image */
+  overflow: hidden;
+  position: relative;
+}
+
+.file_input_preview img {
+  object-fit: contain; /* Garde l'image dans ses proportions */
+  width: 100%;
+  height: 100%;
+}
+
 /* //////////////RESPONSIVE///////////// */
 @media (prefers-color-scheme: dark) {
   html {

@@ -45,6 +45,10 @@ model Service {
   user         User          @relation(fields: [userId], references: [id])
   transactions Transaction[]
   createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  categories   String[]
+  imageUrl     String
+  active       Boolean       @default(true)
 }
 
 model Transaction {

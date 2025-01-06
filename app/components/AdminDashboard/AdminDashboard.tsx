@@ -60,7 +60,7 @@ const AdminDashboard: FC<AdminDashboardProps> = () => {
           <Link className="opening_hours" href="/admin/opening">
             Opening Hours
           </Link>
-          <Link className="service" href="/admin/menu">
+          <Link className="service" href="/admin/service">
             Gérer les services
           </Link>
         </main>

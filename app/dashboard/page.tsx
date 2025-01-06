@@ -40,7 +40,12 @@ const DashboardPage = () => {
         setTotalAmount(amount);
         setTotalCount(count);
         setReachedServicesRatio(reachedServices);
-        setService(lastServices);
+        setService(
+          lastServices.map((service) => ({
+            ...service,
+            imageKey: service.imageUrl, // Mapping imageUrl to imageKey
+          }))
+        );
         setIsLoading(false);
       }
     } catch (error) {
