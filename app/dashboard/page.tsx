@@ -43,7 +43,7 @@ const DashboardPage = () => {
         setService(
           lastServices.map((service) => ({
             ...service,
-            imageKey: service.imageUrl, // Mapping imageUrl to imageKey
+            imageUrl: service.imageUrl, // Mapping imageUrl to imageKey
           }))
         );
         setIsLoading(false);

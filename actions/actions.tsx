@@ -1,9 +1,9 @@
 "use server";
 
 import prisma from "@/app/lib/prisma";
-// import fs from "fs";
-// import path from "path";
-//import supabase from "@/app/utils/supabase";
+import { join } from "path";
+import { stat, mkdir, writeFile } from "fs/promises";
+import mime from "mime";
 
 // Va nous permettre de vérifier si un user existe déjà dans la BD sinon on l'ajoute
 export async function checkAndAddUser(email: string | undefined) {
@@ -31,7 +31,34 @@ export async function checkAndAddUser(email: string | undefined) {
 }
 
 // Ajouter les services
-export async function addService(email: string, name: string, amount: number) {
+// export async function addService(email: string, name: string, amount: number) {
+//   try {
+//     const user = await prisma.user.findUnique({
+//       where: { email },
+//     });
+//     if (!user) {
+//       throw new Error("Utilisateur non trouvé");
+//     }
+//     await prisma.service.create({
+//       data: {
+//         name,
+//         amount,
+//         userId: user.id,
+//         imageUrl: "", // Provide a default or actual imageUrl value
+//       },
+//     });
+//     console.log("Service ajouté avec succès");
+//   } catch (error) {
+//     console.error("Erreur lors de l'ajout du service:", error);
+//     throw error;
+//   }
+// }
+export async function addService(
+  email: string,
+  name: string,
+  amount: number,
+  description: string
+) {
   try {
     const user = await prisma.user.findUnique({
       where: { email },
@@ -44,7 +71,8 @@ export async function addService(email: string, name: string, amount: number) {
         name,
         amount,
         userId: user.id,
-        imageUrl: "", // Provide a default or actual imageUrl value
+        description, // Assurez-vous que la description est incluse ici
+        imageUrl: "", // Valeur par défaut ou réelle
       },
     });
     console.log("Service ajouté avec succès");
@@ -54,7 +82,7 @@ export async function addService(email: string, name: string, amount: number) {
   }
 }
 
-// Afficher les services
+// Récupérer les services par utilisateur
 export async function getServicesByUser(email: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -77,6 +105,24 @@ export async function getServicesByUser(email: string) {
     return user.services;
   } catch (error) {
     console.error("Erreur lors de la récupération des services:", error);
+    throw error;
+  }
+}
+
+// Récupérer un service par son ID
+export async function getServiceById(serviceId: string) {
+  try {
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
+    });
+
+    if (!service) {
+      throw new Error("Service non trouvé");
+    }
+
+    return service; // Retourne le service avec la description
+  } catch (error) {
+    console.error("Erreur lors de la récupération du service:", error);
     throw error;
   }
 }
@@ -167,26 +213,50 @@ export async function addTransactionToService(
 }
 
 // fonction qui sert à suppimer un service et ses transactions
+// export const deleteService = async (serviceId: string) => {
+//   try {
+//     // plusieurs
+//     await prisma.transaction.deleteMany({
+//       where: { serviceId },
+//     });
+//     // un seul
+//     await prisma.service.delete({
+//       where: {
+//         id: serviceId,
+//       },
+//     });
+//   } catch (error) {
+//     console.error(
+//       "Erreur lors de la suppréssion du service et de ses transactions associées",
+//       error
+//     );
+//     throw error;
+//   }
+// };
 export const deleteService = async (serviceId: string) => {
   try {
-    // plusieurs
+    // Suppression des transactions associées
     await prisma.transaction.deleteMany({
       where: { serviceId },
     });
-    // un seul
+
+    // Suppression du service
     await prisma.service.delete({
       where: {
         id: serviceId,
       },
     });
+
+    console.log("Service supprimé avec succès");
   } catch (error) {
     console.error(
-      "Erreur lors de la suppréssion du service et de ses transactions associées",
+      "Erreur lors de la suppression du service et de ses transactions associées",
       error
     );
     throw error;
   }
 };
+
 // Fonction pour supprimer un service et ses transactions
 // export const deleteService = async ({
 //   imagePath,
@@ -414,6 +484,7 @@ export async function getReachedServices(email: string) {
 }
 
 ////////////////
+// Récupérer les 3 derniers services
 export const getLastServices = async (email: string) => {
   try {
     const services = await prisma.service.findMany({
@@ -440,72 +511,241 @@ export const getLastServices = async (email: string) => {
     throw error;
   }
 };
-/////////////////////////////////
-// file upload
-// export async function handleFileUpload(
-//   file: File
-// ): Promise<string | undefined> {
-//   return new Promise((resolve, reject) => {
-//     const uploadDir = path.join(process.cwd(), "uploads");
 
-//     // Vérifier si le dossier "uploads" existe, sinon le créer
-//     if (!fs.existsSync(uploadDir)) {
-//       fs.mkdirSync(uploadDir);
+// Récupérer tous les services
+export const getAllServices = async () => {
+  try {
+    // Récupère tous les services sans filtrer par email
+    const services = await prisma.service.findMany({
+      include: {
+        transactions: true, // Inclure les transactions associées si nécessaire
+      },
+    });
+
+    return services; // Retourne la liste de tous les services
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération de tous les services:",
+      error
+    );
+    throw error; // Lève l'erreur pour qu'elle soit gérée ailleurs
+  }
+};
+
+// Récupérer tous les services par utilisateur
+export const getAllServicesByUser = async (email: string) => {
+  try {
+    const services = await prisma.service.findMany({
+      where: {
+        user: {
+          email,
+        },
+      },
+      include: {
+        transactions: true,
+      },
+    });
+    return services;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des services:", error);
+    return { error: "Impossible de récupérer les services." };
+  }
+};
+
+///////////////////////////////////////////
+
+//CREATION SERVICE & UPDATE SERVICE
+
+// Mettre à jour un service
+// export async function updateService(
+//   serviceId: string,
+//   name: string,
+//   amount: number,
+//   description: string
+// ) {
+//   try {
+//     const service = await prisma.service.findUnique({
+//       where: { id: serviceId },
+//     });
+
+//     if (!service) {
+//       throw new Error("Service non trouvé");
 //     }
 
-//     const filePath = path.join(uploadDir, file.name);
-
-//     // Lire le fichier en tant que buffer et l'écrire sur le disque
-//     const reader = new FileReader();
-//     reader.onload = () => {
-//       fs.writeFile(
-//         filePath,
-//         Buffer.from(reader.result as ArrayBuffer),
-//         (err) => {
-//           if (err) {
-//             reject(err);
-//           } else {
-//             resolve(filePath);
-//           }
-//         }
-//       );
-//     };
-//     reader.onerror = (err) => {
-//       reject(err);
-//     };
-//     reader.readAsArrayBuffer(file);
-//   });
-// }
-
-//upload image
-// export async function uploadImageToSupabase(
-//   file: File,
-//   userId: string
-// ): Promise<string> {
-//   const fileName = `${Date.now()}-${file.name}`;
-//   const { data, error } = await supabase.storage
-//     .from("images")
-//     .upload(fileName, file, {
-//       metadata: {
-//         userId: userId,
+//     const updatedService = await prisma.service.update({
+//       where: { id: serviceId },
+//       data: {
+//         name,
+//         amount,
+//         description,
+//         imageUrl: service.imageUrl, // Conserver l'image existante
 //       },
 //     });
 
-//   if (error) {
-//     throw new Error(error.message);
+//     console.log("Service mis à jour avec succès :", updatedService);
+//     return updatedService;
+//   } catch (error) {
+//     console.error("Erreur lors de la mise à jour du service:", error);
+//     throw new Error("Impossible de mettre à jour le service");
 //   }
-
-//   if (!data) {
-//     throw new Error("Erreur lors du téléchargement de l'image");
-//   }
-
-//   const { data: publicUrlData } = supabase.storage
-//     .from("images")
-//     .getPublicUrl(data.path);
-
-//   if (!publicUrlData || !publicUrlData.publicUrl) {
-//     throw new Error("Erreur lors de la récupération de l'URL publique");
-//   }
-
-//   return publicUrlData.publicUrl;
 // }
+// Mettre à jour un service
+export async function updateService(
+  serviceId: string,
+  name: string,
+  amount: number,
+  description: string,
+  file?: File
+) {
+  try {
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
+    });
+
+    if (!service) {
+      throw new Error("Service non trouvé");
+    }
+
+    // Vérification du fichier si présent
+    let imageUrl = service.imageUrl; // Conserver l'URL de l'image existante
+    if (file) {
+      // Si un fichier est fourni, on télécharge une nouvelle image
+      imageUrl = await uploadImageToServer(file);
+    }
+
+    // Mise à jour du service
+    const updatedService = await prisma.service.update({
+      where: { id: serviceId },
+      data: {
+        name,
+        amount,
+        description,
+        imageUrl, // On met à jour l'URL de l'image si nécessaire
+      },
+    });
+
+    console.log("Service mis à jour avec succès :", updatedService);
+    return updatedService;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du service:", error);
+    throw new Error("Impossible de mettre à jour le service");
+  }
+}
+
+// Créer un service avec upload d'image
+// export async function createService(
+//   email: string,
+//   name: string,
+//   amount: number,
+//   description: string,
+//   file: File
+// ) {
+//   try {
+//     const user = await prisma.user.findUnique({
+//       where: { email },
+//     });
+//     if (!user) {
+//       throw new Error("Utilisateur non trouvé");
+//     }
+
+//     // Vérification du format du fichier
+//     const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
+//     if (!allowedMimeTypes.includes(file.type)) {
+//       throw new Error("Format d'image non pris en charge");
+//     }
+
+//     // Upload de l'image et récupération de l'URL
+//     const imageUrl = await uploadImageToServer(file);
+
+//     // Création du service
+//     const newService = await prisma.service.create({
+//       data: {
+//         name,
+//         amount,
+//         description,
+//         userId: user.id,
+//         imageUrl,
+//       },
+//     });
+
+//     console.log("Service créé avec succès :", newService);
+//     return newService;
+//   } catch (error) {
+//     console.error("Erreur lors de la création du service:", error);
+//     throw new Error("Impossible de créer le service");
+//   }
+// }
+// Créer un service avec upload d'image
+export async function createService(
+  email: string,
+  name: string,
+  amount: number,
+  description: string,
+  file: File
+) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (!user) {
+      throw new Error("Utilisateur non trouvé");
+    }
+
+    // Vérification du format du fichier
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!allowedMimeTypes.includes(file.type)) {
+      throw new Error("Format d'image non pris en charge");
+    }
+
+    // Upload de l'image et récupération de l'URL
+    const imageUrl = await uploadImageToServer(file);
+
+    // Création du service
+    const newService = await prisma.service.create({
+      data: {
+        name,
+        amount,
+        description,
+        userId: user.id,
+        imageUrl, // On attribue l'URL de l'image
+      },
+    });
+
+    console.log("Service créé avec succès :", newService);
+    return newService;
+  } catch (error) {
+    console.error("Erreur lors de la création du service:", error);
+    throw new Error("Impossible de créer le service");
+  }
+}
+
+// Fonction d'upload d'image
+async function uploadImageToServer(file: File): Promise<string> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const relativeUploadDir = `/uploads/${new Date()
+    .toLocaleDateString("fr-FR")
+    .replace(/\//g, "-")}`;
+  const uploadDir = join(process.cwd(), "public", relativeUploadDir);
+
+  try {
+    // Créer le dossier s'il n'existe pas
+    await stat(uploadDir).catch(() => mkdir(uploadDir, { recursive: true }));
+
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const fileExtension = mime.getExtension(file.type) || "png";
+    const fileName = `${file.name.replace(
+      /\.[^/.]+$/,
+      ""
+    )}-${uniqueSuffix}.${fileExtension}`;
+    const filePath = join(uploadDir, fileName);
+
+    // Écrire l'image sur le serveur
+    await writeFile(filePath, buffer);
+
+    // Retourner l'URL relative
+    return `${relativeUploadDir}/${fileName}`;
+  } catch (error) {
+    console.error("Erreur lors du téléchargement de l'image :", error);
+    throw new Error("Erreur lors de l'upload de l'image");
+  }
+}

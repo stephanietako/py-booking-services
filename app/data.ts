@@ -24,6 +24,8 @@ const services: Service[] = [
         serviceId: "1",
       },
     ],
+    description: "",
+    imageUrl: "",
   },
   {
     id: "2",
@@ -48,6 +50,8 @@ const services: Service[] = [
         serviceId: "2",
       },
     ],
+    description: "",
+    imageUrl: "",
   },
   {
     id: "3",
@@ -64,6 +68,8 @@ const services: Service[] = [
         serviceId: "3",
       },
     ],
+    description: "",
+    imageUrl: "",
   },
   {
     id: "4",
@@ -80,6 +86,8 @@ const services: Service[] = [
         serviceId: "4",
       },
     ],
+    description: "",
+    imageUrl: "",
   },
   {
     id: "5",
@@ -96,6 +104,8 @@ const services: Service[] = [
         serviceId: "5",
       },
     ],
+    description: "",
+    imageUrl: "",
   },
   {
     id: "6",
@@ -112,6 +122,8 @@ const services: Service[] = [
         serviceId: "6",
       },
     ],
+    description: "",
+    imageUrl: "",
   },
 ];
 

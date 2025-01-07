@@ -46,7 +46,7 @@ model Service {
   transactions Transaction[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  categories   String[]
+  description  String
   imageUrl     String
   active       Boolean       @default(true)
 }

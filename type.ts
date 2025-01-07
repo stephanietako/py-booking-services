@@ -1,9 +1,9 @@
 export interface Service {
-  imageKey: string;
   id: string;
   createdAt: Date;
   name: string;
   amount: number;
+  description: string;
   imageUrl: string;
   transactions?: Transaction[];
 }

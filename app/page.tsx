@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import Calendar from "./components/Calendar/Calendar";
 import Image from "next/image";
-import Services from "./components/Services/Services";
 import styles from "./page.module.css";
 import Navbar from "./components/Navbar/Navbar";
 import ServiceItem from "./components/ServiceItem/ServiceItem";
@@ -10,6 +9,7 @@ import services from "./data";
 import Link from "next/link";
 import { DateTime } from "@/type";
 import Spinner from "./components/Spinner/Spinner";
+import Services from "./components/Services/Services";
 
 export default function Home() {
   const [date, setDate] = useState<DateTime>({
@@ -41,7 +41,11 @@ export default function Home() {
           <h1>HELLO WORLD BOOKING APP</h1>
           <h2>Starting project</h2>
           <br />
+          <h1>Nos Services</h1>
+          <br />
+
           <ul className={styles.list_services}>
+            <p>ici service item</p>
             {services.map((service) => (
               <Link key={service.id} href={`/manage/${service.id}`}>
                 <ServiceItem service={service} enableHover={1}></ServiceItem>

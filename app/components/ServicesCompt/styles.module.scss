@@ -1,0 +1,47 @@
+// .servicesContainer {
+//   display: flex;
+//   justify-content: space-around;
+//   flex-wrap: wrap;
+//   padding: 2rem;
+//   background-color: #f9f9f9;
+// }
+
+.service {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1rem;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  border: 4px solid red;
+
+  &:hover {
+    transform: translateY(-10px);
+  }
+}
+
+.service_image {
+  width: 100%;
+  height: 200px;
+}
+
+.service__title {
+  font-size: 1.5rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.service__description {
+  font-size: 1rem;
+  margin: 0 1rem;
+}
+
+.service__price {
+  font-size: 1.2rem;
+  margin: 1rem;
+  text-align: center;
+  color: #333;
+  font-weight: bold;
+}

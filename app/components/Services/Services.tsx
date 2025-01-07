@@ -1,5 +1,5 @@
 import React from "react";
-import ServiceCompt from "../ServiceCompt/ServiceCompt";
+import ServiceCompt from "../ServicesCompt/ServiceCompt";
 // Styles
 import styles from "./styles.module.scss";
 // Ce composant Services est une fonction qui contient une liste de services (titre, description, prix, URL de l'image).
@@ -7,23 +7,23 @@ import styles from "./styles.module.scss";
 const Services: React.FC = () => {
   const services = [
     {
-      title: "Forfait Basic",
+      name: "Forfait Basic",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      price: "50€",
+      amount: "50€",
       imageUrl: "/assets/photo1.jpg",
     },
     {
-      title: "Forfait Standard",
+      name: "Forfait Standard",
       description:
         "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      price: "100€",
+      amount: "100€",
       imageUrl: "/assets/photo1.jpg",
     },
     {
-      title: "Forfait Premium",
+      name: "Forfait Premium",
       description:
         "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
-      price: "200€",
+      amount: "200€",
       imageUrl: "/assets/photo1.jpg",
     },
   ];
@@ -33,9 +33,9 @@ const Services: React.FC = () => {
       {services.map((service, index) => (
         <ServiceCompt
           key={index}
-          title={service.title}
+          name={service.name}
           description={service.description}
-          price={service.price}
+          amount={service.amount}
           imageUrl={service.imageUrl}
         />
       ))}

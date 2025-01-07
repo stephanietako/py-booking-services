@@ -20,6 +20,17 @@
   justify-content: space-between;
   align-items: center;
 }
+.serviceItemImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.serviceImage {
+  object-fit: cover;
+}
 
 .serviceItemDetails {
   display: flex;
