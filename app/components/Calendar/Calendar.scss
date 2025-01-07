@@ -6,7 +6,8 @@
 .calendar_container {
   display: flex;
   width: auto;
-  height: 100vh;
+  height: 100%;
+  margin: 2rem;
   justify-content: center;
   align-items: center;
 }

@@ -5,33 +5,44 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import Navbar from "./components/Navbar/Navbar";
 import ServiceItem from "./components/ServiceItem/ServiceItem";
-import services from "./data";
+import { Service } from "@/type"; // Assure-toi d'utiliser le bon type Service
 import Link from "next/link";
 import { DateTime } from "@/type";
 import Spinner from "./components/Spinner/Spinner";
-import Services from "./components/Services/Services";
+import { getAllServices } from "@/actions/actions";
 
 export default function Home() {
+  // Correction du typage des services en utilisant Service et non ServiceType
+  const [services, setServices] = useState<Service[]>([]);
   const [date, setDate] = useState<DateTime>({
     justDate: null,
     dateTime: null,
   });
+  const [error, setError] = useState<string>(""); // Affichage des erreurs
   const [isClient, setIsClient] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Récupération des services au chargement
+  useEffect(() => {
+    const fetchAllServices = async () => {
+      setIsLoading(true); // On met le loading à true avant la récupération des services
+      try {
+        const data = await getAllServices();
+        setServices(data);
+      } catch (error) {
+        console.error("Erreur lors du chargement des services:", error);
+        setError("Impossible de charger les services.");
+      } finally {
+        setIsLoading(false); // On arrête le loading
+      }
+    };
+    fetchAllServices();
+  }, []);
+
+  // Pour gérer le rendu côté client
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  useEffect(() => {
-    if (date.dateTime) {
-      setIsLoading(true);
-      // Simuler un chargement de données pour le composant Services
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000); // Remplacez 1000 par le temps de chargement réel
-    }
-  }, [date]);
 
   return (
     <>
@@ -43,28 +54,34 @@ export default function Home() {
           <br />
           <h1>Nos Services</h1>
           <br />
-
-          <ul className={styles.list_services}>
-            <p>ici service item</p>
-            {services.map((service) => (
-              <Link key={service.id} href={`/manage/${service.id}`}>
-                <ServiceItem service={service} enableHover={1}></ServiceItem>
-              </Link>
-            ))}
-          </ul>
-          <br />
+          {/* Affichage des services */}
+          {error && <p className="error">{error}</p>}{" "}
+          {/* Affichage de l'erreur */}
           <div>
+            <h2>SÉLÉCTIONNEZ UNE DATE</h2>
+            {/* Affichage conditionnel du Calendrier si la date n'est pas définie */}
             {isClient && !date.dateTime && (
               <Calendar setDate={setDate} date={date} />
             )}
+
+            {/* Si la date est définie et qu'on n'est pas en train de charger */}
             {isClient && date.dateTime && !isLoading ? (
-              <Services />
+              <ul className={styles.list_services}>
+                {services.map((service) => (
+                  <Link key={service.id} href={`/manage/${service.id}`}>
+                    <ServiceItem
+                      service={service}
+                      enableHover={1}
+                    ></ServiceItem>
+                  </Link>
+                ))}
+              </ul>
+            ) : isLoading ? (
+              <div className="spinner_container">
+                <Spinner /> {/* Affichage du spinner pendant le chargement */}
+              </div>
             ) : (
-              isLoading && (
-                <div className="spinner_container">
-                  <Spinner />
-                </div>
-              )
+              <div>Veuillez sélectionner une date pour voir les services</div>
             )}
           </div>
         </main>
@@ -118,6 +135,7 @@ export default function Home() {
     </>
   );
 }
+
 // "use client";
 // import { useState } from "react";
 // import Calendar from "./components/Calendar/Calendar";

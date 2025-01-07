@@ -8,7 +8,7 @@ import styles from "./styles.module.scss";
 interface ServiceComptProps {
   name: string;
   description: string;
-  amount: string;
+  amount: number;
   imageUrl: string;
 }
 

@@ -4,24 +4,55 @@ import prisma from "@/app/lib/prisma";
 import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
-
+import bcrypt from "bcrypt";
 // Va nous permettre de vérifier si un user existe déjà dans la BD sinon on l'ajoute
-export async function checkAndAddUser(email: string | undefined) {
-  if (!email) return;
+// export async function checkAndAddUser(email: string | undefined) {
+//   if (!email) return;
+//   try {
+//     const existingUser = await prisma.user.findUnique({
+//       where: {
+//         email,
+//       },
+//     });
+
+//     if (!existingUser) {
+//       await prisma.user.create({
+//         data: {
+//           email,
+//         },
+//       });
+//       console.log("Nouvel utilisateur ajouté dans la base de données");
+//     } else {
+//       console.log("Utilisateur déjà présent dans la base de données");
+//     }
+//   } catch (error) {
+//     console.error("Erreur lors de la vérification de l'utilisateur:", error);
+//   }
+// }
+// Va nous permettre de vérifier si un utilisateur existe déjà dans la BD sinon on l'ajoute avec un mot de passe haché
+export async function checkAndAddUser(
+  email: string | undefined,
+  password: string | undefined
+) {
+  if (!email || !password) return;
+
   try {
     const existingUser = await prisma.user.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
     });
 
     if (!existingUser) {
+      // Hachage du mot de passe avant d'insérer l'utilisateur
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       await prisma.user.create({
         data: {
           email,
+          password: hashedPassword, // Mot de passe haché stocké dans la BD
+          isAdmin: false, // Par défaut, les nouveaux utilisateurs ne sont pas admin
         },
       });
-      console.log("Nouvel utilisateur ajouté dans la base de données");
+      console.log("Nouvel utilisateur ajouté avec mot de passe sécurisé.");
     } else {
       console.log("Utilisateur déjà présent dans la base de données");
     }
@@ -29,30 +60,7 @@ export async function checkAndAddUser(email: string | undefined) {
     console.error("Erreur lors de la vérification de l'utilisateur:", error);
   }
 }
-
-// Ajouter les services
-// export async function addService(email: string, name: string, amount: number) {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { email },
-//     });
-//     if (!user) {
-//       throw new Error("Utilisateur non trouvé");
-//     }
-//     await prisma.service.create({
-//       data: {
-//         name,
-//         amount,
-//         userId: user.id,
-//         imageUrl: "", // Provide a default or actual imageUrl value
-//       },
-//     });
-//     console.log("Service ajouté avec succès");
-//   } catch (error) {
-//     console.error("Erreur lors de l'ajout du service:", error);
-//     throw error;
-//   }
-// }
+// création d'un service
 export async function addService(
   email: string,
   name: string,
@@ -149,7 +157,7 @@ export async function getTransactionsByServiceId(serviceId: string) {
     throw error;
   }
 }
-
+// Ajouter une transaction à un service
 export async function addTransactionToService(
   serviceId: string,
   amount: number,
