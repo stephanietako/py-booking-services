@@ -1,9 +1,10 @@
+//app/services/page.tsx
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
 import { Service } from "@/type";
 import { useUser } from "@clerk/nextjs";
-import { getServicesByUser, addService } from "@/actions/actions";
+import { addService, getAllServices } from "@/actions/actions";
 import Modal from "../components/Modal/Modal";
 import ServiceItem from "../components/ServiceItem/ServiceItem";
 import styles from "./styles.module.scss";
@@ -17,33 +18,35 @@ const ServicesPage: React.FC = () => {
   const [selectedService, setSelectedService] = useState<string>(""); // Typage de la sélection de service
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // Ajout de la gestion des erreurs
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [error, setError] = useState<string>("");
 
   // Fonction de récupération des services
   const fetchServices = useCallback(async () => {
-    if (user?.primaryEmailAddress?.emailAddress) {
-      setLoading(true);
-      try {
-        const userServices = await getServicesByUser(
-          user.primaryEmailAddress.emailAddress
-        );
-        setServices(userServices);
-      } catch (error) {
-        console.log("Erreur lors de la récupération des services", error);
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      console.log("Utilisateur non connecté ou email non disponible");
+    setLoading(true); // On met le loading à true avant la récupération des services
+    try {
+      const data = await getAllServices();
+      setServices(data);
+    } catch (error) {
+      console.error("Erreur lors du chargement des services:", error);
+      setError("Impossible de charger les services.");
+    } finally {
+      setLoading(false); // On arrête le loading
     }
-  }, [user?.primaryEmailAddress?.emailAddress]);
+  }, []);
 
-  // Chargement des services lorsque l'email de l'utilisateur change
+  // On récupère les services au montage du composant
   useEffect(() => {
     fetchServices();
   }, [fetchServices]);
 
   // Fonction pour ajouter un service
   const handleAddService = async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) {
+      setErrorMessage("Utilisateur non connecté ou email non disponible.");
+      return;
+    }
+
     try {
       const selected = services.find(
         (service) => service.name === selectedService
@@ -53,13 +56,15 @@ const ServicesPage: React.FC = () => {
         return;
       }
 
-      await addService(
-        user?.primaryEmailAddress?.emailAddress as string,
+      // Appel à addService
+      const result = await addService(
+        user.primaryEmailAddress.emailAddress,
         selected.name,
         selected.amount,
         selected.description
       );
-      fetchServices(); // Récupère de nouveau les services après l'ajout
+      console.log("Service ajouté avec succès : ", result); // Ajoute un log ici pour vérifier
+      fetchServices(); // Récupérer de nouveau les services après l'ajout
       setSelectedService(""); // Réinitialiser la sélection
       setIsModalOpen(false); // Fermer le modal
       setErrorMessage(null); // Réinitialiser l'erreur

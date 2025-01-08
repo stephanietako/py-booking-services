@@ -1,3 +1,5 @@
+//app/admin/service/pqge.tsx
+
 "use client";
 
 import React, { FC, useEffect, useState, ChangeEvent } from "react";
@@ -76,76 +78,20 @@ const Service: FC = () => {
       setError("Image trop grande, veuillez choisir une image de moins de 1Mo");
       return;
     }
+
+    // Vérification du type de fichier
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+    if (!allowedTypes.includes(file.type)) {
+      setError(
+        "Type de fichier non autorisé. Veuillez sélectionner une image (PNG, JPEG ou JPG)."
+      );
+      return;
+    }
     setInput((prev) => ({ ...prev, file }));
   };
 
   // ✅ Enregistrement ou mise à jour du service
-  // const handleSaveService = async (): Promise<void> => {
-  //   setError("");
-  //   setSuccessMessage("");
 
-  //   // ✅ Validation manuelle TypeScript sans Zod
-  //   if (!input.name.trim()) {
-  //     setError("Le nom est requis.");
-  //     return;
-  //   }
-  //   if (!input.description.trim()) {
-  //     setError("La description est requise.");
-  //     return;
-  //   }
-  //   if (input.amount <= 0) {
-  //     setError("Le montant doit être supérieur à zéro.");
-  //     return;
-  //   }
-  //   if (!input.file) {
-  //     setError("Un fichier est requis.");
-  //     return;
-  //   }
-
-  //   // ✅ Contrôle de la présence de l'utilisateur
-  //   if (!user?.primaryEmailAddress?.emailAddress) {
-  //     setError("Utilisateur non identifié.");
-  //     return;
-  //   }
-
-  //   try {
-  //     // ✅ Désactivation temporaire du bouton (isLoading)
-  //     setIsFormModified(false);
-
-  //     // ✅ Création ou mise à jour du service
-  //     if (input.id) {
-  //       await updateService(
-  //         input.id,
-  //         input.name,
-  //         input.amount,
-  //         input.description,
-  //         input.file
-  //       );
-  //       setSuccessMessage("Service mis à jour avec succès !");
-  //     } else {
-  //       await createService(
-  //         user.primaryEmailAddress.emailAddress,
-  //         input.name,
-  //         input.amount,
-  //         input.description,
-  //         input.file
-  //       );
-  //       setSuccessMessage("Service créé avec succès !");
-  //     }
-
-  //     // ✅ Rechargement de la liste et reset du formulaire
-  //     const updatedServices = await getAllServices();
-  //     setServices(updatedServices);
-  //     setInput(initialInput);
-  //     setPreview("");
-  //   } catch (error) {
-  //     console.error("Erreur lors de l'enregistrement :", error);
-  //     setError("Une erreur s'est produite. Veuillez réessayer.");
-  //   } finally {
-  //     // ✅ Réactivation du formulaire après la requête
-  //     setIsFormModified(true);
-  //   }
-  // };
   const handleSaveService = async (): Promise<void> => {
     setError("");
     setSuccessMessage("");
@@ -223,6 +169,68 @@ const Service: FC = () => {
       setIsFormModified(true); // Réactivation du bouton
     }
   };
+  // const handleSaveService = async (): Promise<void> => {
+  //   // ✅ Vérification des permissions admin
+  //   if (user?.publicMetadata.role !== "admin") {
+  //     setError("Vous n'êtes pas autorisé à ajouter des services.");
+  //     return;
+  //   }
+
+  //   // ✅ Vérification des champs obligatoires
+  //   if (!input.name.trim() || !input.description.trim() || input.amount <= 0) {
+  //     setError("Tous les champs doivent être remplis correctement.");
+  //     return;
+  //   }
+
+  //   // ✅ Vérification de l'email de l'utilisateur
+  //   if (!user?.primaryEmailAddress?.emailAddress) {
+  //     setError("Adresse e-mail non disponible.");
+  //     return;
+  //   }
+
+  //   const email = user.primaryEmailAddress.emailAddress; // ✅ Email confirmé comme string
+
+  //   // ✅ Si un ID de service existe, il s'agit d'une mise à jour
+  //   if (input.id) {
+  //     try {
+  //       // 🛠️ Mise à jour du service
+  //       await updateService(
+  //         input.id,
+  //         input.name,
+  //         input.amount,
+  //         input.description,
+  //         input.file
+  //       );
+  //       setSuccessMessage("Service mis à jour avec succès !");
+  //     } catch (error) {
+  //       console.error("Erreur lors de la mise à jour du service :", error);
+  //       setError(
+  //         "Une erreur s'est produite lors de la mise à jour du service."
+  //       );
+  //     }
+  //   } else {
+  //     // ✅ Sinon, on crée un nouveau service
+  //     try {
+  //       await createService(
+  //         email,
+  //         input.name,
+  //         input.amount,
+  //         input.description,
+  //         input.file!
+  //       );
+  //       setSuccessMessage("Service créé avec succès !");
+  //     } catch (error) {
+  //       console.error("Erreur lors de la création du service :", error);
+  //       setError("Une erreur s'est produite lors de l'ajout du service.");
+  //     }
+  //   }
+
+  //   // ✅ Mise à jour de l'affichage
+  //   const updatedServices = await getAllServices();
+  //   setServices(updatedServices);
+  //   setInput(initialInput); // ✅ Réinitialisation du formulaire
+  //   setPreview(""); // ✅ Réinitialisation de l'aperçu
+  // };
 
   // ✅ Suppression d'un service
   const handleDelete = async (id: string) => {
@@ -322,6 +330,7 @@ const Service: FC = () => {
             {services.map((service) => (
               <div key={service.id}>
                 <p>{service.name}</p>
+                <p>{service.description}</p>
                 <Image
                   src={service.imageUrl || "/default.png"} // ✅ Gestion du src vide
                   alt={service.name}

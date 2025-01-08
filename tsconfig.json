@@ -27,7 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/lib/db.ts"
+    "lib/db.ts"
   ],
   "exclude": ["node_modules"]
 }

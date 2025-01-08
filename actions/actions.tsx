@@ -1,10 +1,10 @@
 "use server";
 
-import prisma from "@/app/lib/prisma";
+import prisma from "@/lib/prisma";
 import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
-import bcrypt from "bcrypt";
+
 // Va nous permettre de vérifier si un user existe déjà dans la BD sinon on l'ajoute
 // export async function checkAndAddUser(email: string | undefined) {
 //   if (!email) return;
@@ -30,29 +30,14 @@ import bcrypt from "bcrypt";
 //   }
 // }
 // Va nous permettre de vérifier si un utilisateur existe déjà dans la BD sinon on l'ajoute avec un mot de passe haché
-export async function checkAndAddUser(
-  email: string | undefined,
-  password: string | undefined
-) {
-  if (!email || !password) return;
-
+// Vérifier et ajouter un utilisateur si inexistant
+export async function checkAndAddUser(email: string | undefined) {
+  if (!email) return;
   try {
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
+    const existingUser = await prisma.user.findUnique({ where: { email } });
     if (!existingUser) {
-      // Hachage du mot de passe avant d'insérer l'utilisateur
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      await prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword, // Mot de passe haché stocké dans la BD
-          isAdmin: false, // Par défaut, les nouveaux utilisateurs ne sont pas admin
-        },
-      });
-      console.log("Nouvel utilisateur ajouté avec mot de passe sécurisé.");
+      await prisma.user.create({ data: { email, isAdmin: false } });
+      console.log("Nouvel utilisateur ajouté dans la base de données");
     } else {
       console.log("Utilisateur déjà présent dans la base de données");
     }
@@ -60,7 +45,7 @@ export async function checkAndAddUser(
     console.error("Erreur lors de la vérification de l'utilisateur:", error);
   }
 }
-// création d'un service
+// Ajouter un service
 export async function addService(
   email: string,
   name: string,
@@ -68,19 +53,16 @@ export async function addService(
   description: string
 ) {
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
-    }
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) throw new Error("Utilisateur non trouvé");
+
     await prisma.service.create({
       data: {
         name,
         amount,
+        description,
+        imageUrl: "",
         userId: user.id,
-        description, // Assurez-vous que la description est incluse ici
-        imageUrl: "", // Valeur par défaut ou réelle
       },
     });
     console.log("Service ajouté avec succès");
@@ -90,26 +72,14 @@ export async function addService(
   }
 }
 
-// Récupérer les services par utilisateur
+// Récupérer les services d'un utilisateur
 export async function getServicesByUser(email: string) {
   try {
     const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-      include: {
-        services: {
-          include: {
-            transactions: true,
-          },
-        },
-      },
+      where: { email },
+      include: { services: { include: { transactions: true } } },
     });
-
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
-    }
-    // On va retourner la liste de tous les services
+    if (!user) throw new Error("Utilisateur non trouvé");
     return user.services;
   } catch (error) {
     console.error("Erreur lors de la récupération des services:", error);
@@ -220,51 +190,17 @@ export async function addTransactionToService(
   }
 }
 
-// fonction qui sert à suppimer un service et ses transactions
-// export const deleteService = async (serviceId: string) => {
-//   try {
-//     // plusieurs
-//     await prisma.transaction.deleteMany({
-//       where: { serviceId },
-//     });
-//     // un seul
-//     await prisma.service.delete({
-//       where: {
-//         id: serviceId,
-//       },
-//     });
-//   } catch (error) {
-//     console.error(
-//       "Erreur lors de la suppréssion du service et de ses transactions associées",
-//       error
-//     );
-//     throw error;
-//   }
-// };
-export const deleteService = async (serviceId: string) => {
+// Supprimer un service et ses transactions
+export async function deleteService(serviceId: string) {
   try {
-    // Suppression des transactions associées
-    await prisma.transaction.deleteMany({
-      where: { serviceId },
-    });
-
-    // Suppression du service
-    await prisma.service.delete({
-      where: {
-        id: serviceId,
-      },
-    });
-
+    await prisma.transaction.deleteMany({ where: { serviceId } });
+    await prisma.service.delete({ where: { id: serviceId } });
     console.log("Service supprimé avec succès");
   } catch (error) {
-    console.error(
-      "Erreur lors de la suppression du service et de ses transactions associées",
-      error
-    );
+    console.error("Erreur lors de la suppression du service:", error);
     throw error;
   }
-};
-
+}
 // Fonction pour supprimer un service et ses transactions
 // export const deleteService = async ({
 //   imagePath,
@@ -397,7 +333,7 @@ export async function getTransactionsByEmailAndPeriod(
 }
 
 // dashboard /////////////////////
-// fonction qui va me permettre de calculer le montant total de toutes les transactions de l'utilisateur en utilisant son e-mail
+// Calculer le montant total des transactions sans limitation de budget
 export async function getTotalTransactionAmount(email: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -411,17 +347,18 @@ export async function getTotalTransactionAmount(email: string) {
       },
     });
 
-    if (!user) throw new Error("Utilisateur non trouvés");
+    if (!user) throw new Error("Utilisateur non trouvé");
 
-    const totalAmount = user.services.reduce((sum, services) => {
-      return (
-        sum +
-        services.transactions.reduce(
-          (serviceSum, transaction) => serviceSum + transaction.amount,
-          0
-        )
+    const totalAmount = user.services
+      .flatMap(
+        (service: { transactions: { amount: number }[] }) =>
+          service.transactions
+      )
+      .reduce(
+        (sum: number, transaction: { amount: number }) =>
+          sum + transaction.amount,
+        0
       );
-    }, 0);
 
     return totalAmount;
   } catch (error) {
@@ -459,7 +396,6 @@ export async function getTotalTransactionCount(email: string) {
   }
 }
 
-// calculer le nombre de services atteints
 export async function getReachedServices(email: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -563,40 +499,6 @@ export const getAllServicesByUser = async (email: string) => {
 ///////////////////////////////////////////
 
 //CREATION SERVICE & UPDATE SERVICE
-
-// Mettre à jour un service
-// export async function updateService(
-//   serviceId: string,
-//   name: string,
-//   amount: number,
-//   description: string
-// ) {
-//   try {
-//     const service = await prisma.service.findUnique({
-//       where: { id: serviceId },
-//     });
-
-//     if (!service) {
-//       throw new Error("Service non trouvé");
-//     }
-
-//     const updatedService = await prisma.service.update({
-//       where: { id: serviceId },
-//       data: {
-//         name,
-//         amount,
-//         description,
-//         imageUrl: service.imageUrl, // Conserver l'image existante
-//       },
-//     });
-
-//     console.log("Service mis à jour avec succès :", updatedService);
-//     return updatedService;
-//   } catch (error) {
-//     console.error("Erreur lors de la mise à jour du service:", error);
-//     throw new Error("Impossible de mettre à jour le service");
-//   }
-// }
 // Mettre à jour un service
 export async function updateService(
   serviceId: string,
@@ -641,49 +543,6 @@ export async function updateService(
 }
 
 // Créer un service avec upload d'image
-// export async function createService(
-//   email: string,
-//   name: string,
-//   amount: number,
-//   description: string,
-//   file: File
-// ) {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { email },
-//     });
-//     if (!user) {
-//       throw new Error("Utilisateur non trouvé");
-//     }
-
-//     // Vérification du format du fichier
-//     const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
-//     if (!allowedMimeTypes.includes(file.type)) {
-//       throw new Error("Format d'image non pris en charge");
-//     }
-
-//     // Upload de l'image et récupération de l'URL
-//     const imageUrl = await uploadImageToServer(file);
-
-//     // Création du service
-//     const newService = await prisma.service.create({
-//       data: {
-//         name,
-//         amount,
-//         description,
-//         userId: user.id,
-//         imageUrl,
-//       },
-//     });
-
-//     console.log("Service créé avec succès :", newService);
-//     return newService;
-//   } catch (error) {
-//     console.error("Erreur lors de la création du service:", error);
-//     throw new Error("Impossible de créer le service");
-//   }
-// }
-// Créer un service avec upload d'image
 export async function createService(
   email: string,
   name: string,
@@ -727,33 +586,25 @@ export async function createService(
   }
 }
 
-// Fonction d'upload d'image
+// Fonction pour uploader une image
 async function uploadImageToServer(file: File): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
-  const relativeUploadDir = `/uploads/${new Date()
-    .toLocaleDateString("fr-FR")
-    .replace(/\//g, "-")}`;
+  const relativeUploadDir = `/uploads/${
+    new Date().toISOString().split("T")[0]
+  }`;
   const uploadDir = join(process.cwd(), "public", relativeUploadDir);
 
   try {
-    // Créer le dossier s'il n'existe pas
     await stat(uploadDir).catch(() => mkdir(uploadDir, { recursive: true }));
-
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     const fileExtension = mime.getExtension(file.type) || "png";
-    const fileName = `${file.name.replace(
-      /\.[^/.]+$/,
-      ""
-    )}-${uniqueSuffix}.${fileExtension}`;
+    const fileName = `${uniqueSuffix}.${fileExtension}`;
     const filePath = join(uploadDir, fileName);
 
-    // Écrire l'image sur le serveur
     await writeFile(filePath, buffer);
-
-    // Retourner l'URL relative
     return `${relativeUploadDir}/${fileName}`;
   } catch (error) {
-    console.error("Erreur lors du téléchargement de l'image :", error);
+    console.error("Erreur lors du téléchargement de l'image:", error);
     throw new Error("Erreur lors de l'upload de l'image");
   }
 }

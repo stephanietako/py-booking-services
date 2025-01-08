@@ -39,7 +39,7 @@ const ManagePage = ({ params }: { params: Promise<{ serviceId: string }> }) => {
     {
       description: "hôtesse",
       amount: 200,
-      allowedFor: ["Simplicité", "Prenium"],
+      allowedFor: ["Simplicité", "Prenium", "Palmiers Tropicaux"],
     },
     {
       description: "vidéo drône",
@@ -78,6 +78,53 @@ const ManagePage = ({ params }: { params: Promise<{ serviceId: string }> }) => {
     getId();
   }, [params]);
 
+  // const handleAddTransaction = async () => {
+  //   const option = options.find(
+  //     (option) => option.amount.toString() === selectedOption
+  //   );
+  //   if (!option) {
+  //     alert("Veuillez sélectionner une option valide");
+  //     return;
+  //   }
+
+  //   if (service?.name && !option.allowedFor.includes(service.name)) {
+  //     alert(
+  //       `L'option "${option.description}" n'est pas disponible pour le service "${service?.name}"`
+  //     );
+  //     return;
+  //   }
+
+  //   if (option.maxCount) {
+  //     const optionCount =
+  //       service?.transactions?.filter(
+  //         (transaction) =>
+  //           transaction.description === option.description &&
+  //           transaction.amount === option.amount
+  //       ).length || 0;
+
+  //     if (optionCount >= option.maxCount) {
+  //       alert(
+  //         `L'option "${option.description}" ne peut pas être ajoutée plus de ${option.maxCount} fois pour le service "${service?.name}"`
+  //       );
+  //       return;
+  //     }
+  //   }
+
+  //   try {
+  //     await addTransactionToService(
+  //       serviceId,
+  //       option.amount,
+  //       option.description
+  //     );
+  //     console.log("ok");
+  //     fetchServiceData(serviceId);
+  //     setAmount("");
+  //     setSelectedOption("");
+  //   } catch (error) {
+  //     console.log("Vous avez dépassé le budget", error);
+  //     alert("Vous avez dépassé le budget");
+  //   }
+  // };
   const handleAddTransaction = async () => {
     const option = options.find(
       (option) => option.amount.toString() === selectedOption
@@ -111,6 +158,7 @@ const ManagePage = ({ params }: { params: Promise<{ serviceId: string }> }) => {
     }
 
     try {
+      // Ajouter la transaction sans vérification de budget
       await addTransactionToService(
         serviceId,
         option.amount,
@@ -121,8 +169,8 @@ const ManagePage = ({ params }: { params: Promise<{ serviceId: string }> }) => {
       setAmount("");
       setSelectedOption("");
     } catch (error) {
-      console.log("Vous avez dépassé le budget", error);
-      alert("Vous avez dépassé le budget");
+      console.log("Erreur lors de l'ajout de la transaction", error);
+      alert("Une erreur s'est produite lors de l'ajout de la transaction.");
     }
   };
 

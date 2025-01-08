@@ -1,7 +1,6 @@
 "use server";
 
-import bcrypt from "bcrypt";
-import prisma from "@/app/lib/prisma";
+import prisma from "@/lib/prisma";
 
 export async function checkAdmin(
   email: string,
@@ -27,17 +26,9 @@ export async function checkAdmin(
       } else {
         console.log("Utilisateur non trouvé, création...");
 
-        // Générer un mot de passe haché pour la création d'utilisateur
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(
-          adminPassword || "defaultPassword",
-          saltRounds
-        );
-
         await prisma.user.create({
           data: {
             email,
-            password: hashedPassword, // Mot de passe haché requis
             isAdmin: true,
           },
         });

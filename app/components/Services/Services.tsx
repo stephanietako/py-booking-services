@@ -55,7 +55,7 @@ const Services: React.FC = () => {
             name={service.name}
             description={service.description}
             amount={service.amount}
-            imageUrl={service.imageUrl || "/default.jpg"}
+            imageUrl={service.imageUrl || "public/assets/default.jpg"}
           />
         ))
       )}

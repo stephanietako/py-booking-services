@@ -50,6 +50,9 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
         <div className={styles.serviceItemDetails}>
           <div className={styles.serviceItemInfo}>
             <span className={styles.serviceItemTitle}>{service.name}</span>
+            <span className={styles.serviceItemDescription}>
+              {service.description}
+            </span>
             <span className={styles.serviceItemTransactionCount}>
               {transactionCount} transaction(s)
             </span>
