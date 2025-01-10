@@ -1,5 +1,3 @@
-//app/admin/service/pqge.tsx
-
 "use client";
 
 import React, { FC, useEffect, useState, ChangeEvent } from "react";
@@ -18,14 +16,14 @@ import { useUser } from "@clerk/nextjs";
 type Input = {
   id?: string;
   name: string;
-  description: string;
+  description?: string; // description est facultatif
   amount: number;
   file?: File;
 };
 
 const initialInput: Input = {
   name: "",
-  description: "",
+  description: "", // Valeur initiale vide pour description
   amount: 0,
   file: undefined,
 };
@@ -61,14 +59,14 @@ const Service: FC = () => {
     return () => URL.revokeObjectURL(objectUrl);
   }, [input.file]);
 
-  // ✅ Gestion des champs texte
+  // Gestion des champs texte
   const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInput((prev) => ({ ...prev, [name]: value }));
     setIsFormModified(true);
   };
 
-  // ✅ Gestion de la sélection de fichier
+  // Gestion de la sélection de fichier
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
     setError("");
@@ -79,7 +77,6 @@ const Service: FC = () => {
       return;
     }
 
-    // Vérification du type de fichier
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {
       setError(
@@ -90,17 +87,16 @@ const Service: FC = () => {
     setInput((prev) => ({ ...prev, file }));
   };
 
-  // ✅ Enregistrement ou mise à jour du service
-
+  // Enregistrement ou mise à jour du service
   const handleSaveService = async (): Promise<void> => {
     setError("");
     setSuccessMessage("");
 
-    // ✅ Vérification minimale : au moins un champ doit être modifié
+    // Vérification minimale : au moins un champ doit être modifié
     if (
       !input.id &&
       (!input.name.trim() ||
-        !input.description.trim() ||
+        !input.description?.trim() ||
         input.amount <= 0 ||
         !input.file)
     ) {
@@ -119,18 +115,16 @@ const Service: FC = () => {
       return;
     }
 
-    // ✅ Contrôle de l'utilisateur
+    // Contrôle de l'utilisateur
     if (!user?.primaryEmailAddress?.emailAddress) {
       setError("Utilisateur non identifié.");
       return;
     }
 
     try {
-      setIsFormModified(false); // Désactivation temporaire du bouton
+      setIsFormModified(false);
 
-      // ✅ Gestion différenciée entre création et mise à jour
       if (input.id) {
-        // 🛠️ Mise à jour : Envoi uniquement des champs modifiés
         const updateData: Partial<typeof input> = {};
         if (input.name) updateData.name = input.name;
         if (input.description) updateData.description = input.description;
@@ -146,18 +140,16 @@ const Service: FC = () => {
         );
         setSuccessMessage("Service mis à jour avec succès !");
       } else {
-        // ✅ Création complète
         await createService(
           user.primaryEmailAddress.emailAddress,
           input.name,
           input.amount,
-          input.description,
+          input.description!,
           input.file!
         );
         setSuccessMessage("Service créé avec succès !");
       }
 
-      // ✅ Mise à jour de l'affichage
       const updatedServices = await getAllServices();
       setServices(updatedServices);
       setInput(initialInput);
@@ -166,77 +158,15 @@ const Service: FC = () => {
       console.error("Erreur lors de l'enregistrement :", error);
       setError("Une erreur s'est produite. Veuillez réessayer.");
     } finally {
-      setIsFormModified(true); // Réactivation du bouton
+      setIsFormModified(true);
     }
   };
-  // const handleSaveService = async (): Promise<void> => {
-  //   // ✅ Vérification des permissions admin
-  //   if (user?.publicMetadata.role !== "admin") {
-  //     setError("Vous n'êtes pas autorisé à ajouter des services.");
-  //     return;
-  //   }
 
-  //   // ✅ Vérification des champs obligatoires
-  //   if (!input.name.trim() || !input.description.trim() || input.amount <= 0) {
-  //     setError("Tous les champs doivent être remplis correctement.");
-  //     return;
-  //   }
-
-  //   // ✅ Vérification de l'email de l'utilisateur
-  //   if (!user?.primaryEmailAddress?.emailAddress) {
-  //     setError("Adresse e-mail non disponible.");
-  //     return;
-  //   }
-
-  //   const email = user.primaryEmailAddress.emailAddress; // ✅ Email confirmé comme string
-
-  //   // ✅ Si un ID de service existe, il s'agit d'une mise à jour
-  //   if (input.id) {
-  //     try {
-  //       // 🛠️ Mise à jour du service
-  //       await updateService(
-  //         input.id,
-  //         input.name,
-  //         input.amount,
-  //         input.description,
-  //         input.file
-  //       );
-  //       setSuccessMessage("Service mis à jour avec succès !");
-  //     } catch (error) {
-  //       console.error("Erreur lors de la mise à jour du service :", error);
-  //       setError(
-  //         "Une erreur s'est produite lors de la mise à jour du service."
-  //       );
-  //     }
-  //   } else {
-  //     // ✅ Sinon, on crée un nouveau service
-  //     try {
-  //       await createService(
-  //         email,
-  //         input.name,
-  //         input.amount,
-  //         input.description,
-  //         input.file!
-  //       );
-  //       setSuccessMessage("Service créé avec succès !");
-  //     } catch (error) {
-  //       console.error("Erreur lors de la création du service :", error);
-  //       setError("Une erreur s'est produite lors de l'ajout du service.");
-  //     }
-  //   }
-
-  //   // ✅ Mise à jour de l'affichage
-  //   const updatedServices = await getAllServices();
-  //   setServices(updatedServices);
-  //   setInput(initialInput); // ✅ Réinitialisation du formulaire
-  //   setPreview(""); // ✅ Réinitialisation de l'aperçu
-  // };
-
-  // ✅ Suppression d'un service
+  // Suppression d'un service
   const handleDelete = async (id: string) => {
     try {
       await deleteService(id);
-      const updatedServices = await getAllServices(); // 🔥 Rechargement après suppression
+      const updatedServices = await getAllServices();
       setServices(updatedServices);
       setSuccessMessage("Service supprimé avec succès !");
     } catch (error) {
@@ -245,19 +175,18 @@ const Service: FC = () => {
     }
   };
 
-  // ✅ Préparation de l'édition d'un service
+  // Préparation de l'édition d'un service
   const handleEditService = (service: ServiceType) => {
     setInput({
       id: service.id,
       name: service.name,
-      description: service.description,
+      description: service.description || "", // Valeur par défaut pour description
       amount: service.amount,
       file: undefined,
     });
     setPreview(service.imageUrl || "/default.png");
   };
 
-  // ✅ Affichage du composant principal
   return (
     <Wrapper>
       <div className="menu_container">
@@ -276,7 +205,7 @@ const Service: FC = () => {
             type="text"
             placeholder="Description"
             onChange={handleTextChange}
-            value={input.description}
+            value={input.description || ""}
           />
           <input
             name="amount"
@@ -294,7 +223,7 @@ const Service: FC = () => {
               {preview ? (
                 <Image
                   alt="preview"
-                  src={preview || "/default.png"} // ✅ Default géré ici
+                  src={preview || "/default.png"}
                   width={100}
                   height={100}
                 />
@@ -319,11 +248,9 @@ const Service: FC = () => {
           </button>
         </div>
 
-        {/* ✅ Gestion des erreurs et succès */}
         {error && <p className="text_error">{error}</p>}
         {successMessage && <p className="text_success">{successMessage}</p>}
 
-        {/* ✅ Liste des services */}
         <div className="menu_items">
           <p className="menu_items__text">Vos services :</p>
           <div className="menu_items__container">
@@ -332,7 +259,7 @@ const Service: FC = () => {
                 <p>{service.name}</p>
                 <p>{service.description}</p>
                 <Image
-                  src={service.imageUrl || "/default.png"} // ✅ Gestion du src vide
+                  src={service.imageUrl || "/default.png"}
                   alt={service.name}
                   width={100}
                   height={100}

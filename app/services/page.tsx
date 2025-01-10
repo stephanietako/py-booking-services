@@ -61,7 +61,7 @@ const ServicesPage: React.FC = () => {
         user.primaryEmailAddress.emailAddress,
         selected.name,
         selected.amount,
-        selected.description
+        selected.description ?? ""
       );
       console.log("Service ajouté avec succès : ", result); // Ajoute un log ici pour vérifier
       fetchServices(); // Récupérer de nouveau les services après l'ajout

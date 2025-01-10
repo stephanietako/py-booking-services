@@ -16,7 +16,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
           <div className={styles.transaction_item__badge}>
             + {transaction.amount}€
           </div>
-          {transaction.serviceName}
+          {/* {transaction.service} */}
         </button>
       </div>
       <div className={styles.transaction_item__infos}>

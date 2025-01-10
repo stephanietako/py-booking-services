@@ -1,50 +1,50 @@
 "use client";
 
 import { FC } from "react";
-import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { checkAdmin } from "@/actions/checkAdmin";
 import Wrapper from "../Wrapper/Wrapper";
 import Link from "next/link";
+import { CustomUser } from "@/type";
 
-type AdminDashboardProps = object;
+type AdminDashboardProps = {
+  userId: string;
+};
 
-const AdminDashboard: FC<AdminDashboardProps> = () => {
-  const { user } = useUser();
+const AdminDashboard: FC<AdminDashboardProps> = ({ userId }) => {
   const router = useRouter();
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [data, setData] = useState<CustomUser | null>(null);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    const verifyAdmin = async () => {
-      if (user) {
-        const provider =
-          user.externalAccounts.length > 0 ? "google" : "password";
-        const password =
-          provider === "password"
-            ? prompt("Entrez le mot de passe administrateur :") || ""
-            : undefined;
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch(`/api/getUser`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        });
 
-        const result = await checkAdmin(
-          user.emailAddresses[0].emailAddress,
-          provider,
-          password
-        );
-
-        if (result.isAdmin) {
-          setIsAdmin(true);
-        } else {
-          alert(result.message);
-          router.push("/unauthorized"); // Redirige vers une page non autorisée
+        if (!res.ok) {
+          throw new Error("error fetching user data");
         }
+
+        const userData = await res.json();
+        if (userData.role?.name !== "admin") {
+          router.push("/");
+        }
+        setData(userData);
+      } catch (error) {
+        console.error("Impossible de récupérer les données", error);
+        setError("error fetching user data");
       }
     };
 
-    verifyAdmin();
-  }, [user, router]);
+    fetchUserData();
+  }, [userId, router]);
 
-  if (!user || !isAdmin) {
-    return <div>Chargement...</div>;
+  if (error) {
+    return <p className="error_text">{error}</p>;
   }
 
   return (
@@ -53,7 +53,7 @@ const AdminDashboard: FC<AdminDashboardProps> = () => {
         <header className="admin_dashboard">
           <h1>Tableau de bord administrateur</h1>
           <p>
-            Bienvenue, {user.firstName} {user.lastName}
+            Bienvenue, {data?.firstName} {data?.lastName}
           </p>
         </header>
         <main>

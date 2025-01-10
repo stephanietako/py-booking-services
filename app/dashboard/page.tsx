@@ -16,7 +16,7 @@ import Link from "next/link";
 import ServiceItem from "../components/ServiceItem/ServiceItem";
 import { Service } from "@/type";
 
-const DashboardPage = () => {
+const DashboardUserPage = () => {
   const { user } = useUser();
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -24,8 +24,8 @@ const DashboardPage = () => {
   const [reachedServicesRatio, setReachedServicesRatio] = useState<
     string | null
   >(null);
-
   const [services, setService] = useState<Service[]>([]);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -37,25 +37,20 @@ const DashboardPage = () => {
         const reachedServices = await getReachedServices(email);
         const lastServices = await getLastServices(email);
         setTotalAmount(amount);
-        setTotalAmount(amount);
         setTotalCount(count);
         setReachedServicesRatio(reachedServices);
-        setService(
-          lastServices.map((service) => ({
-            ...service,
-            imageUrl: service.imageUrl, // Mapping imageUrl to imageKey
-          }))
-        );
+        setService(lastServices);
         setIsLoading(false);
       }
     } catch (error) {
       console.error("Erreur lors de la récupération des données", error);
+      setFetchError("Impossible de récupérer les données.");
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line
   }, [user]);
 
   return (
@@ -64,10 +59,23 @@ const DashboardPage = () => {
         <div className="loading">
           <span>Loading ...</span>
         </div>
+      ) : fetchError ? (
+        <p style={{ color: "red" }}>{fetchError}</p>
       ) : (
-        <div className="dashboard_container">
-          {/*  */}
-          <div className="dashboard_container__box">
+        <div
+          className="dashboard_container"
+          style={{
+            marginTop: "2rem",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <h2>Transactions</h2>
+
+          <div
+            className="dashboard_container__box"
+            style={{ marginTop: "1rem", display: "flex", width: "20rem" }}
+          >
             <div className="__box">
               <span id="total_transactions">Total des Transactions</span>
               <span className="item" id="box_total_amount">
@@ -77,9 +85,10 @@ const DashboardPage = () => {
             <FaMoneyCheckAlt />
           </div>
 
-          {/*  */}
-
-          <div className="dashboard_container__box">
+          <div
+            className="dashboard_container__box"
+            style={{ marginTop: "1rem", display: "flex", width: "20rem" }}
+          >
             <div className="__box">
               <span id="total_transactions">Nombre de Transactions</span>
               <span className="item" id="total_transactions">
@@ -89,9 +98,10 @@ const DashboardPage = () => {
             <MdOutlineDone />
           </div>
 
-          {/*  */}
-
-          <div className="dashboard_container__box">
+          <div
+            className="dashboard_container__box"
+            style={{ marginTop: "1rem", display: "flex", width: "20rem" }}
+          >
             <div className="__box">
               <span id="total_transactions">Services atteints</span>
               <span className="item" id="box_total_amount">
@@ -117,4 +127,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default DashboardUserPage;

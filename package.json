@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "dependencies": {
     "@clerk/nextjs": "^6.9.1",
     "@prisma/client": "^6.1.0",
@@ -34,12 +37,13 @@
     "@types/bcrypt": "^5.0.2",
     "@types/lodash": "^4.17.14",
     "@types/multer": "^1.4.12",
-    "@types/node": "^20",
+    "@types/node": "^20.17.12",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.0",
     "prisma": "^6.1.0",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   }
 }
