@@ -10,46 +10,106 @@ export async function addUserToDatabase(
   email: string,
   name: string,
   image: string,
-  clerkUserId: string,
-  description?: string
+  clerkUserId: string
 ) {
   try {
     // Vérifie si le rôle existe bien dans la base de données
     const role = await prisma.role.findUnique({
-      where: { name: "member" },
+      where: { name: "member" }, // Assure-toi que le nom "member" existe dans la table Role
     });
 
     if (!role) {
-      throw new Error("The specified role does not exist.");
+      throw new Error("Le rôle spécifié n'existe pas.");
     }
 
-    // Utiliser `upsert` pour créer ou mettre à jour l'utilisateur
+    // Utilise `upsert` pour créer ou mettre à jour l'utilisateur
     const user = await prisma.user.upsert({
       where: { clerkUserId },
       update: {
         name,
-        email,
         image,
-        description: description ?? null,
       },
       create: {
         clerkUserId,
         email,
         name,
         image,
-        description: description ?? null,
         roleId: role.id,
       },
     });
 
+    console.log("Utilisateur ajouté ou mis à jour :", user);
     return user;
   } catch (error) {
     console.error("Erreur lors de l'ajout de l'utilisateur à la base :", error);
     throw error;
   }
 }
+// export async function addUserToDatabase(
+//   email: string,
+//   name: string,
+//   clerkUserId: string,
+//   description?: string
+// ) {
+//   try {
+//     // Vérification si l'utilisateur existe déjà avec le même email
+//     const existingUser = await prisma.user.findUnique({
+//       where: { email },
+//     });
 
-// Récupérer le rôle d'un utilisateur
+//     if (existingUser) {
+//       // Gérer le cas où l'utilisateur existe déjà
+//       console.log("L'utilisateur existe déjà avec cet email.");
+//       // Option 1 : Mettre à jour l'utilisateur
+//       const updatedUser = await prisma.user.update({
+//         where: { email },
+//         data: { name, description: description ?? undefined },
+//       });
+//       return updatedUser;
+//     } else {
+//       // Utilisation de `upsert` pour créer un utilisateur
+//       const role = await prisma.role.findUnique({
+//         where: { name: "member" },
+//       });
+
+//       if (!role) {
+//         throw new Error("Le rôle spécifié n'existe pas.");
+//       }
+
+//       const user = await prisma.user.upsert({
+//         where: { clerkUserId },
+//         update: {
+//           name,
+//           description: description ?? undefined,
+//         },
+//         create: {
+//           clerkUserId,
+//           email,
+//           name,
+//           description: description ?? undefined,
+//           roleId: role.id,
+//         },
+//       });
+
+//       return user;
+//     }
+//   } catch (error) {
+//     if (error instanceof Error) {
+//       console.error(
+//         "Erreur lors de l'ajout de l'utilisateur à la base :",
+//         error.message
+//       );
+//     } else {
+//       console.error(
+//         "Erreur inconnue lors de l'ajout de l'utilisateur à la base :",
+//         error
+//       );
+//     }
+//     throw error; // Relance l'erreur pour gestion ultérieure
+//   }
+// }
+
+// Récupérer un utilisateur par son email
 export async function getRole(clerkUserId: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -58,7 +118,7 @@ export async function getRole(clerkUserId: string) {
     });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Utilisateur non trouvé");
     }
 
     return user;
@@ -70,35 +130,12 @@ export async function getRole(clerkUserId: string) {
     throw error;
   }
 }
-// Vérifier et ajouter un utilisateur si inexistant
-// export async function checkAndAddUser(email: string | undefined, name: string) {
-//   if (!email || !name) return; // Assurez-vous que l'email et le nom sont fournis
-//   try {
-//     const existingUser = await prisma.user.findUnique({ where: { email } });
 
-//     if (!existingUser) {
-//       // Ajoutez le champ 'name' lors de la création de l'utilisateur
-//       await prisma.user.create({
-//         data: {
-//           email,
-//           name, // Ajouter le champ name ici
-//           isAdmin: false,
-//         },
-//       });
-//       console.log("Nouvel utilisateur ajouté dans la base de données");
-//     } else {
-//       console.log("Utilisateur déjà présent dans la base de données");
-//     }
-//   } catch (error) {
-//     console.error("Erreur lors de la vérification de l'utilisateur:", error);
-//   }
-// }
 export async function checkAndAddUser(
   email: string | undefined,
   name: string,
-  role: string,
-  image: string,
-  description: string
+  clerkUserId: string,
+  role: string
 ) {
   if (!email || !name || !role) return;
 
@@ -106,7 +143,7 @@ export async function checkAndAddUser(
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (!existingUser) {
-      await addUserToDatabase(email, name, role, image, description);
+      await addUserToDatabase(email, name, role, clerkUserId);
     } else {
       console.log("Utilisateur déjà présent dans la base de données");
     }
@@ -124,7 +161,7 @@ export async function addService(
 ) {
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Utilisateur non trouvé");
 
     await prisma.service.create({
       data: {
@@ -149,7 +186,7 @@ export async function getServicesByUser(email: string) {
       where: { email },
       include: { services: { include: { transactions: true } } },
     });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Utilisateur non trouvé");
     return user.services;
   } catch (error) {
     console.error("Erreur lors de la récupération des services:", error);
@@ -165,10 +202,10 @@ export async function getServiceById(serviceId: string) {
     });
 
     if (!service) {
-      throw new Error("Service not found");
+      throw new Error("Service non trouvé");
     }
 
-    return service;
+    return service; // Retourne le service avec la description
   } catch (error) {
     console.error("Erreur lors de la récupération du service:", error);
     throw error;
@@ -188,7 +225,7 @@ export async function getTransactionsByServiceId(serviceId: string) {
     });
 
     if (!service) {
-      throw new Error("Service not found");
+      throw new Error("Service non trouvé");
     }
 
     return service;
@@ -197,7 +234,6 @@ export async function getTransactionsByServiceId(serviceId: string) {
     throw error;
   }
 }
-
 // Ajouter une transaction à un service
 export async function addTransactionToService(
   serviceId: string,
@@ -214,7 +250,7 @@ export async function addTransactionToService(
       },
     });
     if (!service) {
-      throw new Error("Service not found");
+      throw new Error("Service non trouvé");
     }
 
     const totalTransactions = service.transactions.reduce(
@@ -272,7 +308,36 @@ export async function deleteService(serviceId: string) {
     throw error;
   }
 }
+// Fonction pour supprimer un service et ses transactions
+// export const deleteService = async ({
+//   imagePath,
+//   id,
+// }: {
+//   imagePath: string;
+//   id: string;
+// }) => {
+//   try {
+//     // Suppression de l'image si nécessaire
+//     await deleteImageFromStorage(imagePath);
 
+//     // Suppression des transactions associées au service
+//     await prisma.transaction.deleteMany({
+//       where: { serviceId: id },
+//     });
+
+//     // Suppression du service de la base de données
+//     await prisma.service.delete({
+//       where: {
+//         id: id,
+//       },
+//     });
+
+//     console.log("Service supprimé avec succès");
+//   } catch (error) {
+//     console.error("Erreur lors de la suppression du service:", error);
+//     throw error;
+//   }
+// };
 // supprimer une transaction
 export async function deleteTransaction(transactionId: string) {
   try {
@@ -283,7 +348,7 @@ export async function deleteTransaction(transactionId: string) {
     });
 
     if (!transaction) {
-      throw new Error("Transaction not found");
+      throw new Error("Transaction non trouvées");
     }
 
     await prisma.transaction.delete({
@@ -327,7 +392,7 @@ export async function getTransactionsByEmailAndPeriod(
         dateLimit.setFullYear(now.getFullYear() - 1);
         break;
       default:
-        throw new Error("Invalide periode");
+        throw new Error("Période invalide");
     }
 
     // récupérer l'utilisateur par email avec ses services et les transactions de ces services
@@ -389,7 +454,7 @@ export async function getTotalTransactionAmount(email: string) {
       },
     });
 
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Utilisateur non trouvé");
 
     const totalAmount = user.services
       .flatMap(
@@ -425,7 +490,7 @@ export async function getTotalTransactionCount(email: string) {
         },
       },
     });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Utilisateur non trouvés");
 
     const totalCount = user.services.reduce((count, service) => {
       return count + service.transactions.length;
@@ -451,7 +516,7 @@ export async function getReachedServices(email: string) {
       },
     });
 
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Utilisateur non trouvés");
 
     const totalServices = user.services.length;
     const reachedServices = user.services.filter((service) => {
@@ -539,6 +604,7 @@ export const getAllServicesByUser = async (email: string) => {
 };
 
 ///////////////////////////////////////////
+
 //CREATION SERVICE & UPDATE SERVICE
 // Mettre à jour un service
 export async function updateService(
@@ -554,7 +620,7 @@ export async function updateService(
     });
 
     if (!service) {
-      throw new Error("Service not found");
+      throw new Error("Service non trouvé");
     }
 
     // Vérification du fichier si présent
@@ -579,7 +645,7 @@ export async function updateService(
     return updatedService;
   } catch (error) {
     console.error("Erreur lors de la mise à jour du service:", error);
-    throw new Error("Unable to update the service");
+    throw new Error("Impossible de mettre à jour le service");
   }
 }
 
@@ -596,13 +662,13 @@ export async function createService(
       where: { email },
     });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Utilisateur non trouvé");
     }
 
     // Vérification du format du fichier
     const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
     if (!allowedMimeTypes.includes(file.type)) {
-      throw new Error("Unsupported image format");
+      throw new Error("Format d'image non pris en charge");
     }
 
     // Upload de l'image et récupération de l'URL
@@ -646,6 +712,6 @@ async function uploadImageToServer(file: File): Promise<string> {
     return `${relativeUploadDir}/${fileName}`;
   } catch (error) {
     console.error("Erreur lors du téléchargement de l'image:", error);
-    throw new Error("Error while uploading the image");
+    throw new Error("Erreur lors de l'upload de l'image");
   }
 }

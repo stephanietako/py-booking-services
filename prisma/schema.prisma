@@ -20,7 +20,6 @@ model User {
   name        String
   image       String?
   description String?
-  isAdmin     Boolean   @default(false)
   clerkUserId String    @unique
   roleId      String?
   createdAt   DateTime  @default(now())

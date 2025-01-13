@@ -17,8 +17,8 @@ const AdminPage = async () => {
     const fullName = `${user.firstName} ${user.lastName}` || "";
     const email = user.emailAddresses[0]?.emailAddress || "";
     const image = user.imageUrl || "";
-    const description = user.description || "";
-    await addUserToDatabase(userId, fullName, email, image, description);
+
+    await addUserToDatabase(userId, fullName, email, image);
   }
 
   const userRole = await getRole(userId as string);

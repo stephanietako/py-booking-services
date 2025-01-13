@@ -2,9 +2,8 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  description?: string;
+  description?: string | null;
   image: string;
-  isAdmin?: boolean;
   clerkUserId: string;
   createdAt: Date;
   roleId?: string | null;
@@ -50,7 +49,7 @@ export interface CustomUser {
   id: string;
   firstName?: string;
   lastName?: string;
-  description?: string;
+  description?: string | null;
   emailAddresses: Array<{ emailAddress: string }>;
   imageUrl?: string;
   image?: string;
