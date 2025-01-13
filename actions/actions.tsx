@@ -38,7 +38,7 @@ export async function addUserToDatabase(
       },
     });
 
-    console.log("Utilisateur ajouté ou mis à jour :", user);
+    // console.log("Utilisateur ajouté ou mis à jour :", user);
     return user;
   } catch (error) {
     console.error("Erreur lors de l'ajout de l'utilisateur à la base :", error);

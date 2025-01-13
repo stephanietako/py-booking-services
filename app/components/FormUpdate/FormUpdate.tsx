@@ -10,7 +10,7 @@ const FormUpdate: React.FC<FormUpdateProps> = ({ userId }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    description: "", // Ajout de la description
+    description: "",
   });
 
   const [message, setMessage] = useState<string>("");
@@ -61,8 +61,14 @@ const FormUpdate: React.FC<FormUpdateProps> = ({ userId }) => {
     try {
       const res = await fetch(`/api/updateUser`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // Correction : créer un objet qui contient userId et la description
+        body: JSON.stringify({
+          userId, // Passer l'id de l'utilisateur
+          description: formData.description, // Passer la description
+        }),
       });
 
       const result = await res.json();
@@ -79,57 +85,58 @@ const FormUpdate: React.FC<FormUpdateProps> = ({ userId }) => {
   };
 
   return (
-    <div>
-      <form className="form" onSubmit={handleSubmit}>
-        {" "}
-        {/* onSubmit au lieu de onChange */}
-        {message && <p className="message">{message}</p>}
-        {/* Le champ caché pour l'ID de l'utilisateur */}
-        <input type="hidden" name="id" value={userId} />
-        <div className="form_bloc">
-          <label className="label" htmlFor="name">
-            Nom
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            disabled
-            value={formData.name}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form_bloc">
-          <br />
-          <label className="label" htmlFor="email">
-            Email
-          </label>
-          <input
-            type="text"
-            id="email"
-            name="email"
-            disabled
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </div>
-        {/* Nouveau champ pour la description */}
-        <div className="form_bloc">
-          <br />
-          <label className="label" htmlFor="description">
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Ajouter une description ici..."
-          />
-        </div>
-        <button type="submit">Mettre à jour</button>
-      </form>
-    </div>
+    <form className="form" onSubmit={handleSubmit}>
+      {" "}
+      {/* onSubmit au lieu de onChange */}
+      {message && <p className="message">{message}</p>}
+      {/* Le champ caché pour l'ID de l'utilisateur */}
+      <input type="hidden" name="id" value={userId} />
+      <div className="form_bloc">
+        <label className="label" htmlFor="name">
+          Nom
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          disabled
+          value={formData.name}
+          onChange={handleChange}
+          className="input"
+        />
+      </div>
+      <div className="form_bloc">
+        <br />
+        <label className="label" htmlFor="email">
+          Email
+        </label>
+        <input
+          className="input"
+          type="text"
+          id="email"
+          name="email"
+          disabled
+          value={formData.email}
+          onChange={handleChange}
+        />
+      </div>
+      {/* Nouveau champ pour la description */}
+      <div className="form_bloc">
+        <br />
+        <label className="label" htmlFor="description">
+          Description
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Ajouter une description ici..."
+          className="textarea"
+        />
+      </div>
+      <button type="submit">Mettre à jour</button>
+    </form>
   );
 };
 
