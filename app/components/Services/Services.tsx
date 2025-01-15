@@ -53,7 +53,7 @@ const Services: React.FC = () => {
           <ServiceCompt
             key={service.id}
             name={service.name}
-            description={service.description}
+            description={service.description || ""}
             amount={service.amount}
             imageUrl={service.imageUrl || "public/assets/default.jpg"}
           />

@@ -1,111 +1,48 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
 
 // Ajouter un utilisateur à la base de données
-export async function addUserToDatabase(
-  email: string,
-  name: string,
-  image: string,
-  clerkUserId: string
-) {
-  try {
-    // Vérifie si le rôle existe bien dans la base de données
-    const role = await prisma.role.findUnique({
-      where: { name: "member" }, // Assure-toi que le nom "member" existe dans la table Role
-    });
-
-    if (!role) {
-      throw new Error("Le rôle spécifié n'existe pas.");
-    }
-
-    // Utilise `upsert` pour créer ou mettre à jour l'utilisateur
-    const user = await prisma.user.upsert({
-      where: { clerkUserId },
-      update: {
-        name,
-        image,
-      },
-      create: {
-        clerkUserId,
-        email,
-        name,
-        image,
-        roleId: role.id,
-      },
-    });
-
-    // console.log("Utilisateur ajouté ou mis à jour :", user);
-    return user;
-  } catch (error) {
-    console.error("Erreur lors de l'ajout de l'utilisateur à la base :", error);
-    throw error;
-  }
-}
 // export async function addUserToDatabase(
 //   email: string,
 //   name: string,
-//   clerkUserId: string,
-//   description?: string
+//   image: string,
+//   clerkUserId: string
 // ) {
 //   try {
-//     // Vérification si l'utilisateur existe déjà avec le même email
-//     const existingUser = await prisma.user.findUnique({
-//       where: { email },
+//     // Vérifie si le rôle existe bien dans la base de données
+//     const role = await prisma.role.findUnique({
+//       where: { name: "member" },
 //     });
 
-//     if (existingUser) {
-//       // Gérer le cas où l'utilisateur existe déjà
-//       console.log("L'utilisateur existe déjà avec cet email.");
-//       // Option 1 : Mettre à jour l'utilisateur
-//       const updatedUser = await prisma.user.update({
-//         where: { email },
-//         data: { name, description: description ?? undefined },
-//       });
-//       return updatedUser;
-//     } else {
-//       // Utilisation de `upsert` pour créer un utilisateur
-//       const role = await prisma.role.findUnique({
-//         where: { name: "member" },
-//       });
-
-//       if (!role) {
-//         throw new Error("Le rôle spécifié n'existe pas.");
-//       }
-
-//       const user = await prisma.user.upsert({
-//         where: { clerkUserId },
-//         update: {
-//           name,
-//           description: description ?? undefined,
-//         },
-//         create: {
-//           clerkUserId,
-//           email,
-//           name,
-//           description: description ?? undefined,
-//           roleId: role.id,
-//         },
-//       });
-
-//       return user;
+//     if (!role) {
+//       throw new Error("Le rôle spécifié n'existe pas.");
 //     }
+
+//     // Utilise `upsert` pour créer ou mettre à jour l'utilisateur
+//     const user = await prisma.user.upsert({
+//       where: { clerkUserId },
+//       update: {
+//         name,
+//         image,
+//       },
+//       create: {
+//         clerkUserId,
+//         email,
+//         name,
+//         image,
+//         roleId: role.id,
+//       },
+//     });
+
+//     // console.log("Utilisateur ajouté ou mis à jour :", user);
+//     return user;
 //   } catch (error) {
-//     if (error instanceof Error) {
-//       console.error(
-//         "Erreur lors de l'ajout de l'utilisateur à la base :",
-//         error.message
-//       );
-//     } else {
-//       console.error(
-//         "Erreur inconnue lors de l'ajout de l'utilisateur à la base :",
-//         error
-//       );
-//     }
-//     throw error; // Relance l'erreur pour gestion ultérieure
+//     console.error("Erreur lors de l'ajout de l'utilisateur à la base :", error);
+//     throw error;
 //   }
 // }
 
@@ -131,36 +68,67 @@ export async function getRole(clerkUserId: string) {
   }
 }
 
-export async function checkAndAddUser(
-  email: string | undefined,
+// add user
+export async function addUserToDatabase(
+  email: string,
   name: string,
-  clerkUserId: string,
-  role: string
+  image: string,
+  clerkUserId: string
 ) {
-  if (!email || !name || !role) return;
-
   try {
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    // Recherche uniquement par clerkUserId pour éviter les doublons
+    const existingUser = await prisma.user.findUnique({
+      where: { clerkUserId },
+    });
 
-    if (!existingUser) {
-      await addUserToDatabase(email, name, role, clerkUserId);
-    } else {
-      console.log("Utilisateur déjà présent dans la base de données");
+    // Si l'utilisateur existe déjà, on met à jour ses informations (email, name, image)
+    if (existingUser) {
+      const updatedUser = await prisma.user.update({
+        where: { clerkUserId },
+        data: {
+          email, // Met à jour l'email principal si changé dans Clerk
+          name,
+          image,
+        },
+      });
+      return updatedUser;
     }
+
+    // Vérifie l'existence du rôle avant création
+    const role = await prisma.role.findUnique({
+      where: { name: "member" },
+    });
+    if (!role) {
+      throw new Error("Le rôle spécifié n'existe pas.");
+    }
+
+    // Crée l'utilisateur seulement si clerkUserId n'existe pas
+    const newUser = await prisma.user.create({
+      data: {
+        clerkUserId, // Identifiant principal
+        email,
+        name,
+        image,
+        roleId: role.id,
+      },
+    });
+
+    return newUser;
   } catch (error) {
-    console.error("Erreur lors de la vérification de l'utilisateur :", error);
+    console.error("Erreur lors de l'ajout de l'utilisateur à la base :", error);
+    throw error;
   }
 }
 
 // Ajouter un service
 export async function addService(
-  email: string,
+  clerkUserId: string,
   name: string,
   amount: number,
   description: string
 ) {
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { clerkUserId } });
     if (!user) throw new Error("Utilisateur non trouvé");
 
     await prisma.service.create({
@@ -180,10 +148,10 @@ export async function addService(
 }
 
 // Récupérer les services d'un utilisateur
-export async function getServicesByUser(email: string) {
+export async function getServicesByUser(clerkUserId: string) {
   try {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { clerkUserId },
       include: { services: { include: { transactions: true } } },
     });
     if (!user) throw new Error("Utilisateur non trouvé");
@@ -308,36 +276,7 @@ export async function deleteService(serviceId: string) {
     throw error;
   }
 }
-// Fonction pour supprimer un service et ses transactions
-// export const deleteService = async ({
-//   imagePath,
-//   id,
-// }: {
-//   imagePath: string;
-//   id: string;
-// }) => {
-//   try {
-//     // Suppression de l'image si nécessaire
-//     await deleteImageFromStorage(imagePath);
 
-//     // Suppression des transactions associées au service
-//     await prisma.transaction.deleteMany({
-//       where: { serviceId: id },
-//     });
-
-//     // Suppression du service de la base de données
-//     await prisma.service.delete({
-//       where: {
-//         id: id,
-//       },
-//     });
-
-//     console.log("Service supprimé avec succès");
-//   } catch (error) {
-//     console.error("Erreur lors de la suppression du service:", error);
-//     throw error;
-//   }
-// };
 // supprimer une transaction
 export async function deleteTransaction(transactionId: string) {
   try {
@@ -364,7 +303,7 @@ export async function deleteTransaction(transactionId: string) {
 
 // liste des transactions
 export async function getTransactionsByEmailAndPeriod(
-  email: string,
+  clerkUserId: string,
   period: string
 ) {
   try {
@@ -397,7 +336,7 @@ export async function getTransactionsByEmailAndPeriod(
 
     // récupérer l'utilisateur par email avec ses services et les transactions de ces services
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { clerkUserId },
       include: {
         services: {
           include: {
@@ -441,10 +380,10 @@ export async function getTransactionsByEmailAndPeriod(
 
 // dashboard /////////////////////
 // Calculer le montant total des transactions sans limitation de budget
-export async function getTotalTransactionAmount(email: string) {
+export async function getTotalTransactionAmount(clerkUserId: string) {
   try {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { clerkUserId },
       include: {
         services: {
           include: {
@@ -478,10 +417,10 @@ export async function getTotalTransactionAmount(email: string) {
 }
 
 // comptage des transactions
-export async function getTotalTransactionCount(email: string) {
+export async function getTotalTransactionCount(clerkUserId: string) {
   try {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { clerkUserId },
       include: {
         services: {
           include: {
@@ -503,10 +442,10 @@ export async function getTotalTransactionCount(email: string) {
   }
 }
 
-export async function getReachedServices(email: string) {
+export async function getReachedServices(clerkUserId: string) {
   try {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { clerkUserId },
       include: {
         services: {
           include: {
@@ -536,12 +475,12 @@ export async function getReachedServices(email: string) {
 
 ////////////////
 // Récupérer les 3 derniers services
-export const getLastServices = async (email: string) => {
+export const getLastServices = async (clerkUserId: string) => {
   try {
     const services = await prisma.service.findMany({
       where: {
         user: {
-          email,
+          clerkUserId,
         },
       },
       orderBy: {
@@ -584,12 +523,12 @@ export const getAllServices = async () => {
 };
 
 // Récupérer tous les services par utilisateur
-export const getAllServicesByUser = async (email: string) => {
+export const getAllServicesByUser = async (clerkUserId: string) => {
   try {
     const services = await prisma.service.findMany({
       where: {
         user: {
-          email,
+          clerkUserId,
         },
       },
       include: {
@@ -604,7 +543,6 @@ export const getAllServicesByUser = async (email: string) => {
 };
 
 ///////////////////////////////////////////
-
 //CREATION SERVICE & UPDATE SERVICE
 // Mettre à jour un service
 export async function updateService(
@@ -651,7 +589,7 @@ export async function updateService(
 
 // Créer un service avec upload d'image
 export async function createService(
-  email: string,
+  clerkUserId: string,
   name: string,
   amount: number,
   description: string,
@@ -659,7 +597,7 @@ export async function createService(
 ) {
   try {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { clerkUserId },
     });
     if (!user) {
       throw new Error("Utilisateur non trouvé");

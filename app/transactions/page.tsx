@@ -13,26 +13,48 @@ const TransactionsPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  // const fetchTransactions = async (period: string) => {
+  //   if (user?.primaryEmailAddress?.emailAddress) {
+  //     setLoading(true);
+  //     try {
+  //       const transactionData = await getTransactionsByEmailAndPeriod(
+  //         user?.primaryEmailAddress?.emailAddress,
+  //         period
+  //       );
+  //       setTransactions(transactionData);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error(
+  //         "Erreur lors de la récupération des transactions:",
+  //         error
+  //       );
+  //     }
+  //   }
+  // };
+
+  // par defaut last30
+
   const fetchTransactions = async (period: string) => {
-    if (user?.primaryEmailAddress?.emailAddress) {
+    if (user?.id) {
+      // Utilisation de user.id ici
       setLoading(true);
       try {
         const transactionData = await getTransactionsByEmailAndPeriod(
-          user?.primaryEmailAddress?.emailAddress,
+          user.id, // Passage de l'ID correct
           period
         );
         setTransactions(transactionData);
-        setLoading(false);
       } catch (error) {
         console.error(
           "Erreur lors de la récupération des transactions:",
           error
         );
+      } finally {
+        setLoading(false);
       }
     }
   };
 
-  // par defaut last30
   useEffect(() => {
     fetchTransactions("last30");
     // eslint-disable-next-line

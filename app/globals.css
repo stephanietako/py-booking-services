@@ -813,6 +813,92 @@ button:hover {
   width: 100%;
   justify-content: center;
 }
+/* ////////////// */
+/* Liste des utilisateurs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+thead {
+  background-color: #f4f4f4;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Colonnes du tableau */
+.table_all_users {
+  font-weight: bold;
+  color: #333;
+}
+
+.name,
+.email,
+.role {
+  font-size: 14px;
+}
+
+.image img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.modif_users_link {
+  text-decoration: none;
+  color: #3498db;
+  font-weight: bold;
+}
+
+.modif_users_link:hover {
+  text-decoration: underline;
+}
+
+.message {
+  background-color: #ffcccc;
+  color: #d9534f;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Styles responsives pour les petits écrans */
+@media (max-width: 768px) {
+  table {
+    font-size: 14px;
+  }
+
+  td,
+  th {
+    padding: 8px;
+  }
+
+  .name,
+  .email,
+  .role {
+    font-size: 12px;
+  }
+
+  .image img {
+    width: 40px;
+    height: 40px;
+  }
+}
 
 /* ///////// */
 /* .path {

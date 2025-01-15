@@ -27,15 +27,37 @@ const DashboardUserPage = () => {
   const [services, setService] = useState<Service[]>([]);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
+  // const fetchData = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const email = user?.primaryEmailAddress?.emailAddress as string;
+  //     if (email) {
+  //       const amount = await getTotalTransactionAmount(email);
+  //       const count = await getTotalTransactionCount(email);
+  //       const reachedServices = await getReachedServices(email);
+  //       const lastServices = await getLastServices(email);
+  //       setTotalAmount(amount);
+  //       setTotalCount(count);
+  //       setReachedServicesRatio(reachedServices);
+  //       setService(lastServices);
+  //       setIsLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.error("Erreur lors de la récupération des données", error);
+  //     setFetchError("Impossible de récupérer les données.");
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const email = user?.primaryEmailAddress?.emailAddress as string;
-      if (email) {
-        const amount = await getTotalTransactionAmount(email);
-        const count = await getTotalTransactionCount(email);
-        const reachedServices = await getReachedServices(email);
-        const lastServices = await getLastServices(email);
+      const userId = user?.id as string; // Utilisation de user.id ici
+      if (userId) {
+        const amount = await getTotalTransactionAmount(userId); // Passage du bon identifiant
+        const count = await getTotalTransactionCount(userId);
+        const reachedServices = await getReachedServices(userId);
+        const lastServices = await getLastServices(userId);
         setTotalAmount(amount);
         setTotalCount(count);
         setReachedServicesRatio(reachedServices);

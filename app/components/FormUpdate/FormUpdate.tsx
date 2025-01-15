@@ -56,7 +56,7 @@ const FormUpdate: React.FC<FormUpdateProps> = ({ userId }) => {
 
   // Handler pour gérer la soumission du formulaire
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Empêche le rechargement de la page lors de la soumission
+    e.preventDefault();
 
     try {
       const res = await fetch(`/api/updateUser`, {
@@ -64,10 +64,9 @@ const FormUpdate: React.FC<FormUpdateProps> = ({ userId }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        // Correction : créer un objet qui contient userId et la description
         body: JSON.stringify({
-          userId, // Passer l'id de l'utilisateur
-          description: formData.description, // Passer la description
+          userId,
+          userDescription: formData.description,
         }),
       });
 
@@ -86,8 +85,6 @@ const FormUpdate: React.FC<FormUpdateProps> = ({ userId }) => {
 
   return (
     <form className="form" onSubmit={handleSubmit}>
-      {" "}
-      {/* onSubmit au lieu de onChange */}
       {message && <p className="message">{message}</p>}
       {/* Le champ caché pour l'ID de l'utilisateur */}
       <input type="hidden" name="id" value={userId} />

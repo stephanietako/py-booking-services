@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { getAuth } from "@clerk/nextjs/server";
 
 export async function POST(req: NextRequest) {
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.update({
       where: { clerkUserId: userId },
       data: {
-        description: userDescription,
+        description: userDescription || null,
       },
     });
 

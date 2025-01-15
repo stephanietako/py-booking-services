@@ -3,11 +3,11 @@ export interface User {
   email: string;
   name: string;
   description?: string | null;
-  image: string;
+  image?: string | null;
   clerkUserId: string;
   createdAt: Date;
   roleId?: string | null;
-  role?: Role | null;
+  role?: { name: string };
   services?: Service[];
 }
 
@@ -55,5 +55,34 @@ export interface CustomUser {
   image?: string;
   email?: string;
   name?: string;
-  role?: Role | null;
+  role?: { name: string };
 }
+
+/////////
+// export interface Role {
+//   name: string;
+//   id?: string;
+// }
+
+// export interface Service {
+//   id: string;
+//   name: string;
+//   amount: number;
+//   description?: string | null;
+//   imageUrl: string;
+//   active: boolean;
+//   createdAt: Date;
+// }
+
+// export interface User {
+//   id: string;
+//   email: string;
+//   name: string;
+//   description?: string | null;
+//   image: string;
+//   clerkUserId: string;
+//   createdAt: Date;
+//   roleId?: string | null;
+//   role?: Role; // Utilisation de l'interface complète
+//   services?: Service[];
+// }
