@@ -45,8 +45,8 @@ const Navbar: React.FC = () => {
               <Link href="/transactions">
                 <div className="btn_secret">Mes Transactions</div>
               </Link>
-              <Link href="/dashboardUser">
-                <div className="btn_secret">Dashboard</div>
+              <Link href="/dashboardAdmin">
+                <div className="btn_secret">DashboardADMIN</div>
               </Link>
               <Link href="/admin">
                 <div className="btn_secret">ADMIN</div>

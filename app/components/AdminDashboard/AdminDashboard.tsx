@@ -1,3 +1,5 @@
+//app/components/AdminDashboard.tsx
+
 "use client";
 
 import { FC } from "react";
@@ -6,7 +8,7 @@ import { useEffect, useState } from "react";
 import Wrapper from "../Wrapper/Wrapper";
 import Link from "next/link";
 import { CustomUser } from "@/type";
-
+//ADMIN
 type AdminDashboardProps = {
   userId: string;
 };
@@ -57,11 +59,11 @@ const AdminDashboard: FC<AdminDashboardProps> = ({ userId }) => {
           </p>
         </header>
         <main>
-          <Link className="opening_hours" href="/admin/opening">
-            Opening Hours
+          <Link className="opening_hours" href="/admin/adminPage">
+            Heures d&apos;ouverture
           </Link>
           <Link className="service" href="/admin/service">
-            Gérer les services
+            Création et gestion d&apos;un service
           </Link>
         </main>
       </div>

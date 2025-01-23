@@ -5,47 +5,6 @@ import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
 
-// Ajouter un utilisateur à la base de données
-// export async function addUserToDatabase(
-//   email: string,
-//   name: string,
-//   image: string,
-//   clerkUserId: string
-// ) {
-//   try {
-//     // Vérifie si le rôle existe bien dans la base de données
-//     const role = await prisma.role.findUnique({
-//       where: { name: "member" },
-//     });
-
-//     if (!role) {
-//       throw new Error("Le rôle spécifié n'existe pas.");
-//     }
-
-//     // Utilise `upsert` pour créer ou mettre à jour l'utilisateur
-//     const user = await prisma.user.upsert({
-//       where: { clerkUserId },
-//       update: {
-//         name,
-//         image,
-//       },
-//       create: {
-//         clerkUserId,
-//         email,
-//         name,
-//         image,
-//         roleId: role.id,
-//       },
-//     });
-
-//     // console.log("Utilisateur ajouté ou mis à jour :", user);
-//     return user;
-//   } catch (error) {
-//     console.error("Erreur lors de l'ajout de l'utilisateur à la base :", error);
-//     throw error;
-//   }
-// }
-
 // Récupérer un utilisateur par son email
 export async function getRole(clerkUserId: string) {
   try {
@@ -116,33 +75,6 @@ export async function addUserToDatabase(
     return newUser;
   } catch (error) {
     console.error("Erreur lors de l'ajout de l'utilisateur à la base :", error);
-    throw error;
-  }
-}
-
-// Ajouter un service
-export async function addService(
-  clerkUserId: string,
-  name: string,
-  amount: number,
-  description: string
-) {
-  try {
-    const user = await prisma.user.findUnique({ where: { clerkUserId } });
-    if (!user) throw new Error("Utilisateur non trouvé");
-
-    await prisma.service.create({
-      data: {
-        name,
-        amount,
-        description,
-        imageUrl: "",
-        userId: user.id,
-      },
-    });
-    console.log("Service ajouté avec succès");
-  } catch (error) {
-    console.error("Erreur lors de l'ajout du service:", error);
     throw error;
   }
 }
@@ -544,6 +476,88 @@ export const getAllServicesByUser = async (clerkUserId: string) => {
 
 ///////////////////////////////////////////
 //CREATION SERVICE & UPDATE SERVICE
+// Créer un service avec upload d'image
+// export async function createService(
+//   clerkUserId: string,
+//   name: string,
+//   amount: number,
+//   description: string,
+//   file: File
+// ) {
+//   try {
+//     // Recherche de l'utilisateur dans la base de données
+//     const existingUser = await prisma.user.findUnique({
+//       where: { clerkUserId },
+//     });
+//     if (!existingUser) throw new Error("Utilisateur non trouvé");
+
+//     // Vérification du format du fichier
+//     const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
+//     if (!allowedMimeTypes.includes(file.type)) {
+//       throw new Error("Format d'image non pris en charge");
+//     }
+
+//     // Upload de l'image et récupération de l'URL
+//     const imageUrl = await uploadImageToServer(file);
+
+//     // Création du service en associant l'utilisateur via userId
+//     await prisma.service.create({
+//       data: {
+//         name,
+//         amount,
+//         description,
+//         imageUrl,
+//         userId: existingUser.id, // Lier le service à l'utilisateur via userId
+//       },
+//     });
+
+//     console.log("Service ajouté avec succès");
+//   } catch (error) {
+//     console.error("Erreur lors de l'ajout du service:", error);
+//     throw error;
+//   }
+// }
+// Créer un service avec upload d'image sans lier à un utilisateur
+// Créer un service sans lier à un utilisateur
+export async function createService(
+  name: string,
+  amount: number,
+  description: string,
+  file: File
+) {
+  try {
+    // Vérification si les données sont valides
+    if (!name || !amount || !file) {
+      throw new Error("Les informations nécessaires sont manquantes.");
+    }
+
+    // Vérification du format du fichier
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!allowedMimeTypes.includes(file.type)) {
+      throw new Error("Format d'image non pris en charge");
+    }
+
+    // Upload de l'image et récupération de l'URL
+    const imageUrl = await uploadImageToServer(file);
+
+    // Création du service sans utilisateur lié (aucun userId)
+    await prisma.service.create({
+      data: {
+        name,
+        amount,
+        description,
+        imageUrl,
+        userId: null, // Pas de liaison avec un utilisateur, 'userId' est nul
+      },
+    });
+
+    console.log("Service ajouté avec succès");
+  } catch (error) {
+    console.error("Erreur lors de l'ajout du service:", error);
+    throw error;
+  }
+}
+
 // Mettre à jour un service
 export async function updateService(
   serviceId: string,
@@ -575,7 +589,7 @@ export async function updateService(
         name,
         amount,
         description,
-        imageUrl, // On met à jour l'URL de l'image si nécessaire
+        imageUrl,
       },
     });
 
@@ -584,50 +598,6 @@ export async function updateService(
   } catch (error) {
     console.error("Erreur lors de la mise à jour du service:", error);
     throw new Error("Impossible de mettre à jour le service");
-  }
-}
-
-// Créer un service avec upload d'image
-export async function createService(
-  clerkUserId: string,
-  name: string,
-  amount: number,
-  description: string,
-  file: File
-) {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-    });
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
-    }
-
-    // Vérification du format du fichier
-    const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
-    if (!allowedMimeTypes.includes(file.type)) {
-      throw new Error("Format d'image non pris en charge");
-    }
-
-    // Upload de l'image et récupération de l'URL
-    const imageUrl = await uploadImageToServer(file);
-
-    // Création du service
-    const newService = await prisma.service.create({
-      data: {
-        name,
-        amount,
-        description,
-        userId: user.id,
-        imageUrl, // On attribue l'URL de l'image
-      },
-    });
-
-    console.log("Service créé avec succès :", newService);
-    return newService;
-  } catch (error) {
-    console.error("Erreur lors de la création du service:", error);
-    throw new Error("Impossible de créer le service");
   }
 }
 
@@ -651,5 +621,33 @@ async function uploadImageToServer(file: File): Promise<string> {
   } catch (error) {
     console.error("Erreur lors du téléchargement de l'image:", error);
     throw new Error("Erreur lors de l'upload de l'image");
+  }
+}
+///////////////////////////
+// Fonction d'ajout de service
+// Ajouter un service
+export async function addService(
+  clerkUserId: string,
+  name: string,
+  amount: number,
+  description: string
+) {
+  try {
+    const user = await prisma.user.findUnique({ where: { clerkUserId } });
+    if (!user) throw new Error("Utilisateur non trouvé");
+
+    await prisma.service.create({
+      data: {
+        name,
+        amount,
+        description,
+        imageUrl: "",
+        userId: user.id,
+      },
+    });
+    console.log("Service ajouté avec succès");
+  } catch (error) {
+    console.error("Erreur lors de l'ajout du service:", error);
+    throw error;
   }
 }

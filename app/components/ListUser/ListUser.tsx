@@ -56,7 +56,7 @@ const ListUser = () => {
                     alt={user.name ?? "Profil"}
                     width={50}
                     height={50}
-                    unoptimized // Désactive l'optimisation stricte de Next.js
+                    unoptimized
                   />
                 )}
               </td>
@@ -64,7 +64,7 @@ const ListUser = () => {
               <td className="actions">
                 <Link
                   className="modif_users_link"
-                  href={`/dashboardUser/edit/${user.clerkUserId}`}
+                  href={`/dashboardAdmin/edit/${user.clerkUserId}`}
                 >
                   Modifier
                 </Link>

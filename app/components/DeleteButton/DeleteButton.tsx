@@ -18,8 +18,8 @@ const DeleteButton: React.FC<DeleteButtonProps> = ({ id }) => {
       if (response.ok) {
         window.location.reload();
       } else {
-        const errorData = await response.json();
-        console.error(errorData);
+        // const errorData = await response.json();
+        console.error("erreur");
       }
     } catch (error) {
       console.error("Error deleting user:", error);

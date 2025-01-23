@@ -11,16 +11,17 @@ import {
 } from "@/actions/actions";
 import { Service as ServiceType } from "@/type";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
-import { useUser } from "@clerk/nextjs";
 
+// Définition des types d'input (propriétés d'un service)
 type Input = {
-  id?: string;
+  id?: string; // L'ID est optionnel lors de la création d'un service
   name: string;
   description?: string; // description est facultatif
   amount: number;
-  file?: File;
+  file?: File; // fichier est optionnel
 };
 
+// Valeurs initiales des inputs, utilisée lors de la réinitialisation du formulaire
 const initialInput: Input = {
   name: "",
   description: "", // Valeur initiale vide pour description
@@ -29,19 +30,20 @@ const initialInput: Input = {
 };
 
 const Service: FC = () => {
+  // États pour la gestion des erreurs, des entrées et des services
   const [error, setError] = useState<string>("");
-  const [input, setInput] = useState<Input>(initialInput);
-  const [preview, setPreview] = useState<string>("");
-  const [services, setServices] = useState<ServiceType[]>([]);
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const { user } = useUser();
-  const [isFormModified, setIsFormModified] = useState(false);
+  const [input, setInput] = useState<Input>(initialInput); // Valeurs du formulaire
+  const [preview, setPreview] = useState<string>(""); // Prévisualisation de l'image
+  const [services, setServices] = useState<ServiceType[]>([]); // Liste des services
+  const [successMessage, setSuccessMessage] = useState<string>(""); // Message de succès
+  //const { user } = useUser(); // Utilisateur connecté via Clerk
+  const [isFormModified, setIsFormModified] = useState(false); // Suivi des modifications du formulaire
 
   // Récupération des services au chargement
   useEffect(() => {
     const fetchAllServices = async () => {
       try {
-        const data = await getAllServices();
+        const data = await getAllServices(); // Récupère la liste des services
         setServices(data);
       } catch (error) {
         console.error("Erreur lors du chargement des services:", error);
@@ -51,32 +53,35 @@ const Service: FC = () => {
     fetchAllServices();
   }, []);
 
-  // Gestion de l'aperçu de l'image
+  // Gestion de l'aperçu de l'image sélectionnée
   useEffect(() => {
-    if (!input.file) return;
-    const objectUrl = URL.createObjectURL(input.file);
+    if (!input.file) return; // Si aucun fichier n'est sélectionné, on ne fait rien
+
+    const objectUrl = URL.createObjectURL(input.file); // Création d'un URL temporaire pour l'aperçu
     setPreview(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl); // Libère l'URL après utilisation
   }, [input.file]);
 
-  // Gestion des champs texte
+  // Gestion des champs texte (nom, description, montant)
   const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInput((prev) => ({ ...prev, [name]: value }));
-    setIsFormModified(true);
+    setIsFormModified(true); // Marque que le formulaire a été modifié
   };
 
-  // Gestion de la sélection de fichier
+  // Gestion de la sélection de fichier pour l'image
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return;
-    setError("");
+    if (!e.target.files?.[0]) return; // Si aucun fichier n'est sélectionné, on arrête
+    setError(""); // Réinitialise les erreurs
     const file = e.target.files[0];
 
+    // Vérification de la taille du fichier
     if (file.size > MAX_FILE_SIZE) {
       setError("Image trop grande, veuillez choisir une image de moins de 1Mo");
       return;
     }
 
+    // Vérification du type de fichier
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {
       setError(
@@ -84,17 +89,17 @@ const Service: FC = () => {
       );
       return;
     }
-    setInput((prev) => ({ ...prev, file }));
+    setInput((prev) => ({ ...prev, file })); // Mémorise le fichier sélectionné
   };
 
   // Enregistrement ou mise à jour du service
-  const handleSaveService = async (): Promise<void> => {
-    setError("");
-    setSuccessMessage("");
+  const handleSaveService = async () => {
+    setError(""); // Réinitialisation des erreurs
+    setSuccessMessage(""); // Réinitialisation du message de succès
 
     // Vérification minimale : au moins un champ doit être modifié
     if (
-      !input.id &&
+      !input.id && // Si l'ID est absent (création d'un service)
       (!input.name.trim() ||
         !input.description?.trim() ||
         input.amount <= 0 ||
@@ -104,9 +109,10 @@ const Service: FC = () => {
       return;
     }
 
+    // Vérification que des modifications ont été apportées pour un service existant
     if (
-      input.id &&
-      !input.name &&
+      input.id && // Si c'est une mise à jour de service
+      !input.name && // Aucun champ n'a été modifié
       !input.description &&
       !input.amount &&
       !input.file
@@ -115,15 +121,10 @@ const Service: FC = () => {
       return;
     }
 
-    // Contrôle de l'utilisateur
-    if (!user?.primaryEmailAddress?.emailAddress) {
-      setError("Utilisateur non identifié.");
-      return;
-    }
-
     try {
-      setIsFormModified(false);
+      setIsFormModified(false); // Désactive le statut de modification
 
+      // Si c'est une mise à jour, on prépare les données
       if (input.id) {
         const updateData: Partial<typeof input> = {};
         if (input.name) updateData.name = input.name;
@@ -131,6 +132,7 @@ const Service: FC = () => {
         if (input.amount) updateData.amount = input.amount;
         if (input.file) updateData.file = input.file;
 
+        // Appel à l'action updateService pour mettre à jour
         await updateService(
           input.id,
           updateData.name!,
@@ -140,8 +142,8 @@ const Service: FC = () => {
         );
         setSuccessMessage("Service mis à jour avec succès !");
       } else {
+        // Si c'est une création de service
         await createService(
-          user.primaryEmailAddress.emailAddress,
           input.name,
           input.amount,
           input.description!,
@@ -150,23 +152,24 @@ const Service: FC = () => {
         setSuccessMessage("Service créé avec succès !");
       }
 
+      // Récupération de la liste mise à jour des services
       const updatedServices = await getAllServices();
       setServices(updatedServices);
-      setInput(initialInput);
-      setPreview("");
+      setInput(initialInput); // Réinitialisation du formulaire
+      setPreview(""); // Réinitialisation de l'aperçu de l'image
     } catch (error) {
       console.error("Erreur lors de l'enregistrement :", error);
       setError("Une erreur s'est produite. Veuillez réessayer.");
     } finally {
-      setIsFormModified(true);
+      setIsFormModified(true); // Réactive le statut de modification
     }
   };
 
   // Suppression d'un service
   const handleDelete = async (id: string) => {
     try {
-      await deleteService(id);
-      const updatedServices = await getAllServices();
+      await deleteService(id); // Appel à l'action deleteService
+      const updatedServices = await getAllServices(); // Mise à jour de la liste des services
       setServices(updatedServices);
       setSuccessMessage("Service supprimé avec succès !");
     } catch (error) {
@@ -175,16 +178,16 @@ const Service: FC = () => {
     }
   };
 
-  // Préparation de l'édition d'un service
+  // Préparation à l'édition d'un service
   const handleEditService = (service: ServiceType) => {
     setInput({
       id: service.id,
       name: service.name,
       description: service.description || "", // Valeur par défaut pour description
       amount: service.amount,
-      file: undefined,
+      file: undefined, // Réinitialisation de l'image
     });
-    setPreview(service.imageUrl || "/default.png");
+    setPreview(service.imageUrl || "/default.png"); // Prise en charge de l'URL de l'image du service
   };
 
   return (
@@ -237,6 +240,7 @@ const Service: FC = () => {
               type="file"
               accept="image/png, image/jpeg, image/jpg"
               onChange={handleFileSelect}
+              style={{ display: "none" }}
             />
           </label>
           <button
@@ -247,10 +251,8 @@ const Service: FC = () => {
             {input.id ? "Mettre à jour le service" : "Ajouter le service"}
           </button>
         </div>
-
         {error && <p className="text_error">{error}</p>}
         {successMessage && <p className="text_success">{successMessage}</p>}
-
         <div className="menu_items">
           <p className="menu_items__text">Vos services :</p>
           <div className="menu_items__container">

@@ -1,3 +1,4 @@
+//app/api/auth.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getAuth } from "@clerk/nextjs/server";
 

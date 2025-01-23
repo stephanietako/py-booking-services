@@ -1,11 +1,12 @@
+// app/api/getCloseDays/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuth } from "@clerk/nextjs/server";
+import { formatISO } from "date-fns";
 
-export async function DELETE(req: NextRequest) {
-  const { id } = await req.json();
-
+export async function GET(req: NextRequest) {
   const { userId: getAuthenticatedUserId } = getAuth(req);
+
   if (!getAuthenticatedUserId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -18,25 +19,18 @@ export async function DELETE(req: NextRequest) {
   if (!adminUser || (adminUser.role && adminUser.role.name !== "admin")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
-  // if (!adminUser || adminUser.role === null || adminUser.role.name !== "admin") {
-  //   return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  // }
 
   try {
-    await prisma.user.delete({
-      where: { id },
-    });
-
+    // Récupération des jours et des jours fermés
+    const closedDays = await prisma.closedDay.findMany();
     return NextResponse.json(
-      {
-        message: "User data delete successfully",
-      },
+      { closedDays: closedDays.map((d) => formatISO(d.date)) },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Erreur serveur:", error);
+    console.error("Error fetching closed days:", error);
     return NextResponse.json(
-      { error: "Error deleting user data" },
+      { error: "Error fetching closed days" },
       { status: 500 }
     );
   }

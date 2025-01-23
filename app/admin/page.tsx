@@ -1,9 +1,9 @@
+//app/admin/page.tsx
 import { addUserToDatabase, getRole } from "@/actions/actions";
 import AdminDashboard from "../components/AdminDashboard/AdminDashboard";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { CustomUser } from "@/type";
-import Wrapper from "../components/Wrapper/Wrapper";
 
 const AdminPage = async () => {
   const { userId } = await auth();
@@ -25,9 +25,9 @@ const AdminPage = async () => {
   const userRole = await getRole(userId);
 
   return (
-    <Wrapper>
+    <>
       {userRole?.role?.name === "admin" && <AdminDashboard userId={userId} />}
-    </Wrapper>
+    </>
   );
 };
 

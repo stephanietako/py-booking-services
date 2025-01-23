@@ -17,19 +17,24 @@ export interface Role {
   users?: User[];
 }
 
-export interface Service {
+export type Service = {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
   name: string;
   amount: number;
-  description?: string | null;
+  description: string | null;
   imageUrl: string;
+  userId: string | null; // Le userId peut être nul
   active: boolean;
-  userId: string;
-  user?: User;
-  transactions?: Transaction[];
-}
+  createdAt: Date;
+  updatedAt: Date;
+  transactions: {
+    id: string;
+    amount: number;
+    createdAt: Date;
+    description: string;
+    serviceId: string | null;
+  }[];
+};
 
 export interface Transaction {
   id: string;
@@ -58,31 +63,12 @@ export interface CustomUser {
   role?: { name: string };
 }
 
-/////////
-// export interface Role {
-//   name: string;
-//   id?: string;
-// }
-
-// export interface Service {
-//   id: string;
-//   name: string;
-//   amount: number;
-//   description?: string | null;
-//   imageUrl: string;
-//   active: boolean;
-//   createdAt: Date;
-// }
-
-// export interface User {
-//   id: string;
-//   email: string;
-//   name: string;
-//   description?: string | null;
-//   image: string;
-//   clerkUserId: string;
-//   createdAt: Date;
-//   roleId?: string | null;
-//   role?: Role; // Utilisation de l'interface complète
-//   services?: Service[];
-// }
+export type ServiceHours = {
+  id: number;
+  dayOfWeek: string;
+  opening: number;
+  closing: number;
+  isClosed: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};

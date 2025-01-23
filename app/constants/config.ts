@@ -10,4 +10,6 @@ export const categories = [
   "Prenium",
 ] as const;
 
-export const MAX_FILE_SIZE = 1024 * 1024 * 7; // 7MB
+export const MAX_FILE_SIZE = 1024 * 1024 * 5; //5M
+
+export const now = new Date(); // Do not use this in mutated functions, e.g. setHours(0, 0, 0, 0)

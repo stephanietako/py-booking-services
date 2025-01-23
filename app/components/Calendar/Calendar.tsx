@@ -1,71 +1,121 @@
 "use client";
-
-import { Dispatch, type FC, SetStateAction } from "react";
+import type { ServiceHours } from "@prisma/client";
+import { format, formatISO, isBefore } from "date-fns";
 import ReactCalendar from "react-calendar";
-import { add, format } from "date-fns";
-import {
-  Service_opening_time,
-  Service_closing_time,
-  Interval,
-} from "@/app/constants/config";
-// Styles
+import { FC, useEffect, useState } from "react";
+import { Interval, now as serverNow } from "@/app/constants/config";
+import { getOpeningTimes, roundToNearestMinutes } from "@/utils/helpers";
+import { DateTime } from "@/type";
+import { getOpeningHours, getClosedDays } from "@/actions/openingActions";
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.scss";
-import { DateTime } from "@/type";
+import { useRouter } from "next/navigation";
 
 interface CalendarProps {
-  date: DateTime;
-  setDate: Dispatch<SetStateAction<DateTime>>;
+  days: ServiceHours[]; // Utilisation de ServiceHours
+  closedDays: string[]; // Jours fermés sous forme de chaînes ISO
 }
 
-// interface DateType {
-//   justDate: Date | null;
-//   dateTime: Date | null;
-// }
+const Calendar: FC<CalendarProps> = () => {
+  const router = useRouter();
 
-const Calendar: FC<CalendarProps> = ({ setDate, date }) => {
-  const getTimes = () => {
-    if (!date.justDate) return;
+  const [days, setDays] = useState<ServiceHours[]>([]);
+  const [closedDays, setClosedDays] = useState<string[]>([]);
+  const [isClient, setIsClient] = useState(false); // Pour gérer les différences entre client et serveur
+  const [date, setDate] = useState<DateTime>({
+    justDate: null,
+    dateTime: null,
+  });
 
-    const { justDate } = date;
+  // Utilisation de useEffect pour s'assurer que l'on manipule localStorage et router que côté client
+  useEffect(() => {
+    setIsClient(true); // Cela garantira que l'on n'exécute ce code qu'après le montage côté client
+  }, []);
 
-    // horaires
-    const beginning = add(justDate, { hours: Service_opening_time });
-    const end = add(justDate, { hours: Service_closing_time });
-    const interval = Interval; // minutes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedDays = await getOpeningHours();
+        const fetchedClosedDays = await getClosedDays();
+        setDays(fetchedDays);
+        setClosedDays(fetchedClosedDays);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-    const times = [];
-    for (let i = beginning; i <= end; i = add(i, { minutes: interval })) {
-      times.push(i);
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (date.dateTime) {
+      localStorage.setItem("selectedTime", date.dateTime.toISOString());
+      router.push("/service");
     }
+  }, [date.dateTime, router]);
 
-    return times;
+  // Calculer le jour actuel seulement côté client
+  useEffect(() => {
+    if (isClient && days.length) {
+      const today = days.find((d) => d.dayOfWeek === format(serverNow, "EEEE"));
+      if (today && today.isClosed) {
+        setClosedDays((prevClosedDays) => [
+          ...prevClosedDays,
+          formatISO(new Date().setHours(0, 0, 0, 0)),
+        ]);
+      }
+
+      // Vérifier si l'heure actuelle est après l'heure de fermeture
+      const rounded = roundToNearestMinutes(serverNow, Interval);
+      const closingTime = today ? today.closing : null;
+      const closing = closingTime
+        ? new Date().setHours(closingTime, 0, 0, 0)
+        : null;
+      const tooLate = closing && !isBefore(rounded, closing);
+
+      if (tooLate && closing) {
+        setClosedDays((prevClosedDays) => [
+          ...prevClosedDays,
+          formatISO(new Date().setHours(0, 0, 0, 0)),
+        ]);
+      }
+    }
+  }, [isClient, days]);
+
+  const times = date.justDate && getOpeningTimes(date.justDate, days);
+
+  const handleTimeClick = (time?: ServiceHours) => {
+    if (time) {
+      const selectedTime = new Date(date.justDate!);
+      selectedTime.setHours(time.opening, 0, 0, 0);
+      setDate((prev) => ({ ...prev, dateTime: selectedTime }));
+    }
   };
-
-  const times = getTimes();
 
   return (
     <div className="calendar_container">
-      {date.justDate ? (
-        <div className="calendar">
+      {date.justDate && (
+        <div className="time">
           {times?.map((time, i) => (
-            <div key={`times-${i}`} className="calendar_times">
-              <button
-                className="btn_times"
-                type="button"
-                onClick={() => setDate((prev) => ({ ...prev, dateTime: time }))}
-              >
-                {/* kk it's 24h format */}
-                {format(time, "kk:mm")}
+            <div key={`time-${i}`}>
+              <button onClick={() => handleTimeClick(time)} type="button">
+                {format(
+                  new Date(date.justDate!).setHours(time.opening, 0, 0, 0),
+                  "kk:mm"
+                )}{" "}
               </button>
             </div>
           ))}
         </div>
-      ) : (
+      )}
+      {isClient && (
         <ReactCalendar
-          minDate={new Date()}
-          className="REACT-CALENDAR"
+          minDate={serverNow}
+          className="REACT-CALENDAR p-2"
           view="month"
+          tileDisabled={({ date }) =>
+            closedDays && closedDays.includes(formatISO(date))
+          }
           onClickDay={(date) =>
             setDate((prev) => ({ ...prev, justDate: date }))
           }

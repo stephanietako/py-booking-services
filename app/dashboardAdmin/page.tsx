@@ -8,7 +8,7 @@ import ListUser from "../components/ListUser/ListUser";
 import Wrapper from "../components/Wrapper/Wrapper";
 import { SignOutButton } from "@clerk/nextjs";
 
-export default async function DashboardUser() {
+export default async function DashboardAdmin() {
   const { userId } = await auth();
   if (!userId) redirect("/");
 
