@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Service } from "@/type"; // Typage des services
+import { Service } from "@/types"; // Typage des services
 import { getServicesByUser } from "@/actions/actions"; // Import de l'API pour récupérer les services
 import ServiceCompt from "../ServicesCompt/ServiceCompt";
 import styles from "./styles.module.scss";

@@ -3,7 +3,7 @@ import { addUserToDatabase, getRole } from "@/actions/actions";
 import AdminDashboard from "../components/AdminDashboard/AdminDashboard";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { CustomUser } from "@/type";
+import { CustomUser } from "@/types";
 
 const AdminPage = async () => {
   const { userId } = await auth();

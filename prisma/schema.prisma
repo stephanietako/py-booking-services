@@ -57,17 +57,15 @@ model Transaction {
   createdAt   DateTime @default(now())
 }
 
-model ServiceHours {
-  id        Int      @id @default(autoincrement())
-  dayOfWeek String   @unique // "Monday", "Tuesday", etc.
-  opening   Int // Heure d'ouverture (en heures)
-  closing   Int // Heure de fermeture (en heures)
-  isClosed  Boolean // Indicateur si le service est fermé ce jour-là
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model ClosedDay {
   id   String   @id @default(cuid())
   date DateTime @unique
+}
+
+model Day {
+  id        String @id @default(cuid())
+  name      String // monday, tuesday, ...
+  dayOfWeek Int // @see getDay() documentation, 0 for Sunday, 1 for Monday, ...
+  openTime  String
+  closeTime String
 }

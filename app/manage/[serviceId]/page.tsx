@@ -7,7 +7,7 @@ import {
 } from "@/actions/actions";
 import ServiceItem from "@/app/components/ServiceItem/ServiceItem";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
-import { Service } from "@/type";
+import { Service } from "@/types";
 import React, { useEffect, useState } from "react";
 import { FaRegTrashAlt, FaWallet } from "react-icons/fa";
 import { BsCartX } from "react-icons/bs";

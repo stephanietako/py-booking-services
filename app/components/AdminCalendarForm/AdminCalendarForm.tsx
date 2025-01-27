@@ -1,11 +1,15 @@
-// app/admin/components/AdminCalendarForm.tsx
-import { ServiceHours } from "@/type";
 import React, { useState } from "react";
 
 // Définir les types des props
+type OpeningHour = {
+  dayOfWeek: number;
+  opening: string;
+  closing: string;
+};
+
 type AdminCalendarFormProps = {
-  openingHours: ServiceHours[]; // Les horaires d'ouverture
-  onUpdate: (updatedHours: ServiceHours[]) => void; // Fonction pour mettre à jour les horaires
+  openingHours: OpeningHour[]; // Les horaires d'ouverture
+  onUpdate: (updatedHours: OpeningHour[]) => void; // Fonction pour mettre à jour les horaires
   closedDays: string[]; // Liste des jours fermés
 };
 
@@ -14,16 +18,18 @@ const AdminCalendarForm: React.FC<AdminCalendarFormProps> = ({
   onUpdate,
   closedDays,
 }) => {
-  const [hours, setHours] = useState<ServiceHours[]>(openingHours);
+  const [hours, setHours] = useState<OpeningHour[]>(openingHours);
 
   // Fonction pour gérer la mise à jour des horaires
   const handleTimeChange = (
-    dayOfWeek: string,
+    dayOfWeek: number,
     type: "opening" | "closing",
-    value: number
+    value: string
   ) => {
     const updatedHours = hours.map((service) =>
-      service.dayOfWeek === dayOfWeek ? { ...service, [type]: value } : service
+      service.dayOfWeek === dayOfWeek
+        ? { ...service, [type]: value } // Le format doit être 'HH:mm'
+        : service
     );
     setHours(updatedHours);
   };
@@ -65,32 +71,28 @@ const AdminCalendarForm: React.FC<AdminCalendarFormProps> = ({
                 <td>{service.dayOfWeek}</td>
                 <td>
                   <input
-                    type="number"
+                    type="time" // Utilisation de type "time" pour entrer une heure valide
                     value={service.opening}
                     onChange={(e) =>
                       handleTimeChange(
                         service.dayOfWeek,
                         "opening",
-                        parseInt(e.target.value)
+                        e.target.value
                       )
                     }
-                    min={0}
-                    max={23}
                   />
                 </td>
                 <td>
                   <input
-                    type="number"
+                    type="time" // Utilisation de type "time" pour entrer une heure valide
                     value={service.closing}
                     onChange={(e) =>
                       handleTimeChange(
                         service.dayOfWeek,
                         "closing",
-                        parseInt(e.target.value)
+                        e.target.value
                       )
                     }
-                    min={0}
-                    max={23}
                   />
                 </td>
               </tr>

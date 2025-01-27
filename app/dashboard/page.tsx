@@ -14,7 +14,7 @@ import { MdOutlineDone } from "react-icons/md";
 import { FaSailboat } from "react-icons/fa6";
 import Link from "next/link";
 import ServiceItem from "../components/ServiceItem/ServiceItem";
-import { Service } from "@/type";
+import { Service } from "@/types";
 
 const DashboardUserPage = () => {
   const { user } = useUser();

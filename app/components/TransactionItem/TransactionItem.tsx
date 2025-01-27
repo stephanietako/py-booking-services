@@ -1,4 +1,4 @@
-import { Transaction } from "@/type";
+import { Transaction } from "@/types";
 import React from "react";
 import Link from "next/link";
 // Styles

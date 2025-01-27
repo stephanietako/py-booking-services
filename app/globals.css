@@ -877,6 +877,41 @@ tr:hover {
   margin-bottom: 20px;
 }
 
+.admin-opening-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.manage-opening-hours h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.hours-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hours-table th,
+.hours-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.hours-table select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.error {
+  color: red;
+  margin: 10px 0;
+}
+
 /* Styles responsives pour les petits écrans */
 @media (max-width: 768px) {
   table {
@@ -983,75 +1018,104 @@ tr:hover {
   margin-bottom: 5px;
 }
 
-/* .path {
-  stroke-dasharray: 187;
-  stroke-dashoffset: 0;
-  transform-origin: center;
-  -webkit-animation: dash 1.4s ease-in-out infinite,
-    colors 5.6s ease-in-out infinite;
-  animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
-} */
-/* @-webkit-keyframes colors {
-  0% {
-    stroke: #4285f4;
-  }
-  25% {
-    stroke: #de3e35;
-  }
-  50% {
-    stroke: #f7c223;
-  }
-  75% {
-    stroke: #1b9a59;
-  }
-  100% {
-    stroke: #4285f4;
-  }
-} */
+/* opening page */
+.admin-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
 
-/* @keyframes colors {
-  0% {
-    stroke: #4285f4;
-  }
-  25% {
-    stroke: #de3e35;
-  }
-  50% {
-    stroke: #f7c223;
-  }
-  75% {
-    stroke: #1b9a59;
-  }
-  100% {
-    stroke: #4285f4;
-  }
+.switch-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
-@-webkit-keyframes dash {
-  0% {
-    stroke-dashoffset: 187;
-  }
-  50% {
-    stroke-dashoffset: 46.75;
-    transform: rotate(135deg);
-  }
-  100% {
-    stroke-dashoffset: 187;
-    transform: rotate(450deg);
-  }
+
+.switch-btn {
+  padding: 10px 20px;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
 }
-@keyframes dash {
-  0% {
-    stroke-dashoffset: 187;
-  }
-  50% {
-    stroke-dashoffset: 46.75;
-    transform: rotate(135deg);
-  }
-  100% {
-    stroke-dashoffset: 187;
-    transform: rotate(450deg);
-  }
-} */
+
+.switch-btn.active {
+  background-color: #4281c4;
+  color: white;
+  border-color: #007bff;
+}
+
+.switch-btn:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+/* Opening hours */
+.hours-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hour-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.day-name {
+  flex: 1;
+  font-weight: bold;
+}
+
+input[type="time"] {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Calendar */
+.calendar-container {
+  text-align: center;
+}
+
+.closed-day {
+  background-color: #f87171 !important; /* Rouge pour les jours fermés */
+  color: white !important;
+}
+
+.toggle-day-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toggle-day-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Save button */
+.save-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: hsl(220, 77%, 41%);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.save-btn:hover {
+  background-color: #218838;
+}
 
 /* //////////////RESPONSIVE///////////// */
 @media (prefers-color-scheme: dark) {

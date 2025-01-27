@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { getTransactionsByEmailAndPeriod } from "@/actions/actions";
 import Wrapper from "../components/Wrapper/Wrapper";
-import { Transaction } from "@/type";
+import { Transaction } from "@/types";
 import TransactionItem from "../components/TransactionItem/TransactionItem";
 // Retourner la liste des transactions en fonction de la periode choisie
 

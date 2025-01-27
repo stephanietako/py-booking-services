@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Wrapper from "../Wrapper/Wrapper";
 import Link from "next/link";
-import { CustomUser } from "@/type";
+import { CustomUser } from "@/types";
 //ADMIN
 type AdminDashboardProps = {
   userId: string;
@@ -59,10 +59,10 @@ const AdminDashboard: FC<AdminDashboardProps> = ({ userId }) => {
           </p>
         </header>
         <main>
-          <Link className="opening_hours" href="/admin/adminPage">
+          <Link className="opening_hours" href="/admin/opening">
             Heures d&apos;ouverture
           </Link>
-          <Link className="service" href="/admin/service">
+          <Link className="service" href="/service">
             Création et gestion d&apos;un service
           </Link>
         </main>

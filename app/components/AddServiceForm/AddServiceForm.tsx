@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Service } from "@/type";
+import { Service } from "@/types";
 import Modal from "../Modal/Modal";
 
 interface AddServiceFormProps {

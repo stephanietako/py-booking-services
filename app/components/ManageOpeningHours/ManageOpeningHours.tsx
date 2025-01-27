@@ -1,162 +1,134 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { changeOpeningHours, getOpeningHours } from "@/actions/openingActions";
-import { ServiceHours } from "@/type";
+import { getOpeningHours, postHoursToDataBase } from "@/actions/openingActions";
+import { Day } from "@prisma/client";
 
-const generateTimeOptions = (): string[] => {
-  return Array.from({ length: 19 }, (_, i) =>
-    Array.from(
-      { length: 2 },
-      (_, j) =>
-        `${(i + 5).toString().padStart(2, "0")}:${(j * 30)
-          .toString()
-          .padStart(2, "0")}`
-    )
-  ).flat();
-};
-
-const timeOptions = generateTimeOptions();
-
-const ManageOpeningHours = () => {
-  const [hours, setHours] = useState<ServiceHours[]>([]);
+const ManageOpeningHours: React.FC = () => {
+  const [openingHours, setOpeningHours] = useState<Day[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
+  // Générer les options d'heures
+  const generateTimeOptions = () => {
+    return Array.from({ length: 19 }, (_, i) =>
+      Array.from(
+        { length: 2 },
+        (_, j) =>
+          `${(i + 5).toString().padStart(2, "0")}:${(j * 30)
+            .toString()
+            .padStart(2, "0")}`
+      )
+    ).flat();
+  };
+
+  const timeOptions = generateTimeOptions();
+
+  // Récupérer les horaires d'ouverture depuis l'API
   useEffect(() => {
-    const fetchHours = async () => {
+    async function fetchData() {
       setIsLoading(true);
       setError(null);
-
       try {
-        const data = await getOpeningHours(); // Appel direct à la fonction du serveur
-        setHours(data);
+        const data: Day[] = await getOpeningHours(); // Récupère les horaires
+        console.log("Données récupérées depuis l'API:", data);
+        setOpeningHours(data);
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Erreur inconnue";
-        setError(errorMessage);
+        console.error("Erreur lors de la récupération des horaires :", err);
+        setError("Impossible de récupérer les horaires.");
       } finally {
         setIsLoading(false);
       }
-    };
+    }
 
-    fetchHours();
+    fetchData();
   }, []);
 
-  const handleInputChange = (
-    index: number,
-    field: "opening" | "closing",
+  // Mise à jour des horaires
+  const handleChange = async (
+    dayId: string,
+    key: "openTime" | "closeTime",
     value: string
   ) => {
-    const newHours = [...hours];
-    newHours[index][field] = timeToNumber(value);
-    setHours(newHours);
-  };
-
-  // const handleSubmit = async () => {
-  //   setIsLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     await changeOpeningHours(hours); // Appel à l'action du serveur pour mettre à jour les horaires
-  //     alert("Horaires mis à jour avec succès");
-  //   } catch (err) {
-  //     const errorMessage =
-  //       err instanceof Error ? err.message : "Erreur inconnue";
-  //     setError(errorMessage);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  const handleSubmit = async () => {
-    setIsLoading(true);
     setError(null);
-
+    setIsSaving(true);
     try {
-      // Validation de la structure des données
-      hours.forEach((hour) => {
-        console.log("Vérification de la structure:", hour);
-        if (typeof hour.id !== "number")
-          throw new Error(`id invalide: ${hour.id}`);
-        if (typeof hour.dayOfWeek !== "string")
-          throw new Error(`dayOfWeek invalide: ${hour.dayOfWeek}`);
-        if (typeof hour.opening !== "number")
-          throw new Error(`opening invalide: ${hour.opening}`);
-        if (typeof hour.closing !== "number")
-          throw new Error(`closing invalide: ${hour.closing}`);
-        if (typeof hour.isClosed !== "boolean")
-          throw new Error(`isClosed invalide: ${hour.isClosed}`);
-      });
+      const updatedHours = openingHours.map((day) =>
+        day.id === dayId ? { ...day, [key]: value } : day
+      );
 
-      await changeOpeningHours(hours); // Mettre à jour dans la base
-      alert("Horaires mis à jour avec succès");
+      if (!updatedHours.every((day) => day.id)) {
+        throw new Error("Tous les jours doivent avoir un ID");
+      }
+
+      setOpeningHours(updatedHours); // Mise à jour locale
+      await postHoursToDataBase(updatedHours); // Sauvegarde dans la base
+      alert("Les horaires ont été mis à jour avec succès !");
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Erreur inconnue";
-      setError(errorMessage);
+      console.error("Erreur lors de la mise à jour des horaires :", err);
+      setError("Impossible de mettre à jour les horaires.");
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
-  const timeToNumber = (time: string): number => {
-    const [hours, minutes] = time.split(":").map(Number);
-    return hours + minutes / 60;
-  };
-
-  const numberToTime = (time: number): string => {
-    const hours = Math.floor(time);
-    const minutes = Math.round((time - hours) * 60);
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
   return (
-    <div>
+    <div className="manage-opening-hours">
       <h2>Gestion des horaires d&apos;ouverture</h2>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-      >
-        {hours.map((hour, index) => (
-          <div key={hour.id}>
-            <label>
-              {hour.dayOfWeek}:
-              <select
-                value={numberToTime(hour.opening)}
-                onChange={(e) =>
-                  handleInputChange(index, "opening", e.target.value)
-                }
-              >
-                {timeOptions.map((time) => (
-                  <option key={time} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-              -
-              <select
-                value={numberToTime(hour.closing)}
-                onChange={(e) =>
-                  handleInputChange(index, "closing", e.target.value)
-                }
-              >
-                {timeOptions.map((time) => (
-                  <option key={time} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        ))}
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "Mise à jour en cours..." : "Mettre à jour"}
-        </button>
-      </form>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error">{error}</p>}
+      {isLoading ? (
+        <p>Chargement...</p>
+      ) : (
+        <table className="hours-table">
+          <thead>
+            <tr>
+              <th>Jour</th>
+              <th>Heure d&apos;ouverture</th>
+              <th>Heure de fermeture</th>
+            </tr>
+          </thead>
+          <tbody>
+            {openingHours.map((day) => (
+              <tr key={day.id}>
+                <td>{day.name}</td>
+                <td>
+                  <select
+                    value={day.openTime}
+                    onChange={(e) =>
+                      handleChange(day.id, "openTime", e.target.value)
+                    }
+                    aria-label={`Sélectionnez l'heure d'ouverture pour ${day.name}`}
+                    disabled={isSaving}
+                  >
+                    {timeOptions.map((time) => (
+                      <option key={time} value={time}>
+                        {time}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td>
+                  <select
+                    value={day.closeTime}
+                    onChange={(e) =>
+                      handleChange(day.id, "closeTime", e.target.value)
+                    }
+                    aria-label={`Sélectionnez l'heure de fermeture pour ${day.name}`}
+                    disabled={isSaving}
+                  >
+                    {timeOptions.map((time) => (
+                      <option key={time} value={time}>
+                        {time}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

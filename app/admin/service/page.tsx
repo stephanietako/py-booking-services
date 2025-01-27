@@ -9,7 +9,7 @@ import {
   updateService,
   getAllServices,
 } from "@/actions/actions";
-import { Service as ServiceType } from "@/type";
+import { Service as ServiceType } from "@/types";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 
 // Définition des types d'input (propriétés d'un service)
@@ -193,6 +193,7 @@ const Service: FC = () => {
   return (
     <Wrapper>
       <div className="menu_container">
+        <h1>CRÉATION D&apos;UN SERVICE </h1>
         <div className="menu_form">
           <input
             name="name"

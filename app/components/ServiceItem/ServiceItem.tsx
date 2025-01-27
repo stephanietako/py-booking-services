@@ -1,4 +1,4 @@
-import { Service } from "@/type";
+import { Service } from "@/types";
 import React from "react";
 import Image from "next/image";
 // Styles

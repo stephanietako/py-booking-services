@@ -45,11 +45,6 @@ export interface Transaction {
   service?: Service | null;
 }
 
-export type DateTime = {
-  justDate: Date | null;
-  dateTime: Date | null;
-};
-
 export interface CustomUser {
   id: string;
   firstName?: string;
@@ -63,12 +58,19 @@ export interface CustomUser {
   role?: { name: string };
 }
 
-export type ServiceHours = {
-  id: number;
-  dayOfWeek: string;
-  opening: number;
-  closing: number;
-  isClosed: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+export type DateTime = {
+  justDate: Date | null; // Stocke uniquement une date sans heure.
+  dateTime: Date | null; // Stocke une date avec l'heure.
 };
+
+export interface DayInput {
+  id: string;
+  name: string;
+  dayOfWeek: number;
+  openTime: string;
+  closeTime: string;
+}
+
+export interface CloseDayInput {
+  date: Date;
+}

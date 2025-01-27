@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import DeleteButton from "../DeleteButton/DeleteButton";
-import { User } from "@/type";
+import { User } from "@/types";
 
 const ListUser = () => {
   const [users, setUsers] = useState<User[]>([]);

@@ -1,120 +1,88 @@
 "use client";
-import type { ServiceHours } from "@prisma/client";
-import { format, formatISO, isBefore } from "date-fns";
-import ReactCalendar from "react-calendar";
-import { FC, useEffect, useState } from "react";
-import { Interval, now as serverNow } from "@/app/constants/config";
+
+import React, { FC, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { format, formatISO, isBefore, parse } from "date-fns";
+import type { Day } from "@prisma/client";
 import { getOpeningTimes, roundToNearestMinutes } from "@/utils/helpers";
-import { DateTime } from "@/type";
-import { getOpeningHours, getClosedDays } from "@/actions/openingActions";
+import { Interval, now } from "@/app/constants/config";
+import { DateTime } from "@/types";
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.scss";
-import { useRouter } from "next/navigation";
+
+// Dynamically import the calendar component
+const DynamicCalendar = React.memo(
+  dynamic(() => import("react-calendar"), { ssr: false })
+);
 
 interface CalendarProps {
-  days: ServiceHours[]; // Utilisation de ServiceHours
-  closedDays: string[]; // Jours fermés sous forme de chaînes ISO
+  days: Day[];
+  closedDays: string[];
 }
 
-const Calendar: FC<CalendarProps> = () => {
+const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
   const router = useRouter();
 
-  const [days, setDays] = useState<ServiceHours[]>([]);
-  const [closedDays, setClosedDays] = useState<string[]>([]);
-  const [isClient, setIsClient] = useState(false); // Pour gérer les différences entre client et serveur
+  // State for selected date and time
   const [date, setDate] = useState<DateTime>({
     justDate: null,
     dateTime: null,
   });
 
-  // Utilisation de useEffect pour s'assurer que l'on manipule localStorage et router que côté client
-  useEffect(() => {
-    setIsClient(true); // Cela garantira que l'on n'exécute ce code qu'après le montage côté client
-  }, []);
+  // Determine if today is closed
+  const today = days.find((d) => d.dayOfWeek === now.getDay());
+  const rounded = roundToNearestMinutes(now, Interval);
+  const closing = today ? parse(today.closeTime, "kk:mm", now) : null;
+  const tooLate = closing ? !isBefore(rounded, closing) : false;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchedDays = await getOpeningHours();
-        const fetchedClosedDays = await getClosedDays();
-        setDays(fetchedDays);
-        setClosedDays(fetchedClosedDays);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  if (tooLate) {
+    const todayISO = formatISO(new Date().setHours(0, 0, 0, 0));
+    if (!closedDays.includes(todayISO)) closedDays.push(todayISO);
+  }
 
-    fetchData();
-  }, []);
-
+  // Update localStorage and navigate to the service page when a time is selected
   useEffect(() => {
     if (date.dateTime) {
       localStorage.setItem("selectedTime", date.dateTime.toISOString());
-      router.push("/service");
+      router.push("/admin/service");
     }
   }, [date.dateTime, router]);
 
-  // Calculer le jour actuel seulement côté client
-  useEffect(() => {
-    if (isClient && days.length) {
-      const today = days.find((d) => d.dayOfWeek === format(serverNow, "EEEE"));
-      if (today && today.isClosed) {
-        setClosedDays((prevClosedDays) => [
-          ...prevClosedDays,
-          formatISO(new Date().setHours(0, 0, 0, 0)),
-        ]);
-      }
-
-      // Vérifier si l'heure actuelle est après l'heure de fermeture
-      const rounded = roundToNearestMinutes(serverNow, Interval);
-      const closingTime = today ? today.closing : null;
-      const closing = closingTime
-        ? new Date().setHours(closingTime, 0, 0, 0)
-        : null;
-      const tooLate = closing && !isBefore(rounded, closing);
-
-      if (tooLate && closing) {
-        setClosedDays((prevClosedDays) => [
-          ...prevClosedDays,
-          formatISO(new Date().setHours(0, 0, 0, 0)),
-        ]);
-      }
-    }
-  }, [isClient, days]);
-
+  // Get available times for the selected day
   const times = date.justDate && getOpeningTimes(date.justDate, days);
-
-  const handleTimeClick = (time?: ServiceHours) => {
-    if (time) {
-      const selectedTime = new Date(date.justDate!);
-      selectedTime.setHours(time.opening, 0, 0, 0);
-      setDate((prev) => ({ ...prev, dateTime: selectedTime }));
-    }
-  };
 
   return (
     <div className="calendar_container">
-      {date.justDate && (
+      {date.justDate ? (
+        // Render available times
         <div className="time">
-          {times?.map((time, i) => (
-            <div key={`time-${i}`}>
-              <button onClick={() => handleTimeClick(time)} type="button">
-                {format(
-                  new Date(date.justDate!).setHours(time.opening, 0, 0, 0),
-                  "kk:mm"
-                )}{" "}
-              </button>
-            </div>
-          ))}
+          {times && times.length > 0 ? (
+            times.map((time, index) => (
+              <div className="time_bloc" key={`time-${index}`}>
+                <button
+                  onClick={() =>
+                    setDate((prev) => ({ ...prev, dateTime: time }))
+                  }
+                  type="button"
+                  aria-label={`Select time ${format(time, "kk:mm")}`}
+                >
+                  {format(time, "kk:mm")}
+                </button>
+              </div>
+            ))
+          ) : (
+            <p>Aucune plage horaire disponible pour cette date.</p>
+          )}
         </div>
-      )}
-      {isClient && (
-        <ReactCalendar
-          minDate={serverNow}
+      ) : (
+        // Render the calendar
+        <DynamicCalendar
+          minDate={now}
           className="REACT-CALENDAR p-2"
           view="month"
-          tileDisabled={({ date }) =>
-            closedDays && closedDays.includes(formatISO(date))
+          tileDisabled={
+            ({ date }) => closedDays.includes(formatISO(date)) // Disable closed days
           }
           onClickDay={(date) =>
             setDate((prev) => ({ ...prev, justDate: date }))

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User } from "@/type";
+import { User } from "@/types";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 import { useParams } from "next/navigation"; // Importer useParams de Next.js
 // modification email et name fonctionne pas

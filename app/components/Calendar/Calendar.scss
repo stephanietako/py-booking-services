@@ -101,7 +101,7 @@
 }
 .react-calendar__navigation button {
   min-width: 44px;
-  background: none;
+  background-color: #97e3f2;
   color: blue;
 }
 .react-calendar__navigation button:disabled {
@@ -124,6 +124,7 @@
   padding: 5px;
   background-clip: content-box !important;
   border-radius: 15px !important;
+  background-color: #97e3f2;
 }
 
 .react-calendar__navigation__label__labelText {
@@ -133,6 +134,7 @@
 }
 .react-calendar__navigation__label {
   pointer-events: none;
+  background-color: #97e3f2;
 }
 
 .react-calendar__navigation__arrow {
