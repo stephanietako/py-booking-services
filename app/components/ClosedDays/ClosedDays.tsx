@@ -1,59 +1,140 @@
-import React from "react";
+// "use client";
+
+// import React, { useState, useEffect } from "react";
+// import { formatISO } from "date-fns";
+// import { getClosedDays, openDay, closeDay } from "@/actions/openingActions";
+// import dynamic from "next/dynamic";
+
+// const DynamicCalendar = dynamic(() => import("react-calendar"), { ssr: false });
+
+// const ClosedDays: React.FC = () => {
+//   const [closedDays, setClosedDays] = useState<string[]>([]);
+//   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+//   const [error, setError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     async function fetchData() {
+//       try {
+//         const data = await getClosedDays();
+//         setClosedDays(data);
+//       } catch {
+//         setError("Erreur lors du chargement des jours fermés.");
+//       }
+//     }
+//     fetchData();
+//   }, []);
+
+//   const handleDayChange = async () => {
+//     if (!selectedDate) return;
+
+//     const dayIso = formatISO(selectedDate);
+//     const isClosed = closedDays.includes(dayIso);
+
+//     try {
+//       if (isClosed) {
+//         await openDay({ date: new Date(dayIso) });
+//         setClosedDays((prev) => prev.filter((d) => d !== dayIso));
+//       } else {
+//         await closeDay({ date: new Date(dayIso) });
+//         setClosedDays((prev) => [...prev, dayIso]);
+//       }
+//     } catch {
+//       setError("Erreur lors de la mise à jour des jours.");
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <h2>Gérer les jours fermés</h2>
+//       {error && <p className="error">{error}</p>}
+//       <DynamicCalendar
+//         minDate={new Date()}
+//         tileClassName={({ date }) =>
+//           closedDays.includes(formatISO(date)) ? "closed-day" : null
+//         }
+//         onClickDay={(date) => setSelectedDate(date)}
+//       />
+//       <button onClick={handleDayChange} disabled={!selectedDate}>
+//         {selectedDate && closedDays.includes(formatISO(selectedDate))
+//           ? "Ouvrir ce jour"
+//           : "Fermer ce jour"}
+//       </button>
+//     </div>
+//   );
+// };
+
+// export default ClosedDays;
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { formatISO } from "date-fns";
-// Définir les types des props
-type ClosedDaysProps = {
-  closedDays: string[]; // Liste des jours fermés sous forme de chaînes (par exemple, formatISO)
-  onClose: (date: { date: Date }) => Promise<void>; // Fonction pour fermer un jour
-  onOpen: (date: { date: Date }) => Promise<void>; // Fonction pour ouvrir un jour
-};
+import { getClosedDays, openDay, closeDay } from "@/actions/openingActions";
+import dynamic from "next/dynamic";
+import { toast } from "react-hot-toast";
 
-const ClosedDays: React.FC<ClosedDaysProps> = ({
-  closedDays,
-  onClose,
-  onOpen,
-}) => {
-  // Fonction utilitaire pour convertir une date en chaîne ISO et obtenir un objet Date
-  const handleClose = async (date: string) => {
-    try {
-      const dateObj = new Date(date);
-      await onClose({ date: dateObj });
-    } catch (error) {
-      console.error("Erreur lors de la fermeture du jour", error);
+const DynamicCalendar = dynamic(() => import("react-calendar"), { ssr: false });
+
+const ClosedDays: React.FC = () => {
+  const [closedDays, setClosedDays] = useState<string[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getClosedDays();
+        setClosedDays(data);
+      } catch {
+        setError("Erreur lors du chargement des jours fermés.");
+      }
     }
-  };
+    fetchData();
+  }, []);
 
-  const handleOpen = async (date: string) => {
+  const handleDayChange = async () => {
+    if (!selectedDate) return;
+
+    const dayIso = formatISO(selectedDate);
+    const isClosed = closedDays.includes(dayIso);
+
     try {
-      const dateObj = new Date(date); // Convertir la chaîne en objet Date
-      await onOpen({ date: dateObj });
-    } catch (error) {
-      console.error("Erreur lors de l'ouverture du jour", error);
+      if (isClosed) {
+        await openDay({ date: new Date(dayIso) });
+        setClosedDays((prev) => prev.filter((d) => d !== dayIso));
+        toast.success("Le jour a été ouvert avec succès.");
+      } else {
+        await closeDay({ date: new Date(dayIso) });
+        setClosedDays((prev) => [...prev, dayIso]);
+        toast.success("Le jour a été fermé avec succès.");
+      }
+    } catch {
+      setError("Erreur lors de la mise à jour des jours.");
+      toast.error("Erreur lors de la mise à jour des jours.");
     }
   };
 
   return (
     <div>
-      <h2>Jours Fermés</h2>
-      <ul>
-        {closedDays.length === 0 ? (
-          <p>Aucun jour fermé</p>
-        ) : (
-          closedDays.map((day) => (
-            <li key={day}>
-              <span>{day}</span>
-              <button onClick={() => handleOpen(day)}>Ouvrir</button>
-            </li>
-          ))
-        )}
-      </ul>
-      <h2>Ajouter un Jour Fermé</h2>
-      <button
-        onClick={() => {
-          const date = new Date(); // Exemple d'ajout du jour actuel comme fermé
-          handleClose(formatISO(date)); // Ajouter le jour actuel comme fermé
+      <h2>Gérer les jours fermés</h2>
+      {error && <p className="error">{error}</p>}
+      <DynamicCalendar
+        minDate={new Date()}
+        tileClassName={({ date }) =>
+          closedDays.includes(formatISO(date)) ? "closed-day" : null
+        }
+        onClickDay={(date) => {
+          const dayIso = formatISO(date);
+          if (closedDays.includes(dayIso)) {
+            toast.error("Ce jour est déjà fermé.");
+          } else {
+            setSelectedDate(date);
+          }
         }}
-      >
-        Fermer le jour actuel
+      />
+      <button onClick={handleDayChange} disabled={!selectedDate}>
+        {selectedDate && closedDays.includes(formatISO(selectedDate))
+          ? "Ouvrir ce jour"
+          : "Fermer ce jour"}
       </button>
     </div>
   );

@@ -18,6 +18,7 @@ export interface Role {
 }
 
 export type Service = {
+  categories: string[];
   id: string;
   name: string;
   amount: number;

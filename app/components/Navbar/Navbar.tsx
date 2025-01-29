@@ -36,20 +36,20 @@ const Navbar: React.FC = () => {
         {isSignedIn ? (
           <>
             <Link href="/dashboard">
-              <div className="btn_secret">Mon Tableau de bord</div>
+              <div className="btn">Mon Tableau de bord</div>
             </Link>
             <>
               <Link href="/services">
-                <div className="btn_secret">Mes Services</div>
+                <div className="btn">Mes Services</div>
               </Link>
               <Link href="/transactions">
-                <div className="btn_secret">Mes Transactions</div>
+                <div className="btn">Mes Transactions</div>
               </Link>
               <Link href="/dashboardAdmin">
-                <div className="btn_secret">DashboardADMIN</div>
+                <div className="btn">DashboardADMIN</div>
               </Link>
               <Link href="/admin">
-                <div className="btn_secret">ADMIN</div>
+                <div className="btn">ADMIN</div>
               </Link>
             </>
             <UserButton />

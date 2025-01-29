@@ -13,12 +13,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.9.1",
-    "@headlessui/react": "^2.2.0",
-    "@prisma/client": "^6.2.1",
+    "@prisma/client": "^6.3.0",
     "@supabase/supabase-js": "^2.47.10",
-    "@types/crypto-js": "^4.2.2",
     "bcrypt": "^5.1.1",
-    "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "mime": "^4.0.6",
@@ -32,8 +29,7 @@
     "react-icons": "^5.4.0",
     "react-select": "^5.9.0",
     "sass": "^1.82.0",
-    "sharp": "^0.33.5",
-    "zod": "^3.24.1"
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -45,7 +41,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.0",
-    "prisma": "^6.2.1",
+    "prisma": "^6.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }

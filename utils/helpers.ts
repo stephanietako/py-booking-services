@@ -1,20 +1,22 @@
 import { addMinutes, getMinutes, isBefore, isEqual, parse } from "date-fns";
 import { Day } from "@prisma/client";
 import {
+  categories,
   Service_closing_time,
   Service_opening_time,
   Interval,
 } from "@/app/constants/config";
-
-// Constante d'intervalle pour les créneaux (30 minutes par défaut)
-// Assurez-vous que cette valeur est bien alignée avec la logique de l'application
 
 // Fonction pour capitaliser la première lettre d'une chaîne
 export const capitalize = (str: string): string => {
   if (!str) return str;
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
-
+// Les categories de services
+export const selectOptions = categories.map((category) => ({
+  value: category,
+  label: capitalize(category),
+}));
 // Fonction pour convertir un index de jour en nom de jour
 export const weekdayIndexToName = (index: number): string => {
   const days = [
@@ -38,52 +40,6 @@ export const roundToNearestMinutes = (
   return addMinutes(date, minutesLeftUntilNextInterval);
 };
 
-// export const getOpeningTimes = (startDate: Date, dbDays: Day[]): Date[] => {
-//   const dayOfWeek = startDate.getDay();
-//   const isToday = isEqual(startDate, new Date().setHours(0, 0, 0, 0));
-
-//   // Trouver les horaires correspondants au jour sélectionné
-//   const today = dbDays.find((d) => d.dayOfWeek === dayOfWeek);
-//   if (!today) {
-//     throw new Error(
-//       `No opening times found for dayOfWeek: ${dayOfWeek}. Ensure all days are defined in the database.`
-//     );
-//   }
-
-//   // Convertir les horaires d'ouverture et de fermeture en objets Date
-//   const opening = parse(today.openTime, "HH:mm", startDate);
-//   const closing = parse(today.closeTime, "HH:mm", startDate);
-
-//   // Vérification des horaires pour le jour actuel
-//   let startTime: Date;
-//   if (isToday) {
-//     const roundedNow = roundToNearestMinutes(new Date(), Interval);
-
-//     // Vérifier si l'heure actuelle est trop tardive pour réserver
-//     if (!isBefore(roundedNow, closing)) {
-//       throw new Error("No more bookings available for today.");
-//     }
-
-//     // Définir l'heure de départ comme maintenant ou l'ouverture
-//     startTime = isBefore(roundedNow, opening) ? opening : roundedNow;
-//   } else {
-//     startTime = opening;
-//   }
-
-//   const endTime = closing;
-
-//   // Générer les créneaux horaires entre startTime et endTime
-//   const times: Date[] = [];
-//   for (
-//     let time = startTime;
-//     isBefore(time, endTime) || isEqual(time, endTime);
-//     time = addMinutes(time, Interval)
-//   ) {
-//     times.push(time);
-//   }
-
-//   return times;
-// };
 export const getOpeningTimes = (startDate: Date, dbDays: Day[]): Date[] => {
   const dayOfWeek = startDate.getDay();
   const isToday = isEqual(startDate, new Date().setHours(0, 0, 0, 0));

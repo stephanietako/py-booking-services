@@ -11,7 +11,6 @@ import { DateTime } from "@/types";
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.scss";
 
-// Dynamically import the calendar component
 const DynamicCalendar = React.memo(
   dynamic(() => import("react-calendar"), { ssr: false })
 );
@@ -45,7 +44,7 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
   useEffect(() => {
     if (date.dateTime) {
       localStorage.setItem("selectedTime", date.dateTime.toISOString());
-      router.push("/admin/service");
+      router.push("/carts");
     }
   }, [date.dateTime, router]);
 
@@ -61,6 +60,7 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
             times.map((time, index) => (
               <div className="time_bloc" key={`time-${index}`}>
                 <button
+                  className="btn_times"
                   onClick={() =>
                     setDate((prev) => ({ ...prev, dateTime: time }))
                   }
@@ -76,17 +76,34 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
           )}
         </div>
       ) : (
-        // Render the calendar
+        // <DynamicCalendar
+        //   minDate={now}
+        //   className="REACT-CALENDAR p-2"
+        //   view="month"
+        //   tileDisabled={
+        //     ({ date }) => closedDays.includes(formatISO(date)) // Disable closed days
+        //   }
+        //   onClickDay={(date) =>
+        //     setDate((prev) => ({ ...prev, justDate: date }))
+        //   }
+        // />
         <DynamicCalendar
           minDate={now}
           className="REACT-CALENDAR p-2"
           view="month"
-          tileDisabled={
-            ({ date }) => closedDays.includes(formatISO(date)) // Disable closed days
+          tileDisabled={({ date }) => closedDays.includes(formatISO(date))}
+          tileClassName={({ date }) =>
+            closedDays.includes(formatISO(date)) ? "closed-day" : ""
           }
-          onClickDay={(date) =>
-            setDate((prev) => ({ ...prev, justDate: date }))
-          }
+          onClickDay={(date, e) => {
+            e.preventDefault();
+            const dayIso = formatISO(date);
+            if (closedDays.includes(dayIso)) {
+              // Jour fermé, aucun toast
+            } else {
+              setDate((prev) => ({ ...prev, justDate: date }));
+            }
+          }}
         />
       )}
     </div>
