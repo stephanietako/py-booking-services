@@ -25,6 +25,7 @@ model User {
   createdAt   DateTime  @default(now())
   services    Service[]
   role        Role      @relation(fields: [roleId], references: [id])
+  bookings    Booking[]
 }
 
 model Role {
@@ -40,6 +41,7 @@ model Service {
   userId       String?
   user         User?         @relation(fields: [userId], references: [id])
   transactions Transaction[]
+  bookings     Booking[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   description  String?
@@ -68,4 +70,13 @@ model Day {
   dayOfWeek Int // @see getDay() documentation, 0 for Sunday, 1 for Monday, ...
   openTime  String
   closeTime String
+}
+
+model Booking {
+  id        String   @id @default(uuid())
+  userId    String
+  serviceId String
+  user      User     @relation(fields: [userId], references: [id])
+  service   Service  @relation(fields: [serviceId], references: [id])
+  createdAt DateTime @default(now())
 }

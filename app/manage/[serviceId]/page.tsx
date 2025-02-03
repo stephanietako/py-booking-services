@@ -27,7 +27,7 @@ const ManagePage = ({ params }: { params: Promise<{ serviceId: string }> }) => {
     {
       description: "personne supplémentaire",
       amount: 50,
-      allowedFor: ["Simplicité"],
+      allowedFor: ["Découverte"],
       maxCount: 9,
     },
     {
@@ -39,7 +39,7 @@ const ManagePage = ({ params }: { params: Promise<{ serviceId: string }> }) => {
     {
       description: "hôtesse",
       amount: 200,
-      allowedFor: ["Simplicité", "Prenium", "Palmiers Tropicaux"],
+      allowedFor: ["Simplicité", "Prenium"],
     },
     {
       description: "vidéo drône",

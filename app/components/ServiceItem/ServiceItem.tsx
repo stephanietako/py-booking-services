@@ -32,44 +32,59 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
 
   // Valeur par défaut pour l'image si imageUrl est vide ou null
   const imageUrl = service.imageUrl ? service.imageUrl : "/assets/default.jpg";
-
+  /////////
+  // Nouvelle fonction pour ajouter une réservation
+  const handleAddToBooking = async () => {
+    try {
+      const userId = "user-id"; // Remplace par la récupération réelle de l’ID utilisateur
+      await addUserBooking(userId, service.id); // Nouvelle API pour réserver
+      alert("Service ajouté à vos réservations !");
+    } catch (error) {
+      console.error("Erreur lors de la réservation", error);
+    }
+  };
   return (
-    <li className={`${styles.serviceItem} ${hoverClass}`}>
-      <div className={styles.serviceItemHeader}>
-        {/* Affichage de l'image du service avec gestion d'image vide */}
-        <div className={styles.serviceItemImage}>
-          <Image
-            src={imageUrl} // Utilise imageUrl avec fallback si vide
-            alt={service.name}
-            width={60}
-            height={60}
-            className={styles.serviceImage}
-          />
-        </div>
-
-        <div className={styles.serviceItemDetails}>
-          <div className={styles.serviceItemInfo}>
-            <span className={styles.serviceItemTitle}>{service.name}</span>
-            <span className={styles.serviceItemDescription}>
-              {service.description}
-            </span>
-            <span className={styles.serviceItemTransactionCount}>
-              {transactionCount} transaction(s)
-            </span>
+    <>
+      <li className={`${styles.serviceItem} ${hoverClass}`}>
+        <div className={styles.serviceItemHeader}>
+          {/* Affichage de l'image du service avec gestion d'image vide */}
+          <div className={styles.serviceItemImage}>
+            <Image
+              src={imageUrl} // Utilise imageUrl avec fallback si vide
+              alt={service.name}
+              width={60}
+              height={60}
+              className={styles.serviceImage}
+            />
           </div>
+
+          <div className={styles.serviceItemDetails}>
+            <div className={styles.serviceItemInfo}>
+              <span className={styles.serviceItemTitle}>{service.name}</span>
+              <span className={styles.serviceItemDescription}>
+                {service.description}
+              </span>
+              <span className={styles.serviceItemTransactionCount}>
+                {transactionCount} transaction(s)
+              </span>
+            </div>
+          </div>
+          <div className={styles.serviceItemAmount}> {remainingAmount} €</div>
         </div>
-        <div className={styles.serviceItemAmount}> {remainingAmount} €</div>
-      </div>
 
-      <div className={styles.serviceItemStats}>
-        <span>{totalTransactionAmount} € dépensés</span>
-        <span>{remainingAmount} € montant total</span>
-      </div>
+        <div className={styles.serviceItemStats}>
+          <span>{totalTransactionAmount} € dépensés</span>
+          <span>{remainingAmount} € montant total</span>
+        </div>
 
-      <div className={styles.serviceItemProgress}>
-        <progress value={progressValue} max="100"></progress>
-      </div>
-    </li>
+        <div className={styles.serviceItemProgress}>
+          <progress value={progressValue} max="100"></progress>
+        </div>
+      </li>
+      <button onClick={handleAddToBooking} className="btn_option">
+        Réserver
+      </button>
+    </>
   );
 };
 

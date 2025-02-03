@@ -134,13 +134,76 @@ export async function getTransactionsByServiceId(serviceId: string) {
     throw error;
   }
 }
+
 // Ajouter une transaction à un service
+// export async function addTransactionToService(
+//   serviceId: string,
+//   amount: number,
+//   description: string
+// ) {
+//   try {
+//     const service = await prisma.service.findUnique({
+//       where: {
+//         id: serviceId,
+//       },
+//       include: {
+//         transactions: true,
+//       },
+//     });
+//     if (!service) {
+//       throw new Error("Service non trouvé");
+//     }
+
+//     const totalTransactions = service.transactions.reduce(
+//       (sum, transaction) => sum + transaction.amount,
+//       0
+//     );
+
+//     // La transaction ne doit pas dépasser le montant du service
+//     const totalWithNewTransaction = totalTransactions + amount;
+//     if (totalWithNewTransaction > service.amount) {
+//       throw new Error(
+//         "Le montant total des transactions dépasse le montant du service"
+//       );
+//     }
+
+//     // Si le montant n'est pas supérieur, on crée la nouvelle transaction
+//     const newTransaction = await prisma.transaction.create({
+//       data: {
+//         amount,
+//         description,
+//         service: {
+//           connect: {
+//             id: service.id,
+//           },
+//         },
+//       },
+//     });
+
+//     // Mettre à jour le montant du service en ajoutant le montant de l'option
+//     await prisma.service.update({
+//       where: {
+//         id: service.id,
+//       },
+//       data: {
+//         amount: service.amount + amount,
+//       },
+//     });
+
+//     console.log("Transaction ajoutée avec succès");
+//     return newTransaction;
+//   } catch (error) {
+//     console.error("Erreur lors de l'ajout de la transaction", error);
+//     throw error;
+//   }
+// }
 export async function addTransactionToService(
   serviceId: string,
   amount: number,
   description: string
 ) {
   try {
+    // Récupération du service et de ses transactions
     const service = await prisma.service.findUnique({
       where: {
         id: serviceId,
@@ -153,20 +216,7 @@ export async function addTransactionToService(
       throw new Error("Service non trouvé");
     }
 
-    const totalTransactions = service.transactions.reduce(
-      (sum, transaction) => sum + transaction.amount,
-      0
-    );
-
-    // La transaction ne doit pas dépasser le montant du service
-    const totalWithNewTransaction = totalTransactions + amount;
-    if (totalWithNewTransaction > service.amount) {
-      throw new Error(
-        "Le montant total des transactions dépasse le montant du service"
-      );
-    }
-
-    // Si le montant n'est pas supérieur, on crée la nouvelle transaction
+    // Création de la nouvelle transaction
     const newTransaction = await prisma.transaction.create({
       data: {
         amount,
@@ -179,7 +229,7 @@ export async function addTransactionToService(
       },
     });
 
-    // Mettre à jour le montant du service en ajoutant le montant de l'option
+    // Mise à jour du montant du service
     await prisma.service.update({
       where: {
         id: service.id,
@@ -196,7 +246,6 @@ export async function addTransactionToService(
     throw error;
   }
 }
-
 // Supprimer un service et ses transactions
 export async function deleteService(serviceId: string) {
   try {

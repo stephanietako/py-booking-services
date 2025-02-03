@@ -15,7 +15,7 @@ const ListUser = () => {
       const response = await fetch(`/api/getAllUsers`, { method: "GET" });
 
       if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des utilisateurs");
+        throw new Error("error fetching user data");
       }
 
       const data: User[] = await response.json();
