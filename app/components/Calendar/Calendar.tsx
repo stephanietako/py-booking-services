@@ -44,7 +44,7 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
   useEffect(() => {
     if (date.dateTime) {
       localStorage.setItem("selectedTime", date.dateTime.toISOString());
-      router.push("/carts");
+      router.push("/serviceList");
     }
   }, [date.dateTime, router]);
 

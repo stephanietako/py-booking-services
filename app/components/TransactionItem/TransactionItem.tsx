@@ -1,44 +1,82 @@
-import { Transaction } from "@/types";
+// import React from "react";
+// import { Transaction } from "@/types";
+// import Link from "next/link";
+// import styles from "./styles.module.scss";
+
+// type TransactionItemProps = {
+//   transaction: Transaction;
+// };
+
+// const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
+//   return (
+//     <li className={styles.transaction_item}>
+//       <div className={styles.transaction_item__details}>
+//         <span className={styles.transaction_item__amount}>
+//           {transaction.amount}€
+//         </span>
+//         <span className={styles.transaction_item__description}>
+//           {transaction.description}
+//         </span>
+//         <span className={styles.transaction_item__date}>
+//           {/* {new Date(transaction.createdAt).toLocaleDateString("fr-FR")} */}
+//           {transaction.createdAt.toLocaleDateString("fr-FR")} à{" "}
+//           {transaction.createdAt.toLocaleTimeString("fr-FR", {
+//             hour: "2-digit",
+//             minute: "2-digit",
+//           })}
+//         </span>
+//       </div>
+//       <span className="font-bold text-sm">{transaction.description}</span>
+//       <div className={styles.transaction_item__see_more}>
+//         <Link
+//           className={styles.btn__see_more}
+//           href={`/manage/${transaction.serviceId}`}
+//         >
+//           voir plus
+//         </Link>
+//       </div>
+//     </li>
+//   );
+// };
+
+// export default TransactionItem;
 import React from "react";
+import { Transaction } from "@/types";
 import Link from "next/link";
-// Styles
 import styles from "./styles.module.scss";
 
-interface TransactionItemProps {
+type TransactionItemProps = {
   transaction: Transaction;
-}
+};
 
 const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
+  const transactionDate = new Date(transaction.createdAt); // ✅ Conversion de la date
+  console.log("Transaction affichée:", transaction);
   return (
-    <li key={transaction.id} className={styles.transaction_item_list}>
-      <div className={styles.transaction_item_list__bloc}>
-        <button className={styles.btn_transaction_item}>
-          <div className={styles.transaction_item__badge}>
-            + {transaction.amount}€
-          </div>
-          {/* {transaction.service} */}
-        </button>
+    <li className={styles.transaction_item}>
+      <div className={styles.transaction_item__details}>
+        <span className={styles.transaction_item__amount}>
+          {transaction.amount}€
+        </span>
+        <span className={styles.transaction_item__description}>
+          {transaction.description}
+        </span>
+        <span className={styles.transaction_item__date}>
+          {transactionDate.toLocaleDateString("fr-FR")} à{" "}
+          {transactionDate.toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
       </div>
-      <div className={styles.transaction_item__infos}>
-        <div className={styles.transaction_item__infos_bloc}>
-          <span className={styles.transaction_item__description}>
-            {transaction.description}
-          </span>
-          <span className={styles.transaction_item__date_time}>
-            {transaction.createdAt.toLocaleDateString("fr-FR")} à{" "}
-            {transaction.createdAt.toLocaleTimeString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </span>
-        </div>
-      </div>
+
       <div className={styles.transaction_item__see_more}>
         <Link
           className={styles.btn__see_more}
           href={`/manage/${transaction.serviceId}`}
+          aria-label={`Voir plus de détails sur le service ${transaction.serviceId}`}
         >
-          voir plus
+          Voir plus
         </Link>
       </div>
     </li>

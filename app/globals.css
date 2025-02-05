@@ -40,8 +40,14 @@ body {
   background-color: var(--background-light);
   color: var(--text-color);
 }
+h1 {
+  font-size: 2.5rem;
+  color: #2a2a2a;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 600;
+}
 
-h1,
 h2,
 h3,
 h4,
@@ -178,9 +184,9 @@ header {
   padding: 12px 20px;
   background-color: #28a745;
   color: var(--white);
-  font-size: 16px;
+  font-size: 1rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -208,7 +214,24 @@ header {
 .btnHandleAddBudget:hover {
   background-color: #007bb5;
 }
+.actions button {
+  padding: 8px 15px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+}
 
+.actions button:hover {
+  background-color: #0056b3;
+}
+
+.actions button:disabled {
+  background-color: #ccc;
+}
 /* BOUTON GÉNÉRIQUE */
 button {
   padding: 10px 20px;
@@ -224,19 +247,6 @@ button {
 button:hover {
   background: #005bb5;
 }
-/* .btn {
-  border: none;
-  text-decoration: none;
-  outline: none;
-  background-color: #3498db; 
-  color: white; 
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-.btn:focus {
-  outline: none; 
-} */
 
 /* BOUTON FERMETURE */
 .closeButton {
@@ -411,7 +421,7 @@ tr:hover {
   width: auto;
   height: auto;
   /* border: 4px solid blue; */
-  padding: 5px;
+  /* padding: 5px; */
   margin-top: 10vh;
   justify-content: center;
   flex-wrap: wrap;
@@ -631,7 +641,7 @@ tr:hover {
 
 .transactions_select__input {
   display: flex;
-  width: auto;
+  width: 24rem;
   height: auto;
   border-radius: 20px;
   border: 4px solid blue;
@@ -811,7 +821,7 @@ p {
 }
 
 /* Style du container principal */
-.menu_container {
+/* .menu_container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -821,19 +831,26 @@ p {
   background-color: #f8f8f8;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+} */
+.menu_container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-
 /* Style du formulaire */
 .menu_form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
   width: 100%;
   margin-bottom: 30px;
 }
 
 /* Champs de texte */
-.input_name,
+/* .input_name,
 .input_description,
 .input_price {
   padding: 10px;
@@ -841,25 +858,63 @@ p {
   border-radius: 4px;
   font-size: 16px;
   outline: none;
+} */
+.input_name,
+.input_description,
+.input_price {
+  padding: 12px 20px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s;
 }
-
-.input_name:focus,
+/* .input_name:focus,
 .input_description:focus,
 .input_price:focus {
   border-color: #0070f3;
+} */
+.input_name:focus,
+.input_description:focus,
+.input_price:focus {
+  border-color: #007bff;
+  outline: none;
+  background-color: #fff;
 }
-
 /* Label du fichier */
-.label_file {
+/* .label_file {
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
+} */
+.label_file {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.label_file:hover {
+  background-color: #0056b3;
+}
+
+.file_input_preview {
+  display: inline-block;
+  margin-left: 20px;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #f0f0f0;
 }
 
 .file_input {
   background-color: #0070f3;
-  color: white;
+  color: #fff;
   padding: 10px 20px;
   border-radius: 4px;
   text-align: center;
@@ -882,7 +937,7 @@ p {
 }
 
 /* Messages d'erreur et de succès */
-.text_error {
+/* .text_error {
   color: red;
   font-weight: bold;
   margin-top: 15px;
@@ -892,8 +947,26 @@ p {
   color: green;
   font-weight: bold;
   margin-top: 15px;
+} */
+.text_error,
+.text_success {
+  font-size: 1rem;
+  text-align: center;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-weight: bold;
 }
 
+.text_error {
+  color: #ff4d4f;
+  background-color: #fff1f0;
+}
+
+.text_success {
+  color: #4caf50;
+  background-color: #e7f8e7;
+}
 /* Section de la liste des services */
 .menu_items {
   display: flex;
@@ -901,15 +974,25 @@ p {
   gap: 20px;
 }
 
-.menu_items__text {
+/* .menu_items__text {
   font-size: 18px;
   font-weight: bold;
+} */
+.menu_items__text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: #333;
 }
-
-.menu_items__container {
-  display: grid;
+/* .menu_items__container {
+  display: flex;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 15px;
+} */
+.menu_items__container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .menu_items__container div {
@@ -927,7 +1010,7 @@ p {
   padding: 8px 15px;
   margin-top: 10px;
   background-color: #ff6b6b;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -1013,11 +1096,15 @@ p {
   object-fit: cover;
 }
 
-.actions {
+/* .actions {
   display: block;
   gap: 10px;
+} */
+.actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
 }
-
 .modif_users_link {
   text-decoration: none;
   color: #3498db;
@@ -1203,13 +1290,13 @@ p {
 
 .switch-btn.active {
   background-color: #4281c4;
-  color: white;
+  color: #fff;
   border-color: #007bff;
 }
 
 .switch-btn:hover {
   background-color: #0056b3;
-  color: white;
+  color: #fff;
 }
 
 /* Opening hours */
@@ -1378,6 +1465,55 @@ input[type="time"]:focus {
 .closed-day {
   background-color: #dc2626;
   color: white;
+}
+
+/* Styles pour le formulaire */
+.select_option {
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+}
+
+.select_option .react-select__control {
+  border-radius: 6px;
+}
+
+.service_item {
+  background-color: #fafafa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s;
+}
+
+.service_item:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.service_item p {
+  font-size: 1rem;
+  color: #555;
+  margin: 5px 0;
+}
+
+.guide_text {
+  font-size: 1rem;
+  color: #555;
+  margin: 5px 0;
+  padding: 2rem;
+}
+/* /////serviceList///// */
+.service_list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.service_list__container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 /* //////////////RESPONSIVE///////////// */

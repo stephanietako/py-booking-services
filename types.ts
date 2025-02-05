@@ -18,32 +18,27 @@ export interface Role {
 }
 
 export type Service = {
-  categories: string[];
   id: string;
   name: string;
   amount: number;
+  categories: string[]; // Utilisation d'un tableau de chaînes
   description: string | null;
   imageUrl: string;
-  userId: string | null; // Le userId peut être nul
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
-  transactions: {
-    id: string;
-    amount: number;
-    createdAt: Date;
-    description: string;
-    serviceId: string | null;
-  }[];
+  transactions?: Transaction[];
+  bookings?: Booking[]; // Marquer `bookings` comme optionnel
 };
 
 export interface Transaction {
-  id: string;
-  amount: number;
-  description?: string;
-  createdAt: Date;
-  serviceId?: string | null;
-  service?: Service | null;
+  id: string; // L'ID est de type UUID (généré automatiquement)
+  amount: number; // Montant de la transaction
+  description?: string; // Description optionnelle
+  createdAt: Date; // Date de création (DateTime dans Prisma)
+  serviceId?: string | null; // serviceId peut être null ou défini
+  service?: Service | null; // Objet Service optionnel, peut être null
+  bookings?: Booking[]; // Réservations associées à la transaction
 }
 
 export interface CustomUser {
@@ -74,4 +69,14 @@ export interface DayInput {
 
 export interface CloseDayInput {
   date: Date;
+}
+
+export interface Booking {
+  id: string;
+  serviceId: string;
+  userId: string;
+  service: Service; // Service réservé par l'utilisateur
+  user: User; // Utilisateur qui a fait la réservation
+  createdAt: Date; // Date de création de la réservation
+  transactions: Transaction[]; // Liste des options ajoutées à la réservation
 }

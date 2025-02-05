@@ -6,7 +6,6 @@ import { getAllServices } from "@/actions/actions";
 import ServiceItem from "../components/ServiceItem/ServiceItem";
 import styles from "./styles.module.scss";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
-import Link from "next/link";
 
 const ServicesPage: React.FC = () => {
   //const { user } = useUser();
@@ -36,8 +35,8 @@ const ServicesPage: React.FC = () => {
   return (
     <Wrapper>
       <div className={styles.container}>
-        <h1 className={styles.title}>Services Page</h1>
-        <h2>Services disponibles</h2>
+        <h1 className={styles.title}>Page Administrateur Services</h1>
+        <h2>Vue D&apos;ensemble Des Services disponibles</h2>
         <ul className={styles.list_services}>
           {loading ? (
             <div>Chargement...</div>
@@ -45,9 +44,11 @@ const ServicesPage: React.FC = () => {
             <div>Aucun service disponible</div>
           ) : (
             services.map((service) => (
-              <Link key={service.id} href={`/manage/${service.id}`}>
-                <ServiceItem service={service} enableHover={1}></ServiceItem>
-              </Link>
+              <ServiceItem
+                key={service.id}
+                service={service}
+                enableHover={1}
+              ></ServiceItem>
             ))
           )}
         </ul>

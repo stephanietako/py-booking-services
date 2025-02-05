@@ -11,82 +11,80 @@
 // } from "@/actions/actions";
 // import { Service as ServiceType } from "@/types";
 // import Wrapper from "@/app/components/Wrapper/Wrapper";
-// //import { selectOptions } from 'src/utils/helper'
-// //
-// // Définition des types d'input (propriétés d'un service)
+// import { selectOptions } from "@/utils/helpers";
+// import dynamic from "next/dynamic";
+// const DynamicSelect = dynamic(() => import("react-select"), { ssr: false });
+
 // type Input = {
-//   id?: string; // L'ID est optionnel lors de la création d'un service
+//   id?: string;
 //   name: string;
-//   description?: string; // description est facultatif
+//   description?: string;
 //   amount: number;
-//   file?: File; // fichier est optionnel
+//   file?: File;
+//   categories: string[];
+//   imageUrl?: string;
 // };
 
-// // Valeurs initiales des inputs, utilisée lors de la réinitialisation du formulaire
 // const initialInput: Input = {
 //   name: "",
-//   description: "", // Valeur initiale vide pour description
+//   description: "",
 //   amount: 0,
 //   file: undefined,
+//   categories: [],
+//   imageUrl: "",
 // };
 
-// // interface ServiceProps {
-// //   selectedTime: string; //as ISO
-// // }
-
 // const Service: FC = () => {
-//   // États pour la gestion des erreurs, des entrées et des services
 //   const [error, setError] = useState<string>("");
-//   const [input, setInput] = useState<Input>(initialInput); // Valeurs du formulaire
-//   const [preview, setPreview] = useState<string>(""); // Prévisualisation de l'image
-//   const [services, setServices] = useState<ServiceType[]>([]); // Liste des services
-//   const [successMessage, setSuccessMessage] = useState<string>(""); // Message de succès
-//   //const { user } = useUser(); // Utilisateur connecté via Clerk
-//   const [isFormModified, setIsFormModified] = useState(false); // Suivi des modifications du formulaire
+//   const [input, setInput] = useState<Input>(initialInput);
+//   const [preview, setPreview] = useState<string>("");
+//   const [services, setServices] = useState<ServiceType[]>([]);
+//   const [successMessage, setSuccessMessage] = useState<string>("");
+//   const [isFormModified, setIsFormModified] = useState(false);
 
-//   // Récupération des services au chargement
 //   useEffect(() => {
 //     const fetchAllServices = async () => {
 //       try {
-//         const data = await getAllServices(); // Récupère la liste des services
-//         setServices(data);
-//       } catch (error) {
+//         const data = await getAllServices();
+//         setServices(
+//           data.map((service) => ({
+//             ...service,
+//             transactions: service.transactions || [],
+//           }))
+//         );
+//       } catch {
 //         console.error("Erreur lors du chargement des services:", error);
 //         setError("Impossible de charger les services.");
 //       }
 //     };
 //     fetchAllServices();
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
 //   }, []);
 
-//   // Gestion de l'aperçu de l'image sélectionnée
 //   useEffect(() => {
-//     if (!input.file) return; // Si aucun fichier n'est sélectionné, on ne fait rien
+//     if (!input.file) return;
 
-//     const objectUrl = URL.createObjectURL(input.file); // Création d'un URL temporaire pour l'aperçu
+//     const objectUrl = URL.createObjectURL(input.file);
 //     setPreview(objectUrl);
-//     return () => URL.revokeObjectURL(objectUrl); // Libère l'URL après utilisation
+//     return () => URL.revokeObjectURL(objectUrl);
 //   }, [input.file]);
 
-//   // Gestion des champs texte (nom, description, montant)
 //   const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
 //     const { name, value } = e.target;
 //     setInput((prev) => ({ ...prev, [name]: value }));
-//     setIsFormModified(true); // Marque que le formulaire a été modifié
+//     setIsFormModified(true);
 //   };
 
-//   // Gestion de la sélection de fichier pour l'image
 //   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-//     if (!e.target.files?.[0]) return; // Si aucun fichier n'est sélectionné, on arrête
-//     setError(""); // Réinitialise les erreurs
+//     if (!e.target.files?.[0]) return;
+//     setError("");
 //     const file = e.target.files[0];
 
-//     // Vérification de la taille du fichier
 //     if (file.size > MAX_FILE_SIZE) {
-//       setError("Image trop grande, veuillez choisir une image de moins de 1Mo");
+//       setError("Image trop grande, veuillez choisir une image de moins de 5Mo");
 //       return;
 //     }
 
-//     // Vérification du type de fichier
 //     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
 //     if (!allowedTypes.includes(file.type)) {
 //       setError(
@@ -94,117 +92,123 @@
 //       );
 //       return;
 //     }
-//     setInput((prev) => ({ ...prev, file })); // Mémorise le fichier sélectionné
+//     setInput((prev) => ({ ...prev, file }));
 //   };
 
-//   // Enregistrement ou mise à jour du service
 //   const handleSaveService = async () => {
-//     setError(""); // Réinitialisation des erreurs
-//     setSuccessMessage(""); // Réinitialisation du message de succès
+//     setError("");
+//     setSuccessMessage("");
 
-//     // Vérification minimale : au moins un champ doit être modifié
 //     if (
-//       !input.id && // Si l'ID est absent (création d'un service)
-//       (!input.name.trim() ||
-//         !input.description?.trim() ||
-//         input.amount <= 0 ||
-//         !input.file)
+//       !input.name.trim() ||
+//       !input.description?.trim() ||
+//       input.amount <= 0 ||
+//       (!input.file && !input.imageUrl) ||
+//       input.categories.length === 0
 //     ) {
-//       setError("Tous les champs sont requis lors de la création.");
-//       return;
-//     }
-
-//     // Vérification que des modifications ont été apportées pour un service existant
-//     if (
-//       input.id && // Si c'est une mise à jour de service
-//       !input.name && // Aucun champ n'a été modifié
-//       !input.description &&
-//       !input.amount &&
-//       !input.file
-//     ) {
-//       setError("Veuillez modifier au moins un champ.");
+//       setError("Tous les champs sont requis.");
 //       return;
 //     }
 
 //     try {
-//       setIsFormModified(false); // Désactive le statut de modification
-
-//       // Si c'est une mise à jour, on prépare les données
 //       if (input.id) {
-//         const updateData: Partial<typeof input> = {};
-//         if (input.name) updateData.name = input.name;
-//         if (input.description) updateData.description = input.description;
-//         if (input.amount) updateData.amount = input.amount;
-//         if (input.file) updateData.file = input.file;
-
-//         // Appel à l'action updateService pour mettre à jour
 //         await updateService(
 //           input.id,
-//           updateData.name!,
-//           updateData.amount!,
-//           updateData.description!,
-//           updateData.file
+//           input.name,
+//           input.amount,
+//           input.description || "",
+//           input.file
 //         );
 //         setSuccessMessage("Service mis à jour avec succès !");
 //       } else {
-//         // Si c'est une création de service
 //         await createService(
 //           input.name,
 //           input.amount,
-//           input.description!,
-//           input.file!
+//           input.description || "",
+//           input.file!,
+//           input.categories
 //         );
 //         setSuccessMessage("Service créé avec succès !");
 //       }
 
-//       // Récupération de la liste mise à jour des services
 //       const updatedServices = await getAllServices();
 //       setServices(updatedServices);
-//       setInput(initialInput); // Réinitialisation du formulaire
-//       setPreview(""); // Réinitialisation de l'aperçu de l'image
-//     } catch (error) {
-//       console.error("Erreur lors de l'enregistrement :", error);
-//       setError("Une erreur s'est produite. Veuillez réessayer.");
-//     } finally {
-//       setIsFormModified(true); // Réactive le statut de modification
+//       setInput(initialInput);
+//       setPreview("");
+//       setIsFormModified(false);
+//     } catch {
+//       setError("Une erreur est survenue.");
 //     }
 //   };
 
-//   // Suppression d'un service
 //   const handleDelete = async (id: string) => {
 //     try {
-//       await deleteService(id); // Appel à l'action deleteService
-//       const updatedServices = await getAllServices(); // Mise à jour de la liste des services
+//       await deleteService(id);
+//       const updatedServices = await getAllServices();
 //       setServices(updatedServices);
 //       setSuccessMessage("Service supprimé avec succès !");
-//     } catch (error) {
-//       console.error("Erreur de suppression :", error);
+//     } catch {
 //       setError("Erreur lors de la suppression.");
 //     }
 //   };
 
-//   // Préparation à l'édition d'un service
 //   const handleEditService = (service: ServiceType) => {
 //     setInput({
 //       id: service.id,
 //       name: service.name,
-//       description: service.description || "", // Valeur par défaut pour description
+//       description: service.description || "",
 //       amount: service.amount,
-//       file: undefined, // Réinitialisation de l'image
+//       file: undefined,
+//       categories: service.categories || [],
+//       imageUrl: service.imageUrl || "",
 //     });
-//     setPreview(service.imageUrl || "/default.png"); // Prise en charge de l'URL de l'image du service
+//     setPreview(service.imageUrl || "/assets/default.png");
 //   };
+
+//   useEffect(() => {
+//     if (successMessage) {
+//       const timer = setTimeout(() => {
+//         setSuccessMessage("");
+//       }, 3000);
+
+//       return () => clearTimeout(timer);
+//     }
+//   }, [successMessage]);
 
 //   return (
 //     <Wrapper>
 //       <div className="menu_container">
-//         <h1>CRÉATION D&apos;UN SERVICE </h1>
+//         <h1>Création et gestion des Services</h1>
+//         <p className="guide_text">
+//           Bienvenue sur la page de gestion des services. Vous pouvez ajouter,
+//           modifier et supprimer des services en utilisant les formulaires
+//           ci-dessous. Assurez-vous que tous les champs sont correctement remplis
+//           avant de sauvegarder un service. Pour modifier un service existant,
+//           cliquez sur &quot;Modifier&quot;, et pour supprimer un service,
+//           cliquez sur &quot;Supprimer&quot;.
+//         </p>
 //         <div className="menu_form">
+//           <DynamicSelect
+//             value={input.categories.map((category) => ({
+//               value: category,
+//               label: category,
+//             }))}
+//             onChange={(newValue) => {
+//               const selectedCategories = (
+//                 newValue as { value: string; label: string }[]
+//               ).map((option) => option.value);
+//               setInput((prev) => ({ ...prev, categories: selectedCategories }));
+//               setIsFormModified(true);
+//             }}
+//             isMulti
+//             className="select_option"
+//             options={selectOptions}
+//           />
 //           <input
 //             name="name"
 //             className="input_name"
 //             type="text"
-//             placeholder="Nom"
+//             placeholder="Nom du service"
 //             onChange={handleTextChange}
 //             value={input.name}
 //           />
@@ -232,7 +236,7 @@
 //               {preview ? (
 //                 <Image
 //                   alt="preview"
-//                   src={preview || "/default.png"}
+//                   src={preview || "/assets/default.png"}
 //                   width={100}
 //                   height={100}
 //                 />
@@ -263,21 +267,25 @@
 //           <p className="menu_items__text">Vos services :</p>
 //           <div className="menu_items__container">
 //             {services.map((service) => (
-//               <div key={service.id}>
+//               <div key={service.id} className="service_item">
+//                 <p>{service.categories.join(", ")}</p>
 //                 <p>{service.name}</p>
 //                 <p>{service.description}</p>
+//                 <p>{service.amount}€</p>
 //                 <Image
 //                   src={service.imageUrl || "/default.png"}
 //                   alt={service.name}
 //                   width={100}
 //                   height={100}
 //                 />
-//                 <button onClick={() => handleDelete(service.id)}>
-//                   Supprimer
-//                 </button>
-//                 <button onClick={() => handleEditService(service)}>
-//                   Modifier
-//                 </button>
+//                 <div className="actions">
+//                   <button onClick={() => handleEditService(service)}>
+//                     Modifier
+//                   </button>
+//                   <button onClick={() => handleDelete(service.id)}>
+//                     Supprimer
+//                   </button>
+//                 </div>
 //               </div>
 //             ))}
 //           </div>
@@ -289,7 +297,6 @@
 
 // export default Service;
 "use client";
-
 import React, { FC, useEffect, useState, ChangeEvent } from "react";
 import Image from "next/image";
 import { MAX_FILE_SIZE } from "@/app/constants/config";
@@ -305,77 +312,93 @@ import { selectOptions } from "@/utils/helpers";
 import dynamic from "next/dynamic";
 const DynamicSelect = dynamic(() => import("react-select"), { ssr: false });
 
-// Définition des types d'input (propriétés d'un service)
 type Input = {
-  id?: string; // L'ID est optionnel lors de la création d'un service
+  id?: string;
   name: string;
-  description?: string; // description est facultatif
+  description?: string;
   amount: number;
-  file?: File; // fichier est optionnel
+  file?: File;
   categories: string[];
+  imageUrl?: string;
 };
 
-// Valeurs initiales des inputs, utilisée lors de la réinitialisation du formulaire
 const initialInput: Input = {
   name: "",
-  description: "", // Valeur initiale vide pour description
+  description: "",
   amount: 0,
   file: undefined,
   categories: [],
+  imageUrl: "",
 };
 
 const Service: FC = () => {
-  // États pour la gestion des erreurs, des entrées et des services
   const [error, setError] = useState<string>("");
-  const [input, setInput] = useState<Input>(initialInput); // Valeurs du formulaire
-  const [preview, setPreview] = useState<string>(""); // Prévisualisation de l'image
-  const [services, setServices] = useState<ServiceType[]>([]); // Liste des services
-  const [successMessage, setSuccessMessage] = useState<string>(""); // Message de succès
-  const [isFormModified, setIsFormModified] = useState(false); // Suivi des modifications du formulaire
+  const [input, setInput] = useState<Input>(initialInput);
+  const [preview, setPreview] = useState<string>("");
+  const [services, setServices] = useState<ServiceType[]>([]);
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [isFormModified, setIsFormModified] = useState(false);
 
-  // Récupération des services au chargement
   useEffect(() => {
     const fetchAllServices = async () => {
       try {
-        const data = await getAllServices(); // Récupère la liste des services
-        setServices(data);
-      } catch (error) {
-        console.error("Erreur lors du chargement des services:", error);
+        const data = await getAllServices();
+        setServices(
+          data.map((service) => ({
+            ...service,
+            transactions: service.transactions || [],
+          }))
+        );
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "Une erreur inconnue est survenue.";
+        console.error("Erreur lors du chargement des services:", errorMessage); // Affiche l'erreur complète
         setError("Impossible de charger les services.");
       }
     };
+
     fetchAllServices();
   }, []);
 
-  // Gestion de l'aperçu de l'image sélectionnée
   useEffect(() => {
-    if (!input.file) return; // Si aucun fichier n'est sélectionné, on ne fait rien
+    if (!input.file) return;
 
-    const objectUrl = URL.createObjectURL(input.file); // Création d'un URL temporaire pour l'aperçu
+    const objectUrl = URL.createObjectURL(input.file);
     setPreview(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl); // Libère l'URL après utilisation
+    return () => URL.revokeObjectURL(objectUrl);
   }, [input.file]);
 
-  // Gestion des champs texte (nom, description, montant)
   const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInput((prev) => ({ ...prev, [name]: value }));
-    setIsFormModified(true); // Marque que le formulaire a été modifié
+    setIsFormModified(true);
   };
 
-  // Gestion de la sélection de fichier pour l'image
+  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    // Vérifie que l'entrée est valide (nombres, un seul point décimal et jusqu'à deux décimales)
+    if (/^\d*\.?\d{0,2}$/.test(value)) {
+      setInput((prev) => ({
+        ...prev,
+        amount: value === "" ? 0 : parseFloat(value),
+      }));
+      setIsFormModified(true);
+    }
+  };
+
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return; // Si aucun fichier n'est sélectionné, on arrête
-    setError(""); // Réinitialise les erreurs
+    if (!e.target.files?.[0]) return;
+    setError("");
     const file = e.target.files[0];
 
-    // Vérification de la taille du fichier
     if (file.size > MAX_FILE_SIZE) {
-      setError("Image trop grande, veuillez choisir une image de moins de 1Mo");
+      setError("Image trop grande, veuillez choisir une image de moins de 5Mo");
       return;
     }
 
-    // Vérification du type de fichier
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {
       setError(
@@ -383,112 +406,101 @@ const Service: FC = () => {
       );
       return;
     }
-    setInput((prev) => ({ ...prev, file })); // Mémorise le fichier sélectionné
+    setInput((prev) => ({ ...prev, file }));
   };
 
-  // Enregistrement ou mise à jour du service
   const handleSaveService = async () => {
-    setError(""); // Réinitialisation des erreurs
-    setSuccessMessage(""); // Réinitialisation du message de succès
+    setError("");
+    setSuccessMessage("");
 
-    // Vérification minimale : au moins un champ doit être modifié
     if (
-      !input.id && // Si l'ID est absent (création d'un service)
-      (!input.name.trim() ||
-        !input.description?.trim() ||
-        input.amount <= 0 ||
-        !input.file)
+      !input.name.trim() ||
+      !input.description?.trim() ||
+      input.amount <= 0 ||
+      (!input.file && !input.imageUrl) ||
+      input.categories.length === 0
     ) {
-      setError("Tous les champs sont requis lors de la création.");
-      return;
-    }
-
-    // Vérification que des modifications ont été apportées pour un service existant
-    if (
-      input.id && // Si c'est une mise à jour de service
-      !input.name && // Aucun champ n'a été modifié
-      !input.description &&
-      !input.amount &&
-      !input.file
-    ) {
-      setError("Veuillez modifier au moins un champ.");
+      setError("Tous les champs sont requis.");
       return;
     }
 
     try {
-      setIsFormModified(false); // Désactive le statut de modification
-
-      // Si c'est une mise à jour, on prépare les données
       if (input.id) {
-        const updateData: Partial<typeof input> = {};
-        if (input.name) updateData.name = input.name;
-        if (input.description) updateData.description = input.description;
-        if (input.amount) updateData.amount = input.amount;
-        if (input.file) updateData.file = input.file;
-
-        // Appel à l'action updateService pour mettre à jour
         await updateService(
           input.id,
-          updateData.name!,
-          updateData.amount!,
-          updateData.description!,
-          updateData.file
+          input.name,
+          input.amount,
+          input.description || "",
+          input.file
         );
         setSuccessMessage("Service mis à jour avec succès !");
       } else {
-        // Si c'est une création de service
         await createService(
           input.name,
           input.amount,
-          input.description!,
-          input.file!
+          input.description || "",
+          input.file!,
+          input.categories
         );
         setSuccessMessage("Service créé avec succès !");
       }
 
-      // Récupération de la liste mise à jour des services
       const updatedServices = await getAllServices();
       setServices(updatedServices);
-      setInput(initialInput); // Réinitialisation du formulaire
-      setPreview(""); // Réinitialisation de l'aperçu de l'image
-    } catch (error) {
-      console.error("Erreur lors de l'enregistrement :", error);
-      setError("Une erreur s'est produite. Veuillez réessayer.");
-    } finally {
-      setIsFormModified(true); // Réactive le statut de modification
+      setInput(initialInput);
+      setPreview("");
+      setIsFormModified(false);
+    } catch {
+      setError("Une erreur est survenue.");
     }
   };
 
-  // Suppression d'un service
   const handleDelete = async (id: string) => {
     try {
-      await deleteService(id); // Appel à l'action deleteService
-      const updatedServices = await getAllServices(); // Mise à jour de la liste des services
+      await deleteService(id);
+      const updatedServices = await getAllServices();
       setServices(updatedServices);
       setSuccessMessage("Service supprimé avec succès !");
-    } catch (error) {
-      console.error("Erreur de suppression :", error);
+    } catch {
       setError("Erreur lors de la suppression.");
     }
   };
 
-  // Préparation à l'édition d'un service
   const handleEditService = (service: ServiceType) => {
     setInput({
       id: service.id,
       name: service.name,
-      description: service.description || "", // Valeur par défaut pour description
+      description: service.description || "",
       amount: service.amount,
-      file: undefined, // Réinitialisation de l'image
-      categories: service.categories || [], // Ajout des catégories
+      file: undefined,
+      categories: service.categories || [],
+      imageUrl: service.imageUrl || "",
     });
-    setPreview(service.imageUrl || "/default.png"); // Prise en charge de l'URL de l'image du service
+    setPreview(service.imageUrl || "/assets/default.png");
   };
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   return (
     <Wrapper>
       <div className="menu_container">
-        <h1>CRÉATION D&apos;UN SERVICE </h1>
+        <h1>Création et gestion des Services</h1>
+        <p className="guide_text">
+          Bienvenue sur la page de gestion des services. Vous pouvez ajouter,
+          modifier et supprimer des services en utilisant les formulaires
+          ci-dessous. Assurez-vous que tous les champs sont correctement remplis
+          avant de sauvegarder un service. Pour modifier un service existant,
+          cliquez sur &quot;Modifier&quot;, et pour supprimer un service,
+          cliquez sur &quot;Supprimer&quot;.
+        </p>
         <div className="menu_form">
           <DynamicSelect
             value={input.categories.map((category) => ({
@@ -499,12 +511,8 @@ const Service: FC = () => {
               const selectedCategories = (
                 newValue as { value: string; label: string }[]
               ).map((option) => option.value);
-              setInput((prev) => ({
-                ...prev,
-                categories: selectedCategories,
-                name: selectedCategories[0] || "", // Définir le nom comme la première catégorie sélectionnée
-              }));
-              setIsFormModified(true); // Marque que le formulaire a été modifié
+              setInput((prev) => ({ ...prev, categories: selectedCategories }));
+              setIsFormModified(true);
             }}
             isMulti
             className="select_option"
@@ -514,10 +522,9 @@ const Service: FC = () => {
             name="name"
             className="input_name"
             type="text"
-            placeholder="Nom"
+            placeholder="Nom du service"
             onChange={handleTextChange}
             value={input.name}
-            readOnly // Rendre le champ en lecture seule pour éviter les modifications manuelles
           />
           <input
             name="description"
@@ -530,20 +537,19 @@ const Service: FC = () => {
           <input
             name="amount"
             className="input_price"
-            type="number"
+            type="text"
             placeholder="Prix"
-            onChange={(e) =>
-              setInput((prev) => ({ ...prev, amount: Number(e.target.value) }))
-            }
-            value={input.amount}
+            onChange={handlePriceChange} // On utilise la fonction de validation ci-dessus
+            value={input.amount === 0 ? "" : input.amount.toString()} // Empêche l'affichage de "0" dans le champ d'entrée
           />
+
           <label htmlFor="file" className="label_file">
             <span className="file_input">Choisir une image</span>
             <div className="file_input_preview">
               {preview ? (
                 <Image
                   alt="preview"
-                  src={preview || "/default.png"}
+                  src={preview || "/assets/default.png"}
                   width={100}
                   height={100}
                 />
@@ -574,23 +580,25 @@ const Service: FC = () => {
           <p className="menu_items__text">Vos services :</p>
           <div className="menu_items__container">
             {services.map((service) => (
-              <div key={service.id}>
+              <div key={service.id} className="service_item">
                 <p>{service.categories.join(", ")}</p>
                 <p>{service.name}</p>
                 <p>{service.description}</p>
-                <p>{service.amount}</p>
+                <p>{service.amount}€</p>
                 <Image
                   src={service.imageUrl || "/default.png"}
                   alt={service.name}
                   width={100}
                   height={100}
                 />
-                <button onClick={() => handleDelete(service.id)}>
-                  Supprimer
-                </button>
-                <button onClick={() => handleEditService(service)}>
-                  Modifier
-                </button>
+                <div className="actions">
+                  <button onClick={() => handleEditService(service)}>
+                    Modifier
+                  </button>
+                  <button onClick={() => handleDelete(service.id)}>
+                    Supprimer
+                  </button>
+                </div>
               </div>
             ))}
           </div>

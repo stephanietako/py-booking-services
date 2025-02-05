@@ -3,7 +3,10 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// 🏗 Résumé du fonctionnement
+// 1️⃣ L'admin gère la base de services (Service).
+// 2️⃣ L’utilisateur choisit un service et effectue une réservation (Booking).
+// 3️⃣ Chaque Booking stocke quel utilisateur (userId) a réservé quel service (serviceId).
 generator client {
   provider = "prisma-client-js"
 }
@@ -23,9 +26,8 @@ model User {
   clerkUserId String    @unique
   roleId      String
   createdAt   DateTime  @default(now())
-  services    Service[]
+  bookings    Booking[] // Un utilisateur peut avoir plusieurs réservations
   role        Role      @relation(fields: [roleId], references: [id])
-  bookings    Booking[]
 }
 
 model Role {
@@ -38,25 +40,24 @@ model Service {
   id           String        @id @default(uuid())
   name         String
   amount       Float
-  userId       String?
-  user         User?         @relation(fields: [userId], references: [id])
-  transactions Transaction[]
-  bookings     Booking[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  categories   String[] // Changement pour un tableau de catégories
   description  String?
   imageUrl     String
   active       Boolean       @default(true)
-  categories   String[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+  bookings     Booking[]
 }
 
 model Transaction {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   description String
   amount      Float
   serviceId   String?
-  service     Service? @relation(fields: [serviceId], references: [id])
-  createdAt   DateTime @default(now())
+  service     Service?  @relation(fields: [serviceId], references: [id])
+  createdAt   DateTime  @default(now())
+  Booking     Booking[]
 }
 
 model ClosedDay {
@@ -73,10 +74,11 @@ model Day {
 }
 
 model Booking {
-  id        String   @id @default(uuid())
-  userId    String
-  serviceId String
-  user      User     @relation(fields: [userId], references: [id])
-  service   Service  @relation(fields: [serviceId], references: [id])
-  createdAt DateTime @default(now())
+  id           String        @id @default(uuid())
+  userId       String
+  serviceId    String
+  user         User          @relation(fields: [userId], references: [id])
+  service      Service       @relation(fields: [serviceId], references: [id])
+  createdAt    DateTime      @default(now())
+  transactions Transaction[]
 }

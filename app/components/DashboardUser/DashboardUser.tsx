@@ -8,15 +8,14 @@ import {
 } from "@/actions/actions";
 import { useUser } from "@clerk/nextjs";
 import React, { useState, useEffect } from "react";
-import Wrapper from "../components/Wrapper/Wrapper";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { MdOutlineDone } from "react-icons/md";
 import { FaSailboat } from "react-icons/fa6";
 import Link from "next/link";
-import ServiceItem from "../components/ServiceItem/ServiceItem";
+import ServiceItem from "../ServiceItem/ServiceItem";
 import { Service } from "@/types";
 
-const DashboardUserPage = () => {
+const DashboardUser = () => {
   const { user } = useUser();
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -27,51 +26,35 @@ const DashboardUserPage = () => {
   const [services, setService] = useState<Service[]>([]);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Ne pas exécuter fetchData tant que user est null
-  useEffect(() => {
-    if (!user) return;
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const userId = user?.id ?? "";
-      console.log("📌 Récupération des données pour:", userId);
-
-      const [amount, count, reachedServices, lastServices] = await Promise.all([
-        getTotalTransactionAmount(userId, "last30"),
-        getTotalTransactionCount(userId, "last30"),
-        getReachedServices(userId),
-        getLastServices(userId),
-      ]);
-
-      setTotalAmount(amount);
-      setTotalCount(count);
-      setReachedServicesRatio(JSON.stringify(reachedServices));
-      setService(lastServices as unknown as Service[]);
+      const userId = user?.id as string; // Utilisation de user.id ici
+      if (userId) {
+        const amount = await getTotalTransactionAmount(userId, "last30"); // Passage du bon identifiant
+        const count = await getTotalTransactionCount(userId, "last30");
+        const reachedServices = await getReachedServices(userId);
+        const lastServices = await getLastServices(userId);
+        setTotalAmount(amount);
+        setTotalCount(count);
+        setReachedServicesRatio(JSON.stringify(reachedServices));
+        setService(lastServices);
+        setIsLoading(false);
+      }
     } catch (error) {
-      console.error("❌ Erreur lors de la récupération des données:", error);
+      console.error("Erreur lors de la récupération des données", error);
       setFetchError("Impossible de récupérer les données.");
-    } finally {
       setIsLoading(false);
     }
   };
 
-  // 🔥 Attendre que `user` soit défini avant d'afficher la page
-  if (!user) {
-    return (
-      <Wrapper>
-        <div className="loading">
-          <span>Chargement des données utilisateur...</span>
-        </div>
-      </Wrapper>
-    );
-  }
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
-    <Wrapper>
+    <section>
       {isLoading ? (
         <div className="loading">
           <span>Loading ...</span>
@@ -96,7 +79,7 @@ const DashboardUserPage = () => {
             <div className="__box">
               <span id="total_transactions">Total des Transactions</span>
               <span className="item" id="box_total_amount">
-                {totalAmount != null ? `${totalAmount}€` : "Chargement..."}
+                {totalAmount != null ? `${totalAmount}€` : "N/A"}
               </span>
             </div>
             <FaMoneyCheckAlt />
@@ -109,7 +92,7 @@ const DashboardUserPage = () => {
             <div className="__box">
               <span id="total_transactions">Nombre de Transactions</span>
               <span className="item" id="total_transactions">
-                {totalCount != null ? `${totalCount}` : "Chargement..."}
+                {totalCount != null ? `${totalCount}` : "N/A"}
               </span>
             </div>
             <MdOutlineDone />
@@ -122,7 +105,7 @@ const DashboardUserPage = () => {
             <div className="__box">
               <span id="total_transactions">Services atteints</span>
               <span className="item" id="box_total_amount">
-                {reachedServicesRatio || "Chargement..."}
+                {reachedServicesRatio || "N/A"}
               </span>
             </div>
             <FaSailboat />
@@ -133,15 +116,15 @@ const DashboardUserPage = () => {
             <ul className="last_services__box">
               {services.map((service) => (
                 <Link href={`/manage/${service.id}`} key={service.id}>
-                  <ServiceItem service={service} enableHover={1} />
+                  <ServiceItem service={service} enableHover={1}></ServiceItem>
                 </Link>
               ))}
             </ul>
           </div>
         </div>
       )}
-    </Wrapper>
+    </section>
   );
 };
 
-export default DashboardUserPage;
+export default DashboardUser;

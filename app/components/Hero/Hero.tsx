@@ -1,49 +1,58 @@
 "use client";
-import React, { useEffect, useState } from "react";
-// Importation du composant Image de Next.js
+
+import React, { useState } from "react";
+import CalendarComponent from "../Calendar/Calendar";
+import { Day } from "@prisma/client";
 import Image from "next/image";
+import backgroundImg from "@/public/assets/default.jpg";
+// Styles
+import styles from "./styles.module.scss";
+import Modal from "../Modal/Modal";
+export const dynamic = "force-dynamic";
+interface HeroProps {
+  days: Day[];
+  closedDays: string[];
+}
 
-const Hero = () => {
-  const [isMobile, setIsMobile] = useState(false);
+const Hero: React.FC<HeroProps> = ({ days, closedDays }) => {
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
-  const handleResize = () => {
-    setIsMobile(window.innerWidth < 768);
+  // Fonction pour afficher ou masquer le calendrier
+  const toggleCalendarVisibility = () => {
+    setIsCalendarVisible(!isCalendarVisible);
   };
 
-  useEffect(() => {
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   return (
-    <div className="hero" id="hero">
-      <div className="hero_container">
-        {isMobile ? (
-          <Image
-            src="/assets/photo1.jpg"
-            alt="GIF alternative"
-            sizes="(max-width: 800px) 100vw, 1200px 70vw  1200px 50vw"
-            width={800}
-            height={700}
-            unoptimized
-            className="img_hero"
-          />
-        ) : (
-          <video
-            id="video"
-            playsInline
-            loop
-            muted
-            autoPlay
-            src="/videos/video-test.mp4"
-          />
-        )}
+    <div className={styles.hero_wrapper}>
+      <Image
+        src={backgroundImg}
+        alt="coucher de soleil avc vue sur des palmiers"
+        className={styles.hero_image}
+        priority={true}
+        fill={true}
+        placeholder="blur"
+      />
+      <div className={styles.hero_content}>
+        <div className={styles.hero_content__bloc}>
+          <h1>Faites votre réservation facilement</h1>
+          <p>Réservez votre bateau et vos services en quelques clics.</p>
+          <button
+            onClick={toggleCalendarVisibility}
+            className={styles.calendar_btn}
+          >
+            {isCalendarVisible ? "Cacher le calendrier" : "Voir le calendrier"}
+          </button>
+        </div>
       </div>
+      {/* MODAL */}
+      <Modal
+        isOpen={isCalendarVisible}
+        onClose={toggleCalendarVisibility}
+        title="Choisissez une date"
+      >
+        <p>Réservez votre bateau dès maintenant !</p>
+        <CalendarComponent days={days} closedDays={closedDays} />
+      </Modal>
     </div>
   );
 };
