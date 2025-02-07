@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Service } from "@/types";
 import { getAllServices } from "@/actions/actions";
-import ServiceItem from "../components/ServiceItem/ServiceItem";
+import ServiceItem from "@/app/components/ServiceItem/ServiceItem";
 import styles from "./styles.module.scss";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 

@@ -1,72 +1,52 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { Booking } from "@/types";
-
-// Créer une réservation
-
-// export async function createBooking(
-//   userId: string,
-//   serviceId: string,
-//   date: Date
-// ) {
-//   try {
-//     // Vérifier si le jour est ouvert
-//     const dayOfWeek = date.getDay(); // 0 = Dimanche, 1 = Lundi, etc.
-//     const day = await prisma.day.findFirst({
-//       where: { dayOfWeek },
-//     });
-
-//     if (!day) {
-//       throw new Error("Ce jour n'est pas ouvert à la réservation.");
-//     }
-
-//     // Vérifier les horaires d'ouverture
-//     const [openHour, openMinute] = day.openTime.split(":").map(Number);
-//     const [closeHour, closeMinute] = day.closeTime.split(":").map(Number);
-//     const bookingHour = date.getHours();
-//     const bookingMinute = date.getMinutes();
-
-//     if (
-//       bookingHour < openHour ||
-//       (bookingHour === openHour && bookingMinute < openMinute) ||
-//       bookingHour > closeHour ||
-//       (bookingHour === closeHour && bookingMinute > closeMinute)
-//     ) {
-//       throw new Error(
-//         "L'horaire sélectionné est en dehors des heures d'ouverture."
-//       );
-//     }
-
-//     // Création de la réservation si tout est valide
-//     return await prisma.booking.create({
-//       data: {
-//         userId,
-//         serviceId,
-//         createdAt: date,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Erreur lors de la réservation :", error);
-//     throw new Error(error.message || "Impossible de réserver ce service.");
-//   }
-// }
+import { sendAdminNotification, sendUserCancellationEmail } from "./email";
 
 // Créer une réservation
 export async function createBooking(userId: string, serviceId: string) {
-  if (!userId) {
-    throw new Error("Utilisateur non authentifié.");
-  }
-
   try {
-    return await prisma.booking.create({
-      data: { userId, serviceId },
+    const newBooking = await prisma.booking.create({
+      data: {
+        userId,
+        serviceId,
+        status: "pending",
+        approvedByAdmin: false,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // Exemple d'expiration dans 24 heures
+      },
+      include: {
+        user: true, // Inclure l'utilisateur lié
+        service: true, // Inclure le service lié
+      },
     });
+
+    // ✅ Envoi d'un email à l'admin
+    await sendAdminNotification(
+      newBooking.user.name,
+      newBooking.service.name,
+      newBooking.user.email
+    );
+
+    return newBooking;
   } catch (error) {
     console.error("Erreur lors de la réservation :", error);
     throw new Error("Impossible de réserver ce service.");
   }
 }
+
+// Confirmer une réservation
+export async function confirmBooking(bookingId: string) {
+  try {
+    return await prisma.booking.update({
+      where: { id: bookingId },
+      data: { status: "confirmed" },
+    });
+  } catch (error) {
+    console.error("Erreur lors de la confirmation :", error);
+    throw new Error("Impossible de confirmer la réservation.");
+  }
+}
+
 // Récupérer une réservation par service et utilisateur
 export const getBookingByServiceAndUser = async (
   serviceId: string,
@@ -95,6 +75,7 @@ export async function addUserBooking(userId: string, serviceId: string) {
       data: {
         userId,
         serviceId,
+        expiresAt: new Date(), // ✅ Ajout de la date d'expiration
       },
     });
 
@@ -105,29 +86,32 @@ export async function addUserBooking(userId: string, serviceId: string) {
   }
 }
 
-// Supprimer une réservation
-// export async function deleteUserBooking(userId: string, serviceId: string) {
-//   try {
-//     await prisma.booking.deleteMany({
-//       where: { userId, serviceId },
-//     });
-
-//     return { message: "Réservation annulée avec succès." };
-//   } catch (error) {
-//     console.error("Erreur lors de la suppression de la réservation:", error);
-//     throw new Error("Impossible de supprimer la réservation.");
-//   }
-// }
-export async function deleteUserBooking(userId: string, serviceId: string) {
+// Récupérer toutes les réservations d'un utilisateur
+export async function getUserBookings(userId: string) {
   try {
-    const deleted = await prisma.booking.deleteMany({
-      where: { userId, serviceId },
+    const bookings = await prisma.booking.findMany({
+      where: { userId },
+      include: {
+        service: true, // Inclure les détails du service
+        user: true, // Inclure l'utilisateur
+        transactions: true, // Inclure les transactions associées
+      },
+      orderBy: { createdAt: "desc" }, // Trier par date décroissante (récentes en premier)
     });
 
-    if (deleted.count === 0) {
-      throw new Error("Aucune réservation trouvée à annuler.");
-    }
+    return bookings;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des réservations :", error);
+    throw new Error("Impossible de charger les réservations.");
+  }
+}
 
+// Supprimer une réservation
+export async function deleteUserBooking(bookingId: string) {
+  try {
+    await prisma.booking.delete({
+      where: { id: bookingId },
+    });
     return { message: "Réservation annulée avec succès." };
   } catch (error) {
     console.error("Erreur lors de la suppression de la réservation:", error);
@@ -135,21 +119,174 @@ export async function deleteUserBooking(userId: string, serviceId: string) {
   }
 }
 
-// Récupérer les réservations d'un utilisateur
-export async function getUserBookings(userId: string): Promise<Booking[]> {
-  if (!userId) throw new Error("Utilisateur non authentifié.");
-
-  try {
-    return await prisma.booking.findMany({
-      where: { userId },
-      include: { service: true, user: true, transactions: true },
-    });
-  } catch (error) {
-    console.error("Erreur lors de la récupération des réservations :", error);
-    throw new Error("Impossible de charger vos réservations.");
-  }
-}
-
+// Supprimer une réservation
 export async function deleteBooking(bookingId: string) {
   return await prisma.booking.delete({ where: { id: bookingId } });
 }
+
+// Récupérer toutes les réservations avec sécurisation des types
+export async function getAllBookings() {
+  try {
+    const now = new Date();
+
+    // 🔥 1. Trouver les réservations expirées
+    const expiredBookings = await prisma.booking.findMany({
+      where: {
+        approvedByAdmin: false,
+        expiresAt: { lte: now },
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            role: true,
+            image: true,
+            description: true,
+            createdAt: true,
+            clerkUserId: true,
+            roleId: true,
+          },
+        },
+        service: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            amount: true,
+            imageUrl: true,
+            active: true,
+            createdAt: true,
+            updatedAt: true,
+            transactions: true,
+            categories: true,
+          },
+        },
+        transactions: true,
+      },
+    });
+
+    // 🔥 2. Envoyer un email aux utilisateurs concernés
+    for (const booking of expiredBookings) {
+      await sendUserCancellationEmail(
+        booking.user.email,
+        booking.service.name,
+        booking.user.name,
+        booking.user.email
+      );
+    }
+
+    // 🔥 3. Supprimer les réservations expirées
+    await prisma.booking.deleteMany({
+      where: {
+        id: { in: expiredBookings.map((booking) => booking.id) },
+      },
+    });
+
+    // 🔥 4. Retourner les réservations valides
+    return await prisma.booking.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            role: true,
+            image: true,
+            description: true,
+            createdAt: true,
+            clerkUserId: true,
+            roleId: true,
+          },
+        },
+        service: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            amount: true,
+            imageUrl: true,
+            active: true,
+            createdAt: true,
+            updatedAt: true,
+            transactions: true,
+            categories: true,
+          },
+        },
+        transactions: true,
+      },
+    });
+  } catch (error) {
+    console.error(
+      "❌ Erreur lors de la récupération des réservations :",
+      error
+    );
+    throw new Error("Impossible de charger les réservations.");
+  }
+}
+
+// export async function getAllBookings() {
+//   try {
+//     const now = new Date();
+
+//     // Trouver les réservations expirées
+//     const expiredBookings = await prisma.booking.findMany({
+//       where: {
+//         approvedByAdmin: false,
+//         expiresAt: { lte: now },
+//       },
+//       include: {
+//         user: true,
+//         service: true,
+//       },
+//     });
+
+//     // Envoyer un email aux utilisateurs concernés
+//     for (const booking of expiredBookings) {
+//       await sendUserCancellationEmail(
+//         booking.user.email,
+//         booking.service.name,
+//         booking.service.name
+//       );
+//     }
+
+//     // Supprimer les réservations expirées
+//     await prisma.booking.deleteMany({
+//       where: {
+//         id: { in: expiredBookings.map((booking) => booking.id) },
+//       },
+//     });
+
+//     // Retourner les réservations valides avec un service simplifié
+//     return await prisma.booking.findMany({
+//       include: {
+//         user: {
+//           select: { id: true, email: true, name: true },
+//         },
+//         service: {
+//           select: {
+//             // Sélection simplifiée des propriétés
+//             id: true,
+//             name: true,
+//             description: true,
+//             amount: true,
+//           },
+//         },
+//         transactions: true,
+//       },
+//     });
+//   } catch (error) {
+//     console.error(
+//       "❌ Erreur lors de la récupération des réservations :",
+//       error
+//     );
+//     throw new Error("Impossible de charger les réservations.");
+//   }
+// }
+
+//  Lorsqu’un utilisateur fait une réservation, elle est mise en attente.
+// ✅ L’administrateur doit valider la réservation avant que l’utilisateur puisse payer.
+// ✅ Si l’admin ne valide pas en 3 jours, la réservation est annulée automatiquement.
+// ✅ L’utilisateur reçoit un email pour l’informer que sa réservation a été annulée.
+// ✅  La suppression des réservations expirées.

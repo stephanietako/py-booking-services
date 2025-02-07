@@ -74,11 +74,14 @@ model Day {
 }
 
 model Booking {
-  id           String        @id @default(uuid())
-  userId       String
-  serviceId    String
-  user         User          @relation(fields: [userId], references: [id])
-  service      Service       @relation(fields: [serviceId], references: [id])
-  createdAt    DateTime      @default(now())
-  transactions Transaction[]
+  id              String        @id @default(uuid())
+  userId          String
+  serviceId       String
+  user            User          @relation(fields: [userId], references: [id])
+  service         Service       @relation(fields: [serviceId], references: [id])
+  status          String        @default("pending") // Ajout du statut
+  approvedByAdmin Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  expiresAt       DateTime
+  transactions    Transaction[]
 }

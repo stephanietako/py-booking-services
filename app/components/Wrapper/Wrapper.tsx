@@ -7,7 +7,7 @@ type WrapperProps = {
 // Qui va permettre d'avoir une même structure de toutes les tables
 const Wrapper = ({ children }: WrapperProps) => {
   return (
-    <div>
+    <div className="wrapper">
       <Navbar />
       <div className="wrapper_container">{children}</div>
     </div>

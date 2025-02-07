@@ -415,25 +415,17 @@ tr:hover {
   color: red;
   font-size: 1rem;
 }
-
-.wrapper_container {
+/* section */
+section {
   display: flex;
-  width: auto;
-  height: auto;
-  /* border: 4px solid blue; */
-  /* padding: 5px; */
-  margin-top: 10vh;
+  width: 100%;
+  height: 100%;
   justify-content: center;
-  flex-wrap: wrap;
-}
-/* Global container for the page */
-.wrapper {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  border: 4px solid rgb(195, 0, 255);
+  margin-top: 10vh;
+  flex-direction: column;
 }
-
 /* Modal */
 .modalOverlay {
   position: fixed;

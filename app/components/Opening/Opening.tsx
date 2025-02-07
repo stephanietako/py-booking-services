@@ -10,25 +10,27 @@ const Opening: FC = () => {
 
   return (
     <Wrapper>
-      <div className="admin-container">
-        <h2>Administration : Horaires et Jours Fermés</h2>
-        <div className="switch-container">
-          <button
-            className={`switch-btn ${!enabled ? "active" : ""}`}
-            onClick={() => setEnabled(false)}
-          >
-            Gérer les horaires
-          </button>
-          <button
-            className={`switch-btn ${enabled ? "active" : ""}`}
-            onClick={() => setEnabled(true)}
-          >
-            Gérer les jours fermés
-          </button>
-        </div>
+      <section>
+        <div className="admin-container">
+          <h2>Administration : Horaires et Jours Fermés</h2>
+          <div className="switch-container">
+            <button
+              className={`switch-btn ${!enabled ? "active" : ""}`}
+              onClick={() => setEnabled(false)}
+            >
+              Gérer les horaires
+            </button>
+            <button
+              className={`switch-btn ${enabled ? "active" : ""}`}
+              onClick={() => setEnabled(true)}
+            >
+              Gérer les jours fermés
+            </button>
+          </div>
 
-        {!enabled ? <ManageOpeningHours /> : <ClosedDays />}
-      </div>
+          {!enabled ? <ManageOpeningHours /> : <ClosedDays />}
+        </div>
+      </section>
     </Wrapper>
   );
 };

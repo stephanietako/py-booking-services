@@ -21,30 +21,63 @@ const Hero: React.FC<HeroProps> = ({ days, closedDays }) => {
   const toggleCalendarVisibility = () => {
     setIsCalendarVisible(!isCalendarVisible);
   };
+  const handleClick = (label: string) => {
+    alert(`Vous avez cliqué sur : ${label}`);
+  };
 
   return (
-    <div className={styles.hero_wrapper}>
-      <Image
-        src={backgroundImg}
-        alt="coucher de soleil avc vue sur des palmiers"
-        className={styles.hero_image}
-        priority={true}
-        fill={true}
-        placeholder="blur"
-      />
-      <div className={styles.hero_content}>
-        <div className={styles.hero_content__bloc}>
-          <h1>Faites votre réservation facilement</h1>
-          <p>Réservez votre bateau et vos services en quelques clics.</p>
-          <button
-            onClick={toggleCalendarVisibility}
-            className={styles.calendar_btn}
-          >
-            {isCalendarVisible ? "Cacher le calendrier" : "Voir le calendrier"}
-          </button>
+    <>
+      <div className={styles.hero_wrapper}>
+        <div>
+          <h1>Yachting Day</h1>
+        </div>
+        <Image
+          src={backgroundImg}
+          alt="coucher de soleil avc vue sur des palmiers"
+          className={styles.hero_image}
+          priority={true}
+          fill={true}
+          placeholder="blur"
+        />
+        <div className={styles.hero}>
+          <div className={styles.hero_content__left}>
+            <div className={styles.hero_content__bloc}>
+              <h2>Faites votre réservation facilement</h2>
+              <p>Réservez votre bateau et vos services en quelques clics.</p>
+              <button
+                onClick={toggleCalendarVisibility}
+                className={styles.calendar_btn}
+              >
+                {isCalendarVisible
+                  ? "Cacher le calendrier"
+                  : "Voir le calendrier"}
+              </button>
+            </div>
+          </div>
+          <div className={styles.hero_content__right}>
+            <div className={styles.hero_content__right}>
+              <button
+                className={styles.button_hero}
+                onClick={() => handleClick("Qui sommes-nous")}
+              >
+                Qui sommes-nous
+              </button>
+              <button
+                className={styles.button_hero}
+                onClick={() => handleClick("Location de bateau")}
+              >
+                Location de bateau
+              </button>
+              <button
+                className={styles.button_hero}
+                onClick={() => handleClick("Entretien de bateaux")}
+              >
+                Entretien de bateaux
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-      {/* MODAL */}
       <Modal
         isOpen={isCalendarVisible}
         onClose={toggleCalendarVisibility}
@@ -53,7 +86,7 @@ const Hero: React.FC<HeroProps> = ({ days, closedDays }) => {
         <p>Réservez votre bateau dès maintenant !</p>
         <CalendarComponent days={days} closedDays={closedDays} />
       </Modal>
-    </div>
+    </>
   );
 };
 

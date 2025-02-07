@@ -51,23 +51,25 @@ const AdminDashboard: FC<AdminDashboardProps> = ({ userId }) => {
 
   return (
     <Wrapper>
-      <div className="admin_dashboard_container">
-        <header className="admin_dashboard">
-          <h1>Tableau de bord administrateur</h1>
-          <h2>
-            Bienvenue, {data?.name?.split(" ")[0]} {data?.name?.split(" ")[1]}
-          </h2>
-        </header>
+      <section>
+        <div className="admin_dashboard_container">
+          <header className="admin_dashboard">
+            <h1>Tableau de bord administrateur</h1>
+            <h2>
+              Bienvenue, {data?.name?.split(" ")[0]} {data?.name?.split(" ")[1]}
+            </h2>
+          </header>
 
-        <main>
-          <Link className="opening_hours" href="/admin/opening">
-            Heures d&apos;ouverture
-          </Link>
-          <Link className="service" href="/admin/service">
-            Création et gestion d&apos;un service
-          </Link>
-        </main>
-      </div>
+          <main>
+            <Link className="opening_hours" href="/admin/opening">
+              Heures d&apos;ouverture
+            </Link>
+            <Link className="service" href="/admin/service">
+              Création et gestion d&apos;un service
+            </Link>
+          </main>
+        </div>
+      </section>
     </Wrapper>
   );
 };
