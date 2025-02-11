@@ -51,13 +51,14 @@ model Service {
 }
 
 model Transaction {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   description String
   amount      Float
   serviceId   String?
-  service     Service?  @relation(fields: [serviceId], references: [id])
-  createdAt   DateTime  @default(now())
-  Booking     Booking[]
+  service     Service? @relation(fields: [serviceId], references: [id])
+  createdAt   DateTime @default(now())
+  bookingId   String? // Ajout du champ bookingId
+  booking     Booking? @relation(fields: [bookingId], references: [id]) // Relation explicite avec Booking
 }
 
 model ClosedDay {
@@ -73,13 +74,19 @@ model Day {
   closeTime String
 }
 
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Booking {
   id              String        @id @default(uuid())
   userId          String
   serviceId       String
   user            User          @relation(fields: [userId], references: [id])
   service         Service       @relation(fields: [serviceId], references: [id])
-  status          String        @default("pending") // Ajout du statut
+  status          BookingStatus @default(PENDING) // Ajout du statut
   approvedByAdmin Boolean       @default(false)
   createdAt       DateTime      @default(now())
   expiresAt       DateTime

@@ -71,13 +71,17 @@ export interface CloseDayInput {
   date: Date;
 }
 
+export type BookingStatus = "PENDING" | "APPROVED" | "REJECTED";
+
 export interface Booking {
   id: string;
   serviceId: string;
   userId: string;
   service: Service; // Service réservé par l'utilisateur
   user: User; // Utilisateur qui a fait la réservation
-  createdAt: Date; // Date de création de la réservation
+  createdAt: Date;
+  expiresAt: Date | null; // Permettre à expiresAt d'être null,Date de création de la réservation
   transactions?: Transaction[]; // Liste des options ajoutées à la réservation
-  status: string; // Statut de la réservation
+  status: BookingStatus; // Statut de la réservation
+  approvedByAdmin: boolean; // Indique si la réservation a été approuvée par un admin
 }

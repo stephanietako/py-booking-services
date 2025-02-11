@@ -2,10 +2,12 @@ import { Service } from "@/types";
 import React from "react";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
-import { createBooking } from "@/actions/bookings";
 import { useTransition } from "react";
+import toast from "react-hot-toast";
 // Styles
 import styles from "./styles.module.scss";
+import { createBooking } from "@/actions/bookings";
+import { useRouter } from "next/navigation";
 
 interface ServiceItemProps {
   service: Service;
@@ -15,6 +17,7 @@ interface ServiceItemProps {
 const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
   const { user } = useUser();
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const transactionCount = service.transactions
     ? service.transactions.length
@@ -41,17 +44,18 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
   ////////////////////
   const handleBooking = () => {
     if (!user) {
-      alert("Vous devez être connecté pour réserver un service.");
+      toast.error("Vous devez être connecté pour réserver un service.");
       return;
     }
 
     startTransition(async () => {
       try {
         await createBooking(user.id, service.id);
-        alert("Réservation réussie !");
+        toast.success("Réservation réussie !");
+        router.push("/my-bookings");
       } catch (error) {
         console.error(error);
-        alert("Erreur lors de la réservation.");
+        toast.error("Erreur lors de la réservation.");
       }
     });
   };
