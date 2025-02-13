@@ -84,4 +84,6 @@ export interface Booking {
   transactions?: Transaction[]; // Liste des options ajoutées à la réservation
   status: BookingStatus; // Statut de la réservation
   approvedByAdmin: boolean; // Indique si la réservation a été approuvée par un admin
+  amount?: number;
+  totalAmount: number;
 }

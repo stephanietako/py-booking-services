@@ -29,7 +29,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="fr">
         <body className={`${geistSans.variable} ${geistMono.variable}`}>
-          <Toaster position="bottom-center" />
+          <Toaster position="top-center" />
           {children}
         </body>
       </html>

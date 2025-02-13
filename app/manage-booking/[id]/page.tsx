@@ -1,166 +1,59 @@
-// //app/manage-booking/[id]/page.tsx
-
-// "use client";
-
-// import React, { FC, useEffect, useState } from "react";
-// import { deleteUserBooking, getUserBookings } from "@/actions/bookings";
-// import ServiceItem from "@/app/components/ServiceItem/ServiceItem";
-// import Wrapper from "@/app/components/Wrapper/Wrapper";
-// import { Service } from "@/types";
-// import { useRouter, useParams } from "next/navigation";
-// import { useUser } from "@clerk/nextjs";
-// import { Booking } from "@prisma/client";
-// //import { FaRegTrashAlt } from "react-icons/fa";
-// //Détails & gestion d’une réservation spécifique
-// interface ManageBookingPageProps {
-//   serviceId: string;
-//   booking: Booking[];
-// }
-// const ManageBookingPage: FC<ManageBookingPageProps> = ({
-//   serviceId,
-// }: {
-//   serviceId: string;
-// }) => {
-//   const { user } = useUser();
-//   const [service, setService] = useState<Service | null>(null);
-//   const [error, setError] = useState<string | null>(null);
-//   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//   const [loading, setLoading] = useState<boolean>(false);
-//   const router = useRouter();
-//   const { id } = useParams(); // ID de la réservation récupéré depuis l'URL
-
-//   useEffect(() => {
-//     if (!user) {
-//       setError("Vous devez être connecté pour voir cette réservation.");
-//       return;
-//     }
-
-//     const fetchService = async () => {
-//       if (user?.primaryEmailAddress?.emailAddress) {
-//         setLoading(true);
-//         try {
-//           const bookings = await getUserBookings(
-//             user.primaryEmailAddress.emailAddress
-//           );
-//           const bookedService = bookings.find(
-//             (booking: Booking) => booking.serviceId === serviceId
-//           );
-//           if (bookedService) {
-//             setService(bookedService.service);
-//           } else {
-//             setError("Service non trouvé dans vos réservations.");
-//           }
-//         } catch (error) {
-//           console.error("Erreur lors du chargement de la réservation:", error);
-//           setError("Impossible de récupérer la réservation.");
-//         }
-//       }
-//     };
-
-//     fetchService();
-//   }, [serviceId, user]);
-
-//   const handleDeleteBooking = async () => {
-//     if (!user) {
-//       setError("Vous devez être connecté pour annuler cette réservation.");
-//       return;
-//     }
-
-//     if (window.confirm("Voulez-vous vraiment annuler cette réservation ?")) {
-//       try {
-//         await deleteUserBooking(user.id);
-//         router.push("/my-bookings");
-//       } catch (error) {
-//         console.error("Erreur lors de la suppression de la réservation", error);
-//         setError("Impossible de supprimer la réservation.");
-//       }
-//     }
-//   };
-
-//   return (
-//     <Wrapper>
-//       <div className="manage_booking">
-//         {error ? (
-//           <p className="error">{error}</p>
-//         ) : service ? (
-//           <div className="manage_booking_container">
-//             {service && <ServiceItem service={service} enableHover={0} />}
-//             <button onClick={handleDeleteBooking} className="btn_form">
-//               Annuler la réservation
-//             </button>
-//           </div>
-//         ) : (
-//           <p>Chargement...</p>
-//         )}
-//       </div>
-//     </Wrapper>
-//   );
-// };
-
-// export default ManageBookingPage;
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-import { deleteUserBooking, getUserBookings } from "@/actions/bookings";
-import ServiceItem from "@/app/components/ServiceItem/ServiceItem";
+import {
+  deleteUserBooking,
+  getBookingById,
+  updateBookingTotal,
+} from "@/actions/bookings";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
-import { Service } from "@/types";
+import { Booking } from "@/types";
 import { useRouter, useParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { Booking } from "@prisma/client";
 import toast from "react-hot-toast";
-// Détails & gestion d’une réservation spécifique pour l'utilisateur avec la possibilité de l'annuler
-const ManageBookingPage: FC = () => {
-  const { user } = useUser();
-  const { id } = useParams(); // Récupère l'ID de la réservation depuis l'URL
-  const [service, setService] = useState<Service | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [deleting, setDeleting] = useState<string | null>(null);
+import ServiceCompt from "@/app/components/ServicesCompt/ServiceCompt";
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loading, setLoading] = useState<boolean>(false);
+const ManageBookingPage: FC = () => {
+  // Récupérer les informations de l'utilisateur et l'état de chargement de Clerk
+  const { user, isSignedIn, isLoaded } = useUser();
+
+  // Récupérer l'ID de la réservation depuis l'URL
+  const { id } = useParams<{ id: string }>();
+
+  // États locaux pour gérer les données de la réservation, les erreurs, et les états de chargement
+  const [booking, setBooking] = useState<Booking | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
+
+  // Utilisé pour la navigation
   const router = useRouter();
 
+  // Effet pour récupérer les données de la réservation lorsque le composant est monté ou que l'ID change
   useEffect(() => {
-    if (!user) {
-      setError("Vous devez être connecté pour voir cette réservation.");
+    // Si Clerk n'a pas fini de charger, ne rien faire
+    if (!isLoaded) {
       return;
     }
 
-    // const fetchService = async () => {
-    //   setLoading(true);
-    //   try {
-    //     const bookings = await getUserBookings(
-    //       user.primaryEmailAddress?.emailAddress || ""
-    //     );
-    //     const bookedService = bookings.find(
-    //       (booking: Booking) => booking.id === id // Utilise l'ID récupéré depuis l'URL
-    //     );
-    //     if (bookedService) {
-    //       setService(bookedService.service);
-    //     } else {
-    //       setError("Service non trouvé dans vos réservations.");
-    //     }
-    //   } catch (error) {
-    //     console.error("Erreur lors du chargement de la réservation:", error);
-    //     setError("Impossible de récupérer la réservation.");
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-    const fetchService = async () => {
-      setLoading(true);
+    // Si l'utilisateur n'est pas connecté, afficher une erreur
+    if (!isSignedIn) {
+      setError("Vous devez être connecté pour voir cette réservation.");
+      setLoading(false);
+      return;
+    }
+
+    // Fonction pour récupérer les données de la réservation
+    const fetchBooking = async () => {
       try {
-        const bookings = await getUserBookings(user.id); // Utilise `user.id` ici
-        const bookedService = bookings.find(
-          (booking: Booking) => booking.id === id // Utilise l'ID récupéré depuis l'URL
-        );
-        if (bookedService) {
-          setService(bookedService.service);
-        } else {
-          setError("Service non trouvé dans vos réservations.");
-        }
+        // Récupérer les données de la réservation
+        const bookingData = await getBookingById(id, user.id);
+        setBooking(bookingData);
+
+        // Calculer le montant total de la réservation
+        const newTotal = await updateBookingTotal(id);
+        setTotalAmount(newTotal);
       } catch (error) {
         console.error("Erreur lors du chargement de la réservation:", error);
         setError("Impossible de récupérer la réservation.");
@@ -169,75 +62,92 @@ const ManageBookingPage: FC = () => {
       }
     };
 
-    fetchService();
-  }, [id, user]); // Dépendance de `id` pour recharger la réservation si l'ID change
+    fetchBooking();
+  }, [id, user, isSignedIn, isLoaded]);
 
-  //   const handleDeleteBooking = async () => {
-  //     if (!user) {
-  //       setError("Vous devez être connecté pour annuler cette réservation.");
-  //       return;
-  //     }
-
-  //     if (window.confirm("Voulez-vous vraiment annuler cette réservation ?")) {
-  //       try {
-  //         await deleteUserBooking(id); // Utilise l'ID pour supprimer la réservation
-  //         router.push("/my-bookings");
-  //       } catch (error) {
-  //         console.error("Erreur lors de la suppression de la réservation", error);
-  //         setError("Impossible de supprimer la réservation.");
-  //       }
-  //     }
-  //   };
+  // Fonction pour gérer la suppression de la réservation
   const handleDeleteBooking = async () => {
     if (!user) {
       setError("Vous devez être connecté pour annuler cette réservation.");
       return;
     }
 
-    if (!id || Array.isArray(id)) {
-      setError("ID de réservation invalide.");
-      return; // Tu peux aussi rediriger vers une autre page si tu préfères
-    }
-
+    // Confirmer la suppression avec l'utilisateur
     const confirmation = window.confirm(
       "Voulez-vous vraiment annuler cette réservation ?"
     );
     if (!confirmation) return;
 
-    setDeleting(id);
+    setDeleting(true);
     const toastId = toast.loading("Annulation en cours...");
 
     try {
-      await deleteUserBooking(id); // Maintenant, tu sais que `id` est une chaîne
+      // Supprimer la réservation
+      await deleteUserBooking(id, user.id);
       router.push("/my-bookings");
       toast.success("Réservation annulée avec succès !", { id: toastId });
     } catch (error) {
       console.error("Erreur lors de l'annulation :", error);
       toast.error("Impossible d'annuler la réservation.", { id: toastId });
     } finally {
-      setDeleting(null);
+      setDeleting(false);
     }
   };
 
+  // Afficher un message de chargement pendant la récupération des données
+  if (loading) {
+    return (
+      <Wrapper>
+        <p>Chargement...</p>
+      </Wrapper>
+    );
+  }
+
+  // Afficher un message d'erreur si une erreur s'est produite
+  if (error) {
+    return (
+      <Wrapper>
+        <p className="error">{error}</p>
+      </Wrapper>
+    );
+  }
+
+  // Afficher un message si la réservation n'est pas trouvée
+  if (!booking) {
+    return (
+      <Wrapper>
+        <p>Réservation introuvable.</p>
+      </Wrapper>
+    );
+  }
+
+  // Afficher les détails de la réservation
   return (
     <Wrapper>
       <div className="manage_booking">
-        {error ? (
-          <p className="error">{error}</p>
-        ) : service ? (
-          <div className="manage_booking_container">
-            {service && <ServiceItem service={service} enableHover={0} />}
-            <button onClick={handleDeleteBooking} className="btn_form">
-              Annuler la réservation
-            </button>
-          </div>
-        ) : (
-          <p>Chargement...</p>
-        )}
+        <div className="manage_booking_container">
+          <ServiceCompt
+            name={booking.service.name}
+            description={
+              booking.service.description || "Aucune description disponible"
+            }
+            amount={totalAmount}
+            imageUrl={booking.service.imageUrl || "/assets/default.jpg"}
+            categories={booking.service.categories}
+          />
+          <button
+            onClick={handleDeleteBooking}
+            className="btn_form"
+            disabled={deleting}
+          >
+            {deleting ? "Annulation en cours..." : "Annuler la réservation"}
+          </button>
+        </div>
       </div>
     </Wrapper>
   );
 };
 
 export default ManageBookingPage;
+
 // La page ManageBookingPage est complémentaire à MyBookings et permet de gérer une réservation spécifique en montrant les détails du service et en offrant la possibilité d'annuler la réservation. Les deux pages fonctionnent ensemble pour créer une expérience utilisateur complète autour de la gestion des réservations.

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { FC, useEffect, useState, ChangeEvent } from "react";
 import Image from "next/image";
 import { MAX_FILE_SIZE } from "@/app/constants/config";

@@ -8,6 +8,9 @@ import { getUserBookings, deleteUserBooking } from "@/actions/bookings";
 import { Booking } from "@/types";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Wrapper from "../components/Wrapper/Wrapper";
+import TransactionManager from "../components/TransactionManager/TransactionManager";
+import ServiceCompt from "../components/ServicesCompt/ServiceCompt";
 // Liste des réservations utilisateur
 const MyBookings = () => {
   const { user } = useUser();
@@ -15,30 +18,14 @@ const MyBookings = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [totalAmounts, setTotalAmounts] = useState<{ [key: string]: number }>(
+    {}
+  );
+
   const router = useRouter();
 
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   const fetchBookings = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const data = await getUserBookings(user.id);
-  //       setBookings(data);
-  //     } catch (error) {
-  //       console.error("Erreur lors du chargement des réservations :", error);
-  //       setError("Impossible de charger les réservations.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchBookings();
-  // }, [user]);
   useEffect(() => {
     if (!user) return;
-
-    console.log("User ID récupéré :", user.id); // Vérifie la valeur de userId
 
     const fetchBookings = async () => {
       setLoading(true);
@@ -57,6 +44,10 @@ const MyBookings = () => {
     fetchBookings();
   }, [user]);
 
+  const handleTotalUpdate = (bookingId: string, total: number) => {
+    setTotalAmounts((prev) => ({ ...prev, [bookingId]: total }));
+  };
+
   const handleDeleteBooking = async (bookingId: string) => {
     if (!user) {
       toast.error("Utilisateur non authentifié.");
@@ -72,7 +63,7 @@ const MyBookings = () => {
     const toastId = toast.loading("Annulation en cours...");
 
     try {
-      await deleteUserBooking(bookingId);
+      await deleteUserBooking(bookingId, user.id);
       setBookings((prev) => prev.filter((booking) => booking.id !== bookingId));
       toast.success("Réservation annulée avec succès !", { id: toastId });
     } catch (error) {
@@ -84,57 +75,57 @@ const MyBookings = () => {
   };
 
   return (
-    <div>
-      <h1>Mes réservations</h1>
+    <Wrapper>
+      <div>
+        <h1>Mes réservations</h1>
 
-      {loading && <p>Chargement en cours...</p>}
-      {error && <p className="error">{error}</p>}
-      {!loading && bookings.length === 0 && <p>Aucune réservation</p>}
+        {loading && <p>Chargement en cours...</p>}
+        {error && <p className="error">{error}</p>}
+        {!loading && bookings.length === 0 && <p>Aucune réservation</p>}
 
-      {!loading && bookings.length > 0 && (
-        <ul>
-          {bookings.map((booking) => (
-            <li key={booking.id}>
-              <p>Service: {booking.service.name}</p>
-              <p>
-                Date de réservation:{" "}
-                {new Intl.DateTimeFormat("fr-FR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }).format(new Date(booking.createdAt))}
-              </p>
-              <p>
-                Statut:{" "}
-                <span
-                  className={
-                    booking.status === "APPROVED" ? "text-green" : "text-orange"
+        {!loading && bookings.length > 0 && (
+          <ul>
+            {bookings.map((booking) => (
+              <li key={booking.id}>
+                {/* ✅ Passer totalAmount au lieu de booking.service.amount */}
+
+                <ServiceCompt
+                  name={booking.service.name}
+                  description={
+                    booking.service.description ||
+                    "Aucune description disponible"
+                  } // 🔥 Évite null
+                  amount={totalAmounts[booking.id] ?? booking.service.amount}
+                  imageUrl={booking.service.imageUrl || "/assets/default.jpg"}
+                  categories={booking.service.categories}
+                />
+
+                {/* ✅ TransactionManager met à jour totalAmount */}
+                <TransactionManager
+                  bookingId={booking.id}
+                  serviceAmount={booking.service.amount}
+                  onTotalUpdate={(total) =>
+                    handleTotalUpdate(booking.id, total)
                   }
+                />
+                <button
+                  onClick={() => handleDeleteBooking(booking.id)}
+                  disabled={deleting === booking.id}
                 >
-                  {booking.status === "APPROVED"
-                    ? "Confirmée ✅"
-                    : "En attente ⏳"}
-                </span>
-              </p>
-              <button
-                onClick={() => router.push(`/manage-booking/${booking.id}`)}
-              >
-                Voir la réservation
-              </button>
+                  {deleting === booking.id ? "Annulation..." : "Annuler"}
+                </button>
 
-              <button
-                onClick={() => handleDeleteBooking(booking.id)}
-                disabled={deleting === booking.id}
-              >
-                {deleting === booking.id ? "Annulation..." : "Annuler"}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+                <button
+                  onClick={() => router.push(`/manage-booking/${booking.id}`)}
+                >
+                  Voir la réservation
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </Wrapper>
   );
 };
 

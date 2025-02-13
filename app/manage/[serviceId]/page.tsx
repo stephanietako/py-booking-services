@@ -1,3 +1,5 @@
+//app/manage/[serviceId]
+
 "use client";
 
 import {

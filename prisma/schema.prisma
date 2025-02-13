@@ -91,4 +91,5 @@ model Booking {
   createdAt       DateTime      @default(now())
   expiresAt       DateTime
   transactions    Transaction[]
+  totalAmount     Float         @default(0) // Ajout du total
 }

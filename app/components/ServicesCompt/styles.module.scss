@@ -1,12 +1,4 @@
-// .servicesContainer {
-//   display: flex;
-//   justify-content: space-around;
-//   flex-wrap: wrap;
-//   padding: 2rem;
-//   background-color: #f9f9f9;
-// }
-
-.service {
+.service_card {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -16,15 +8,24 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
   border: 4px solid red;
+  padding: 1rem;
 
   &:hover {
     transform: translateY(-10px);
   }
 }
 
-.service_image {
+.service_card__img_content {
+  display: flex;
   width: 100%;
-  height: 200px;
+  height: 100%;
+  border: 10px solid green;
+
+  .service_card__img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .service__title {

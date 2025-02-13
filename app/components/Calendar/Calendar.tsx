@@ -76,17 +76,6 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
           )}
         </div>
       ) : (
-        // <DynamicCalendar
-        //   minDate={now}
-        //   className="REACT-CALENDAR p-2"
-        //   view="month"
-        //   tileDisabled={
-        //     ({ date }) => closedDays.includes(formatISO(date)) // Disable closed days
-        //   }
-        //   onClickDay={(date) =>
-        //     setDate((prev) => ({ ...prev, justDate: date }))
-        //   }
-        // />
         <DynamicCalendar
           minDate={now}
           className="REACT-CALENDAR p-2"
