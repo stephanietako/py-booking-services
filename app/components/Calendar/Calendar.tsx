@@ -43,6 +43,9 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
   // Update localStorage and navigate to the service page when a time is selected
   useEffect(() => {
     if (date.dateTime) {
+      // Affiche l'heure sélectionnée avant de la stocker
+      console.log("Selected date and time:", date.dateTime);
+
       localStorage.setItem("selectedTime", date.dateTime.toISOString());
       router.push("/serviceList");
     }

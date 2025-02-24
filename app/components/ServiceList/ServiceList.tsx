@@ -8,6 +8,7 @@ import Wrapper from "../Wrapper/Wrapper";
 
 const ServiceList = () => {
   const [services, setServices] = useState<Service[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

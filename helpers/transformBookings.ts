@@ -6,6 +6,7 @@ export const transformBookings = (bookings: Booking[]): Booking[] => {
   return bookings.map((booking) => ({
     ...booking,
     createdAt: new Date(booking.createdAt), // Convertir explicitement en Date
+    updatedAt: new Date(booking.updatedAt),
     expiresAt: booking.expiresAt ? new Date(booking.expiresAt) : null, // Convertir expiresAt en Date, ou null si non défini
   }));
 };

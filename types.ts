@@ -80,6 +80,7 @@ export interface Booking {
   service: Service; // Service réservé par l'utilisateur
   user: User; // Utilisateur qui a fait la réservation
   createdAt: Date;
+  updatedAt: Date;
   expiresAt: Date | null; // Permettre à expiresAt d'être null,Date de création de la réservation
   transactions?: Transaction[]; // Liste des options ajoutées à la réservation
   status: BookingStatus; // Statut de la réservation

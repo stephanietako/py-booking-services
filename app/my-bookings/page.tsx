@@ -76,7 +76,7 @@ const MyBookings = () => {
 
   return (
     <Wrapper>
-      <div>
+      <div className="booking">
         <h1>Mes réservations</h1>
 
         {loading && <p>Chargement en cours...</p>}
@@ -87,7 +87,7 @@ const MyBookings = () => {
           <ul>
             {bookings.map((booking) => (
               <li key={booking.id}>
-                {/* ✅ Passer totalAmount au lieu de booking.service.amount */}
+                {/* Passer totalAmount au lieu de booking.service.amount */}
 
                 <ServiceCompt
                   name={booking.service.name}
@@ -100,7 +100,7 @@ const MyBookings = () => {
                   categories={booking.service.categories}
                 />
 
-                {/* ✅ TransactionManager met à jour totalAmount */}
+                {/* TransactionManager met à jour totalAmount */}
                 <TransactionManager
                   bookingId={booking.id}
                   serviceAmount={booking.service.amount}

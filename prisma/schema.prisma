@@ -90,6 +90,7 @@ model Booking {
   approvedByAdmin Boolean       @default(false)
   createdAt       DateTime      @default(now())
   expiresAt       DateTime
+  updatedAt       DateTime      @updatedAt
   transactions    Transaction[]
   totalAmount     Float         @default(0) // Ajout du total
 }

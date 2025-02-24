@@ -1,3 +1,5 @@
+//app/manage-booking/[id]/page.tsx
+
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
@@ -12,6 +14,8 @@ import { useRouter, useParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import ServiceCompt from "@/app/components/ServicesCompt/ServiceCompt";
+
+export const dynamic = "force-dynamic";
 
 const ManageBookingPage: FC = () => {
   // Récupérer les informations de l'utilisateur et l'état de chargement de Clerk
@@ -64,7 +68,17 @@ const ManageBookingPage: FC = () => {
 
     fetchBooking();
   }, [id, user, isSignedIn, isLoaded]);
+  /////////
+  useEffect(() => {
+    const bookingData = localStorage.getItem("bookingData");
+    if (bookingData) {
+      setBooking(JSON.parse(bookingData));
+    }
+  }, []);
 
+  if (!booking) {
+    return <p>Pas de réservation trouvée</p>;
+  }
   // Fonction pour gérer la suppression de la réservation
   const handleDeleteBooking = async () => {
     if (!user) {
@@ -125,6 +139,16 @@ const ManageBookingPage: FC = () => {
   return (
     <Wrapper>
       <div className="manage_booking">
+        <h1>Ma Reservation</h1>
+        <br />
+        <span className="manage_booking__text">
+          <h2>voici votre reservation, vous avez un imprévu ?</h2>
+          <p>
+            Pas de souci ! Vous pouvez annuler votre réservation ici. Gardez à
+            l’esprit qu’une fois annulée, elle ne pourra pas être rétablie.
+          </p>
+        </span>
+
         <div className="manage_booking_container">
           <ServiceCompt
             name={booking.service.name}
@@ -142,6 +166,7 @@ const ManageBookingPage: FC = () => {
           >
             {deleting ? "Annulation en cours..." : "Annuler la réservation"}
           </button>
+          <button>Payer</button>
         </div>
       </div>
     </Wrapper>

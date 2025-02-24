@@ -257,6 +257,7 @@ const Service: FC = () => {
                   src={preview || "/assets/default.png"}
                   width={100}
                   height={100}
+                  priority
                 />
               ) : (
                 <span>Sélectionnez une image</span>

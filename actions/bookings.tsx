@@ -4,49 +4,40 @@ import { prisma } from "@/lib/prisma";
 import { BookingStatus, Booking } from "@/types";
 import { transformBookings } from "@/helpers/transformBookings";
 
-// Créer une réservation
-export async function createBooking(userId: string, serviceId: string) {
+export async function createBooking(
+  userId: string,
+  serviceId: string,
+  selectedTime: string
+) {
   try {
-    // Recherche l'utilisateur par clerkUserId (l'id que tu as de Clerk)
     const user = await prisma.user.findUnique({
-      where: { clerkUserId: userId }, // Utilisation de clerkUserId ici
+      where: { clerkUserId: userId },
     });
 
-    // Vérifie si l'utilisateur existe
-    if (!user) {
-      throw new Error("L'utilisateur spécifié n'existe pas.");
-    }
+    if (!user) throw new Error("Utilisateur introuvable.");
 
-    // Recherche le service avec l'id du service
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
     });
 
-    // Vérifie si le service existe
-    if (!service) {
-      console.error("Aucun service trouvé pour serviceId:", serviceId);
-      throw new Error("Le service spécifié n'existe pas.");
-    }
+    if (!service) throw new Error("Service introuvable.");
 
-    // Définir une date d'expiration (par exemple, 1 semaine après la création)
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7); // 7 jours après la création
+    // Convertir `selectedTime` en Date
+    const dateTime = new Date(selectedTime);
 
-    // Créer la réservation avec le champ expiresAt
     const newBooking = await prisma.booking.create({
       data: {
-        userId: user.id, // Utilisation de l'ID Prisma de l'utilisateur
+        userId: user.id,
         serviceId,
-        status: "PENDING", // Statut initial de la réservation
-        expiresAt, // Ajout du champ expiresAt
+        status: "PENDING",
+        expiresAt: dateTime, // 🏆 On stocke la date choisie !
       },
     });
 
-    console.log("Réservation créée avec succès:", newBooking);
     return newBooking;
   } catch (error) {
-    console.error("Erreur lors de la création de la réservation:", error);
-    throw new Error("Impossible de réserver ce service.");
+    console.error("Erreur lors de la réservation :", error);
+    throw new Error("Impossible de réserver.");
   }
 }
 
@@ -138,30 +129,6 @@ export async function updateBooking(
   });
 }
 
-// export async function deleteUserBooking(bookingId: string, userId: string) {
-//   try {
-//     const booking = await prisma.booking.findUnique({
-//       where: { id: bookingId },
-//     });
-
-//     if (!booking) {
-//       throw new Error("❌ Réservation introuvable.");
-//     }
-
-//     if (booking.userId !== userId) {
-//       throw new Error(
-//         "⛔ Accès refusé : Vous ne pouvez pas supprimer cette réservation."
-//       );
-//     }
-
-//     await prisma.booking.delete({ where: { id: bookingId } });
-
-//     return { message: "✅ Réservation annulée avec succès." };
-//   } catch (error) {
-//     console.error("❌ Erreur lors de la suppression :", error);
-//     throw new Error("Impossible de supprimer la réservation.");
-//   }
-// }
 export async function deleteUserBooking(
   bookingId: string,
   clerkUserId: string
@@ -186,21 +153,14 @@ export async function deleteUserBooking(
 
     // Suppression de la réservation
     await prisma.booking.delete({ where: { id: bookingId } });
-
+    await prisma.transaction.deleteMany({ where: { id: bookingId } });
     return { message: "✅ Réservation annulée avec succès." };
   } catch (error) {
     console.error("❌ Erreur lors de la suppression :", error);
     throw new Error("Impossible de supprimer la réservation.");
   }
 }
-/////////////////
-// export async function getTransactionsByBookingId(bookingId: string) {
-//   return prisma.transaction.findMany({
-//     where: { bookingId },
 
-//     orderBy: { createdAt: "desc" },
-//   });
-// }
 export async function getTransactionsByBookingId(bookingId: string) {
   try {
     const booking = await prisma.booking.findUnique({
@@ -228,15 +188,6 @@ export async function getTransactionsByBookingId(bookingId: string) {
   }
 }
 
-// export async function addTransactionToBooking(
-//   bookingId: string,
-//   amount: number,
-//   description: string
-// ) {
-//   return prisma.transaction.create({
-//     data: { bookingId, amount, description },
-//   });
-// }
 export async function addTransactionToBooking(
   bookingId: string,
   amount: number,
@@ -328,24 +279,3 @@ export async function updateBookingTotal(bookingId: string) {
     throw error;
   }
 }
-
-// export const updateBookingTotalAmount = async (bookingId: string) => {
-//   // Calculer le total à partir des transactions associées à la réservation
-//   const transactions = await prisma.transaction.findMany({
-//     where: { bookingId },
-//     include: { service: true },
-//   });
-
-//   const totalAmount = transactions.reduce(
-//     (total, transaction) => total + transaction.amount,
-//     0
-//   );
-
-//   // Mettre à jour le champ `totalAmount` de la réservation
-//   await prisma.booking.update({
-//     where: { id: bookingId },
-//     data: { totalAmount },
-//   });
-
-//   return totalAmount;
-// };

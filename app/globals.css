@@ -40,6 +40,7 @@ body {
   background-color: var(--background-light);
   color: var(--text-color);
 }
+
 h1 {
   font-size: 2.5rem;
   color: #2a2a2a;
@@ -214,6 +215,7 @@ header {
 .btnHandleAddBudget:hover {
   background-color: #007bb5;
 }
+
 .actions button {
   padding: 8px 15px;
   border: none;
@@ -268,6 +270,7 @@ button:hover {
   border-radius: 50%;
   cursor: not-allowed;
 }
+
 /* Formulaires */
 input,
 textarea,
@@ -374,23 +377,25 @@ tr:hover {
   background-color: var(--danger-color);
   color: var(--white);
 }
+
 .react-calendar__month-view__weekdays {
   display: flex;
   justify-content: space-around;
   margin-bottom: 0.2rem;
 }
+
 .react-calendar__month-view__weekdays__weekday {
   font-size: 0.8rem;
   color: var(--muted-text);
   font-weight: bolder !important;
 }
+
 .react-calendar__month-view__days {
   display: flex;
   flex-wrap: wrap;
   margin-top: 0.2rem;
 }
 
-/* RESTE DU STYLE A TRIER ET AJOUTER CEUX QUI MANQUES  */
 /* ///////////////sign in sign up //////////////////// */
 .signup_page,
 .signin_page {
@@ -402,19 +407,11 @@ tr:hover {
   border: 4px solid blue;
 }
 
-.error {
-  color: #dc2626; /* Rouge vif */
-  background-color: #fee2e2; /* Rouge clair */
-  padding: 0.75rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-}
-
 .error_display {
   color: red;
   font-size: 1rem;
 }
+
 /* section */
 section {
   display: flex;
@@ -426,6 +423,7 @@ section {
   margin-top: 10vh;
   flex-direction: column;
 }
+
 /* Modal */
 .modalOverlay {
   position: fixed;
@@ -476,7 +474,6 @@ section {
 }
 
 /* /////////// */
-
 .textServiceTitle {
   font-size: 1.5rem;
   font-weight: bold;
@@ -525,6 +522,7 @@ section {
   display: flex;
   justify-content: center;
 }
+
 .manage_service_bloc {
   display: flex;
   width: 100%;
@@ -545,12 +543,6 @@ section {
   display: flex;
   flex-direction: column;
   margin-top: 1rem;
-}
-
-.form {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
 }
 
 .input_form_description,
@@ -697,7 +689,36 @@ section {
   font-weight: bold;
   font-size: 1.2rem;
 }
+/* MY BOOKING */
+.manage_booking {
+  display: flex;
+  width: auto;
+  height: 100%;
+  border: 4px solid rgb(238, 219, 10);
+  justify-content: center;
+  flex-direction: column;
+}
+
+.manage_booking__text {
+  border: 3px solid pink;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.manage_booking_container {
+  display: flex;
+  width: auto;
+  height: 100%;
+  border: 4px solid green;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 /* ////////spinner//////////// */
+
 .spinner_container {
   display: flex;
   width: 100%;
@@ -1146,11 +1167,6 @@ p {
   border-radius: 4px;
 }
 
-.error {
-  color: red;
-  margin: 10px 0;
-}
-
 /* Styles responsives pour les petits écrans */
 @media (max-width: 768px) {
   table {
@@ -1509,14 +1525,7 @@ input[type="time"]:focus {
   flex-wrap: wrap;
   gap: 20px;
 }
-/* MY BOOKING */
-.manage_booking_container {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  border: 4px solid green;
-  flex-direction: column;
-}
+
 /* //////////////RESPONSIVE///////////// */
 @media (prefers-color-scheme: dark) {
   html {

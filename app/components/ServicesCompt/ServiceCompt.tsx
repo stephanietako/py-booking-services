@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 // Styles
 import styles from "./styles.module.scss";
+import { format } from "date-fns";
 
 interface ServiceComptProps {
   name: string;
@@ -18,6 +19,14 @@ const ServiceCompt: React.FC<ServiceComptProps> = ({
   imageUrl,
   categories,
 }) => {
+  // Récupérer l'heure et la date sélectionnées depuis `localStorage`
+  const selectedTime = localStorage.getItem("selectedTime");
+  // Vérifier si selectedTime existe et le formater
+  let formattedDate = "";
+  if (selectedTime) {
+    const date = new Date(selectedTime); // Convertir en objet Date
+    formattedDate = format(date, "iiii dd MMMM yyyy 'à' HH:mm"); // Exemple: "Tuesday 27 February 2025 at 08:00"
+  }
   return (
     <div className={styles.service_card}>
       <div className={styles.service_card__img_content}>
@@ -39,6 +48,10 @@ const ServiceCompt: React.FC<ServiceComptProps> = ({
           Catégories :{" "}
           {categories.length > 0 ? categories.join(", ") : "Aucune"}
         </p>
+        {/* Afficher la date et l'heure sélectionnées */}
+        {formattedDate && (
+          <p className={styles.service__date}>Réservé pour : {formattedDate}</p>
+        )}
       </div>
     </div>
   );
