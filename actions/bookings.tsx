@@ -7,37 +7,71 @@ import { transformBookings } from "@/helpers/transformBookings";
 export async function createBooking(
   userId: string,
   serviceId: string,
-  selectedTime: string
+  selectedDate: string,
+  startTime: string,
+  endTime: string
 ) {
   try {
+    console.log("🟢 Tentative de réservation - Utilisateur:", userId);
+    console.log("🟢 Service sélectionné:", serviceId);
+    console.log("📅 Date envoyée :", selectedDate);
+    console.log("⏰ StartTime reçu :", startTime);
+    console.log("⏳ EndTime reçu :", endTime);
+
+    // 🔥 Vérification de startTime et endTime
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      console.error("⛔ Erreur: startTime ou endTime invalide", { start, end });
+      throw new Error("🚨 L'heure de début ou de fin est invalide.");
+    }
+
+    console.log("✅ StartTime après conversion :", start);
+    console.log("✅ EndTime après conversion :", end);
+
     const user = await prisma.user.findUnique({
       where: { clerkUserId: userId },
     });
-
-    if (!user) throw new Error("Utilisateur introuvable.");
+    if (!user) throw new Error("❌ Utilisateur introuvable.");
 
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
     });
+    if (!service) throw new Error("❌ Service introuvable.");
 
-    if (!service) throw new Error("Service introuvable.");
+    // 📌 Vérification des conflits
+    const conflictingBookings = await prisma.booking.findMany({
+      where: {
+        serviceId,
+        OR: [{ reservedAt: start, status: "PENDING" }],
+      },
+    });
 
-    // Convertir `selectedTime` en Date
-    const dateTime = new Date(selectedTime);
+    if (conflictingBookings.length > 0) {
+      throw new Error(
+        "🚫 Ce créneau est déjà réservé. Veuillez choisir un autre."
+      );
+    }
 
+    // ✅ Création de la réservation avec `startTime` et `endTime`
     const newBooking = await prisma.booking.create({
       data: {
         userId: user.id,
         serviceId,
         status: "PENDING",
-        expiresAt: dateTime, // 🏆 On stocke la date choisie !
+        reservedAt: start,
+        startTime: start, // ✅ S'assurer que ces champs sont bien passés
+        endTime: end,
+        expiresAt: new Date(end.getTime() + 24 * 60 * 60 * 1000), // Expiration dans 24h
       },
     });
 
+    console.log("✅ Réservation réussie :", newBooking);
     return newBooking;
   } catch (error) {
-    console.error("Erreur lors de la réservation :", error);
-    throw new Error("Impossible de réserver.");
+    console.error("❌ Erreur lors de la réservation :", error);
+    throw new Error(`Impossible de réserver. Détails : ${error}`);
   }
 }
 
@@ -48,7 +82,7 @@ export async function getUserBookings(userId: string) {
       where: {
         user: {
           clerkUserId: userId, // Comparer avec clerkUserId
-        }, // ✅ Filtre pour ne retourner que les réservations de cet utilisateur
+        }, // Filtre pour ne retourner que les réservations de cet utilisateur
       },
       include: {
         service: true,
@@ -166,8 +200,8 @@ export async function getTransactionsByBookingId(bookingId: string) {
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: {
-        transactions: true, // ✅ Récupère les transactions associées à la réservation
-        service: true, // ✅ Ajoute les infos du service lié à la réservation
+        transactions: true, // Récupère les transactions associées à la réservation
+        service: true, // Ajoute les infos du service lié à la réservation
       },
     });
 
@@ -176,8 +210,8 @@ export async function getTransactionsByBookingId(bookingId: string) {
     }
 
     return {
-      transactions: booking.transactions, // ✅ Liste des transactions
-      service: booking.service, // ✅ Infos sur le service associé
+      transactions: booking.transactions, // Liste des transactions
+      service: booking.service, // Infos sur le service associé
     };
   } catch (error) {
     console.error(
@@ -198,8 +232,8 @@ export async function addTransactionToBooking(
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: {
-        transactions: true, // ✅ Récupérer les transactions existantes
-        service: true, // ✅ Récupérer le service associé à la réservation
+        transactions: true, // Récupérer les transactions existantes
+        service: true, // Récupérer le service associé à la réservation
       },
     });
 
@@ -228,6 +262,7 @@ export async function addTransactionToBooking(
   }
 }
 
+//
 export async function deleteTransaction(transactionId: string) {
   try {
     // Vérifie si la transaction existe
@@ -254,7 +289,7 @@ export async function deleteTransaction(transactionId: string) {
   }
 }
 
-// 🔥 Mettre à jour le total du prix de la réservation
+//  Mettre à jour le total du prix de la réservation
 export async function updateBookingTotal(bookingId: string) {
   try {
     const booking = await prisma.booking.findUnique({
@@ -278,4 +313,51 @@ export async function updateBookingTotal(bookingId: string) {
     console.error("❌ Erreur lors de la mise à jour du total :", error);
     throw error;
   }
+}
+
+// Exemple de getBookedTimes
+// export async function getBookedTimes(date: string) {
+//   // Convertir `date` en Date pour une manipulation facile
+//   const startOfDay = new Date(date);
+//   startOfDay.setHours(0, 0, 0, 0); // Début de la journée
+
+//   const endOfDay = new Date(date);
+//   endOfDay.setHours(23, 59, 59, 999); // Fin de la journée
+
+//   // Récupérer tous les créneaux réservés pour ce jour
+//   const bookings = await prisma.booking.findMany({
+//     where: {
+//       reservedAt: {
+//         gte: startOfDay, // À partir du début du jour
+//         lte: endOfDay, // Jusqu'à la fin du jour
+//       },
+//     },
+//   });
+
+//   // Retourner les créneaux réservés sous forme d'une liste de dates ISO
+//   return bookings.map((booking) => booking.reservedAt.toISOString());
+// }
+export async function getBookedTimes(date: string) {
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const bookings = await prisma.booking.findMany({
+    where: {
+      reservedAt: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
+    },
+    select: {
+      startTime: true,
+      endTime: true,
+    },
+  });
+
+  return bookings.map(({ startTime, endTime }) => ({
+    startTime: new Date(startTime),
+    endTime: new Date(endTime),
+  }));
 }

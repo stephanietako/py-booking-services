@@ -27,6 +27,9 @@ export type Service = {
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
+  reservedAt: Date | null;
+  startTime?: Date | null;
+  endTime?: Date | null;
   transactions?: Transaction[];
   bookings?: Booking[]; // Marquer `bookings` comme optionnel
 };
@@ -56,7 +59,7 @@ export interface CustomUser {
 
 export type DateTime = {
   justDate: Date | null; // Stocke uniquement une date sans heure.
-  dateTime: Date | null; // Stocke une date avec l'heure.
+  dateTime?: Date | null; // Stocke une date avec l'heure.
 };
 
 export interface DayInput {
@@ -81,6 +84,9 @@ export interface Booking {
   user: User; // Utilisateur qui a fait la réservation
   createdAt: Date;
   updatedAt: Date;
+  startTime: Date;
+  endTime: Date;
+  reservedAt: Date | null;
   expiresAt: Date | null; // Permettre à expiresAt d'être null,Date de création de la réservation
   transactions?: Transaction[]; // Liste des options ajoutées à la réservation
   status: BookingStatus; // Statut de la réservation

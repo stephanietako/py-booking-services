@@ -1,4 +1,5 @@
-import { addMinutes, getMinutes, isBefore, isEqual, parse } from "date-fns";
+import { addMinutes, getMinutes, isBefore, isEqual, format } from "date-fns";
+import { fr } from "date-fns/locale";
 import { Day } from "@prisma/client";
 import {
   categories,
@@ -17,18 +18,10 @@ export const selectOptions = categories.map((category) => ({
   value: category,
   label: capitalize(category),
 }));
-// Fonction pour convertir un index de jour en nom de jour
+
 export const weekdayIndexToName = (index: number): string => {
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  return days[index] || "Invalid day";
+  const testDate = new Date(2024, 0, index + 1); // Janvier 2024, pour tester chaque jour
+  return format(testDate, "EEEE", { locale: fr }); // ✅ Retourne le jour en français
 };
 
 // Fonction pour arrondir une date au prochain intervalle (par défaut 30 minutes)
@@ -42,7 +35,7 @@ export const roundToNearestMinutes = (
 
 export const getOpeningTimes = (startDate: Date, dbDays: Day[]): Date[] => {
   const dayOfWeek = startDate.getDay();
-  const isToday = isEqual(startDate, new Date().setHours(0, 0, 0, 0));
+  const isToday = isEqual(startDate, new Date(new Date().setHours(0, 0, 0, 0)));
 
   // Trouver les horaires correspondants au jour sélectionné dans la base de données
   const today = dbDays.find((d) => d.dayOfWeek === dayOfWeek);
@@ -52,8 +45,22 @@ export const getOpeningTimes = (startDate: Date, dbDays: Day[]): Date[] => {
   const closingTime = today ? today.closeTime : Service_closing_time;
 
   // Convertir les horaires d'ouverture et de fermeture en objets Date
-  const opening = parse(`${openingTime}:00`, "HH:mm:ss", startDate);
-  const closing = parse(`${closingTime}:00`, "HH:mm:ss", startDate);
+  // const opening = parse(`${openingTime}:00`, "HH:mm:ss", startDate);
+  // const closing = parse(`${closingTime}:00`, "HH:mm:ss", startDate);
+  const parseHour = (time: string | number) => {
+    if (typeof time === "number") return [time, 0]; // Ex: 8 devient [8, 0]
+    const parts = time.split(":");
+    return [parseInt(parts[0]), parseInt(parts[1]) || 0]; // Ex: "08:30" devient [8, 30]
+  };
+
+  const [openHour, openMinute] = parseHour(openingTime);
+  const [closeHour, closeMinute] = parseHour(closingTime);
+
+  const opening = new Date(startDate);
+  opening.setHours(openHour, openMinute, 0);
+
+  const closing = new Date(startDate);
+  closing.setHours(closeHour, closeMinute, 0);
 
   // Vérification des horaires pour le jour actuel
   let startTime: Date;
@@ -62,7 +69,8 @@ export const getOpeningTimes = (startDate: Date, dbDays: Day[]): Date[] => {
 
     // Vérifier si l'heure actuelle est trop tardive pour réserver
     if (!isBefore(roundedNow, closing)) {
-      throw new Error("No more bookings available for today.");
+      console.warn("⏳ Plus aucun créneau disponible aujourd'hui.");
+      return []; // Renvoie une liste vide au lieu de lever une erreur
     }
 
     // Définir l'heure de départ comme maintenant ou l'ouverture
@@ -84,4 +92,13 @@ export const getOpeningTimes = (startDate: Date, dbDays: Day[]): Date[] => {
   }
 
   return times;
+};
+
+export const filterAvailableTimes = (
+  availableTimes: Date[],
+  bookedTimes: Date[]
+): Date[] => {
+  return availableTimes.filter(
+    (time) => !bookedTimes.some((booked) => time.getTime() === booked.getTime())
+  );
 };
