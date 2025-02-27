@@ -11,16 +11,21 @@ export async function sendEmailToAdmin({
   bookingId: string;
   userEmail: string;
 }) {
-  const adminEmail = "admin@example.com"; // Change avec l'email de l'admin
+  const adminEmail = process.env.ADMIN_EMAIL; // ✅ Vérification dynamique
+
+  if (!adminEmail) {
+    console.error("❌ ADMIN_EMAIL n'est pas défini.");
+    throw new Error("Configuration invalide : ADMIN_EMAIL manquant.");
+  }
 
   try {
     await resend.emails.send({
       from: "noreply@yourapp.com",
       to: adminEmail,
-      subject: "Nouvelle réservation en attente",
+      subject: "🔔 Nouvelle réservation en attente",
       html: `
         <p>Bonjour,</p>
-        <p>Un utilisateur a confirmé une réservation. Voici les détails :</p>
+        <p>Un utilisateur a demandé la confirmation d'une réservation :</p>
         <ul>
           <li><strong>ID Réservation :</strong> ${bookingId}</li>
           <li><strong>Email Utilisateur :</strong> ${userEmail}</li>
@@ -29,8 +34,9 @@ export async function sendEmailToAdmin({
       `,
     });
 
-    console.log("Email envoyé à l'admin !");
+    console.log("📩 Email envoyé à l'admin !");
   } catch (error) {
-    console.error("Erreur lors de l'envoi de l'email :", error);
+    console.error("❌ Erreur lors de l'envoi de l'email :", error);
+    throw new Error("Échec de l'envoi de l'email.");
   }
 }

@@ -836,6 +836,12 @@ button {
     cursor: not-allowed;
   }
 }
+.confirmation_message {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #ff9800; /* Couleur d'alerte ou de statut */
+  font-weight: bold;
+}
 
 /* ////////spinner//////////// */
 

@@ -32,19 +32,6 @@ export async function closeDay(input: CloseDayInput) {
   }
 }
 
-// Ouvrir un jour précédemment fermé
-// export async function openDay(input: CloseDayInput) {
-//   const { date } = validateCloseDayInput(input);
-//   const existingClosedDay = await prisma.closedDay.findUnique({
-//     where: { date: new Date(date) },
-//   });
-
-//   if (!existingClosedDay) {
-//     throw new Error("Le jour n'est pas fermé ou n'existe pas.");
-//   }
-
-//   return prisma.closedDay.delete({ where: { id: existingClosedDay.id } });
-// }
 export async function openDay(input: CloseDayInput) {
   try {
     const { date } = validateCloseDayInput(input);
@@ -65,16 +52,7 @@ export async function openDay(input: CloseDayInput) {
     throw error;
   }
 }
-// Fonction pour récupérer les jours fermés
-// export async function getClosedDays(): Promise<string[]> {
-//   try {
-//     const closedDays = await prisma.closedDay.findMany();
-//     return closedDays.map((d) => formatISO(d.date));
-//   } catch (error) {
-//     console.error("Erreur lors de la récupération des jours fermés :", error);
-//     throw new Error("Impossible de récupérer les jours fermés.");
-//   }
-// }
+
 export async function getClosedDays(): Promise<string[]> {
   try {
     const closedDays = await prisma.closedDay.findMany();

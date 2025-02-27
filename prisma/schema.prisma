@@ -89,7 +89,7 @@ model Booking {
   serviceId       String
   user            User          @relation(fields: [userId], references: [id])
   service         Service       @relation(fields: [serviceId], references: [id])
-  status          BookingStatus @default(PENDING) // Ajout du statut
+  status          BookingStatus @default(PENDING)
   approvedByAdmin Boolean       @default(false)
   createdAt       DateTime      @default(now())
   expiresAt       DateTime

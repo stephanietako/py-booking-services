@@ -63,6 +63,7 @@ const TransactionManager: React.FC<TransactionManagerProps> = ({
 
   useEffect(() => {
     fetchTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingId, serviceAmount]);
 
   const handleAddTransaction = async () => {

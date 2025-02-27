@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { BookingStatus, Booking } from "@/types";
+import { Booking } from "@/types";
 import { transformBookings } from "@/helpers/transformBookings";
 
 export async function createBooking(
@@ -21,6 +21,10 @@ export async function createBooking(
     // 🔥 Vérification de startTime et endTime
     const start = new Date(startTime);
     const end = new Date(endTime);
+    // à tester comme if
+    if (start >= end) {
+      throw new Error("⛔ L'heure de début doit être avant l'heure de fin.");
+    }
 
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
       console.error("⛔ Erreur: startTime ou endTime invalide", { start, end });
@@ -41,10 +45,19 @@ export async function createBooking(
     if (!service) throw new Error("❌ Service introuvable.");
 
     // 📌 Vérification des conflits
+    // const conflictingBookings = await prisma.booking.findMany({
+    //   where: {
+    //     serviceId,
+    //     OR: [{ reservedAt: start, status: "PENDING" }],
+    //   },
+    // });
     const conflictingBookings = await prisma.booking.findMany({
       where: {
         serviceId,
-        OR: [{ reservedAt: start, status: "PENDING" }],
+        AND: [
+          { startTime: { lt: end } }, // Commence avant la fin de la nouvelle réservation
+          { endTime: { gt: start } }, // Termine après le début de la nouvelle réservation
+        ],
       },
     });
 
@@ -103,7 +116,7 @@ export async function getUserBookings(userId: string) {
 export const getAllBookings = async (userId: string): Promise<Booking[]> => {
   const bookings = await prisma.booking.findMany({
     where: {
-      status: "PENDING", // Sélectionner les réservations avec le statut "PENDING"
+      // status: "PENDING", // Sélectionner les réservations avec le statut "PENDING"
       user: {
         clerkUserId: userId, // Comparer avec clerkUserId
       },
@@ -150,17 +163,36 @@ export async function getBookingById(bookingId: string, userId: string) {
 }
 
 // Mettre à jour le statut d'une réservation
+// export async function updateBooking(
+//   id: string,
+//   status: BookingStatus
+// ): Promise<void> {
+//   await prisma.booking.update({
+//     where: { id },
+//     data: { status },
+//     include: {
+//       service: true,
+//     },
+//   });
+// }
+
 export async function updateBooking(
-  id: string,
-  status: BookingStatus
-): Promise<void> {
-  await prisma.booking.update({
-    where: { id },
-    data: { status },
-    include: {
-      service: true,
-    },
-  });
+  bookingId: string,
+  newStatus: "APPROVED" | "REJECTED"
+) {
+  try {
+    const updatedBooking = await prisma.booking.update({
+      where: { id: bookingId },
+      data: {
+        status: newStatus,
+        approvedByAdmin: newStatus === "APPROVED",
+      },
+    });
+    return updatedBooking;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de la réservation :", error);
+    throw new Error("Impossible de mettre à jour la réservation.");
+  }
 }
 
 export async function deleteUserBooking(
@@ -187,7 +219,8 @@ export async function deleteUserBooking(
 
     // Suppression de la réservation
     await prisma.booking.delete({ where: { id: bookingId } });
-    await prisma.transaction.deleteMany({ where: { id: bookingId } });
+    await prisma.transaction.deleteMany({ where: { bookingId } });
+    // await prisma.transaction.deleteMany({ where: { id: bookingId } });
     return { message: "✅ Réservation annulée avec succès." };
   } catch (error) {
     console.error("❌ Erreur lors de la suppression :", error);
@@ -361,3 +394,7 @@ export async function getBookedTimes(date: string) {
     endTime: new Date(endTime),
   }));
 }
+// return bookings.map(({ startTime, endTime }) => ({
+//   startTime: startTime.toISOString(),
+//   endTime: endTime.toISOString(),
+// }));
