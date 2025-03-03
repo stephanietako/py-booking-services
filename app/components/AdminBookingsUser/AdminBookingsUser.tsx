@@ -21,7 +21,11 @@ const AdminBookingsUser: React.FC<AdminBookingsUserProps> = ({ bookings }) => {
   ) => {
     try {
       setLoading(true);
-      await updateBooking(bookingId, newStatus); // Mettre à jour le statut
+      if (newStatus === "APPROVED" || newStatus === "REJECTED") {
+        await updateBooking(bookingId, newStatus);
+      } else {
+        throw new Error("Invalid booking status");
+      }
       toast.success(
         `Réservation ${newStatus === "APPROVED" ? "validée" : "annulée"} avec succès`
       );

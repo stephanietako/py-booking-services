@@ -4,6 +4,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Fonction pour envoyer un email à l'admin
 export async function sendEmailToAdmin({
   bookingId,
   userEmail,
@@ -11,7 +12,7 @@ export async function sendEmailToAdmin({
   bookingId: string;
   userEmail: string;
 }) {
-  const adminEmail = process.env.ADMIN_EMAIL; // ✅ Vérification dynamique
+  const adminEmail = process.env.ADMIN_EMAIL; // Récupère l'email de l'admin depuis les variables d'environnement
 
   if (!adminEmail) {
     console.error("❌ ADMIN_EMAIL n'est pas défini.");

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Booking } from "@/types";
 import { transformBookings } from "@/helpers/transformBookings";
 
+// Créer une réservation
 export async function createBooking(
   userId: string,
   serviceId: string,
@@ -162,20 +163,7 @@ export async function getBookingById(bookingId: string, userId: string) {
   }
 }
 
-// Mettre à jour le statut d'une réservation
-// export async function updateBooking(
-//   id: string,
-//   status: BookingStatus
-// ): Promise<void> {
-//   await prisma.booking.update({
-//     where: { id },
-//     data: { status },
-//     include: {
-//       service: true,
-//     },
-//   });
-// }
-
+// Mettre à jour le statut de la réservation
 export async function updateBooking(
   bookingId: string,
   newStatus: "APPROVED" | "REJECTED"
@@ -295,7 +283,7 @@ export async function addTransactionToBooking(
   }
 }
 
-//
+// supprimer une transaction
 export async function deleteTransaction(transactionId: string) {
   try {
     // Vérifie si la transaction existe
@@ -348,28 +336,7 @@ export async function updateBookingTotal(bookingId: string) {
   }
 }
 
-// Exemple de getBookedTimes
-// export async function getBookedTimes(date: string) {
-//   // Convertir `date` en Date pour une manipulation facile
-//   const startOfDay = new Date(date);
-//   startOfDay.setHours(0, 0, 0, 0); // Début de la journée
-
-//   const endOfDay = new Date(date);
-//   endOfDay.setHours(23, 59, 59, 999); // Fin de la journée
-
-//   // Récupérer tous les créneaux réservés pour ce jour
-//   const bookings = await prisma.booking.findMany({
-//     where: {
-//       reservedAt: {
-//         gte: startOfDay, // À partir du début du jour
-//         lte: endOfDay, // Jusqu'à la fin du jour
-//       },
-//     },
-//   });
-
-//   // Retourner les créneaux réservés sous forme d'une liste de dates ISO
-//   return bookings.map((booking) => booking.reservedAt.toISOString());
-// }
+// Récupérer les créneaux réservés pour une date donnée
 export async function getBookedTimes(date: string) {
   const startOfDay = new Date(date);
   startOfDay.setHours(0, 0, 0, 0);
@@ -394,7 +361,3 @@ export async function getBookedTimes(date: string) {
     endTime: new Date(endTime),
   }));
 }
-// return bookings.map(({ startTime, endTime }) => ({
-//   startTime: startTime.toISOString(),
-//   endTime: endTime.toISOString(),
-// }));

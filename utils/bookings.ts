@@ -1,5 +1,3 @@
-// src/utils/booking.ts
-
 import { prisma } from "@/lib/prisma";
 
 export const updateBookingStatus = async (

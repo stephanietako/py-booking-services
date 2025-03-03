@@ -6,6 +6,7 @@ import { DayInput, CloseDayInput } from "@/types";
 import { formatISO } from "date-fns";
 import { Day } from "@prisma/client";
 
+// Fonction pour récupérer les jours
 export async function getDays(): Promise<Day[]> {
   return await prisma.day.findMany();
 }
@@ -32,6 +33,7 @@ export async function closeDay(input: CloseDayInput) {
   }
 }
 
+// Fonction pour ouvrir un jour
 export async function openDay(input: CloseDayInput) {
   try {
     const { date } = validateCloseDayInput(input);
@@ -62,6 +64,7 @@ export async function getClosedDays(): Promise<string[]> {
     throw new Error("Impossible de récupérer les jours fermés.");
   }
 }
+
 // Fonction pour récupérer les horaires d'ouverture
 export async function getOpeningHours(): Promise<Day[]> {
   try {
@@ -79,6 +82,7 @@ export async function getOpeningHours(): Promise<Day[]> {
   }
 }
 
+// Fonction pour mettre à jour les horaires d'ouverture
 export async function updateOpeningHours(dayInputs: DayInput[]) {
   try {
     if (!dayInputs || dayInputs.length === 0) {
@@ -125,6 +129,7 @@ export async function updateOpeningHours(dayInputs: DayInput[]) {
   }
 }
 
+// Fonction pour récupérer les jours ouverts et fermés
 export async function getOpeningAndClosedDays() {
   try {
     const days = await prisma.day.findMany({
@@ -148,6 +153,7 @@ export async function getOpeningAndClosedDays() {
   }
 }
 
+// Fonction pour convertir l'index du jour de la semaine en nom
 function weekdayIndexToName(dayOfWeek: number): string {
   const days = [
     "Sunday",
