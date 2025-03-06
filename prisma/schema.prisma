@@ -18,16 +18,17 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(uuid())
-  email       String
-  name        String
-  image       String?
-  description String?
-  clerkUserId String    @unique
-  roleId      String
-  createdAt   DateTime  @default(now())
-  bookings    Booking[] // Un utilisateur peut avoir plusieurs réservations
-  role        Role      @relation(fields: [roleId], references: [id])
+  id               String    @id @default(uuid())
+  email            String
+  name             String
+  image            String?
+  description      String?
+  clerkUserId      String    @unique
+  roleId           String
+  createdAt        DateTime  @default(now())
+  bookings         Booking[] // Un utilisateur peut avoir plusieurs réservations
+  role             Role      @relation(fields: [roleId], references: [id])
+  stripeCustomerId String?   @unique
 }
 
 model Role {
@@ -37,20 +38,23 @@ model Role {
 }
 
 model Service {
-  id           String        @id @default(uuid())
-  name         String
-  amount       Float
-  categories   String[] // Changement pour un tableau de catégories
-  description  String?
-  imageUrl     String
-  active       Boolean       @default(true)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  reservedAt   DateTime?
-  startTime    DateTime?
-  endTime      DateTime?
-  transactions Transaction[]
-  bookings     Booking[]
+  id               String        @id @default(uuid())
+  name             String
+  amount           Float
+  categories       String[] // Changement pour un tableau de catégories
+  description      String?
+  imageUrl         String
+  active           Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  reservedAt       DateTime?
+  startTime        DateTime?
+  endTime          DateTime?
+  transactions     Transaction[]
+  bookings         Booking[]
+  price            Float // Nouveau champ pour le prix dynamique
+  currency         String // Nouveau champ pour la devise
+  stripeCustomerId String? // Ajout de l'identifiant du client Stripe
 }
 
 model Transaction {
@@ -60,7 +64,7 @@ model Transaction {
   serviceId   String?
   service     Service? @relation(fields: [serviceId], references: [id])
   createdAt   DateTime @default(now())
-  bookingId   String? // Ajout du champ bookingId
+  bookingId   String?
   booking     Booking? @relation(fields: [bookingId], references: [id]) // Relation explicite avec Booking
 }
 
@@ -81,22 +85,25 @@ enum BookingStatus {
   PENDING
   APPROVED
   REJECTED
+  PAID
 }
 
 model Booking {
-  id              String        @id @default(uuid())
-  userId          String
-  serviceId       String
-  user            User          @relation(fields: [userId], references: [id])
-  service         Service       @relation(fields: [serviceId], references: [id])
-  status          BookingStatus @default(PENDING)
-  approvedByAdmin Boolean       @default(false)
-  createdAt       DateTime      @default(now())
-  expiresAt       DateTime
-  updatedAt       DateTime      @updatedAt
-  reservedAt      DateTime
-  startTime       DateTime
-  endTime         DateTime
-  transactions    Transaction[]
-  totalAmount     Float         @default(0) // Ajout du total
+  id                    String        @id @default(uuid())
+  userId                String
+  serviceId             String
+  user                  User          @relation(fields: [userId], references: [id])
+  service               Service       @relation(fields: [serviceId], references: [id])
+  status                BookingStatus @default(PENDING)
+  approvedByAdmin       Boolean       @default(false)
+  createdAt             DateTime      @default(now())
+  expiresAt             DateTime
+  updatedAt             DateTime      @updatedAt
+  reservedAt            DateTime
+  startTime             DateTime
+  endTime               DateTime
+  transactions          Transaction[]
+  totalAmount           Float         @default(0) // Ajout du total
+  stripeCustomerId      String?
+  stripePaymentIntentId String? // Ajout de l'identifiant de l'abonnement Stripe
 }

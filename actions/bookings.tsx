@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { Booking } from "@/types";
 import { transformBookings } from "@/helpers/transformBookings";
+import { stripe } from "@/lib/stripe";
 
 // Créer une réservation
 export async function createBooking(
@@ -22,36 +23,54 @@ export async function createBooking(
     // 🔥 Vérification de startTime et endTime
     const start = new Date(startTime);
     const end = new Date(endTime);
-    // à tester comme if
+
     if (start >= end) {
-      throw new Error("⛔ L'heure de début doit être avant l'heure de fin.");
+      throw new Error("⛛ L'heure de début doit être avant l'heure de fin.");
     }
 
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      console.error("⛔ Erreur: startTime ou endTime invalide", { start, end });
+      console.error("⛛ Erreur: startTime ou endTime invalide", { start, end });
       throw new Error("🚨 L'heure de début ou de fin est invalide.");
     }
 
     console.log("✅ StartTime après conversion :", start);
     console.log("✅ EndTime après conversion :", end);
 
+    // Récupérer l'utilisateur via son `clerkUserId`
     const user = await prisma.user.findUnique({
       where: { clerkUserId: userId },
+      select: { id: true, stripeCustomerId: true, email: true },
     });
+
     if (!user) throw new Error("❌ Utilisateur introuvable.");
 
+    // Si l'utilisateur n'a pas de `stripeCustomerId`, on le crée
+    if (!user.stripeCustomerId) {
+      console.log(
+        "⛛ L'utilisateur n'a pas de stripeCustomerId. Création du client Stripe..."
+      );
+      const customer = await stripe.customers.create({
+        email: user.email, // Assurez-vous que l'email est présent
+      });
+
+      // Mettre à jour l'utilisateur dans la base de données avec `stripeCustomerId`
+      await prisma.user.update({
+        where: { clerkUserId: userId },
+        data: { stripeCustomerId: customer.id },
+      });
+
+      // Ajouter le `stripeCustomerId` à l'utilisateur
+      user.stripeCustomerId = customer.id;
+      console.log("✅ Client Stripe créé avec succès :", customer.id);
+    }
+
+    // Récupérer le service
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
     });
     if (!service) throw new Error("❌ Service introuvable.");
 
-    // 📌 Vérification des conflits
-    // const conflictingBookings = await prisma.booking.findMany({
-    //   where: {
-    //     serviceId,
-    //     OR: [{ reservedAt: start, status: "PENDING" }],
-    //   },
-    // });
+    // Vérifier les conflits avec d'autres réservations
     const conflictingBookings = await prisma.booking.findMany({
       where: {
         serviceId,
@@ -68,16 +87,17 @@ export async function createBooking(
       );
     }
 
-    // ✅ Création de la réservation avec `startTime` et `endTime`
+    // Créer la réservation
     const newBooking = await prisma.booking.create({
       data: {
         userId: user.id,
         serviceId,
         status: "PENDING",
         reservedAt: start,
-        startTime: start, // ✅ S'assurer que ces champs sont bien passés
+        startTime: start,
         endTime: end,
         expiresAt: new Date(end.getTime() + 24 * 60 * 60 * 1000), // Expiration dans 24h
+        stripeCustomerId: user.stripeCustomerId, // Assurez-vous que ce champ est bien passé
       },
     });
 
@@ -164,18 +184,38 @@ export async function getBookingById(bookingId: string, userId: string) {
 }
 
 // Mettre à jour le statut de la réservation
+// export async function updateBooking(
+//   bookingId: string,
+//   newStatus: "APPROVED" | "REJECTED" | "PAID"
+// ) {
+//   try {
+//     const updatedBooking = await prisma.booking.update({
+//       where: { id: bookingId },
+//       data: {
+//         status: newStatus,
+//         approvedByAdmin: newStatus === "APPROVED",
+//       },
+//     });
+//     return updatedBooking;
+//   } catch (error) {
+//     console.error("Erreur lors de la mise à jour de la réservation :", error);
+//     throw new Error("Impossible de mettre à jour la réservation.");
+//   }
+// }
 export async function updateBooking(
   bookingId: string,
-  newStatus: "APPROVED" | "REJECTED"
+  newStatus: "APPROVED" | "REJECTED" | "PAID"
 ) {
   try {
+    // Si le statut est "PAID", on ne change pas "approvedByAdmin", sinon on le met à "true" si le statut est "APPROVED"
     const updatedBooking = await prisma.booking.update({
       where: { id: bookingId },
       data: {
         status: newStatus,
-        approvedByAdmin: newStatus === "APPROVED",
+        approvedByAdmin: newStatus === "APPROVED" ? true : undefined, // On garde le `approvedByAdmin` inchangé si ce n'est pas "APPROVED"
       },
     });
+
     return updatedBooking;
   } catch (error) {
     console.error("Erreur lors de la mise à jour de la réservation :", error);
@@ -335,6 +375,38 @@ export async function updateBookingTotal(bookingId: string) {
     throw error;
   }
 }
+// export async function updateBookingTotal(bookingId: string) {
+//   try {
+//     const booking = await prisma.booking.findUnique({
+//       where: { id: bookingId },
+//       include: { transactions: true, service: true },
+//     });
+
+//     if (!booking) {
+//       throw new Error("Réservation introuvable.");
+//     }
+
+//     // Calculer le total (prix du service + transactions)
+//     const totalTransactions = booking.transactions.reduce(
+//       (sum, transaction) => sum + transaction.amount,
+//       0
+//     );
+//     const newTotal = totalTransactions + (booking.service?.amount || 0);
+
+//     // Mettre à jour le total dans la réservation
+//     await prisma.booking.update({
+//       where: { id: bookingId },
+//       data: {
+//         totalAmount: newTotal, // Mettre à jour le totalAmount
+//       },
+//     });
+
+//     return newTotal;
+//   } catch (error) {
+//     console.error("❌ Erreur lors de la mise à jour du total :", error);
+//     throw error;
+//   }
+// }
 
 // Récupérer les créneaux réservés pour une date donnée
 export async function getBookedTimes(date: string) {

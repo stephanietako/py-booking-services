@@ -120,18 +120,6 @@ const MyBookings = () => {
                     Voir la réservation
                   </button>
                 </div>
-                {/* 
-                <button
-                  onClick={() => handleDeleteBooking(booking.id)}
-                  disabled={deleting === booking.id}
-                >
-                  {deleting === booking.id ? "Annulation..." : "Annuler"}
-                </button>
-                <button
-                  onClick={() => router.push(`/manage-booking/${booking.id}`)}
-                >
-                  Voir la réservation
-                </button> */}
               </li>
             ))}
           </ul>

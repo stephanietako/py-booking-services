@@ -39,11 +39,7 @@ export default async function Dashboard() {
           {userRole?.role?.name === "admin" && <ListUser />}
         </div>
         <br />
-        <div>
-          {/* Afficher les réservations si l'utilisateur est admin */}
-          {userRole?.role?.name === "admin" && <UsersBookings />}{" "}
-          {/* Appel de UsersBookings */}
-        </div>
+        <div>{userRole?.role?.name === "admin" && <UsersBookings />} </div>
       </section>
     </Wrapper>
   );

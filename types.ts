@@ -9,6 +9,7 @@ export interface User {
   roleId?: string | null;
   role?: { name: string };
   services?: Service[];
+  stripeCustomerId?: string | null;
 }
 
 export interface Role {
@@ -32,6 +33,9 @@ export type Service = {
   endTime?: Date | null;
   transactions?: Transaction[];
   bookings?: Booking[]; // Marquer `bookings` comme optionnel
+  price: number;
+  currency: string;
+  stripeCustomerId?: string | null;
 };
 
 export interface Transaction {
@@ -55,6 +59,7 @@ export interface CustomUser {
   email?: string;
   name?: string;
   role?: { name: string };
+  stripeCustomerId?: string | null;
 }
 
 export type DateTime = {
@@ -74,7 +79,7 @@ export interface CloseDayInput {
   date: Date;
 }
 
-export type BookingStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type BookingStatus = "PENDING" | "APPROVED" | "REJECTED" | "PAID";
 
 export interface Booking {
   id: string;
@@ -93,4 +98,7 @@ export interface Booking {
   approvedByAdmin: boolean; // Indique si la réservation a été approuvée par un admin
   amount?: number;
   totalAmount: number;
+  stripeCustomerId?: string | null;
+  stripePaymentIntentId?: string | null;
+  priceId?: string | null;
 }

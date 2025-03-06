@@ -325,6 +325,8 @@ export async function createService(
         imageUrl,
         categories: categories.length > 0 ? categories : ["defaultCategory"], // Utilisation des catégories passées en paramètre
         active: true, // L'état actif du service, tu peux ajuster selon ton besoin
+        price: amount, // Ajout de la propriété price
+        currency: "EUR", // Ajout de la propriété currency, ajustez selon votre besoin
       },
     });
 
