@@ -22,7 +22,7 @@ const Services: React.FC = () => {
         const userServices = await getServicesByUser(user.id);
         console.log("Données récupérées :", userServices); // 🔍 Vérifie la structure reçue
 
-        // Correction ici : utilisation de `categories` et `transactions`
+        // Correction ici : utilisation de `categories` et `options`
         const servicesWithRequiredProps: Service[] = userServices.map(
           (service) => ({
             ...service,

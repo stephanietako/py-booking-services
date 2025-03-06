@@ -36,10 +36,6 @@ const Navbar: React.FC = () => {
       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
         {isSignedIn ? (
           <>
-            {/* // nombre, total et services atteints */}
-            {/* <Link href="/dashboardTest">
-              <div className="btn">Mon Tableau de bord</div>
-            </Link> */}
             <>
               <Link href="/my-bookings">
                 <div className="btn">Mes réservations</div>
@@ -47,10 +43,6 @@ const Navbar: React.FC = () => {
               <Link href="/dashboard">
                 <div className="btn">Dashboard</div>
               </Link>
-              {/* //transactions des 30derniers jours par exemple */}
-              {/* <Link href="/transactions">
-                <div className="btn">Mes Transactions</div>
-              </Link> */}
 
               <Link href="/admin/services">
                 <div className="btn">Mes Services</div>

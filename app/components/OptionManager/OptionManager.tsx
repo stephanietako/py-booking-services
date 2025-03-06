@@ -2,33 +2,33 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  addTransactionToBooking,
-  deleteTransaction,
-  getTransactionsByBookingId,
+  addOptionToBooking,
+  deleteOption,
+  getOptionsByBookingId,
   updateBookingTotal, // ✅ Nouvelle action
 } from "@/actions/bookings";
-import { Transaction } from "@/types";
+import { Option } from "@/types";
 import { FaRegTrashAlt, FaWallet } from "react-icons/fa";
 import { BsCartX } from "react-icons/bs";
 
-interface TransactionManagerProps {
+interface OptionManagerProps {
   bookingId: string;
   serviceAmount: number; // ✅ Ajout du prix initial du service
   onTotalUpdate?: (total: number) => void; // ✅ Callback pour envoyer le total
 }
 
-const TransactionManager: React.FC<TransactionManagerProps> = ({
+const OptionManager: React.FC<OptionManagerProps> = ({
   bookingId,
   serviceAmount, // ✅ Montant initial
   onTotalUpdate,
 }) => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [options, setOptions] = useState<Option[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [totalAmount, setTotalAmount] = useState<number>(serviceAmount || 0);
 
-  const options = [
+  const optionsPlus = [
     { description: "Personne supplémentaire", amount: 50 },
     { description: "Personne supplémentaire", amount: 120 },
     { description: "Hôtesse", amount: 200 },
@@ -36,43 +36,43 @@ const TransactionManager: React.FC<TransactionManagerProps> = ({
     { description: "Paddle board", amount: 50 },
   ];
 
-  const fetchTransactions = async () => {
+  const fetchOptions = async () => {
     setLoading(true);
     try {
-      const { transactions } = await getTransactionsByBookingId(bookingId);
-      setTransactions(transactions);
+      const { options } = await getOptionsByBookingId(bookingId);
+      setOptions(options);
 
-      // ✅ Vérifie que les transactions sont bien des nombres valides avant de calculer
-      const total = transactions.reduce(
-        (sum, transaction) => sum + transaction.amount,
+      // ✅ Vérifie que les options sont bien des nombres valides avant de calculer
+      const total = options.reduce(
+        (sum, option) => sum + option.amount,
         serviceAmount || 0
       );
 
       setTotalAmount(total); // ✅ Met à jour localement
       onTotalUpdate?.(total); // ✅ Envoie le total à la card
       console.log("Montant du service:", serviceAmount);
-      console.log("Transactions récupérées:", transactions);
+      console.log("Options récupérées:", options);
       console.log("Total calculé :", total);
     } catch (error) {
-      console.error("❌ Erreur lors du chargement des transactions :", error);
-      setError("Impossible de récupérer les transactions.");
+      console.error("❌ Erreur lors du chargement des options :", error);
+      setError("Impossible de récupérer les options.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchTransactions();
+    fetchOptions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingId, serviceAmount]);
 
-  const handleAddTransaction = async () => {
+  const handleAddOption = async () => {
     if (!selectedOption) {
       alert("Veuillez sélectionner une option valide");
       return;
     }
 
-    const option = options.find(
+    const option = optionsPlus.find(
       (opt) => opt.amount.toString() === selectedOption
     );
     if (!option) {
@@ -81,42 +81,36 @@ const TransactionManager: React.FC<TransactionManagerProps> = ({
     }
 
     try {
-      await addTransactionToBooking(
-        bookingId,
-        option.amount,
-        option.description
-      );
+      if (option.description) {
+        await addOptionToBooking(bookingId, option.amount, option.description);
+      } else {
+        alert("Description de l'option invalide");
+      }
       await updateBookingTotal(bookingId); // ✅ Mise à jour du total dans la DB
       setSelectedOption("");
       setTotalAmount((prev) => prev + option.amount); // ✅ Mise à jour locale du total
-      fetchTransactions(); // ✅ Recharge les transactions
+      fetchOptions(); // ✅ Recharge les options
     } catch (error) {
-      console.error("❌ Erreur lors de l'ajout de la transaction :", error);
+      console.error("❌ Erreur lors de l'ajout de l'option :", error);
       alert("Une erreur s'est produite lors de l'ajout.");
     }
   };
 
-  // 🔥 Suppression d'une transaction et mise à jour du total
-  const handleDeleteTransaction = async (
-    transactionId: string,
-    amount: number
-  ) => {
+  // 🔥 Suppression d'une option et mise à jour du total
+  const handleDeleteOption = async (optionId: string, amount: number) => {
     const confirmed = window.confirm(
-      "Voulez-vous vraiment supprimer cette transaction ?"
+      "Voulez-vous vraiment supprimer cette option ?"
     );
     if (!confirmed) return;
 
     try {
-      await deleteTransaction(transactionId);
+      await deleteOption(optionId);
       await updateBookingTotal(bookingId); // ✅ Mise à jour du total après suppression
       setTotalAmount((prev) => prev - amount); // ✅ Mise à jour locale
-      setTransactions((prev) => prev.filter((t) => t.id !== transactionId));
+      setOptions((prev) => prev.filter((t) => t.id !== optionId));
     } catch (error) {
-      console.error(
-        "❌ Erreur lors de la suppression de la transaction :",
-        error
-      );
-      alert("Impossible de supprimer la transaction.");
+      console.error("❌ Erreur lors de la suppression de l'option :", error);
+      alert("Impossible de supprimer l'option.");
     }
   };
 
@@ -133,7 +127,7 @@ const TransactionManager: React.FC<TransactionManagerProps> = ({
             <option value="" disabled>
               Choisir une option
             </option>
-            {options.map((option) => (
+            {optionsPlus.map((option) => (
               <option
                 key={`${option.description}-${option.amount}`}
                 value={option.amount.toString()}
@@ -142,23 +136,23 @@ const TransactionManager: React.FC<TransactionManagerProps> = ({
               </option>
             ))}
           </select>
-          <button onClick={handleAddTransaction} className="btn_option">
+          <button onClick={handleAddOption} className="btn_option">
             Ajouter une option
           </button>
         </div>
 
         <h4>Total à payer : {totalAmount}€</h4>
 
-        <h3>Transactions</h3>
+        <h3>Options</h3>
         {loading ? (
           <p>Chargement...</p>
         ) : error ? (
           <p className="error">{error}</p>
-        ) : transactions.length === 0 ? (
+        ) : options.length === 0 ? (
           <div className="no_transaction">
             <span className="no_transaction_text">
               <BsCartX />
-              <p>aucune transaction</p>
+              <p>aucune option</p>
             </span>
           </div>
         ) : (
@@ -174,31 +168,27 @@ const TransactionManager: React.FC<TransactionManagerProps> = ({
               </tr>
             </thead>
             <tbody>
-              {transactions.map((transaction) => (
-                <tr key={transaction.id}>
+              {options.map((option) => (
+                <tr key={option.id}>
                   <td>
                     <FaWallet />
                   </td>
-                  <td>+ {transaction.amount}€</td>
-                  <td>{transaction.description}</td>
+                  <td>+ {option.amount}€</td>
+                  <td>{option.description}</td>
                   <td>
-                    {new Date(transaction.createdAt).toLocaleDateString(
-                      "fr-FR"
-                    )}
+                    {new Date(option.createdAt).toLocaleDateString("fr-FR")}
                   </td>
                   <td>
-                    {new Date(transaction.createdAt).toLocaleTimeString(
-                      "fr-FR",
-                      { hour: "2-digit", minute: "2-digit", second: "2-digit" }
-                    )}
+                    {new Date(option.createdAt).toLocaleTimeString("fr-FR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
                   </td>
                   <td>
                     <button
                       onClick={() =>
-                        handleDeleteTransaction(
-                          transaction.id,
-                          transaction.amount
-                        )
+                        handleDeleteOption(option.id, option.amount)
                       }
                       className="btn_action"
                     >
@@ -215,4 +205,4 @@ const TransactionManager: React.FC<TransactionManagerProps> = ({
   );
 };
 
-export default TransactionManager;
+export default OptionManager;

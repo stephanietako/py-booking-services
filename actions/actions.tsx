@@ -112,13 +112,13 @@ export async function getServiceById(serviceId: string) {
   }
 }
 
-// Récupérer la liste des transactions associées à un service
-export async function getTransactionsByServiceId(serviceId: string) {
+// Récupérer la liste des options associées à un service
+export async function getOptionsByServiceId(serviceId: string) {
   try {
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
       include: {
-        transactions: true,
+        options: true,
       },
     });
 
@@ -126,21 +126,21 @@ export async function getTransactionsByServiceId(serviceId: string) {
       throw new Error("Service non trouvé");
     }
 
-    return service.transactions;
+    return service.options;
   } catch (error) {
-    console.error("Erreur lors de la récupération des transactions:", error);
+    console.error("Erreur lors de la récupération des options:", error);
     throw error;
   }
 }
 
-// Ajouter une transaction à un service
-export async function addTransactionToService(
+// Ajouter une option à un service
+export async function addOptionToService(
   serviceId: string,
   amount: number,
   description: string
 ) {
   try {
-    const transaction = await prisma.transaction.create({
+    const option = await prisma.option.create({
       data: {
         amount,
         description,
@@ -148,18 +148,18 @@ export async function addTransactionToService(
       },
     });
 
-    console.log("Transaction ajoutée avec succès:", transaction);
-    return transaction;
+    console.log("Option ajoutée avec succès:", option);
+    return option;
   } catch (error) {
-    console.error("Erreur lors de l'ajout de la transaction:", error);
+    console.error("Erreur lors de l'ajout de la option:", error);
     throw error;
   }
 }
 
-// Supprimer un service et ses transactions
+// Supprimer un service et ses options
 export async function deleteService(serviceId: string) {
   try {
-    await prisma.transaction.deleteMany({ where: { serviceId } });
+    await prisma.option.deleteMany({ where: { serviceId } });
     await prisma.service.delete({ where: { id: serviceId } });
     console.log("Service supprimé avec succès");
   } catch (error) {
@@ -168,32 +168,32 @@ export async function deleteService(serviceId: string) {
   }
 }
 
-// Supprimer une transaction
-export async function deleteTransaction(transactionId: string) {
+// Supprimer une option
+export async function deleteManyoption(optionId: string) {
   try {
-    const transaction = await prisma.transaction.findUnique({
+    const option = await prisma.option.findUnique({
       where: {
-        id: transactionId,
+        id: optionId,
       },
     });
 
-    if (!transaction) {
-      throw new Error("Transaction non trouvée");
+    if (!option) {
+      throw new Error("Option non trouvée");
     }
 
-    await prisma.transaction.delete({
+    await prisma.option.delete({
       where: {
-        id: transactionId,
+        id: optionId,
       },
     });
   } catch (error) {
-    console.error("Erreur lors de la suppression de la transaction:", error);
+    console.error("Erreur lors de la suppression de la option:", error);
     throw error;
   }
 }
 
-// Récupérer les transactions d'un utilisateur par période
-export async function getTransactionsByEmailAndPeriod(
+// Récupérer les options d'un utilisateur par période
+export async function getOptionsByEmailAndPeriod(
   clerkUserId: string,
   period: string
 ) {
@@ -229,7 +229,7 @@ export async function getTransactionsByEmailAndPeriod(
           include: {
             service: {
               include: {
-                transactions: {
+                options: {
                   where: {
                     createdAt: {
                       gte: dateLimit,
@@ -250,17 +250,17 @@ export async function getTransactionsByEmailAndPeriod(
       throw new Error("Utilisateur non trouvé");
     }
 
-    const transactions = user.bookings.flatMap((booking) =>
-      booking.service.transactions.map((transaction) => ({
-        ...transaction,
+    const options = user.bookings.flatMap((booking) =>
+      booking.service.options.map((option) => ({
+        ...option,
         serviceName: booking.service.name,
         serviceId: booking.service.id,
       }))
     );
 
-    return transactions;
+    return options;
   } catch (error) {
-    console.error("Erreur lors de la récupération des transactions", error);
+    console.error("Erreur lors de la récupération des options", error);
     throw error;
   }
 }
@@ -281,7 +281,7 @@ export const getLastServices = async (clerkUserId: string) => {
       },
       take: 3,
       include: {
-        transactions: true,
+        options: true,
       },
     });
 
@@ -339,10 +339,10 @@ export async function createService(
 }
 
 //////////
-// Récupérer les services atteints par un utilisateur (exemple: services ayant plus de 5 transactions)
+// Récupérer les services atteints par un utilisateur (exemple: services ayant plus de 5 options)
 export async function getReachedServices(
   clerkUserId: string,
-  transactionThreshold: number = 5
+  optionThreshold: number = 5
 ) {
   try {
     const user = await prisma.user.findUnique({
@@ -352,7 +352,7 @@ export async function getReachedServices(
           include: {
             service: {
               include: {
-                transactions: true,
+                options: true,
               },
             },
           },
@@ -364,10 +364,10 @@ export async function getReachedServices(
       throw new Error("Utilisateur non trouvé");
     }
 
-    // Filtre les services dont le nombre de transactions dépasse le seuil
+    // Filtre les services dont le nombre d' options dépasse le seuil
     const reachedServices = user.bookings
       .map((booking) => booking.service)
-      .filter((service) => service.transactions.length >= transactionThreshold);
+      .filter((service) => service.options.length >= optionThreshold);
 
     return reachedServices;
   } catch (error) {
@@ -379,8 +379,8 @@ export async function getReachedServices(
   }
 }
 
-// Calculer le montant total des transactions d'un utilisateur dans une période donnée
-export async function getTotalTransactionAmount(
+// Calculer le montant total des optionss d'un utilisateur dans une période donnée
+export async function getTotalOptionAmount(
   clerkUserId: string,
   period: string
 ) {
@@ -416,7 +416,7 @@ export async function getTotalTransactionAmount(
           include: {
             service: {
               include: {
-                transactions: {
+                options: {
                   where: {
                     createdAt: {
                       gte: dateLimit,
@@ -434,10 +434,10 @@ export async function getTotalTransactionAmount(
       throw new Error("Utilisateur non trouvé");
     }
 
-    // Calcule le montant total des transactions
+    // Calcule le montant total des options
     const totalAmount = user.bookings.reduce((total, booking) => {
-      const serviceTotal = booking.service.transactions.reduce(
-        (amountTotal, transaction) => amountTotal + transaction.amount,
+      const serviceTotal = booking.service.options.reduce(
+        (amountTotal, option) => amountTotal + option.amount,
         0
       );
       return total + serviceTotal;
@@ -445,19 +445,13 @@ export async function getTotalTransactionAmount(
 
     return totalAmount;
   } catch (error) {
-    console.error(
-      "Erreur lors du calcul du montant total des transactions:",
-      error
-    );
+    console.error("Erreur lors du calcul du montant total des options:", error);
     throw error;
   }
 }
 
-// Calculer le nombre total de transactions d'un utilisateur dans une période donnée
-export async function getTotalTransactionCount(
-  clerkUserId: string,
-  period: string
-) {
+// Calculer le nombre total d'options d'un utilisateur dans une période donnée
+export async function getTotalOptionCount(clerkUserId: string, period: string) {
   try {
     const now = new Date();
     let dateLimit;
@@ -490,7 +484,7 @@ export async function getTotalTransactionCount(
           include: {
             service: {
               include: {
-                transactions: {
+                options: {
                   where: {
                     createdAt: {
                       gte: dateLimit,
@@ -508,28 +502,25 @@ export async function getTotalTransactionCount(
       throw new Error("Utilisateur non trouvé");
     }
 
-    // Calcule le nombre total de transactions
+    // Calcule le nombre total d' options
     const totalCount = user.bookings.reduce((count, booking) => {
-      return count + booking.service.transactions.length;
+      return count + booking.service.options.length;
     }, 0);
 
     return totalCount;
   } catch (error) {
-    console.error(
-      "Erreur lors du calcul du nombre total des transactions:",
-      error
-    );
+    console.error("Erreur lors du calcul du nombre total des options:", error);
     throw error;
   }
 }
 
-// // Récupérer tous les services
+// Récupérer tous les services
 export const getAllServices = async () => {
   try {
     // Récupère tous les services sans filtrer par email
     const services = await prisma.service.findMany({
       include: {
-        transactions: true, // Inclure les transactions associées si nécessaire
+        options: true, // Inclure les options associées si nécessaire
       },
     });
 
@@ -543,6 +534,7 @@ export const getAllServices = async () => {
   }
 };
 
+//
 export async function updateService(
   serviceId: string,
   name: string,

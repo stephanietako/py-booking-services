@@ -51,7 +51,7 @@ const Service: FC = () => {
         setServices(
           data.map((service) => ({
             ...service,
-            transactions: service.transactions || [],
+            options: service.options || [],
           }))
         );
       } catch (err) {

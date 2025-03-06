@@ -169,6 +169,103 @@
 //   });
 // }
 ////////////
+// import { headers } from "next/headers";
+// import Stripe from "stripe";
+// import { prisma } from "@/lib/prisma";
+
+// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+
+// export async function POST(req: Request) {
+//   console.log("✅ Webhook Stripe reçu !");
+
+//   const body = await req.text();
+//   console.log("📩 Contenu de la requête Stripe :", body);
+
+//   const headerList = await headers();
+//   const signature = headerList.get("stripe-signature") as string;
+
+//   if (!signature) {
+//     console.error("❌ Signature Stripe manquante.");
+//     return new Response("Signature Stripe manquante", { status: 400 });
+//   }
+
+//   let event: Stripe.Event;
+//   try {
+//     event = stripe.webhooks.constructEvent(
+//       body,
+//       signature,
+//       process.env.STRIPE_WEBHOOK_SECRET as string
+//     );
+//   } catch (err) {
+//     console.error("❌ Erreur de validation du webhook:", err);
+//     return new Response("Webhook error", { status: 400 });
+//   }
+
+//   try {
+//     switch (event.type) {
+//       case "checkout.session.completed": {
+//         const session = event.data.object as Stripe.Checkout.Session;
+//         const bookingId = session.metadata?.bookingId;
+
+//         if (!bookingId) {
+//           console.error("❌ Booking ID manquant dans metadata.");
+//           return new Response("Booking ID missing", { status: 400 });
+//         }
+//         // Ajouter un console.log pour vérifier l'ID du PaymentIntent
+//         console.log("✅ Paiement réussi pour la réservation :", bookingId);
+//         console.log("ID du PaymentIntent :", session.payment_intent);
+//         // Vérifier si la réservation existe et est toujours approuvée
+//         const booking = await prisma.booking.findUnique({
+//           where: { id: bookingId },
+//         });
+
+//         if (!booking || booking.status !== "APPROVED") {
+//           console.error("❌ Réservation invalide ou non approuvée.");
+//           return new Response("Invalid booking", { status: 400 });
+//         }
+
+//         // Assure-toi que payment_intent est bien un string
+//         const paymentIntentId = session.payment_intent as string;
+
+//         // Mettre à jour la réservation en PAID
+//         await prisma.booking.update({
+//           where: { id: bookingId },
+//           data: {
+//             status: "PAID", // Ajoute "PAID" dans l'enum Prisma pour éviter ce cast
+//             stripePaymentIntentId: paymentIntentId,
+//             // stripePaymentIntentId: session.payment_intent as string,
+//           },
+//         });
+
+//         // Enregistrer la transaction dans la base de données
+//         await prisma.transaction.create({
+//           data: {
+//             bookingId,
+//             amount: session.amount_total! / 100, // Convertir en devise
+//             description: `Paiement Stripe réussi (${session.id})`,
+//           },
+//         });
+
+//         console.log(`✅ Paiement validé pour la réservation ${bookingId}`);
+//         break;
+//       }
+
+//       case "payment_intent.payment_failed": {
+//         console.warn("❌ Paiement échoué.");
+//         break;
+//       }
+
+//       default:
+//         console.log(`ℹ️ Événement Stripe non géré: ${event.type}`);
+//     }
+//   } catch (error) {
+//     console.error("❌ Erreur lors du traitement du webhook:", error);
+//     return new Response("Erreur Webhook", { status: 500 });
+//   }
+
+//   return new Response("Webhook reçu", { status: 200 });
+// }
+//////////////////////////
 import { headers } from "next/headers";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
@@ -205,16 +302,17 @@ export async function POST(req: Request) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        const bookingId = session.metadata?.bookingId;
 
-        if (!bookingId) {
+        if (!session.metadata?.bookingId) {
           console.error("❌ Booking ID manquant dans metadata.");
           return new Response("Booking ID missing", { status: 400 });
         }
-        // Ajouter un console.log pour vérifier l'ID du PaymentIntent
+
+        const bookingId = session.metadata.bookingId;
         console.log("✅ Paiement réussi pour la réservation :", bookingId);
         console.log("ID du PaymentIntent :", session.payment_intent);
-        // Vérifier si la réservation existe et est toujours approuvée
+
+        // Vérifier si la réservation existe et est approuvée
         const booking = await prisma.booking.findUnique({
           where: { id: bookingId },
         });
@@ -224,29 +322,41 @@ export async function POST(req: Request) {
           return new Response("Invalid booking", { status: 400 });
         }
 
-        // Assure-toi que payment_intent est bien un string
+        if (!session.payment_intent) {
+          console.error("❌ Payment Intent manquant.");
+          return new Response("Payment Intent missing", { status: 400 });
+        }
+
         const paymentIntentId = session.payment_intent as string;
 
-        // Mettre à jour la réservation en PAID
+        // Vérifier que le montant est défini avant de l'utiliser
+        if (!session.amount_total) {
+          console.error("❌ Montant total manquant dans la session.");
+          return new Response("Amount total missing", { status: 400 });
+        }
+
+        // ✅ Mettre à jour la réservation en "PAID"
         await prisma.booking.update({
           where: { id: bookingId },
           data: {
-            status: "PAID", // Ajoute "PAID" dans l'enum Prisma pour éviter ce cast
+            status: "PAID",
             stripePaymentIntentId: paymentIntentId,
-            // stripePaymentIntentId: session.payment_intent as string,
           },
         });
 
-        // Enregistrer la transaction dans la base de données
+        // ✅ Enregistrer la transaction dans la base de données
         await prisma.transaction.create({
           data: {
             bookingId,
-            amount: session.amount_total! / 100, // Convertir en devise
+            amount: session.amount_total / 100, // Convertir centimes en devise
             description: `Paiement Stripe réussi (${session.id})`,
+            createdAt: new Date(), // Ajout de la date de transaction
           },
         });
 
-        console.log(`✅ Paiement validé pour la réservation ${bookingId}`);
+        console.log(
+          `✅ Paiement validé et transaction enregistrée pour la réservation ${bookingId}`
+        );
         break;
       }
 

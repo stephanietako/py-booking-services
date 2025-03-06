@@ -3,8 +3,8 @@
 import {
   getLastServices,
   getReachedServices,
-  getTotalTransactionAmount,
-  getTotalTransactionCount,
+  getTotalOptionAmount,
+  getTotalOptionCount,
 } from "@/actions/actions";
 import { useUser } from "@clerk/nextjs";
 import React, { useState, useEffect } from "react";
@@ -31,8 +31,8 @@ const DashboardUser = () => {
     try {
       const userId = user?.id as string; // Utilisation de user.id ici
       if (userId) {
-        const amount = await getTotalTransactionAmount(userId, "last30"); // Passage du bon identifiant
-        const count = await getTotalTransactionCount(userId, "last30");
+        const amount = await getTotalOptionAmount(userId, "last30"); // Passage du bon identifiant
+        const count = await getTotalOptionCount(userId, "last30");
         const reachedServices = await getReachedServices(userId);
         const lastServices = await getLastServices(userId);
         setTotalAmount(amount);
@@ -70,14 +70,14 @@ const DashboardUser = () => {
             flexDirection: "column",
           }}
         >
-          <h2>Transactions</h2>
+          <h2>Options</h2>
 
           <div
             className="dashboard_container__box"
             style={{ marginTop: "1rem", display: "flex", width: "20rem" }}
           >
             <div className="__box">
-              <span id="total_transactions">Total des Transactions</span>
+              <span id="total_transactions">Total des options</span>
               <span className="item" id="box_total_amount">
                 {totalAmount != null ? `${totalAmount}€` : "N/A"}
               </span>
@@ -90,7 +90,7 @@ const DashboardUser = () => {
             style={{ marginTop: "1rem", display: "flex", width: "20rem" }}
           >
             <div className="__box">
-              <span id="total_transactions">Nombre de Transactions</span>
+              <span id="total_transactions">Nombre de Options</span>
               <span className="item" id="total_transactions">
                 {totalCount != null ? `${totalCount}` : "N/A"}
               </span>

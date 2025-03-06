@@ -50,7 +50,7 @@ export async function createBooking(
         "⛛ L'utilisateur n'a pas de stripeCustomerId. Création du client Stripe..."
       );
       const customer = await stripe.customers.create({
-        email: user.email, // Assurez-vous que l'email est présent
+        email: user.email,
       });
 
       // Mettre à jour l'utilisateur dans la base de données avec `stripeCustomerId`
@@ -70,7 +70,7 @@ export async function createBooking(
     });
     if (!service) throw new Error("❌ Service introuvable.");
 
-    // Vérifier les conflits avec d'autres réservations
+    // Vérifier si le créneau est déjà réservé
     const conflictingBookings = await prisma.booking.findMany({
       where: {
         serviceId,
@@ -121,7 +121,7 @@ export async function getUserBookings(userId: string) {
       include: {
         service: true,
         user: true,
-        transactions: true,
+        options: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -145,7 +145,7 @@ export const getAllBookings = async (userId: string): Promise<Booking[]> => {
     include: {
       service: true, // Inclure les informations sur le service
       user: true, // Inclure les informations sur l'utilisateur
-      transactions: true, // pas certaine que ce soit la peine de le mettre ici
+      options: true, // pas certaine que ce soit la peine de le mettre ici
     },
   });
 
@@ -163,12 +163,10 @@ export async function getBookingById(bookingId: string, userId: string) {
       include: {
         service: true,
         user: true, // Assure-toi que l'utilisateur est bien inclus
-        transactions: true,
+        options: true,
       },
     });
-
     // Vérifie si la réservation existe et si le clerkUserId correspond
-
     if (!booking || booking.user.clerkUserId !== userId) {
       throw new Error("⛔ Réservation introuvable ou accès refusé.");
     }
@@ -184,24 +182,6 @@ export async function getBookingById(bookingId: string, userId: string) {
 }
 
 // Mettre à jour le statut de la réservation
-// export async function updateBooking(
-//   bookingId: string,
-//   newStatus: "APPROVED" | "REJECTED" | "PAID"
-// ) {
-//   try {
-//     const updatedBooking = await prisma.booking.update({
-//       where: { id: bookingId },
-//       data: {
-//         status: newStatus,
-//         approvedByAdmin: newStatus === "APPROVED",
-//       },
-//     });
-//     return updatedBooking;
-//   } catch (error) {
-//     console.error("Erreur lors de la mise à jour de la réservation :", error);
-//     throw new Error("Impossible de mettre à jour la réservation.");
-//   }
-// }
 export async function updateBooking(
   bookingId: string,
   newStatus: "APPROVED" | "REJECTED" | "PAID"
@@ -223,6 +203,7 @@ export async function updateBooking(
   }
 }
 
+// Supprimer une réservation
 export async function deleteUserBooking(
   bookingId: string,
   clerkUserId: string
@@ -247,7 +228,7 @@ export async function deleteUserBooking(
 
     // Suppression de la réservation
     await prisma.booking.delete({ where: { id: bookingId } });
-    await prisma.transaction.deleteMany({ where: { bookingId } });
+    await prisma.option.deleteMany({ where: { bookingId } });
     // await prisma.transaction.deleteMany({ where: { id: bookingId } });
     return { message: "✅ Réservation annulée avec succès." };
   } catch (error) {
@@ -256,12 +237,13 @@ export async function deleteUserBooking(
   }
 }
 
-export async function getTransactionsByBookingId(bookingId: string) {
+// Récupérer les options associées à une réservation
+export async function getOptionsByBookingId(bookingId: string) {
   try {
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: {
-        transactions: true, // Récupère les transactions associées à la réservation
+        options: true, // Récupère les options associées à la réservation
         service: true, // Ajoute les infos du service lié à la réservation
       },
     });
@@ -271,7 +253,7 @@ export async function getTransactionsByBookingId(bookingId: string) {
     }
 
     return {
-      transactions: booking.transactions, // Liste des transactions
+      options: booking.options, // Liste des options
       service: booking.service, // Infos sur le service associé
     };
   } catch (error) {
@@ -283,17 +265,18 @@ export async function getTransactionsByBookingId(bookingId: string) {
   }
 }
 
-export async function addTransactionToBooking(
+// Ajouter une option à une réservation
+export async function addOptionToBooking(
   bookingId: string,
   amount: number,
   description: string
 ) {
   try {
-    // Vérifier si la réservation existe et récupérer les transactions + service
+    // Vérifier si la réservation existe et récupérer les options + service
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: {
-        transactions: true, // Récupérer les transactions existantes
+        options: true, // Récupérer les options existantes
         service: true, // Récupérer le service associé à la réservation
       },
     });
@@ -307,7 +290,7 @@ export async function addTransactionToBooking(
     }
 
     // Ajouter la transaction sans restriction
-    const newTransaction = await prisma.transaction.create({
+    const newTransaction = await prisma.option.create({
       data: {
         bookingId,
         amount,
@@ -323,21 +306,21 @@ export async function addTransactionToBooking(
   }
 }
 
-// supprimer une transaction
-export async function deleteTransaction(transactionId: string) {
+// supprimer une option
+export async function deleteOption(optionId: string) {
   try {
-    // Vérifie si la transaction existe
-    const transaction = await prisma.transaction.findUnique({
-      where: { id: transactionId },
+    // Vérifie si l'option existe
+    const option = await prisma.option.findUnique({
+      where: { id: optionId },
     });
 
-    if (!transaction) {
+    if (!option) {
       throw new Error("❌ Transaction introuvable.");
     }
 
-    // Supprime la transaction
-    await prisma.transaction.delete({
-      where: { id: transactionId },
+    // Supprime l'option
+    await prisma.option.delete({
+      where: { id: optionId },
     });
 
     return { message: "✅ Transaction supprimée avec succès." };
@@ -350,63 +333,64 @@ export async function deleteTransaction(transactionId: string) {
   }
 }
 
-//  Mettre à jour le total du prix de la réservation
-export async function updateBookingTotal(bookingId: string) {
-  try {
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: { transactions: true, service: true }, // ✅ Ajout de service
-    });
-
-    if (!booking) {
-      throw new Error("Réservation introuvable.");
-    }
-
-    // ✅ Calculer le total (prix du service + transactions)
-    const totalTransactions = booking.transactions.reduce(
-      (sum, transaction) => sum + transaction.amount,
-      0
-    );
-    const newTotal = totalTransactions + (booking.service?.amount || 0);
-
-    return newTotal; // ✅ On retourne juste la valeur pour le frontend
-  } catch (error) {
-    console.error("❌ Erreur lors de la mise à jour du total :", error);
-    throw error;
-  }
-}
+// Mettre à jour le total du prix de la réservation
 // export async function updateBookingTotal(bookingId: string) {
 //   try {
 //     const booking = await prisma.booking.findUnique({
 //       where: { id: bookingId },
-//       include: { transactions: true, service: true },
+//       include: { options: true, service: true }, // ✅ Ajout de service
 //     });
 
 //     if (!booking) {
 //       throw new Error("Réservation introuvable.");
 //     }
 
-//     // Calculer le total (prix du service + transactions)
-//     const totalTransactions = booking.transactions.reduce(
-//       (sum, transaction) => sum + transaction.amount,
+//     // ✅ Calculer le total (prix du service + transactions)
+//     const totalOptions = booking.options.reduce(
+//       (sum, option) => sum + option.amount,
 //       0
 //     );
-//     const newTotal = totalTransactions + (booking.service?.amount || 0);
+//     const newTotal = totalOptions + (booking.service?.amount || 0);
 
-//     // Mettre à jour le total dans la réservation
-//     await prisma.booking.update({
-//       where: { id: bookingId },
-//       data: {
-//         totalAmount: newTotal, // Mettre à jour le totalAmount
-//       },
-//     });
-
-//     return newTotal;
+//     return newTotal; // ✅ On retourne juste la valeur pour le frontend
 //   } catch (error) {
 //     console.error("❌ Erreur lors de la mise à jour du total :", error);
 //     throw error;
 //   }
 // }
+
+export async function updateBookingTotal(bookingId: string) {
+  try {
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      include: { options: true, service: true },
+    });
+
+    if (!booking) {
+      throw new Error("Réservation introuvable.");
+    }
+
+    // Calculer le total (prix du service + transactions)
+    const totalOptions = booking.options.reduce(
+      (sum, option) => sum + option.amount,
+      0
+    );
+    const newTotal = totalOptions + (booking.service?.amount || 0);
+
+    // Mettre à jour le total dans la réservation
+    await prisma.booking.update({
+      where: { id: bookingId },
+      data: {
+        totalAmount: newTotal, // Mettre à jour le totalAmount
+      },
+    });
+
+    return newTotal;
+  } catch (error) {
+    console.error("❌ Erreur lors de la mise à jour du total :", error);
+    throw error;
+  }
+}
 
 // Récupérer les créneaux réservés pour une date donnée
 export async function getBookedTimes(date: string) {

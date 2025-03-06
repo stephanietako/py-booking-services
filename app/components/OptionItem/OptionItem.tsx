@@ -1,27 +1,27 @@
 import React from "react";
-import { Transaction } from "@/types";
+import { Option } from "@/types";
 import Link from "next/link";
 import styles from "./styles.module.scss";
 
-type TransactionItemProps = {
-  transaction: Transaction;
+type OptionItemProps = {
+  option: Option;
 };
 
-const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
-  const transactionDate = new Date(transaction.createdAt); // ✅ Conversion de la date
-  console.log("Transaction affichée:", transaction);
+const OptionItem: React.FC<OptionItemProps> = ({ option }) => {
+  const optionDate = new Date(option.createdAt); // ✅ Conversion de la date
+  console.log("Option affichée:", option);
   return (
     <li className={styles.transaction_item}>
       <div className={styles.transaction_item__details}>
         <span className={styles.transaction_item__amount}>
-          {transaction.amount}€
+          {option.amount}€
         </span>
         <span className={styles.transaction_item__description}>
-          {transaction.description}
+          {option.description}
         </span>
         <span className={styles.transaction_item__date}>
-          {transactionDate.toLocaleDateString("fr-FR")} à{" "}
-          {transactionDate.toLocaleTimeString("fr-FR", {
+          {optionDate.toLocaleDateString("fr-FR")} à{" "}
+          {optionDate.toLocaleTimeString("fr-FR", {
             hour: "2-digit",
             minute: "2-digit",
           })}
@@ -31,8 +31,8 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
       <div className={styles.transaction_item__see_more}>
         <Link
           className={styles.btn__see_more}
-          href={`/manage/${transaction.serviceId}`}
-          aria-label={`Voir plus de détails sur le service ${transaction.serviceId}`}
+          href={`/manage/${option.serviceId}`}
+          aria-label={`Voir plus de détails sur le service ${option.serviceId}`}
         >
           Voir plus
         </Link>
@@ -41,4 +41,4 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
   );
 };
 
-export default TransactionItem;
+export default OptionItem;

@@ -158,19 +158,16 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  // 📊 Calcul des transactions
-  const transactionCount = service.transactions?.length || 0;
-  const totalTransactionAmount = service.transactions
-    ? service.transactions.reduce(
-        (sum, transaction) => sum + transaction.amount,
-        0
-      )
+  // 📊 Calcul des options
+  const optionCount = service.options?.length || 0;
+  const totalOptionAmount = service.options
+    ? service.options.reduce((sum, option) => sum + option.amount, 0)
     : 0;
-  const remainingAmount = service.amount + totalTransactionAmount;
+  const remainingAmount = service.amount + totalOptionAmount;
   const progressValue =
-    totalTransactionAmount > service.amount
+    totalOptionAmount > service.amount
       ? 100
-      : (totalTransactionAmount / service.amount) * 100;
+      : (totalOptionAmount / service.amount) * 100;
   const hoverClass = enableHover === 1 ? styles.hoverEnabled : "";
   const imageUrl = service.imageUrl || "/assets/default.jpg";
 
@@ -251,8 +248,8 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
             <span className={styles.serviceItemDescription}>
               {service.description}
             </span>
-            <span className={styles.serviceItemTransactionCount}>
-              {transactionCount} transaction(s)
+            <span className={styles.serviceItemOptionCount}>
+              {optionCount} option(s)
             </span>
           </div>
         </div>
@@ -260,7 +257,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
       </div>
 
       <div className={styles.serviceItemStats}>
-        <span>{totalTransactionAmount} € dépensés</span>
+        <span>{totalOptionAmount} € dépensés</span>
         <span>{remainingAmount} € montant total</span>
       </div>
 

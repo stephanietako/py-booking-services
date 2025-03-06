@@ -7,7 +7,7 @@ import { Booking } from "@/types";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Wrapper from "../components/Wrapper/Wrapper";
-import TransactionManager from "../components/TransactionManager/TransactionManager";
+import OptionManager from "../components/OptionManager/OptionManager";
 import ServiceCompt from "../components/ServicesCompt/ServiceCompt";
 
 // Liste des réservations utilisateur
@@ -100,7 +100,7 @@ const MyBookings = () => {
                 />
 
                 <div className="booking_transaction">
-                  <TransactionManager
+                  <OptionManager
                     bookingId={booking.id}
                     serviceAmount={booking.service.amount}
                     onTotalUpdate={(total) =>

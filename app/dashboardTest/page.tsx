@@ -3,8 +3,8 @@
 import {
   getLastServices,
   getReachedServices,
-  getTotalTransactionAmount,
-  getTotalTransactionCount,
+  getTotalOptionAmount,
+  getTotalOptionCount,
 } from "@/actions/actions";
 import { useUser } from "@clerk/nextjs";
 import React, { useState, useEffect } from "react";
@@ -41,8 +41,8 @@ const DashboardUserPage = () => {
       console.log("📌 Récupération des données pour:", userId);
 
       const [amount, count, reachedServices, lastServices] = await Promise.all([
-        getTotalTransactionAmount(userId, "last30"),
-        getTotalTransactionCount(userId, "last30"),
+        getTotalOptionAmount(userId, "last30"),
+        getTotalOptionCount(userId, "last30"),
         getReachedServices(userId),
         getLastServices(userId),
       ]);
@@ -87,14 +87,14 @@ const DashboardUserPage = () => {
             flexDirection: "column",
           }}
         >
-          <h2>Transactions</h2>
+          <h2>Options</h2>
 
           <div
             className="dashboard_container__box"
             style={{ marginTop: "1rem", display: "flex", width: "20rem" }}
           >
             <div className="__box">
-              <span id="total_transactions">Total des Transactions</span>
+              <span id="total_transactions">Total des options</span>
               <span className="item" id="box_total_amount">
                 {totalAmount != null ? `${totalAmount}€` : "Chargement..."}
               </span>
@@ -107,7 +107,7 @@ const DashboardUserPage = () => {
             style={{ marginTop: "1rem", display: "flex", width: "20rem" }}
           >
             <div className="__box">
-              <span id="total_transactions">Nombre de Transactions</span>
+              <span id="total_transactions">Nombre de options</span>
               <span className="item" id="total_transactions">
                 {totalCount != null ? `${totalCount}` : "Chargement..."}
               </span>

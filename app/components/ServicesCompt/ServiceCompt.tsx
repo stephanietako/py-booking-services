@@ -4,8 +4,8 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import styles from "./styles.module.scss";
 
-// Ajouter un type pour la transaction
-interface Transaction {
+// Ajouter un type pour la option
+interface Option {
   amount: number;
 }
 
@@ -17,7 +17,7 @@ interface ServiceComptProps {
   categories: string[];
   startTime?: string | Date | null;
   endTime?: string | Date | null;
-  transactions?: Transaction[]; // Liste des transactions
+  options?: Option[]; // Liste des options
 }
 
 const ServiceCompt: React.FC<ServiceComptProps> = ({
@@ -28,7 +28,7 @@ const ServiceCompt: React.FC<ServiceComptProps> = ({
   categories,
   startTime,
   endTime,
-  transactions = [], // Default à une liste vide si pas de transactions
+  options = [], // Default à une liste vide si pas de options
 }) => {
   // Vérifier si startTime est valide
   const isValidStartTime =
@@ -43,16 +43,14 @@ const ServiceCompt: React.FC<ServiceComptProps> = ({
     ? format(endTime as Date, "HH:mm", { locale: fr })
     : null;
 
-  // Calcul des transactions
-  const totalTransactionAmount = transactions.reduce(
-    (sum, transaction) => sum + transaction.amount,
+  // Calcul des options
+  const totalOptionAmount = options.reduce(
+    (sum, option) => sum + option.amount,
     0
   );
-  const remainingAmount = amount + totalTransactionAmount; // Montant restant à atteindre
+  const remainingAmount = amount + totalOptionAmount; // Montant restant à atteindre
   const progressValue =
-    totalTransactionAmount > amount
-      ? 100
-      : (totalTransactionAmount / amount) * 100; // Calcul de la barre de progression
+    totalOptionAmount > amount ? 100 : (totalOptionAmount / amount) * 100; // Calcul de la barre de progression
 
   return (
     <div className={styles.service_card}>
@@ -75,9 +73,9 @@ const ServiceCompt: React.FC<ServiceComptProps> = ({
           {categories.length > 0 ? categories.join(", ") : "Aucune"}
         </p>
 
-        {/* Affichage des transactions */}
+        {/* Affichage des options */}
         <div className={styles.service__transactions}>
-          <span>{totalTransactionAmount} € dépensés</span>
+          <span>{totalOptionAmount} € dépensés</span>
           <span>{remainingAmount} € restant à payer</span>
         </div>
 

@@ -38,26 +38,26 @@ model Role {
 }
 
 model Service {
-  id               String        @id @default(uuid())
+  id               String    @id @default(uuid())
   name             String
   amount           Float
   categories       String[] // Changement pour un tableau de catégories
   description      String?
   imageUrl         String
-  active           Boolean       @default(true)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  active           Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   reservedAt       DateTime?
   startTime        DateTime?
   endTime          DateTime?
-  transactions     Transaction[]
+  options          Option[]
   bookings         Booking[]
   price            Float // Nouveau champ pour le prix dynamique
   currency         String // Nouveau champ pour la devise
   stripeCustomerId String? // Ajout de l'identifiant du client Stripe
 }
 
-model Transaction {
+model Option {
   id          String   @id @default(uuid())
   description String
   amount      Float
@@ -102,8 +102,18 @@ model Booking {
   reservedAt            DateTime
   startTime             DateTime
   endTime               DateTime
-  transactions          Transaction[]
+  options               Option[]
   totalAmount           Float         @default(0) // Ajout du total
   stripeCustomerId      String?
   stripePaymentIntentId String? // Ajout de l'identifiant de l'abonnement Stripe
+  transactions          Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  description String
+  amount      Float
+  createdAt   DateTime @default(now())
+  bookingId   String?
+  booking     Booking? @relation(fields: [bookingId], references: [id])
 }

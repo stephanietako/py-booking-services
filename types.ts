@@ -31,14 +31,14 @@ export type Service = {
   reservedAt: Date | null;
   startTime?: Date | null;
   endTime?: Date | null;
-  transactions?: Transaction[];
+  options?: Option[];
   bookings?: Booking[]; // Marquer `bookings` comme optionnel
   price: number;
   currency: string;
   stripeCustomerId?: string | null;
 };
 
-export interface Transaction {
+export interface Option {
   id: string; // L'ID est de type UUID (généré automatiquement)
   amount: number; // Montant de la transaction
   description?: string; // Description optionnelle
@@ -93,12 +93,12 @@ export interface Booking {
   endTime: Date;
   reservedAt: Date | null;
   expiresAt: Date | null; // Permettre à expiresAt d'être null,Date de création de la réservation
-  transactions?: Transaction[]; // Liste des options ajoutées à la réservation
+  options?: Option[]; // Liste des options ajoutées à la réservation
   status: BookingStatus; // Statut de la réservation
   approvedByAdmin: boolean; // Indique si la réservation a été approuvée par un admin
   amount?: number;
   totalAmount: number;
   stripeCustomerId?: string | null;
   stripePaymentIntentId?: string | null;
-  priceId?: string | null;
+  price?: string | null;
 }

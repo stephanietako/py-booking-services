@@ -2,31 +2,28 @@
 
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { getTransactionsByEmailAndPeriod } from "@/actions/actions";
+import { getOptionsByEmailAndPeriod } from "@/actions/actions";
 import Wrapper from "../components/Wrapper/Wrapper";
-import { Transaction } from "@/types";
-import TransactionItem from "../components/TransactionItem/TransactionItem";
+import { Option } from "@/types";
+import OptionItem from "../components/OptionItem/OptionItem";
 
-const TransactionsPage = () => {
+const OptionsPage = () => {
   const { user } = useUser();
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [option, setOptions] = useState<Option[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [period, setPeriod] = useState<string>("last30");
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTransactions = async (period: string) => {
+  const fetchOptions = async (period: string) => {
     if (user?.id) {
       setLoading(true);
       try {
-        const transactionData = await getTransactionsByEmailAndPeriod(
-          user.id,
-          period
-        );
-        console.log("Données reçues dans le client:", transactionData);
-        setTransactions(transactionData);
+        const optionData = await getOptionsByEmailAndPeriod(user.id, period);
+        console.log("Données reçues dans le client:", optionData);
+        setOptions(optionData);
       } catch (err) {
-        console.error("Erreur lors de la récupération des transactions: ", err);
-        setError("Impossible de récupérer les transactions.");
+        console.error("Erreur lors de la récupération des options: ", err);
+        setError("Impossible de récupérer les options.");
       } finally {
         setLoading(false);
       }
@@ -35,7 +32,7 @@ const TransactionsPage = () => {
 
   useEffect(() => {
     if (user?.id) {
-      fetchTransactions("last30");
+      fetchOptions("last30");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
@@ -62,14 +59,14 @@ const TransactionsPage = () => {
           </div>
         ) : error ? (
           <div className="error">{error}</div>
-        ) : transactions.length === 0 ? (
+        ) : option.length === 0 ? (
           <div className="loading_info">
-            <span>Aucune transaction à afficher</span>
+            <span>Aucune option à afficher</span>
           </div>
         ) : (
           <ul className="list_transactions">
-            {transactions.map((transaction) => (
-              <TransactionItem key={transaction.id} transaction={transaction} />
+            {option.map((option) => (
+              <OptionItem key={option.id} option={option} />
             ))}
           </ul>
         )}
@@ -78,4 +75,4 @@ const TransactionsPage = () => {
   );
 };
 
-export default TransactionsPage;
+export default OptionsPage;
