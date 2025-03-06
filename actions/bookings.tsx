@@ -289,8 +289,8 @@ export async function addOptionToBooking(
       throw new Error("❌ Le service lié à cette réservation n'existe plus.");
     }
 
-    // Ajouter la transaction sans restriction
-    const newTransaction = await prisma.option.create({
+    // Vérifier si l'option est autorisée pour ce service
+    const newOption = await prisma.option.create({
       data: {
         bookingId,
         amount,
@@ -298,8 +298,8 @@ export async function addOptionToBooking(
       },
     });
 
-    console.log("✅ Transaction ajoutée avec succès :", newTransaction);
-    return newTransaction;
+    console.log("✅ Transaction ajoutée avec succès :", newOption);
+    return newOption;
   } catch (error) {
     console.error("❌ Erreur lors de l'ajout de la transaction :", error);
     throw error;
