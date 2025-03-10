@@ -1,0 +1,155 @@
+.boat {
+  background: linear-gradient(180deg, #e3f7ff, #ffffff);
+  padding: 4rem 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: #003080;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  text-align: center;
+  flex: 1;
+}
+
+.mainImage {
+  width: 50%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.description,
+.equipements {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.equipements h3 {
+  font-size: 1.8rem;
+  color: #003080;
+  margin-bottom: 1rem;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.column {
+  flex: 1;
+  min-width: 300px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.column h4 {
+  font-size: 1.5rem;
+  color: #0056b3;
+  margin-bottom: 10px;
+}
+
+// 🔥 Correction : Styles liés aux UL & LI avec une classe locale
+.equipements ul,
+.description ul {
+  list-style: none;
+  padding: 0;
+}
+
+.equipements li,
+.description li {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+  padding-left: 1rem;
+  position: relative;
+
+  &:before {
+    content: "✔";
+    color: #14e9f7;
+    position: absolute;
+    left: 0;
+  }
+}
+
+// Galerie
+.gallery {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.gallery h3 {
+  font-size: 1.8rem;
+  color: #003080;
+  margin-bottom: 1rem;
+}
+
+.images {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.image {
+  width: 300px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Responsive
+@media (max-width: 968px) {
+  .header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .mainImage {
+    width: 80%;
+    margin-top: 20px;
+  }
+
+  .grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .images {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .image {
+    max-width: 100%;
+  }
+}

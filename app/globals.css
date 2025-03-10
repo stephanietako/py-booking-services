@@ -12,9 +12,9 @@
   --background-dark: #0a0a0a;
   --white: #ffffff;
   --gray: #d1d5db;
-  /* Bleu Foncé (Hippocampe) : #003080
-Bleu turquoise (intérieur hippocampe: #25fde9
-Bleu clair (rond): #14e9f7 */
+  /* Bleu Foncé  : #003080
+Bleu turquoise : #25fde9
+Bleu clair : #14e9f7 */
   --font-family: "Inter", sans-serif;
   --border-radius: 8px;
   --spacing-small: 0.5rem;

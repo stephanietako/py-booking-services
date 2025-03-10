@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import CalendarComponent from "../Calendar/Calendar";
+import Calendar from "../Calendar/Calendar";
 import { Day } from "@prisma/client";
 import Image from "next/image";
-import backgroundImg from "@/public/assets/default.jpg";
+import backgroundImg from "@/public/assets/hero.jpg";
 // Styles
 import styles from "./styles.module.scss";
 import Modal from "../Modal/Modal";
+
 export const dynamic = "force-dynamic";
+
 interface HeroProps {
   days: Day[];
   closedDays: string[];
@@ -84,7 +86,7 @@ const Hero: React.FC<HeroProps> = ({ days, closedDays }) => {
         title="Choisissez une date"
       >
         <p>Réservez votre bateau dès maintenant !</p>
-        <CalendarComponent days={days} closedDays={closedDays} />
+        <Calendar days={days} closedDays={closedDays} />
       </Modal>
     </>
   );
