@@ -16,18 +16,16 @@ const Services: React.FC = () => {
   // Fonction pour récupérer les services de l'utilisateur
   const fetchServices = useCallback(async () => {
     if (user?.id) {
-      console.log("Utilisateur authentifié:", user);
+      console.log("Utilisateur authentifié:");
       setLoading(true);
       try {
         const userServices = await getServicesByUser(user.id);
-        console.log("Données récupérées :", userServices); // 🔍 Vérifie la structure reçue
+        console.log("Données récupérées");
 
-        // Correction ici : utilisation de `categories` et `options`
         const servicesWithRequiredProps: Service[] = userServices.map(
           (service) => ({
             ...service,
-            categories: service.categories ?? [], // ✅ Correction (pas `category`)
-            // ✅ Vérifie si présent sinon valeur par défaut
+            categories: service.categories ?? [],
           })
         );
         setServices(servicesWithRequiredProps);
@@ -41,7 +39,6 @@ const Services: React.FC = () => {
       console.error("Utilisateur non connecté ou ID non disponible.");
       setError("Utilisateur non connecté ou ID non disponible.");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   useEffect(() => {
@@ -63,7 +60,7 @@ const Services: React.FC = () => {
             description={service.description || ""}
             amount={service.amount}
             imageUrl={service.imageUrl || "/assets/default.jpg"}
-            categories={service.categories} // ✅ Ajout des catégories
+            categories={service.categories}
           />
         ))
       )}

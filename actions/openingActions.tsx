@@ -55,6 +55,7 @@ export async function openDay(input: CloseDayInput) {
   }
 }
 
+// Fonction pour récupérer les jours fermés
 export async function getClosedDays(): Promise<string[]> {
   try {
     const closedDays = await prisma.closedDay.findMany();

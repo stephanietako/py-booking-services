@@ -18,9 +18,6 @@ export async function DELETE(req: NextRequest) {
   if (!adminUser || (adminUser.role && adminUser.role.name !== "admin")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
-  // if (!adminUser || adminUser.role === null || adminUser.role.name !== "admin") {
-  //   return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  // }
 
   try {
     await prisma.user.delete({

@@ -4,7 +4,6 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import styles from "./styles.module.scss";
 
-// Ajouter un type pour la option
 interface Option {
   amount: number;
 }

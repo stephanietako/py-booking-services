@@ -18,7 +18,6 @@ const EditUser = () => {
   // Fonction pour récupérer l'utilisateur
   useEffect(() => {
     if (!clerkUserId) return;
-    console.log("clerkUserId:", clerkUserId);
 
     const fetchUser = async () => {
       try {

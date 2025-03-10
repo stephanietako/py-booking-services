@@ -91,14 +91,9 @@ export async function createStripePortalSession(
     });
 
     return session.url;
-  } catch (error) {
-    console.error("❌ Erreur Stripe :", error);
-    if (error instanceof Error) {
-      console.error("Réponse de Stripe :", error.message);
-    } else {
-      console.error("Réponse de Stripe :", error);
-    }
-    console.error("❌ Erreur Stripe :", error);
+  } catch {
+    console.error("ℹ️ Une erreur s'est produite lors du traitement.");
+
     throw new Error("Impossible de créer la session du portail Stripe.");
   }
 }
@@ -130,7 +125,7 @@ export const createStripeCheckoutSession = async (
       mode: "payment", // Mode de paiement
       customer: customerId, // Le client Stripe
       metadata: {
-        bookingId: String(bookingId), // 🔥 Assure-toi que c'est bien une string
+        bookingId: String(bookingId), // 🔥 Conversion explicite en string
       },
       success_url: `${domainUrl}/dashboard/payment/success`, // URL après paiement réussi
       cancel_url: `${domainUrl}/dashboard/payment/cancel`, // URL après annulation
@@ -142,7 +137,7 @@ export const createStripeCheckoutSession = async (
   }
 };
 
-// Exemple de mise à jour du statut après un paiement réussi via Stripe
+// Mise à jour du statut après un paiement réussi via Stripe
 export async function updateBookingStatusToPaid(bookingId: string) {
   try {
     // Mettre à jour le statut de la réservation à "PAID"
@@ -153,14 +148,14 @@ export async function updateBookingStatusToPaid(bookingId: string) {
       },
     });
     return updatedBooking;
-  } catch (error) {
-    console.error("Erreur lors de la mise à jour du statut à PAID :", error);
+  } catch {
+    console.log("Erreur lors de la mise à jour du statut à PAID ");
     throw new Error("Impossible de mettre à jour le statut à PAID.");
   }
 }
 
+// Fonction pour récupérer le prix et la devise d'un service
 export const getServicePriceWithName = async (serviceId: string) => {
-  // Exemple : récupérer le prix du service depuis ta base de données
   const service = await prisma.service.findUnique({
     where: { id: serviceId },
     select: { price: true, currency: true, name: true },
@@ -170,5 +165,5 @@ export const getServicePriceWithName = async (serviceId: string) => {
     throw new Error("Service non trouvé");
   }
 
-  return service; // Retourne le prix et la devise pour le service
+  return service;
 };

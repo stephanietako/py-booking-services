@@ -12,7 +12,9 @@
   --background-dark: #0a0a0a;
   --white: #ffffff;
   --gray: #d1d5db;
-
+  /* Bleu Foncé (Hippocampe) : #003080
+Bleu turquoise (intérieur hippocampe: #25fde9
+Bleu clair (rond): #14e9f7 */
   --font-family: "Inter", sans-serif;
   --border-radius: 8px;
   --spacing-small: 0.5rem;
@@ -88,22 +90,6 @@ header {
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-/* BOUTONS GÉNÉRIQUES */
-/* .btn {
-  padding: var(--spacing-small) var(--spacing-medium);
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--gray);
-  background-color: var(--primary-color);
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: var(--primary-hover);
-} */
 
 .btn--secondary {
   background-color: var(--secondary-color);
@@ -1008,11 +994,7 @@ p {
   background-color: #f9f9f9;
   transition: border-color 0.3s;
 }
-/* .input_name:focus,
-.input_description:focus,
-.input_price:focus {
-  border-color: #0070f3;
-} */
+
 .input_name:focus,
 .input_description:focus,
 .input_price:focus {
@@ -1020,13 +1002,7 @@ p {
   outline: none;
   background-color: #fff;
 }
-/* Label du fichier */
-/* .label_file {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-} */
+
 .label_file {
   display: flex;
   align-items: center;
@@ -1075,18 +1051,6 @@ p {
   color: #777;
 }
 
-/* Messages d'erreur et de succès */
-/* .text_error {
-  color: red;
-  font-weight: bold;
-  margin-top: 15px;
-}
-
-.text_success {
-  color: green;
-  font-weight: bold;
-  margin-top: 15px;
-} */
 .text_error,
 .text_success {
   font-size: 1rem;
@@ -1113,21 +1077,13 @@ p {
   gap: 20px;
 }
 
-/* .menu_items__text {
-  font-size: 18px;
-  font-weight: bold;
-} */
 .menu_items__text {
   font-size: 1.2rem;
   font-weight: 500;
   margin-bottom: 20px;
   color: #333;
 }
-/* .menu_items__container {
-  display: flex;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
-} */
+
 .menu_items__container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -1235,10 +1191,6 @@ p {
   object-fit: cover;
 }
 
-/* .actions {
-  display: block;
-  gap: 10px;
-} */
 .actions {
   margin-top: 15px;
   display: flex;

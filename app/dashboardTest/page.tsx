@@ -38,7 +38,6 @@ const DashboardUserPage = () => {
     setIsLoading(true);
     try {
       const userId = user?.id ?? "";
-      console.log("📌 Récupération des données pour:", userId);
 
       const [amount, count, reachedServices, lastServices] = await Promise.all([
         getTotalOptionAmount(userId, "last30"),

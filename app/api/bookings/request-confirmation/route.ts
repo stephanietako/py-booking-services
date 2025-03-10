@@ -5,7 +5,7 @@ import { sendEmailToAdmin } from "@/actions/email";
 export async function POST(request: NextRequest) {
   const { userId, bookingId } = await request.json();
 
-  console.log("📌 Requête reçue avec :", { userId, bookingId });
+  console.log("📌 Requête reçue avec avec succes");
 
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
@@ -19,9 +19,6 @@ export async function POST(request: NextRequest) {
       { status: 404 }
     );
   }
-
-  console.log("📌 Clerk User ID enregistré en DB :", booking.user.clerkUserId);
-  console.log("📌 Clerk User ID reçu :", userId);
 
   if (booking.user.clerkUserId !== userId) {
     // Vérifie bien avec `clerkUserId`

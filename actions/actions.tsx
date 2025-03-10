@@ -19,10 +19,6 @@ export async function getRole(clerkUserId: string) {
 
     return user;
   } catch (error) {
-    console.error(
-      "Erreur lors de la récupération du rôle de l'utilisateur",
-      error
-    );
     throw error;
   }
 }
@@ -107,7 +103,7 @@ export async function getServiceById(serviceId: string) {
 
     return service; // Retourne le service avec la description
   } catch (error) {
-    console.error("Erreur lors de la récupération du service:", error);
+    console.error("❌ Erreur lors de la récupération du service.");
     throw error;
   }
 }
@@ -128,7 +124,7 @@ export async function getOptionsByServiceId(serviceId: string) {
 
     return service.options;
   } catch (error) {
-    console.error("Erreur lors de la récupération des options:", error);
+    console.error("❌ Erreur lors de la récupération des options.");
     throw error;
   }
 }
@@ -148,7 +144,8 @@ export async function addOptionToService(
       },
     });
 
-    console.log("Option ajoutée avec succès:", option);
+    console.log(`✅ Option ajoutée avec succès (ID: ${option.id}).`);
+
     return option;
   } catch (error) {
     console.error("Erreur lors de l'ajout de la option:", error);
@@ -161,7 +158,7 @@ export async function deleteService(serviceId: string) {
   try {
     await prisma.option.deleteMany({ where: { serviceId } });
     await prisma.service.delete({ where: { id: serviceId } });
-    console.log("Service supprimé avec succès");
+    console.log(`✅ Service supprimé (ID: ${serviceId}).`);
   } catch (error) {
     console.error("Erreur lors de la suppression du service:", error);
     throw error;
@@ -178,16 +175,23 @@ export async function deleteManyoption(optionId: string) {
     });
 
     if (!option) {
-      throw new Error("Option non trouvée");
+      console.log(` Option déjà supprimée ou introuvable (ID: ${optionId}).`);
+      return;
     }
+    await prisma.option.delete({ where: { id: optionId } });
+    console.log(`✅ Option supprimée (ID: ${optionId}).`);
 
-    await prisma.option.delete({
-      where: {
-        id: optionId,
-      },
-    });
+    // if (!option) {
+    //   throw new Error("Option non trouvée");
+    // }
+
+    // await prisma.option.delete({
+    //   where: {
+    //     id: optionId,
+    //   },
+    // });
   } catch (error) {
-    console.error("Erreur lors de la suppression de la option:", error);
+    console.error("Erreur lors de la suppression de la option:");
     throw error;
   }
 }
@@ -315,7 +319,7 @@ export async function createService(
 
     // Envoi de l'image sur le serveur
     const imageUrl = await uploadImageToServer(file);
-    console.log("URL de l'image téléchargée :", imageUrl);
+
     // Création du service
     const newService = await prisma.service.create({
       data: {
@@ -572,7 +576,9 @@ export async function updateService(
       },
     });
 
-    console.log("Service mis à jour avec succès :", updatedService);
+    console.log(
+      "✅ Service mis à jour avec succès (ID: " + updatedService.id + ")."
+    );
     return updatedService;
   } catch (error) {
     console.error("Erreur lors de la mise à jour du service:", error);
@@ -591,7 +597,7 @@ async function uploadImageToServer(file: File): Promise<string> {
     new Date().toISOString().split("T")[0]
   }`;
   const uploadDir = join(process.cwd(), "public", relativeUploadDir);
-  console.log("📁 Dossier d'upload:", uploadDir);
+  console.log("✅ Image uploadée avec succès.");
 
   try {
     await stat(uploadDir).catch(() => mkdir(uploadDir, { recursive: true }));
@@ -603,11 +609,11 @@ async function uploadImageToServer(file: File): Promise<string> {
     const filePath = join(uploadDir, fileName);
 
     await writeFile(filePath, buffer);
-    console.log("✅ Image enregistrée :", filePath);
+    console.log("✅ Image uploadée avec succès.");
 
     return `${relativeUploadDir}/${fileName}`;
-  } catch (error) {
-    console.error("❌ Erreur lors du téléchargement de l'image:", error);
+  } catch {
+    console.error("❌ Erreur lors du téléchargement de l'image.");
     throw new Error("Erreur lors de l'upload de l'image");
   }
 }
