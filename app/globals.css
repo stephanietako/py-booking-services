@@ -1,6 +1,6 @@
 :root {
-  --primary-color: #63b6f1;
-  --primary-hover: #4669e5;
+  --primary-color: #14e9f7;
+  --primary-hover: #25fde9;
   --secondary-color: #e5e7eb;
   --secondary-hover: #d1d5db;
   --danger-color: #dc2626;
@@ -405,9 +405,8 @@ section {
   height: 100%;
   justify-content: center;
   align-items: center;
-  border: 4px solid rgb(195, 0, 255);
-  margin-top: 10vh;
   flex-direction: column;
+  margin-top: 10vh;
 }
 
 /* Modal */
@@ -684,6 +683,7 @@ section {
   margin-top: 2rem;
   padding: 0 1rem;
   width: 100%;
+  margin-top: 20vh;
 }
 
 .booking_item {
@@ -904,6 +904,7 @@ p {
   height: 100%;
   justify-content: space-around;
   flex-wrap: wrap;
+  margin-top: 20vh;
 }
 
 .opening_hours,
@@ -1121,7 +1122,6 @@ p {
   display: flex;
   width: 100%;
   height: 100%;
-  border: 4px solid #d4d4e4;
   flex-direction: column;
   padding: 2rem;
 }

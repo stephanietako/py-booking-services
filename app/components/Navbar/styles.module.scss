@@ -1,64 +1,467 @@
+// .navbar {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 1rem 2rem;
+//   background-color: #333;
+//   color: #fff;
+
+//   .logo a {
+//     font-size: 1.5rem;
+//     font-weight: bold;
+//     color: #fff;
+//     text-decoration: none;
+//   }
+
+//   .menuToggle {
+//     display: none;
+//     font-size: 2rem;
+//     cursor: pointer;
+//     color: #fff;
+//   }
+
+//   .navLinks {
+//     display: flex;
+//     gap: 1rem;
+//     align-items: center;
+
+//     .navLink {
+//       color: #fff;
+//       text-decoration: none;
+//       padding: 0.5rem 1rem;
+//       border: 1px solid transparent;
+//       background: none;
+//       cursor: pointer;
+//       transition: all 0.3s ease;
+//       align-items: center;
+
+//       &:hover {
+//         border: 1px solid #fff;
+//         border-radius: 5px;
+//       }
+//     }
+
+//     .clerk-sign-in-button,
+//     .clerk-user-button {
+//       .clerk-button {
+//         color: #fff;
+//         padding: 0.5rem 1rem;
+//         border: 1px solid transparent;
+//         background: none;
+//         cursor: pointer;
+//         transition: all 0.3s ease;
+
+//         &:hover {
+//           border: 1px solid #fff;
+//           border-radius: 5px;
+//         }
+//       }
+//     }
+//   }
+
+//   @media (max-width: 768px) {
+//     .menuToggle {
+//       display: block;
+//     }
+
+//     .navLinks {
+//       display: none;
+//       flex-direction: column;
+//       gap: 0;
+//       position: absolute;
+//       top: 4rem;
+//       right: 0;
+//       background-color: #333;
+//       width: 100%;
+//       text-align: center;
+
+//       &.showMenu {
+//         display: flex;
+//         border: 4px solid red;
+//       }
+
+//       .navLink,
+//       .clerk-sign-in-button .clerk-button,
+//       .clerk-user-button .clerk-button {
+//         padding: 1rem;
+//         border-top: 1px solid #444;
+//       }
+//     }
+//   }
+// }
+// 🌟 Couleurs principales
+// $bleu-fonce: #003080;
+// $bleu-turquoise: #25fde9;
+// $bleu-clair: #14e9f7;
+// $blanc: #fff;
+
+// // 🌟 Styles de la navbar
+// .navbar {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 1rem 2rem;
+//   background-color: rgba($bleu-fonce, 0.95); // Fond avec légère transparence
+//   color: $blanc;
+//   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+//   position: fixed;
+//   width: 100%;
+//   top: 0;
+//   left: 0;
+//   z-index: 1000;
+
+//   // 🔹 LOGO
+//   .logo {
+//     display: flex;
+//     align-items: center;
+
+//     img {
+//       width: 150px; // Ajuste selon ton besoin
+//       height: auto;
+//     }
+//   }
+
+//   // 🔹 MENU BURGER (Mobile)
+//   .menuToggle {
+//     display: none;
+//     font-size: 2rem;
+//     cursor: pointer;
+//     color: $blanc;
+//     transition: transform 0.3s ease-in-out;
+
+//     &:hover {
+//       transform: scale(1.1);
+//     }
+//   }
+
+//   // 🔹 Liens de navigation
+//   .navLinks {
+//     display: flex;
+//     gap: 1rem;
+//     align-items: center;
+
+//     a {
+//       color: $blanc;
+//       text-decoration: none;
+//       font-weight: bold;
+//       font-size: 1rem;
+//       padding: 0.5rem 1.2rem;
+//       border-radius: 5px;
+//       transition: all 0.3s ease;
+
+//       &:hover {
+//         background: $bleu-turquoise;
+//         color: $bleu-fonce;
+//       }
+//     }
+//   }
+
+//   // 🔹 Boutons de connexion
+//   .authLinks {
+//     a {
+//       padding: 0.5rem 1.5rem;
+//       background-color: $bleu-clair;
+//       color: $bleu-fonce;
+//       border-radius: 8px;
+//       transition: all 0.3s ease;
+//       font-weight: bold;
+
+//       &:hover {
+//         background-color: $bleu-turquoise;
+//         transform: scale(1.05);
+//       }
+//     }
+//   }
+
+//   // 🔹 Responsive pour mobile 📱
+//   @media (max-width: 768px) {
+//     .menuToggle {
+//       display: block;
+//     }
+
+//     .navLinks {
+//       display: none;
+//       flex-direction: column;
+//       gap: 0;
+//       position: absolute;
+//       top: 4rem;
+//       right: 0;
+//       background-color: rgba($bleu-fonce, 0.95);
+//       width: 100%;
+//       text-align: center;
+//       padding: 1rem 0;
+//       border-top: 2px solid $bleu-clair;
+//       transition: all 0.3s ease-in-out;
+
+//       &.showMenu {
+//         display: flex;
+//         animation: slideIn 0.3s ease-in-out;
+//       }
+//     }
+
+//     @keyframes slideIn {
+//       from {
+//         opacity: 0;
+//         transform: translateY(-10px);
+//       }
+//       to {
+//         opacity: 1;
+//         transform: translateY(0);
+//       }
+//     }
+//   }
+// }
+// 🌟 Couleurs principales
+// $bleu-fonce: #003080;
+// $bleu-turquoise: #25fde9;
+// $bleu-clair: #14e9f7;
+// $blanc: #fff;
+// $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
+
+// .navbar {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 1rem 2rem;
+//   position: fixed;
+//   width: 100%;
+//   top: 0;
+//   left: 0;
+//   z-index: 1000;
+//   transition:
+//     background 0.3s ease-in-out,
+//     // Transition de couleur
+//     box-shadow 0.3s ease-in-out;
+//   background: transparent 0.3s ease-in-out; // Départ transparent
+
+//   .logo {
+//     display: flex;
+//     align-items: center;
+//     height: 8rem;
+
+//     img {
+//       width: 250px;
+//       height: auto;
+//     }
+//   }
+
+//   // 🔹 MENU BURGER (Mobile)
+//   .menuToggle {
+//     display: none;
+//     font-size: 2rem;
+//     cursor: pointer;
+//     color: $blanc;
+//     transition: transform 0.3s ease-in-out;
+
+//     &:hover {
+//       transform: scale(1.1);
+//     }
+//   }
+
+//   // 🔹 Liens de navigation
+//   .navLinks {
+//     display: flex;
+//     gap: 1rem;
+//     align-items: center;
+
+//     a {
+//       color: $blanc;
+//       text-decoration: none;
+//       font-weight: bold;
+//       font-size: 1rem;
+//       padding: 0.5rem 1.2rem;
+//       border-radius: 5px;
+//       transition: all 0.3s ease;
+
+//       &:hover {
+//         background: $bleu-turquoise;
+//         color: $bleu-fonce;
+//       }
+//     }
+//   }
+
+//   // 🔹 Boutons de connexion
+//   .authLinks {
+//     a {
+//       padding: 0.5rem 1.5rem;
+//       background-color: $bleu-clair;
+//       color: $bleu-fonce;
+//       border-radius: 8px;
+//       transition: all 0.3s ease;
+//       font-weight: bold;
+
+//       &:hover {
+//         background-color: $bleu-turquoise;
+//         transform: scale(1.05);
+//       }
+//     }
+//   }
+
+//   // 🔹 Quand la navbar est scrollée
+//   &.scrolled {
+//     background: $transparent-white;
+//     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+
+//     .navLinks a {
+//       color: $bleu-fonce;
+
+//       &:hover {
+//         color: $blanc;
+//       }
+//     }
+
+//     .menuToggle {
+//       color: $bleu-fonce;
+//     }
+//   }
+
+//   // 🔹 Responsive pour mobile 📱
+//   @media (max-width: 768px) {
+//     .menuToggle {
+//       display: block;
+//     }
+
+//     .navLinks {
+//       display: none;
+//       flex-direction: column;
+//       gap: 0;
+//       position: absolute;
+//       top: 4rem;
+//       right: 0;
+//       background-color: rgba($bleu-fonce, 0.95);
+//       width: 100%;
+//       text-align: center;
+//       padding: 1rem 0;
+//       border-top: 2px solid $bleu-clair;
+//       transition: all 0.3s ease-in-out;
+
+//       &.showMenu {
+//         display: flex;
+//         animation: slideIn 0.3s ease-in-out;
+//       }
+//     }
+
+//     @keyframes slideIn {
+//       from {
+//         opacity: 0;
+//         transform: translateY(-10px);
+//       }
+//       to {
+//         opacity: 1;
+//         transform: translateY(0);
+//       }
+//     }
+//   }
+// }
+$bleu-fonce: #003080;
+$bleu-turquoise: #25fde9;
+$bleu-clair: #14e9f7;
+$blanc: #fff;
+$transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #333;
-  color: #fff;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition:
+    background 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+  background: transparent;
 
-  .logo a {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
-    text-decoration: none;
+  .logo {
+    display: flex;
+    align-items: center;
+    height: 8rem;
+
+    img {
+      width: 250px;
+      height: auto;
+    }
   }
 
+  // 🔹 MENU BURGER (Mobile)
   .menuToggle {
     display: none;
     font-size: 2rem;
     cursor: pointer;
-    color: #fff;
+    color: $bleu-fonce;
+    transition: transform 0.3s ease-in-out;
+
+    &:hover {
+      transform: scale(1.1);
+    }
   }
 
+  // 🔹 Liens de navigation modernisés
   .navLinks {
     display: flex;
     gap: 1rem;
     align-items: center;
 
-    .navLink {
-      color: #fff;
+    a {
+      color: $bleu-fonce;
       text-decoration: none;
-      padding: 0.5rem 1rem;
-      border: 1px solid transparent;
-      background: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      align-items: center;
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 0.6rem 1.5rem;
+      border-radius: 50px; // Arrondi pour un look moderne
+      transition: all 0.3s ease-in-out;
+      background: transparent;
+      border: 2px solid $bleu-clair; // Bordure subtile
 
       &:hover {
-        border: 1px solid #fff;
-        border-radius: 5px;
-      }
-    }
-
-    .clerk-sign-in-button,
-    .clerk-user-button {
-      .clerk-button {
-        color: #fff;
-        padding: 0.5rem 1rem;
-        border: 1px solid transparent;
-        background: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-
-        &:hover {
-          border: 1px solid #fff;
-          border-radius: 5px;
-        }
+        background: $bleu-turquoise;
+        color: $blanc;
+        box-shadow: 0 4px 15px rgba(37, 253, 233, 0.5);
       }
     }
   }
 
+  // 🔹 Boutons de connexion modernisés
+  .authLinks {
+    a {
+      padding: 0.6rem 1.8rem;
+      background: $bleu-clair;
+      color: $bleu-fonce;
+      font-weight: bold;
+      border-radius: 50px;
+      transition: all 0.3s ease-in-out;
+      border: 2px solid transparent;
+
+      &:hover {
+        background: $bleu-turquoise;
+        color: $blanc;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(20, 233, 247, 0.4);
+      }
+    }
+  }
+
+  // 🔹 Effet au scroll (Navbar fixée avec effet "frosted glass")
+  &.scrolled {
+    background: $transparent-white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+
+    .navLinks a {
+      color: $bleu-fonce;
+
+      &:hover {
+        color: $blanc;
+      }
+    }
+
+    .menuToggle {
+      color: $bleu-fonce;
+    }
+  }
+
+  // 🔹 Responsive pour mobile 📱
   @media (max-width: 768px) {
     .menuToggle {
       display: block;
@@ -71,20 +474,27 @@
       position: absolute;
       top: 4rem;
       right: 0;
-      background-color: #333;
+      background-color: rgba($bleu-fonce, 0.95);
       width: 100%;
       text-align: center;
+      padding: 1rem 0;
+      border-top: 2px solid $bleu-clair;
+      transition: all 0.3s ease-in-out;
 
       &.showMenu {
         display: flex;
-        border: 4px solid red;
+        animation: slideIn 0.3s ease-in-out;
       }
+    }
 
-      .navLink,
-      .clerk-sign-in-button .clerk-button,
-      .clerk-user-button .clerk-button {
-        padding: 1rem;
-        border-top: 1px solid #444;
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   }

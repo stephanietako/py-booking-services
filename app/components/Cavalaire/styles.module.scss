@@ -1,0 +1,87 @@
+/* styles.module.scss */
+.cavalaireSection {
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  color: #333;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #003080; /* Bleu Foncé */
+}
+
+.text {
+  flex: 1;
+  padding: 20px;
+  background: linear-gradient(180deg, #e3f7ff, #ffffff);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 7vh;
+  transition: box-shadow 0.3s ease;
+
+  /* Ici, on applique le style globalement au conteneur de texte */
+  p {
+    margin-bottom: 10px; /* Légère séparation entre les paragraphes */
+    line-height: 1.8;
+    color: #003080;
+    font-family: "Poppins", sans-serif;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+    text-align: justify; /* Justifie le texte pour une lisibilité améliorée */
+  }
+
+  /* Ajout d'un léger padding pour aérer l'ensemble */
+  padding-bottom: 20px;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+  }
+}
+
+.carousel {
+  position: relative;
+  max-width: 100%;
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.slide {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.active {
+  opacity: 1;
+}
+
+.indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #003080; /* Bleu Foncé */
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.indicator.active {
+  background-color: #25fde9; /* Bleu turquoise */
+}
+
+.indicator:hover {
+  background-color: #14e9f7; /* Bleu clair */
+}

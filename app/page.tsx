@@ -4,13 +4,21 @@ import Hero from "./components/Hero/Hero";
 import About from "./components/About/About";
 import Boat from "./components/Boat/Boat";
 import Cruise from "./components/Cruise/Cruise";
+import Maintenance from "./components/Maintenance/Maintenance";
+import Cavalaire from "./components/Cavalaire/Cavalaire";
 
 export const dynamic = "force-dynamic"; // Utilisation de dynamic rendering dans Next.js
 
 const Home = async () => {
   const days = await getDays(); // Récupérer les jours d'ouverture
   const closedDays = await getClosedDays(); // Récupérer les jours fermés
-
+  // Liste d'images pour le carrousel
+  const images = [
+    "/assets/Calanques-de-Cavalaire.jpg",
+    "/assets/Port-Cros1.webp",
+    "/assets/Beach-Notre-Dame-Porquerolles.jpg",
+    // Ajoutez plus d'images si nécessaire
+  ];
   return (
     <Wrapper>
       <main>
@@ -26,6 +34,12 @@ const Home = async () => {
           <Cruise />
         </section>
       </main>
+      <section>
+        <Maintenance />
+      </section>
+      <section>
+        <Cavalaire images={images} />
+      </section>
     </Wrapper>
   );
 };
