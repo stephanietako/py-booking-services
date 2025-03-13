@@ -1,4 +1,4 @@
-// app/manage-booking/page.tsx
+//app/manage-booking/page.tsx
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
@@ -62,9 +62,7 @@ const ManageBookingPage: FC = () => {
             throw new Error(result.error || "Erreur inconnue");
           }
 
-          console.log("Token décodé :", result.decoded);
           const decodedBookingId = result.decoded.bookingId;
-          console.log("BookingId décodé :", decodedBookingId);
 
           // Récupérer la réservation avec le bookingId décodé
           const resultBooking = await getBookingById(decodedBookingId, user.id);

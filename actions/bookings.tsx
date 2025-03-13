@@ -188,6 +188,7 @@ export async function getBookingById(bookingId: string, userId: string) {
     throw new Error("Impossible de récupérer la réservation.");
   }
 }
+
 // Mettre à jour le statut de la réservation
 export async function updateBooking(
   bookingId: string,
@@ -341,10 +342,6 @@ export async function deleteOption(optionId: string) {
 // Mettre à jour le total d'une réservation
 export async function updateBookingTotal(bookingId: string) {
   try {
-    console.log(
-      `✅ Mise à jour du total pour la réservation (ID: ${bookingId}).`
-    );
-
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: { options: true, service: true },
@@ -380,6 +377,7 @@ export async function updateBookingTotal(bookingId: string) {
     throw error;
   }
 }
+
 // Récupérer les créneaux réservés pour une date donnée
 export async function getBookedTimes(date: string) {
   const startOfDay = new Date(date);

@@ -180,16 +180,6 @@ export async function deleteManyoption(optionId: string) {
     }
     await prisma.option.delete({ where: { id: optionId } });
     console.log(`✅ Option supprimée (ID: ${optionId}).`);
-
-    // if (!option) {
-    //   throw new Error("Option non trouvée");
-    // }
-
-    // await prisma.option.delete({
-    //   where: {
-    //     id: optionId,
-    //   },
-    // });
   } catch (error) {
     console.error("Erreur lors de la suppression de la option:");
     throw error;
@@ -305,7 +295,8 @@ export async function createService(
   amount: number,
   description: string,
   file: File,
-  categories: string[]
+  categories: string[],
+  defaultPrice: number
 ) {
   try {
     if (!name || !amount || !file) {
@@ -331,6 +322,7 @@ export async function createService(
         active: true, // L'état actif du service, tu peux ajuster selon ton besoin
         price: amount, // Ajout de la propriété price
         currency: "EUR", // Ajout de la propriété currency, ajustez selon votre besoin
+        defaultPrice: defaultPrice ?? amount,
       },
     });
 
@@ -617,3 +609,109 @@ async function uploadImageToServer(file: File): Promise<string> {
     throw new Error("Erreur lors de l'upload de l'image");
   }
 }
+
+///////////
+// export async function addServices() {
+//   try {
+//     // Upsert des services "Simplicité" et "Premium"
+//     await prisma.service.upsert({
+//       where: { name: "Simplicité" },
+//       update: {},
+//       create: {
+//         name: "Simplicité",
+//         description:
+//           "Profitez du bateau avec un capitaine à votre disposition...",
+//         defaultPrice: 1700,
+//         isFixed: true,
+//       },
+//     });
+
+//     await prisma.service.upsert({
+//       where: { name: "Premium" },
+//       update: {},
+//       create: {
+//         name: "Premium",
+//         description:
+//           "Expérience gastronomique en mer avec repas et boissons inclus...",
+//         defaultPrice: 2500,
+//         isFixed: true,
+//       },
+//     });
+
+//     console.log("Services 'Simplicité' et 'Premium' ajoutés ou mis à jour.");
+//   } catch (error) {
+//     console.error("Erreur lors de l'ajout ou mise à jour des services", error);
+//     throw error;
+//   }
+// }
+
+// // Ajouter les règles de tarification
+// export async function addPricingRules() {
+//   try {
+//     // Créer plusieurs règles de tarification pour les services
+//     await prisma.pricingRule.createMany({
+//       data: [
+//         {
+//           serviceId: "simplicite",
+//           startDate: new Date("2024-10-16"),
+//           endDate: new Date("2025-05-31"),
+//           price: 1500,
+//         },
+//         {
+//           serviceId: "simplicite",
+//           startDate: new Date("2025-06-01"),
+//           endDate: new Date("2025-07-07"),
+//           price: 1700,
+//         },
+//         {
+//           serviceId: "simplicite",
+//           startDate: new Date("2025-07-08"),
+//           endDate: new Date("2025-08-31"),
+//           price: 1900,
+//         },
+//         {
+//           serviceId: "premium",
+//           startDate: new Date("2024-10-16"),
+//           endDate: new Date("2025-05-31"),
+//           price: 2000,
+//         },
+//         {
+//           serviceId: "premium",
+//           startDate: new Date("2025-06-01"),
+//           endDate: new Date("2025-07-07"),
+//           price: 2200,
+//         },
+//         {
+//           serviceId: "premium",
+//           startDate: new Date("2025-07-08"),
+//           endDate: new Date("2025-08-31"),
+//           price: 2500,
+//         },
+//       ],
+//     });
+
+//     console.log("Règles de tarification ajoutées avec succès.");
+//   } catch (error) {
+//     console.error("Erreur lors de l'ajout des règles de tarification", error);
+//     throw error;
+//   }
+// }
+
+// // Exemple d'utilisation dans ton code serveur
+// export async function setupInitialData() {
+//   try {
+//     // Ajouter ou mettre à jour les services
+//     await addServices();
+
+//     // Ajouter les règles de tarification
+//     await addPricingRules();
+
+//     console.log("Les services et règles de tarification sont configurés.");
+//   } catch (error) {
+//     console.error(
+//       "Erreur lors de la configuration initiale des services et règles de tarification",
+//       error
+//     );
+//     throw error;
+//   }
+// }

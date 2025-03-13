@@ -25,6 +25,7 @@ type Input = {
   file?: File;
   categories: string[];
   imageUrl?: string;
+  defaultPrice?: number;
 };
 
 const initialInput: Input = {
@@ -145,7 +146,8 @@ const Service: FC = () => {
           input.amount,
           input.description || "",
           input.file!,
-          input.categories
+          input.categories,
+          input.defaultPrice ?? input.amount
         );
         setSuccessMessage("Service créé avec succès !");
       }
@@ -181,7 +183,7 @@ const Service: FC = () => {
       categories: service.categories || [],
       imageUrl: service.imageUrl || "",
     });
-    setPreview(service.imageUrl || "/assets/default.png");
+    setPreview(service.imageUrl || "/assets/default.jpg");
   };
 
   useEffect(() => {
@@ -254,7 +256,7 @@ const Service: FC = () => {
               {preview ? (
                 <Image
                   alt="preview"
-                  src={preview || "/assets/default.png"}
+                  src={preview || "/assets/default.jpg"}
                   width={100}
                   height={100}
                   priority
@@ -292,7 +294,7 @@ const Service: FC = () => {
                 <p>{service.description}</p>
                 <p>{service.amount}€</p>
                 <Image
-                  src={service.imageUrl || "/default.png"}
+                  src={service.imageUrl || "/default.jpg"}
                   alt={service.name}
                   width={100}
                   height={100}

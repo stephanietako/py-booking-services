@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 import { useTransition } from "react";
 import toast from "react-hot-toast";
+// Styles
 import styles from "./styles.module.scss";
 import { createBooking } from "@/actions/bookings";
 import { useRouter } from "next/navigation";
@@ -91,44 +92,42 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
   };
 
   return (
-    <li className={`${styles.serviceItem} ${hoverClass}`}>
-      <div className={styles.serviceItemHeader}>
-        <div className={styles.serviceItemImage}>
+    <li className={`${styles.service_item} ${hoverClass}`}>
+      <div className={styles.service_item__content}>
+        <div className={styles.service_image}>
           <Image
             src={imageUrl}
             alt={service.name}
             width={60}
             height={60}
-            className={styles.serviceImage}
+            className={styles.__img}
           />
         </div>
 
-        <div className={styles.serviceItemDetails}>
-          <div className={styles.serviceItemInfo}>
-            <span className={styles.serviceItemTitle}>{service.name}</span>
-            <span className={styles.serviceItemDescription}>
+        <div className={styles.service_item__details}>
+          <div className={styles.service_item__infos}>
+            <span className={styles.service_item__title}>{service.name}</span>
+            <span className={styles.service_item__description}>
               {service.description}
             </span>
-            <span className={styles.serviceItemOptionCount}>
+            <span className={styles.service_item__option_count}>
               {optionCount} option(s)
             </span>
           </div>
+          <div className={styles.service_item__stats}>
+            <span>{remainingAmount} € montant total</span>
+          </div>
+
+          <div className={styles.service_item__progress}>
+            <progress value={progressValue} max="100"></progress>
+          </div>
+          <div className={styles.service_item__amount}>{remainingAmount} €</div>
+
+          <button disabled={isPending} onClick={handleBooking}>
+            {isPending ? "Réservation..." : "Réserver"}
+          </button>
         </div>
-        <div className={styles.serviceItemAmount}>{remainingAmount} €</div>
       </div>
-
-      <div className={styles.serviceItemStats}>
-        <span>{totalOptionAmount} € dépensés</span>
-        <span>{remainingAmount} € montant total</span>
-      </div>
-
-      <div className={styles.serviceItemProgress}>
-        <progress value={progressValue} max="100"></progress>
-      </div>
-
-      <button disabled={isPending} onClick={handleBooking}>
-        {isPending ? "Réservation..." : "Réserver"}
-      </button>
     </li>
   );
 };

@@ -36,6 +36,9 @@ export type Service = {
   price: number;
   currency: string;
   stripeCustomerId?: string | null;
+  defaultPrice?: number; // Prix par défaut pour les services fixes
+  isFixed: boolean; // Indiquer si c'est un service fixe ou dynamique
+  pricingRules?: PricingRule[]; // Règles de tarification pour services fixes
 };
 
 export interface Option {
@@ -101,4 +104,12 @@ export interface Booking {
   stripeCustomerId?: string | null;
   stripePaymentIntentId?: string | null;
   price?: string | null;
+}
+
+export interface PricingRule {
+  id: string;
+  serviceId: string;
+  startDate: Date;
+  endDate: Date;
+  price: number;
 }

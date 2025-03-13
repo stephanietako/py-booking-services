@@ -143,7 +143,6 @@ const OptionManager: React.FC<OptionManagerProps> = ({
 
         <h4>Total à payer : {totalAmount}€</h4>
 
-        <h3>Options</h3>
         {loading ? (
           <p>Chargement...</p>
         ) : error ? (
@@ -156,49 +155,52 @@ const OptionManager: React.FC<OptionManagerProps> = ({
             </span>
           </div>
         ) : (
-          <table className="table_container">
-            <thead>
-              <tr>
-                <th>Service</th>
-                <th>Montant</th>
-                <th>Description</th>
-                <th>Date</th>
-                <th>Heure</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {options.map((option) => (
-                <tr key={option.id}>
-                  <td>
-                    <FaWallet />
-                  </td>
-                  <td>+ {option.amount}€</td>
-                  <td>{option.description}</td>
-                  <td>
-                    {new Date(option.createdAt).toLocaleDateString("fr-FR")}
-                  </td>
-                  <td>
-                    {new Date(option.createdAt).toLocaleTimeString("fr-FR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    })}
-                  </td>
-                  <td>
-                    <button
-                      onClick={() =>
-                        handleDeleteOption(option.id, option.amount)
-                      }
-                      className="btn_action"
-                    >
-                      <FaRegTrashAlt />
-                    </button>
-                  </td>
+          <>
+            <h3>Voici les options que vous avez choisies:</h3>
+            <table className="table_container">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Montant</th>
+                  <th>Description</th>
+                  <th>Date</th>
+                  <th>Heure</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {options.map((option) => (
+                  <tr key={option.id}>
+                    <td>
+                      <FaWallet />
+                    </td>
+                    <td>+ {option.amount}€</td>
+                    <td>{option.description}</td>
+                    <td>
+                      {new Date(option.createdAt).toLocaleDateString("fr-FR")}
+                    </td>
+                    <td>
+                      {new Date(option.createdAt).toLocaleTimeString("fr-FR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() =>
+                          handleDeleteOption(option.id, option.amount)
+                        }
+                        className="btn_action"
+                      >
+                        <FaRegTrashAlt />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
     </div>

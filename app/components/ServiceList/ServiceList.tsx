@@ -5,6 +5,8 @@ import { getAllServices } from "@/actions/actions";
 import { Service } from "@/types";
 import ServiceItem from "../ServiceItem/ServiceItem";
 import Wrapper from "../Wrapper/Wrapper";
+// Styles
+import styles from "./styles.module.scss";
 
 const ServiceList = () => {
   const [services, setServices] = useState<Service[]>([]);
@@ -30,11 +32,11 @@ const ServiceList = () => {
 
   return (
     <Wrapper>
-      <div className="service_list">
+      <div className={styles.service_list}>
         <header className="header">
           <h1>Liste des Services</h1>
         </header>
-        <div className="service_list__container">
+        <div className={styles.service_list__container}>
           {loading && <p>Chargement des services...</p>}
           {error && <p className="error">{error}</p>}
           {!loading && services.length === 0 && (

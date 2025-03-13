@@ -215,38 +215,16 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
   }
 }
 
-// 🌟 Boutons principaux
 .heroButtons {
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
 }
 
-// 🌟 Style des boutons
-// .buttonHero,
-// .calendarBtn {
-//   padding: 12px 24px;
-//   font-size: 1rem;
-//   font-weight: bold;
-//   border: none;
-//   border-radius: 8px;
-//   cursor: pointer;
-//   transition: all 0.3s ease-in-out;
-//   text-transform: uppercase;
-//   background: $bleu-clair;
-//   color: $bleu-fonce;
-//   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-
-//   &:hover {
-//     background: $bleu-turquoise;
-//     transform: translateY(-2px);
-//   }
-// }
-// 🌟 Boutons modernes
 .buttonHero,
 .calendarBtn {
   padding: 14px 28px;
-  font-size: 1.1rem;
+  font-size: 0.7rem;
   font-weight: bold;
   border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
   border-radius: 50px; // Plus arrondi pour un look premium

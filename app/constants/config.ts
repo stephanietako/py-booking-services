@@ -7,7 +7,7 @@ export const categories = [
   "all",
   "Découverte",
   "Simplicité",
-  "Prenium",
+  "Premium",
 ] as const;
 
 export const MAX_FILE_SIZE = 1024 * 1024 * 5; //5M

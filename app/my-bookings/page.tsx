@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import Wrapper from "../components/Wrapper/Wrapper";
 import OptionManager from "../components/OptionManager/OptionManager";
 import ServiceCompt from "../components/ServicesCompt/ServiceCompt";
+//import DashboardUser from "../components/DashboardUser/DashboardUser";
+//import DashboardUser from "../components/DashboardUser/DashboardUser";
 
 // Liste des réservations utilisateur
 const MyBookings = () => {
@@ -83,9 +85,9 @@ const MyBookings = () => {
         {!loading && bookings.length === 0 && <p>Aucune réservation</p>}
 
         {!loading && bookings.length > 0 && (
-          <ul>
+          <ul className="booking_item">
             {bookings.map((booking) => (
-              <li key={booking.id} className="booking_item">
+              <li key={booking.id} className="booking_item__content">
                 <ServiceCompt
                   name={booking.service.name}
                   description={
@@ -99,7 +101,7 @@ const MyBookings = () => {
                   endTime={booking.endTime}
                 />
 
-                <div className="booking_transaction">
+                <div className="booking_option">
                   <OptionManager
                     bookingId={booking.id}
                     serviceAmount={booking.service.amount}
@@ -107,18 +109,21 @@ const MyBookings = () => {
                       handleTotalUpdate(booking.id, total)
                     }
                   />
-
-                  <button
-                    onClick={() => handleDeleteBooking(booking.id)}
-                    disabled={deleting === booking.id}
-                  >
-                    {deleting === booking.id ? "Annulation..." : "Annuler"}
-                  </button>
-                  <button
-                    onClick={() => router.push(`/manage-booking/${booking.id}`)}
-                  >
-                    Voir la réservation
-                  </button>
+                  <span className="booking_option__btn">
+                    <button
+                      onClick={() => handleDeleteBooking(booking.id)}
+                      disabled={deleting === booking.id}
+                    >
+                      {deleting === booking.id ? "Annulation..." : "Annuler"}
+                    </button>
+                    <button
+                      onClick={() =>
+                        router.push(`/manage-booking/${booking.id}`)
+                      }
+                    >
+                      Voir la réservation
+                    </button>
+                  </span>
                 </div>
               </li>
             ))}

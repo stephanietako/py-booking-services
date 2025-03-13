@@ -38,23 +38,35 @@ model Role {
 }
 
 model Service {
-  id               String    @id @default(uuid())
+  id               String        @id @default(uuid())
   name             String
   amount           Float
   categories       String[] // Changement pour un tableau de catégories
   description      String?
   imageUrl         String
-  active           Boolean   @default(true)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  active           Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
   reservedAt       DateTime?
   startTime        DateTime?
   endTime          DateTime?
   options          Option[]
   bookings         Booking[]
+  defaultPrice     Float // Prix par défaut (utilisé seulement pour les services fixes)
+  isFixed          Boolean       @default(false) // true pour les services fixes
+  pricingRules     PricingRule[]
   price            Float // Nouveau champ pour le prix dynamique
   currency         String // Nouveau champ pour la devise
   stripeCustomerId String? // Ajout de l'identifiant du client Stripe
+}
+
+model PricingRule {
+  id        String   @id @default(uuid())
+  serviceId String
+  service   Service  @relation(fields: [serviceId], references: [id])
+  startDate DateTime
+  endDate   DateTime
+  price     Float
 }
 
 model Option {
@@ -117,3 +129,12 @@ model Transaction {
   bookingId   String?
   booking     Booking? @relation(fields: [bookingId], references: [id])
 }
+
+// ✅ L’admin doit pouvoir continuer à créer des services personnalisés.
+// ✅ Les services "Simplicité" et "Premium" doivent toujours exister et suivre les règles tarifaires.
+// ✅ Le prix d’un service varie selon la période choisie sur le calendrier.
+// ✅ Lors de la sélection d’une date, l’utilisateur voit les services adaptés avec le bon prix.
+
+// 🔧 Solution proposée
+// 1️⃣ Ajouter un champ isFixed au modèle Service pour distinguer les services "fixes" (Simplicité/Premium) et ceux créés par l'admin.
+// 2️⃣ Gérer les prix dynamiques via PricingRule, appliqué uniquement aux services fixes.

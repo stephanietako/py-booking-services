@@ -145,14 +145,16 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+// Styles
 import styles from "./styles.module.scss";
 import { UserButton, useUser } from "@clerk/nextjs";
-import { addUserToDatabase } from "@/actions/actions";
+import { addUserToDatabase, getRole } from "@/actions/actions";
 
 const Navbar: React.FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
     if (user?.id && user.primaryEmailAddress?.emailAddress && user.firstName) {
@@ -180,6 +182,16 @@ const Navbar: React.FC = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (user?.id) {
+        const role = await getRole(user.id); // Récupère le rôle de l'utilisateur
+        setUserRole(role?.role?.name || null); // Stocke le rôle dans l'état
+      }
+    };
+    if (user?.id) fetchUserRole(); // Appel la fonction lorsque l'utilisateur est connecté
+  }, [user]);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -211,8 +223,11 @@ const Navbar: React.FC = () => {
           <>
             <Link href="/my-bookings">Mes réservations</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/admin/services">Mes Services</Link>
-            <Link href="/admin">ADMIN</Link>
+            {/* Affichage conditionnel pour les utilisateurs avec le rôle admin */}
+            {userRole === "admin" && (
+              <Link href="/admin/services">Mes Services</Link>
+            )}
+            {userRole === "admin" && <Link href="/admin">ADMIN</Link>}
             <UserButton />
           </>
         ) : (

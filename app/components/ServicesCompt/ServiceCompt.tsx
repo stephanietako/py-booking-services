@@ -74,7 +74,6 @@ const ServiceCompt: React.FC<ServiceComptProps> = ({
 
         {/* Affichage des options */}
         <div className={styles.service__transactions}>
-          <span>{totalOptionAmount} € dépensés</span>
           <span>{remainingAmount} € restant à payer</span>
         </div>
 

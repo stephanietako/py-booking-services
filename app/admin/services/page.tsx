@@ -4,7 +4,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Service } from "@/types";
 import { getAllServices } from "@/actions/actions";
 import Image from "next/image";
-import styles from "./styles.module.scss";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 
 const ServicesPage: React.FC = () => {
@@ -34,18 +33,18 @@ const ServicesPage: React.FC = () => {
 
   return (
     <Wrapper>
-      <div className={styles.container}>
-        <h1 className={styles.title}>Page Administrateur Services</h1>
+      <div className="table_container">
+        <h1 className="title">Page Administrateur Services</h1>
         <h2>Vue D&apos;Ensemble Des Services Disponibles</h2>
 
         {loading ? (
           <div>Chargement...</div>
         ) : error ? (
-          <div className={styles.error}>{error}</div>
+          <div className="error">{error}</div>
         ) : services.length === 0 ? (
           <div>Aucun service disponible pour le moment.</div>
         ) : (
-          <table className={styles.servicesTable}>
+          <table className="table">
             <thead>
               <tr>
                 <th>Nom</th>
@@ -74,7 +73,7 @@ const ServicesPage: React.FC = () => {
                       alt={`Image du service ${service.name}`}
                       width={100}
                       height={100}
-                      className={styles.serviceImage}
+                      className="serviceImage"
                       loading="lazy" // Ajout de lazy loading pour l'image
                     />
                   </td>
