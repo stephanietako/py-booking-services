@@ -1,4 +1,5 @@
 //app/manage-booking/page.tsx
+
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
@@ -249,12 +250,14 @@ const ManageBookingPage: FC = () => {
             description={
               booking.service.description || "Aucune description disponible"
             }
-            amount={totalAmount}
             imageUrl={booking.service.imageUrl || "/assets/default.jpg"}
             categories={booking.service.categories}
             startTime={booking.startTime}
             endTime={booking.endTime}
+            options={booking.options || []} // Assure-toi que les options sont correctement définies
+            totalAmount={totalAmount} // Utilise bien totalAmount ici
           />
+
           {/* Bouton Annuler la réservation */}
           <button
             onClick={handleDeleteBooking}

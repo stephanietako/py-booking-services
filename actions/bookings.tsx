@@ -12,14 +12,10 @@ export async function createBooking(
   serviceId: string,
   selectedDate: string,
   startTime: string,
-  endTime: string
+  endTime: string,
+  options: { amount: number }[] = [] // Par défaut, options est un tableau vide
 ) {
   try {
-    console.log("🟢 Service sélectionné:", serviceId);
-    console.log("📅 Date envoyée :", selectedDate);
-    console.log("⏰ StartTime reçu :", startTime);
-    console.log("⏳ EndTime reçu :", endTime);
-
     // 🔥 Vérification de startTime et endTime
     const start = new Date(startTime);
     const end = new Date(endTime);
@@ -32,9 +28,6 @@ export async function createBooking(
       console.error("⛛ Erreur: startTime ou endTime invalide", { start, end });
       throw new Error("🚨 L'heure de début ou de fin est invalide.");
     }
-
-    console.log("✅ StartTime après conversion :", start);
-    console.log("✅ EndTime après conversion :", end);
 
     // Récupérer l'utilisateur via son `clerkUserId`
     const user = await prisma.user.findUnique({
@@ -49,9 +42,18 @@ export async function createBooking(
       console.log(
         "⛛ L'utilisateur n'a pas de stripeCustomerId. Création du client Stripe..."
       );
-      const customer = await stripe.customers.create({
-        email: user.email,
-      });
+      let customer;
+      try {
+        customer = await stripe.customers.create({
+          email: user.email,
+        });
+      } catch (stripeError) {
+        console.error(
+          "❌ Erreur Stripe lors de la création du client:",
+          stripeError
+        );
+        throw new Error("Impossible de créer le client Stripe.");
+      }
 
       // Mettre à jour l'utilisateur dans la base de données avec `stripeCustomerId`
       await prisma.user.update({
@@ -64,30 +66,42 @@ export async function createBooking(
       console.log("✅ Client Stripe créé avec succès ");
     }
 
-    // Récupérer le service
+    // Récupérer le service et ses règles de tarification
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
+      include: { pricingRules: true }, // Inclure les règles de tarification
     });
     if (!service) throw new Error("❌ Service introuvable.");
 
-    // Vérifier si le créneau est déjà réservé
-    const conflictingBookings = await prisma.booking.findMany({
+    // Calculer le prix dynamique basé sur la date de la réservation
+    let dynamicPrice = service.defaultPrice;
+
+    const selectedDateTime = new Date(selectedDate);
+    if (isNaN(selectedDateTime.getTime())) {
+      throw new Error("🚨 La date sélectionnée est invalide.");
+    }
+
+    // Recherche d'une règle tarifaire applicable
+    const applicableRule = await prisma.pricingRule.findFirst({
       where: {
-        serviceId,
-        AND: [
-          { startTime: { lt: end } }, // Commence avant la fin de la nouvelle réservation
-          { endTime: { gt: start } }, // Termine après le début de la nouvelle réservation
-        ],
+        serviceId: serviceId,
+        startDate: { lte: selectedDateTime },
+        endDate: { gte: selectedDateTime },
       },
     });
 
-    if (conflictingBookings.length > 0) {
-      throw new Error(
-        "🚫 Ce créneau est déjà réservé. Veuillez choisir un autre."
-      );
+    if (applicableRule) {
+      dynamicPrice = applicableRule.price;
     }
 
-    // Créer la réservation
+    // Calculer le prix total avec options
+    const totalAmount =
+      dynamicPrice +
+      (options && options.length > 0
+        ? options.reduce((sum, option) => sum + option.amount, 0)
+        : 0);
+
+    // Créer la réservation avec le prix total calculé
     const newBooking = await prisma.booking.create({
       data: {
         userId: user.id,
@@ -97,14 +111,14 @@ export async function createBooking(
         startTime: start,
         endTime: end,
         expiresAt: new Date(end.getTime() + 24 * 60 * 60 * 1000), // Expiration dans 24h
+        totalAmount, // Utiliser le montant total calculé
         stripeCustomerId: user.stripeCustomerId, // Assurez-vous que ce champ est bien passé
       },
     });
 
-    console.log("✅ Réservation réussie :", newBooking);
     return newBooking;
   } catch (error) {
-    console.error("❌ Erreur lors de la réservation ");
+    console.error("❌ Erreur lors de la réservation ", error);
     throw new Error(`Impossible de réserver. Détails : ${error}`);
   }
 }
@@ -116,19 +130,33 @@ export async function getUserBookings(userId: string) {
       where: {
         user: {
           clerkUserId: userId, // Comparer avec clerkUserId
-        }, // Filtre pour ne retourner que les réservations de cet utilisateur
+        },
       },
       include: {
         service: true,
         user: true,
-        options: true,
+        options: true, // Assurez-vous d'inclure les options
       },
       orderBy: { createdAt: "desc" },
     });
 
-    return bookings;
+    // Ajouter le calcul du montant total pour chaque réservation
+    const bookingsWithTotalAmount = bookings.map((booking) => {
+      const optionsAmount = booking.options.reduce(
+        (sum, option) => sum + option.amount,
+        0
+      );
+      const totalAmount = booking.totalAmount + optionsAmount;
+
+      return {
+        ...booking,
+        totalAmount, // Ajout du montant total calculé
+      };
+    });
+
+    return bookingsWithTotalAmount;
   } catch {
-    console.error("Erreur lors de la récupération des réservations ");
+    console.error("Erreur lors de la récupération des réservations");
     throw new Error("Impossible de charger les réservations.");
   }
 }
@@ -166,8 +194,6 @@ export async function getBookingById(bookingId: string, userId: string) {
         options: true,
       },
     });
-
-    console.log("Réservation récupérée :", booking);
 
     if (!booking || !booking.user || booking.user.clerkUserId !== userId) {
       console.log("Réservation introuvable ou accès refusé.");
@@ -339,44 +365,58 @@ export async function deleteOption(optionId: string) {
   }
 }
 
-// Mettre à jour le total d'une réservation
-export async function updateBookingTotal(bookingId: string) {
-  try {
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: { options: true, service: true },
-    });
+// update
+export const updateBookingTotal = async (
+  bookingId: string
+): Promise<number> => {
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: {
+      service: true,
+      options: true,
+    },
+  });
 
-    if (!booking) {
-      console.log("Réservation introuvable.");
-      throw new Error("Réservation introuvable.");
-    }
-
-    // Calculer le total (prix du service + options)
-    const totalOptions = booking.options.reduce(
-      (sum, option) => sum + option.amount,
-      0
-    );
-    const newTotal = totalOptions + (booking.service?.amount || 0);
-
-    console.log("Nouveau total :", newTotal); // Log de débogage
-
-    // Mettre à jour le total dans la réservation
-    await prisma.booking.update({
-      where: { id: bookingId },
-      data: {
-        totalAmount: newTotal, // Mettre à jour le totalAmount
-      },
-    });
-
-    console.log("Total mis à jour avec succès."); // Log de débogage
-
-    return newTotal;
-  } catch (error) {
-    console.error("❌ Erreur lors de la mise à jour du total :", error);
-    throw error;
+  if (!booking) {
+    console.error("Réservation non trouvée !");
+    return 0; // Retourner 0 si la réservation n'existe pas
   }
-}
+
+  const { service, options, startTime } = booking;
+
+  if (!service) {
+    console.error("Le service lié à cette réservation n'existe pas !");
+    return 0; // Retourner 0 si le service n'existe pas
+  }
+
+  let servicePrice = service.price ?? service.defaultPrice;
+
+  // Vérifier si une règle de tarification existe pour la période de réservation
+  const pricingRule = await prisma.pricingRule.findFirst({
+    where: {
+      serviceId: service.id,
+      startDate: { lte: startTime }, // La règle doit être valide avant ou à la date de début
+      endDate: { gte: startTime }, // La règle doit être valide après ou à la date de début
+    },
+    orderBy: { startDate: "desc" }, // Prendre la règle la plus récente
+  });
+
+  if (pricingRule) {
+    servicePrice = pricingRule.price;
+  }
+
+  // Calcul du total
+  const optionsTotal = options.reduce((sum, option) => sum + option.amount, 0);
+  const totalAmount = servicePrice + optionsTotal;
+
+  // Mise à jour de la réservation avec le nouveau total
+  await prisma.booking.update({
+    where: { id: bookingId },
+    data: { totalAmount },
+  });
+
+  return totalAmount; // Retourner le montant total
+};
 
 // Récupérer les créneaux réservés pour une date donnée
 export async function getBookedTimes(date: string) {

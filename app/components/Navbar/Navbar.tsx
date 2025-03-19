@@ -155,6 +155,11 @@ const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false); // ✅ Ajout de isClient
+
+  useEffect(() => {
+    setIsClient(true); // ✅ On passe en mode client
+  }, []);
 
   useEffect(() => {
     if (user?.id && user.primaryEmailAddress?.emailAddress && user.firstName) {
@@ -195,7 +200,8 @@ const Navbar: React.FC = () => {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  if (!isLoaded) return null;
+  // ✅ On s'assure que le composant est bien monté côté client avant d'afficher quoi que ce soit
+  if (!isClient || !isLoaded) return null;
 
   return (
     <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>

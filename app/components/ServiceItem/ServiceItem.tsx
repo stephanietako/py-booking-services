@@ -1,6 +1,8 @@
+"use client";
+
 import { formatISO, parseISO } from "date-fns";
 import { Service } from "@/types";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 import { useTransition } from "react";
@@ -20,16 +22,33 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  // 📊 Calcul des options
-  const optionCount = service.options?.length || 0;
-  const totalOptionAmount = service.options
-    ? service.options.reduce((sum, option) => sum + option.amount, 0)
-    : 0;
-  const remainingAmount = service.amount + totalOptionAmount;
+  // 🧑‍💻 Gérer l'état du montant dynamique
+  const [remainingAmount, setRemainingAmount] = useState<number>(
+    service.amount
+  ); // Initialisation avec le montant de base
+
+  useEffect(() => {
+    // Calcul du montant dynamique en fonction des options
+    const totalOptionAmount =
+      service.options?.reduce((sum, option) => sum + option.amount, 0) || 0;
+    const totalAmount = service.amount + totalOptionAmount;
+    setRemainingAmount(totalAmount); // Mise à jour du montant dynamique
+  }, [service.amount, service.options]); // Dépendances pour recalculer le montant lorsque ces valeurs changent
+
+  const formattedAmount = new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+  }).format(remainingAmount);
+
   const progressValue =
-    totalOptionAmount > service.amount
-      ? 100
-      : (totalOptionAmount / service.amount) * 100;
+    service.options && service.options.length
+      ? (remainingAmount /
+          (service.amount +
+            (service.options.reduce((sum, option) => sum + option.amount, 0) ||
+              0))) *
+        100
+      : 0;
+
   const hoverClass = enableHover === 1 ? styles.hoverEnabled : "";
   const imageUrl = service.imageUrl || "/assets/default.jpg";
 
@@ -58,30 +77,26 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
     // 🚨 Vérification stricte pour éviter l'erreur "Invalid time value"
     if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
       toast.error("Erreur : Les horaires sélectionnés sont invalides.");
-      console.error("⛔ Erreur: startTime ou endTime invalide", {
-        startTime,
-        endTime,
-      });
       return;
     }
 
     // ✅ Extraction de la date uniquement
-    // const selectedDate = formatISO(new Date(startTime.setHours(0, 0, 0, 0)));
     const selectedDate = formatISO(new Date(startTime));
-    console.log("📅 StartTime valide :", startTime);
-    console.log("⏳ EndTime valide :", endTime);
-    console.log("📌 Date sélectionnée :", selectedDate);
 
     startTransition(async () => {
       try {
         // ✅ Création de la réservation avec `startTime` et `endTime`
-        await createBooking(
+        const booking = await createBooking(
           user.id,
           service.id,
           selectedDate,
           startTime.toISOString(),
           endTime.toISOString()
         );
+
+        // Mise à jour du montant dynamique après la réservation
+        setRemainingAmount(booking.totalAmount); // Utiliser le prix dynamique renvoyé par le back-end
+
         toast.success("Réservation réussie !");
         router.push("/my-bookings");
       } catch (error) {
@@ -108,20 +123,26 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
           <div className={styles.service_item__infos}>
             <span className={styles.service_item__title}>{service.name}</span>
             <span className={styles.service_item__description}>
-              {service.description}
+              {service.description?.split("\n").map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
             </span>
+
             <span className={styles.service_item__option_count}>
-              {optionCount} option(s)
+              {service.options?.length} option(s)
             </span>
           </div>
           <div className={styles.service_item__stats}>
-            <span>{remainingAmount} € montant total</span>
+            <span>{formattedAmount} montant total</span>
           </div>
 
           <div className={styles.service_item__progress}>
             <progress value={progressValue} max="100"></progress>
           </div>
-          <div className={styles.service_item__amount}>{remainingAmount} €</div>
+          <div className={styles.service_item__amount}>{formattedAmount}</div>
 
           <button disabled={isPending} onClick={handleBooking}>
             {isPending ? "Réservation..." : "Réserver"}

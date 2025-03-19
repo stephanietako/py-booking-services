@@ -144,7 +144,7 @@ export async function addOptionToService(
       },
     });
 
-    console.log(`✅ Option ajoutée avec succès (ID: ${option.id}).`);
+    console.log("✅ Option ajoutée avec succès");
 
     return option;
   } catch (error) {

@@ -5,8 +5,9 @@ import Calendar from "../Calendar/Calendar";
 import { Day } from "@prisma/client";
 import Image from "next/image";
 import backgroundImg from "@/public/assets/hero.jpg";
-import styles from "./styles.module.scss";
 import Modal from "../Modal/Modal";
+// Styles
+import styles from "./styles.module.scss";
 
 export const dynamic = "force-dynamic";
 

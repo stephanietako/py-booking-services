@@ -6,7 +6,7 @@ import { getBookingById } from "@/actions/bookings";
 import { useRouter, useParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 
-const ManageBookingPage: FC = () => {
+const ManageBookingIdPage: FC = () => {
   const { user, isSignedIn, isLoaded } = useUser();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -37,4 +37,4 @@ const ManageBookingPage: FC = () => {
   return <p>Redirection...</p>;
 };
 
-export default ManageBookingPage;
+export default ManageBookingIdPage;

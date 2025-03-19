@@ -6,6 +6,7 @@ import Boat from "./components/Boat/Boat";
 import Cruise from "./components/Cruise/Cruise";
 import Maintenance from "./components/Maintenance/Maintenance";
 import Cavalaire from "./components/Cavalaire/Cavalaire";
+//import TarifsDisponibilites from "./components/TarifsDisponibilites/TarifsDisponibilites";
 
 export const dynamic = "force-dynamic"; // Utilisation de dynamic rendering dans Next.js
 
@@ -27,19 +28,22 @@ const Home = async () => {
         <section>
           <About />
         </section>
+        {/* <section>
+          <TarifsDisponibilites />
+        </section> */}
         <section>
           <Boat />
         </section>
         <section>
+          <Cavalaire images={images} />
+        </section>
+        <section>
           <Cruise />
         </section>
+        <section>
+          <Maintenance />
+        </section>
       </main>
-      <section>
-        <Maintenance />
-      </section>
-      <section>
-        <Cavalaire images={images} />
-      </section>
     </Wrapper>
   );
 };

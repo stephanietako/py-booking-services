@@ -44,7 +44,7 @@ export type Service = {
 export interface Option {
   id: string; // L'ID est de type UUID (généré automatiquement)
   amount: number; // Montant de la transaction
-  description?: string; // Description optionnelle
+  description: string;
   createdAt: Date; // Date de création (DateTime dans Prisma)
   serviceId?: string | null; // serviceId peut être null ou défini
   service?: Service | null; // Objet Service optionnel, peut être null

@@ -279,6 +279,46 @@ button {
 }
 
 /* Formulaires */
+.form {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #cdd1d6;
+  padding: 1rem;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 1rem;
+}
+
+.input_form_description,
+.input_form_montant {
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.input_form_description:focus,
+.input_form_montant:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.form_bloc {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  align-items: center;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  padding-right: 0.5rem;
+}
+
 input,
 textarea,
 select {
@@ -292,6 +332,17 @@ select {
   transition: border-color 0.3s ease;
 }
 
+/* textarea {
+  width: 100%;
+  min-width: 100%;
+  padding: var(--spacing-small);
+  font-size: 1rem;
+  color: var(--text-color);
+  border: 1px solid var(--gray);
+  border-radius: var(--border-radius);
+  outline: none;
+  transition: border-color 0.3s ease;
+} */
 input:focus,
 textarea:focus,
 select:focus {
@@ -401,7 +452,8 @@ section {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 10vh;
+  margin-top: 17vh;
+  border: 4px solid blue;
 }
 
 /* Modal */
@@ -480,6 +532,36 @@ section {
   border-radius: 4px;
   font-size: 1rem;
 } */
+.dashboard_user_container__section {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.dashboard_user_container__bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  background: #f0f0f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.dashboard_user_container__content {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
 
 /* /////////transaction////////// */
 .transaction_list {
@@ -909,46 +991,6 @@ p {
 }
 
 /* /////form//////// */
-
-.form {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  border: 2px solid #cdd1d6;
-  padding: 1rem;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  border-radius: 1rem;
-}
-
-.input_form_description,
-.input_form_montant {
-  padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.input_form_description:focus,
-.input_form_montant:focus {
-  border-color: #4a90e2;
-  outline: none;
-}
-
-.form_bloc {
-  display: flex;
-  width: 50%;
-  height: 100%;
-  padding: 1rem;
-  align-items: center;
-}
-
-.label {
-  display: flex;
-  align-items: center;
-  padding-right: 0.5rem;
-}
 
 .no_transaction {
   display: flex;
@@ -1510,7 +1552,7 @@ input[type="time"]:focus {
   color: white;
 }
 
-/* Styles pour le formulaire */
+/* Styles pour le select */
 .select_option {
   border-radius: 6px;
   padding: 12px;

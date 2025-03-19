@@ -124,10 +124,18 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
           minDate={now}
           className="REACT-CALENDAR p-2"
           view="month"
-          tileDisabled={({ date }) => closedDays.includes(formatISO(date))}
-          tileClassName={({ date }) =>
-            closedDays.includes(formatISO(date)) ? "closed-day" : ""
+          tileDisabled={({ date }) =>
+            Array.isArray(closedDays) && closedDays.includes(formatISO(date))
           }
+          tileClassName={({ date }) =>
+            Array.isArray(closedDays) && closedDays.includes(formatISO(date))
+              ? "closed-day"
+              : ""
+          }
+          // tileDisabled={({ date }) => closedDays.includes(formatISO(date))}
+          // tileClassName={({ date }) =>
+          //   closedDays.includes(formatISO(date)) ? "closed-day" : ""
+          // }
           onClickDay={(date) => {
             if (!closedDays.includes(formatISO(date))) {
               setDate(date);
