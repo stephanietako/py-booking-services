@@ -39,13 +39,14 @@ export type Service = {
   defaultPrice?: number; // Prix par défaut pour les services fixes
   isFixed: boolean; // Indiquer si c'est un service fixe ou dynamique
   pricingRules?: PricingRule[]; // Règles de tarification pour services fixes
+  totalAmount?: number;
 };
 
 export interface Option {
   id: string; // L'ID est de type UUID (généré automatiquement)
   amount: number; // Montant de la transaction
   description: string;
-  createdAt: Date; // Date de création (DateTime dans Prisma)
+  createdAt?: Date; // Date de création (DateTime dans Prisma)
   serviceId?: string | null; // serviceId peut être null ou défini
   service?: Service | null; // Objet Service optionnel, peut être null
   bookings?: Booking[]; // Réservations associées à la transaction
@@ -101,9 +102,11 @@ export interface Booking {
   approvedByAdmin: boolean; // Indique si la réservation a été approuvée par un admin
   amount?: number;
   totalAmount: number;
+  cachedTotalAmount?: number;
   stripeCustomerId?: string | null;
   stripePaymentIntentId?: string | null;
   price?: string | null;
+  token?: string;
 }
 
 export interface PricingRule {

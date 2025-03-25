@@ -6,6 +6,7 @@ import React, { FC, useEffect, useState } from "react";
 import {
   deleteUserBooking,
   getBookingById,
+  getBookingIdFromToken,
   updateBookingTotal,
 } from "@/actions/bookings";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
@@ -35,6 +36,67 @@ const ManageBookingPage: FC = () => {
 
   const router = useRouter();
 
+  // useEffect(() => {
+  //   if (!isLoaded) return;
+  //   if (!isSignedIn) {
+  //     setError("Vous devez être connecté pour voir cette réservation.");
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   const fetchBooking = async () => {
+  //     try {
+  //       // Vérifier si un token est présent dans l'URL
+  //       const searchParams = new URLSearchParams(window.location.search);
+  //       const token = searchParams.get("token");
+
+  //       if (token) {
+  //         // Décoder le token pour obtenir le bookingId
+  //         const response = await fetch("/api/bookings/verify-token", {
+  //           method: "POST",
+  //           headers: { "Content-Type": "application/json" },
+  //           body: JSON.stringify({ token }),
+  //         });
+
+  //         const result = await response.json();
+
+  //         if (!response.ok) {
+  //           throw new Error(result.error || "Erreur inconnue");
+  //         }
+
+  //         const decodedBookingId = result.decoded.bookingId;
+
+  //         // Récupérer la réservation avec le bookingId décodé
+  //         const resultBooking = await getBookingById(decodedBookingId, user.id);
+  //         const { booking } = resultBooking;
+  //         setBooking(booking);
+
+  //         // Mettre à jour le total avec le bookingId décodé
+  //         const newTotal = await updateBookingTotal(decodedBookingId);
+  //         setTotalAmount(newTotal);
+  //       } else {
+  //         // Récupérer la réservation avec l'ID de l'URL
+  //         const resultBooking = await getBookingById(id, user.id);
+  //         const { booking } = resultBooking;
+  //         setBooking(booking);
+
+  //         // Mettre à jour le total avec l'ID de l'URL
+  //         const newTotal = await updateBookingTotal(id);
+  //         setTotalAmount(newTotal);
+  //       }
+  //     } catch (error) {
+  //       setError("Oups. Impossible de récupérer la réservation.");
+  //       console.error(
+  //         "Erreur lors de la récupération de la réservation :",
+  //         error
+  //       );
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchBooking();
+  // }, [id, user, isSignedIn, isLoaded]);
   useEffect(() => {
     if (!isLoaded) return;
     if (!isSignedIn) {
@@ -45,43 +107,28 @@ const ManageBookingPage: FC = () => {
 
     const fetchBooking = async () => {
       try {
-        // Vérifier si un token est présent dans l'URL
         const searchParams = new URLSearchParams(window.location.search);
         const token = searchParams.get("token");
 
         if (token) {
-          // Décoder le token pour obtenir le bookingId
-          const response = await fetch("/api/bookings/verify-token", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token }),
-          });
+          // ✅ Décrypter le token pour obtenir bookingId
+          const bookingIdFromToken = await getBookingIdFromToken(token);
 
-          const result = await response.json();
-
-          if (!response.ok) {
-            throw new Error(result.error || "Erreur inconnue");
+          if (!bookingIdFromToken) {
+            throw new Error("Token invalide ou expiré.");
           }
 
-          const decodedBookingId = result.decoded.bookingId;
-
-          // Récupérer la réservation avec le bookingId décodé
-          const resultBooking = await getBookingById(decodedBookingId, user.id);
+          const resultBooking = await getBookingById(
+            bookingIdFromToken,
+            user.id
+          );
           const { booking } = resultBooking;
           setBooking(booking);
 
-          // Mettre à jour le total avec le bookingId décodé
-          const newTotal = await updateBookingTotal(decodedBookingId);
+          const newTotal = await updateBookingTotal(bookingIdFromToken);
           setTotalAmount(newTotal);
         } else {
-          // Récupérer la réservation avec l'ID de l'URL
-          const resultBooking = await getBookingById(id, user.id);
-          const { booking } = resultBooking;
-          setBooking(booking);
-
-          // Mettre à jour le total avec l'ID de l'URL
-          const newTotal = await updateBookingTotal(id);
-          setTotalAmount(newTotal);
+          throw new Error("Aucun token trouvé.");
         }
       } catch (error) {
         setError("Oups. Impossible de récupérer la réservation.");
@@ -95,7 +142,7 @@ const ManageBookingPage: FC = () => {
     };
 
     fetchBooking();
-  }, [id, user, isSignedIn, isLoaded]);
+  }, [user, isSignedIn, isLoaded]);
 
   if (loading)
     return (

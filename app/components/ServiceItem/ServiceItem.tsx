@@ -1,114 +1,281 @@
-"use client";
+// "use client";
 
-import { formatISO, parseISO } from "date-fns";
+// import { useState, useCallback, useEffect } from "react";
+// import { format, formatISO, parseISO } from "date-fns";
+// import { Service } from "@/types";
+// import { useUser } from "@clerk/nextjs";
+// import toast from "react-hot-toast";
+// import Image from "next/image";
+// import { createBooking } from "@/actions/bookings";
+// import OptionManager from "../OptionManager/OptionManager";
+// // Styles
+// import styles from "./styles.module.scss";
+
+// interface ServiceItemProps {
+//   service: Service;
+//   enableHover?: number;
+//   remainingAmount: number;
+// }
+
+// const ServiceItem: React.FC<ServiceItemProps> = ({
+//   service,
+//   enableHover,
+//   remainingAmount,
+// }) => {
+//   const { user } = useUser();
+//   const [isBooking, setIsBooking] = useState(false);
+//   const [bookingMessage, setBookingMessage] = useState<string | null>(null);
+//   const [bookingId, setBookingId] = useState<string | null>(null);
+
+//   const [startTime, setStartTime] = useState<string | null>(null);
+//   const [endTime, setEndTime] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     if (typeof window !== "undefined") {
+//       setStartTime(localStorage.getItem("startTime"));
+//       setEndTime(localStorage.getItem("endTime"));
+//     }
+//   }, []);
+
+//   // 🎯 Fonction de réservation
+//   const handleBooking = useCallback(async () => {
+//     if (!user) return toast.error("Vous devez être connecté pour réserver.");
+//     if (!startTime || !endTime)
+//       return toast.error("Veuillez sélectionner un horaire.");
+
+//     const startISO = parseISO(startTime);
+//     const endISO = parseISO(endTime);
+//     if (isNaN(startISO.getTime()) || isNaN(endISO.getTime())) {
+//       return toast.error("Les horaires sélectionnés sont invalides.");
+//     }
+
+//     setIsBooking(true);
+
+//     try {
+//       const booking = await createBooking(
+//         user.id,
+//         service.id,
+//         formatISO(startISO),
+//         startTime,
+//         endTime
+//       );
+//       setBookingId(booking.id);
+
+//       setBookingMessage(
+//         `✅ Réservé de ${format(startISO, "HH:mm")} à ${format(endISO, "HH:mm")}`
+//       );
+//       toast.success("Réservation réussie !");
+//     } catch (error) {
+//       console.error(error);
+//       toast.error("Erreur lors de la réservation.");
+//     } finally {
+//       setIsBooking(false);
+//     }
+//   }, [user, service.id, startTime, endTime]);
+
+//   // 🎨 Style conditionnel pour le hover
+//   const hoverClass = enableHover === 1 ? styles.hoverEnabled : "";
+//   const imageUrl = service.imageUrl || "/assets/default.jpg";
+
+//   return (
+//     <li className={`${styles.service_item} ${hoverClass}`}>
+//       <div className={styles.service_item__content}>
+//         {/* 📷 Image du service */}
+//         <div className={styles.service_image}>
+//           <Image
+//             src={imageUrl}
+//             alt={service.name}
+//             width={60}
+//             height={60}
+//             className={styles.__img}
+//           />
+//         </div>
+
+//         {/* ℹ️ Détails du service */}
+//         <div className={styles.service_item__details}>
+//           <div className={styles.service_item__infos}>
+//             <span className={styles.service_item__title}>{service.name}</span>
+//             <span className={styles.service_item__description}>
+//               {service.description
+//                 ?.split("\n")
+//                 .map((line, index) => <span key={index}>{line}</span>)}
+//             </span>
+//             <span className={styles.service_item__option_count}>
+//               {service.options?.length} option(s)
+//             </span>
+//           </div>
+
+//           {/* 💰 Montant */}
+//           <div className={styles.service_item__stats}>
+//             <span>
+//               {new Intl.NumberFormat("fr-FR", {
+//                 style: "currency",
+//                 currency: "EUR",
+//               }).format(remainingAmount)}
+//             </span>
+//           </div>
+
+//           {/* 🎟️ Bouton de réservation */}
+//           <button
+//             disabled={isBooking}
+//             onClick={handleBooking}
+//             aria-label={
+//               isBooking ? "Réservation en cours" : "Sélectionner ce service"
+//             }
+//           >
+//             {isBooking ? "Sélection en cours..." : "Sélectionner"}
+//           </button>
+//         </div>
+//       </div>
+
+//       {/* 📩 Message de confirmation */}
+//       {bookingMessage && (
+//         <div className={styles.bookingConfirmationMessage}>
+//           <p>{bookingMessage}</p>
+//         </div>
+//       )}
+
+//       {/* ⚙️ Gestion des options après réservation */}
+//       {bookingId && (
+//         <div className={styles.service_item__option_reminder}>
+//           <p>
+//             Vous pouvez maintenant choisir des options supplémentaires pour
+//             votre réservation.
+//           </p>
+//           <OptionManager
+//             bookingId={bookingId}
+//             serviceAmount={remainingAmount}
+//             onTotalUpdate={() => {}}
+//           />
+//         </div>
+//       )}
+//     </li>
+//   );
+// };
+
+// export default ServiceItem;
+"usz client";
+
+import { useState, useCallback, useEffect } from "react";
+import { format, formatISO, parseISO } from "date-fns";
 import { Service } from "@/types";
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
-import { useTransition } from "react";
 import toast from "react-hot-toast";
-// Styles
+import Image from "next/image";
+import { createBooking, generateBookingToken } from "@/actions/bookings";
+import OptionManager from "../OptionManager/OptionManager";
 import styles from "./styles.module.scss";
-import { createBooking } from "@/actions/bookings";
 import { useRouter } from "next/navigation";
 
 interface ServiceItemProps {
   service: Service;
   enableHover?: number;
+  remainingAmount: number;
 }
 
-const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
+const ServiceItem: React.FC<ServiceItemProps> = ({
+  service,
+  enableHover,
+  remainingAmount,
+}) => {
   const { user } = useUser();
-  const [isPending, startTransition] = useTransition();
+  const [isBooking, setIsBooking] = useState(false);
+  const [bookingMessage, setBookingMessage] = useState<string | null>(null);
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [startTime, setStartTime] = useState<string | null>(null);
+  const [endTime, setEndTime] = useState<string | null>(null);
   const router = useRouter();
 
-  // 🧑‍💻 Gérer l'état du montant dynamique
-  const [remainingAmount, setRemainingAmount] = useState<number>(
-    service.amount
-  ); // Initialisation avec le montant de base
-
   useEffect(() => {
-    // Calcul du montant dynamique en fonction des options
-    const totalOptionAmount =
-      service.options?.reduce((sum, option) => sum + option.amount, 0) || 0;
-    const totalAmount = service.amount + totalOptionAmount;
-    setRemainingAmount(totalAmount); // Mise à jour du montant dynamique
-  }, [service.amount, service.options]); // Dépendances pour recalculer le montant lorsque ces valeurs changent
+    if (typeof window !== "undefined") {
+      setStartTime(localStorage.getItem("startTime"));
+      setEndTime(localStorage.getItem("endTime"));
+    }
+  }, []);
 
-  const formattedAmount = new Intl.NumberFormat("fr-FR", {
-    style: "currency",
-    currency: "EUR",
-  }).format(remainingAmount);
+  // 🎯 Fonction de réservation
+  // const handleBooking = useCallback(async () => {
+  //   if (!user) return toast.error("Vous devez être connecté pour réserver.");
+  //   if (!startTime || !endTime)
+  //     return toast.error("Veuillez sélectionner un horaire.");
 
-  const progressValue =
-    service.options && service.options.length
-      ? (remainingAmount /
-          (service.amount +
-            (service.options.reduce((sum, option) => sum + option.amount, 0) ||
-              0))) *
-        100
-      : 0;
+  //   const startISO = parseISO(startTime);
+  //   const endISO = parseISO(endTime);
+  //   if (isNaN(startISO.getTime()) || isNaN(endISO.getTime())) {
+  //     return toast.error("Les horaires sélectionnés sont invalides.");
+  //   }
 
+  //   setIsBooking(true);
+
+  //   try {
+  //     const booking = await createBooking(
+  //       user.id,
+  //       service.id,
+  //       formatISO(startISO),
+  //       startTime,
+  //       endTime
+  //     );
+  //     setBookingId(booking.id);
+  //     setBookingMessage(
+  //       `✅ Réservé de ${format(startISO, "HH:mm")} à ${format(endISO, "HH:mm")}`
+  //     );
+  //     toast.success("Réservation réussie !");
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("Erreur lors de la réservation.");
+  //   } finally {
+  //     setIsBooking(false);
+  //   }
+  // }, [user, service.id, startTime, endTime]);
+  const handleBooking = useCallback(async () => {
+    if (!user) return toast.error("Vous devez être connecté pour réserver.");
+    if (!startTime || !endTime)
+      return toast.error("Veuillez sélectionner un horaire.");
+
+    const startISO = parseISO(startTime);
+    const endISO = parseISO(endTime);
+    if (isNaN(startISO.getTime()) || isNaN(endISO.getTime())) {
+      return toast.error("Les horaires sélectionnés sont invalides.");
+    }
+
+    setIsBooking(true);
+
+    try {
+      const booking = await createBooking(
+        user.id,
+        service.id,
+        formatISO(startISO),
+        startTime,
+        endTime
+      );
+
+      setBookingId(booking.id);
+      setBookingMessage(
+        `✅ Réservé de ${format(startISO, "HH:mm")} à ${format(endISO, "HH:mm")}`
+      );
+      toast.success("Réservation réussie !");
+
+      // ✅ 1. Générer un token pour sécuriser l'accès à la réservation
+      const token = await generateBookingToken(booking.id, user.id);
+
+      // ✅ 2. Rediriger directement avec le token dans l'URL
+      router.push(`/manage-booking?token=${token}`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Erreur lors de la réservation.");
+    } finally {
+      setIsBooking(false);
+    }
+  }, [user, service.id, startTime, endTime, router]);
+
+  // 🎨 Style conditionnel
   const hoverClass = enableHover === 1 ? styles.hoverEnabled : "";
   const imageUrl = service.imageUrl || "/assets/default.jpg";
-
-  // 🛒 Gestion de la réservation
-  const handleBooking = () => {
-    if (!user) {
-      toast.error("Vous devez être connecté pour réserver un service.");
-      return;
-    }
-
-    // ✅ Récupération et validation des créneaux horaires
-    const selectedStartTime = localStorage.getItem("selectedStartTime");
-    const selectedEndTime = localStorage.getItem("selectedEndTime");
-
-    if (!selectedStartTime || !selectedEndTime) {
-      toast.error(
-        "Veuillez sélectionner une heure de début et une heure de fin."
-      );
-      return;
-    }
-
-    // ✅ Convertir en objets Date
-    const startTime = parseISO(selectedStartTime);
-    const endTime = parseISO(selectedEndTime);
-
-    // 🚨 Vérification stricte pour éviter l'erreur "Invalid time value"
-    if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-      toast.error("Erreur : Les horaires sélectionnés sont invalides.");
-      return;
-    }
-
-    // ✅ Extraction de la date uniquement
-    const selectedDate = formatISO(new Date(startTime));
-
-    startTransition(async () => {
-      try {
-        // ✅ Création de la réservation avec `startTime` et `endTime`
-        const booking = await createBooking(
-          user.id,
-          service.id,
-          selectedDate,
-          startTime.toISOString(),
-          endTime.toISOString()
-        );
-
-        // Mise à jour du montant dynamique après la réservation
-        setRemainingAmount(booking.totalAmount); // Utiliser le prix dynamique renvoyé par le back-end
-
-        toast.success("Réservation réussie !");
-        router.push("/my-bookings");
-      } catch (error) {
-        console.error("❌ Erreur lors de la réservation :", error);
-        toast.error("Erreur lors de la réservation.");
-      }
-    });
-  };
 
   return (
     <li className={`${styles.service_item} ${hoverClass}`}>
       <div className={styles.service_item__content}>
+        {/* 📷 Image du service */}
         <div className={styles.service_image}>
           <Image
             src={imageUrl}
@@ -119,36 +286,81 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, enableHover }) => {
           />
         </div>
 
+        {/* ℹ️ Détails du service */}
         <div className={styles.service_item__details}>
           <div className={styles.service_item__infos}>
             <span className={styles.service_item__title}>{service.name}</span>
             <span className={styles.service_item__description}>
-              {service.description?.split("\n").map((line, index) => (
-                <React.Fragment key={index}>
-                  {line}
-                  <br />
-                </React.Fragment>
-              ))}
+              {service.description
+                ?.split("\n")
+                .map((line, index) => <span key={index}>{line}</span>)}
             </span>
-
             <span className={styles.service_item__option_count}>
               {service.options?.length} option(s)
             </span>
           </div>
+
+          {/* 💰 Montant */}
           <div className={styles.service_item__stats}>
-            <span>{formattedAmount} montant total</span>
+            <span>
+              {new Intl.NumberFormat("fr-FR", {
+                style: "currency",
+                currency: "EUR",
+              }).format(remainingAmount)}
+            </span>
           </div>
 
-          <div className={styles.service_item__progress}>
-            <progress value={progressValue} max="100"></progress>
-          </div>
-          <div className={styles.service_item__amount}>{formattedAmount}</div>
-
-          <button disabled={isPending} onClick={handleBooking}>
-            {isPending ? "Réservation..." : "Réserver"}
-          </button>
+          {/* 🎟️ Bouton de réservation */}
+          {!bookingId ? (
+            <button
+              disabled={isBooking}
+              onClick={handleBooking}
+              aria-label={
+                isBooking ? "Réservation en cours" : "Réserver ce service"
+              }
+              className={isBooking ? styles.loading : ""}
+            >
+              {isBooking ? "Réservation en cours..." : "Réserver ce service"}
+            </button>
+          ) : (
+            <button
+              onClick={() => toast("Gestion des options bientôt disponible !")}
+              className={styles.modifyButton}
+            >
+              Modifier ma réservation
+            </button>
+          )}
         </div>
       </div>
+
+      {/* 📩 Message de confirmation */}
+      {bookingMessage && (
+        <div className={styles.bookingConfirmationMessage}>
+          <p>{bookingMessage}</p>
+
+          {/* ✅ Nouveau bouton pour gérer la réservation */}
+          {bookingId && (
+            <button
+              className={styles.manageBookingButton}
+              onClick={() => router.push(`/manage-booking/${bookingId}`)}
+            >
+              Gérer ma réservation
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* ⚙️ Gestion des options après réservation */}
+      {bookingId && (
+        <div className={styles.service_item__option_reminder}>
+          <p>Ajoutez des options pour votre réservation :</p>
+          <OptionManager
+            bookingId={bookingId}
+            serviceAmount={remainingAmount}
+            onTotalUpdate={() => {}}
+          />
+        </div>
+      )}
     </li>
   );
 };

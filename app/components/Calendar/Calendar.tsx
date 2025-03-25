@@ -82,9 +82,8 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
     if (startTime && endTime) {
       localStorage.setItem("selectedStartTime", startTime.toISOString());
       localStorage.setItem("selectedEndTime", endTime.toISOString());
-      router.push("/serviceList");
     }
-  }, [startTime, endTime, router]);
+  }, [startTime, endTime]);
 
   return (
     <div className="calendar_container">
@@ -132,10 +131,6 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
               ? "closed-day"
               : ""
           }
-          // tileDisabled={({ date }) => closedDays.includes(formatISO(date))}
-          // tileClassName={({ date }) =>
-          //   closedDays.includes(formatISO(date)) ? "closed-day" : ""
-          // }
           onClickDay={(date) => {
             if (!closedDays.includes(formatISO(date))) {
               setDate(date);
@@ -144,6 +139,21 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
             }
           }}
         />
+      )}
+      {/* Affichage du créneau sélectionné avec bouton de confirmation */}
+      {startTime && endTime && (
+        <div>
+          <p>
+            Réservation de {format(startTime, "kk:mm")} à{" "}
+            {format(endTime, "kk:mm")}
+          </p>
+          <button
+            className="btn_confirm"
+            onClick={() => router.push("/serviceList")}
+          >
+            Confirmer la réservation
+          </button>
+        </div>
       )}
     </div>
   );

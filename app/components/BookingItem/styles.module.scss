@@ -1,0 +1,96 @@
+.bookingItem {
+  width: 90%;
+  max-width: 600px;
+  margin: 20px auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.bookingItem__header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+
+  h3 {
+    font-size: 1.1rem;
+    margin-bottom: 3px;
+  }
+
+  .bookingItem__description {
+    font-size: 0.85rem;
+  }
+}
+
+.bookingItem__content {
+  padding: 15px 20px;
+}
+
+.bookingItem__details {
+  p {
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+  }
+}
+
+.bookingItem__total {
+  font-size: 1rem;
+}
+
+.bookingItem__options {
+  margin-top: 10px;
+
+  h4 {
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+  }
+
+  ul {
+    padding-left: 15px;
+  }
+
+  li {
+    font-size: 0.85rem;
+    padding: 3px 0;
+  }
+}
+
+.bookingItem__actions {
+  padding: 10px 20px;
+}
+
+.bookingItem__cancelBtn {
+  background-color: #3f3ce7;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: #5067e5;
+  }
+}
+
+.bookingItem__cancelIcon {
+  width: 18px;
+  height: 18px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bookingItem__content {
+    flex-direction: column;
+  }
+}

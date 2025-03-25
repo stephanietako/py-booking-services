@@ -149,6 +149,7 @@ import Image from "next/image";
 import styles from "./styles.module.scss";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { addUserToDatabase, getRole } from "@/actions/actions";
+import { getUserBookings, generateBookingToken } from "@/actions/bookings"; // Ajoute ces fonctions
 
 const Navbar: React.FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -156,6 +157,31 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false); // ✅ Ajout de isClient
+  // const { user, isSignedIn } = useUser();
+  const [bookingToken, setBookingToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBooking = async () => {
+      if (!user || !isSignedIn) return;
+
+      try {
+        const bookings = await getUserBookings(user.id);
+        if (bookings.length > 0) {
+          // Prendre la dernière réservation active
+          const latestBooking = bookings[0];
+          const token = await generateBookingToken(latestBooking.id, user.id);
+          setBookingToken(token);
+        }
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération de la réservation :",
+          error
+        );
+      }
+    };
+
+    fetchBooking();
+  }, [user, isSignedIn]);
 
   useEffect(() => {
     setIsClient(true); // ✅ On passe en mode client
@@ -202,6 +228,7 @@ const Navbar: React.FC = () => {
 
   // ✅ On s'assure que le composant est bien monté côté client avant d'afficher quoi que ce soit
   if (!isClient || !isLoaded) return null;
+  //////////////////
 
   return (
     <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
@@ -227,8 +254,22 @@ const Navbar: React.FC = () => {
       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
         {isSignedIn ? (
           <>
-            <Link href="/my-bookings">Mes réservations</Link>
+            {isSignedIn && (
+              <Link href="/my-bookings" className="nav-link">
+                Mes réservations
+              </Link>
+            )}
+
             <Link href="/dashboard">Dashboard</Link>
+            {bookingToken && (
+              <Link
+                href={`/manage-booking?token=${bookingToken}`}
+                className="nav-link"
+              >
+                Ma réservation
+              </Link>
+            )}
+
             {/* Affichage conditionnel pour les utilisateurs avec le rôle admin */}
             {userRole === "admin" && (
               <Link href="/admin/services">Mes Services</Link>

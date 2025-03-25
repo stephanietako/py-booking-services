@@ -29,25 +29,21 @@ async function main() {
 
   for (const day of daysOfWeek) {
     await prisma.day.upsert({
-      where: { id: `day-${day.dayOfWeek}` },
+      where: { dayOfWeek: day.dayOfWeek }, // Correction ici
       update: {},
       create: day,
     });
   }
 
-  console.log("Seeding completed: Roles and Days inserted or updated.");
+  console.log("✅ Seeding completed: Roles and Days inserted or updated.");
 
   // Création des services fixes "Simplicité" et "Premium"
   await prisma.service.upsert({
-    where: { id: "simplicite-service-id" },
+    where: { name: "Simplicité" }, // Maintenant, ça fonctionne !
     update: {},
     create: {
-      id: "simplicite-service-id",
       name: "Simplicité",
-      description: `Formule simplicité (repas non compris)\n
-- Eau inclus\n
-- Seul, en couple ou jusqu’à 10 personnes, profitez simplement du bateau et d’un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix.\n
-- Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwichs, charcuterie, fromages, vins ou autres.\n`,
+      description: "Formule simplicité (repas non compris)...",
       defaultPrice: 1500,
       isFixed: true,
       amount: 1500,
@@ -59,26 +55,11 @@ async function main() {
   });
 
   await prisma.service.upsert({
-    where: { id: "premium-service-id" },
+    where: { name: "Premium" },
     update: {},
     create: {
-      id: "premium-service-id",
       name: "Premium",
-      description: `Formule Premium (Coût additionnel, contactez-nous pour plus de renseignements)\n
-- Apéritif et repas à bord\n
-- 1 bouteille de Rosé\n
-- Eau et Soda à volonté\n
-- Décidez de votre menu au moment de votre réservation et comptez sur votre capitaine pour mettre en assiette les délices de notre traiteur local préféré.\n
-- Inclus dans votre location :\n
-  - 6 Paires de masques et tubas adultes et 2 paires enfants\n
-  - 1 paddle board\n
-  - 1 Serviette de bain/personne\n
-  - Literie et serviettes de douche\n
-  - Eau en bouteille\n
-- En Options :\n
-  - Vins, champagnes et boissons spéciales (contactez-nous pour plus de renseignements)\n
-  - Hôtesse : 200€/jour (sous réserve de disponibilité)\n
-  - Location Paddle board supplémentaires : 50€/jour`,
+      description: "Formule Premium avec repas à bord...",
       defaultPrice: 1500,
       isFixed: true,
       amount: 1500,
@@ -89,75 +70,74 @@ async function main() {
     },
   });
 
-  console.log("Services fixes insérés.");
+  console.log("✅ Services fixes insérés.");
 
   // Récupérer les IDs des services fixes
   const simplicite = await prisma.service.findFirst({
     where: { name: "Simplicité" },
   });
-
   const premium = await prisma.service.findFirst({
     where: { name: "Premium" },
   });
 
   if (!simplicite || !premium) {
-    console.error("Erreur : Impossible de récupérer les services fixes.");
-    return;
+    console.error("❌ Erreur : Impossible de récupérer les services fixes.");
+    process.exit(1); // STOP le script si une erreur se produit
   }
 
+  // Récupération de tous les services
   const services = await prisma.service.findMany();
   if (services.length === 0) {
-    console.error(
-      "Erreur : Aucun service trouvé, assurez-vous d'avoir inséré les services avant d'exécuter ce seed."
-    );
-    return;
+    console.error("❌ Erreur : Aucun service trouvé !");
+    process.exit(1);
   }
 
-  // Insérer les tarifs dynamiques pour plusieurs années
-  const pricingRules = [];
+  // Insertion des tarifs dynamiques pour plusieurs années
   const startYear = 2024;
   const endYear = 2030; // Générer les tarifs jusqu'à 2030
 
-  for (let year = startYear; year <= endYear; year++) {
-    for (const service of services) {
-      pricingRules.push(
-        {
-          serviceId: service.id,
-          startDate: new Date(`${year}-10-16`),
-          endDate: new Date(`${year + 1}-05-31`),
-          price: 1500,
-        },
-        {
-          serviceId: service.id,
-          startDate: new Date(`${year + 1}-06-01`),
-          endDate: new Date(`${year + 1}-07-07`),
-          price: 1700,
-        },
-        {
-          serviceId: service.id,
-          startDate: new Date(`${year + 1}-07-08`),
-          endDate: new Date(`${year + 1}-08-31`),
-          price: 1900,
-        },
-        {
-          serviceId: service.id,
-          startDate: new Date(`${year + 1}-09-01`),
-          endDate: new Date(`${year + 1}-10-15`),
-          price: 1700,
-        }
-      );
-    }
-  }
+  const pricingRules = services.flatMap((service) =>
+    Array.from(
+      { length: endYear - startYear + 1 },
+      (_, i) => startYear + i
+    ).flatMap((year) => [
+      {
+        serviceId: service.id,
+        startDate: new Date(`${year}-10-16`),
+        endDate: new Date(`${year + 1}-05-31`),
+        price: 1500,
+      },
+      {
+        serviceId: service.id,
+        startDate: new Date(`${year + 1}-06-01`),
+        endDate: new Date(`${year + 1}-07-07`),
+        price: 1700,
+      },
+      {
+        serviceId: service.id,
+        startDate: new Date(`${year + 1}-07-08`),
+        endDate: new Date(`${year + 1}-08-31`),
+        price: 1900,
+      },
+      {
+        serviceId: service.id,
+        startDate: new Date(`${year + 1}-09-01`),
+        endDate: new Date(`${year + 1}-10-15`),
+        price: 1700,
+      },
+    ])
+  );
 
   await prisma.pricingRule.createMany({ data: pricingRules });
 
-  console.log("Tarifs dynamiques insérés pour toutes les années jusqu'à 2030.");
-  console.log("Seeding terminé !");
+  console.log("✅ Tarifs dynamiques insérés jusqu'à 2030.");
+  console.log("🎉 Seeding terminé avec succès !");
 }
 
+// Exécution du script
 main()
   .catch((e) => {
-    console.error("Error during seeding:", e);
+    console.error("❌ Erreur lors du seeding :", e);
     process.exit(1);
   })
   .finally(async () => {

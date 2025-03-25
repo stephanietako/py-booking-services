@@ -39,7 +39,7 @@ model Role {
 
 model Service {
   id               String        @id @default(uuid())
-  name             String
+  name             String        @unique // Ajout de @unique
   amount           Float
   categories       String[] // Changement pour un tableau de catégories
   description      String?
@@ -88,7 +88,7 @@ model ClosedDay {
 model Day {
   id        String @id @default(cuid())
   name      String // monday, tuesday, ...
-  dayOfWeek Int // @see getDay() documentation, 0 for Sunday, 1 for Monday, ...
+  dayOfWeek Int    @unique
   openTime  String
   closeTime String
 }
@@ -116,6 +116,7 @@ model Booking {
   endTime               DateTime
   options               Option[]
   totalAmount           Float         @default(0) // Ajout du total
+  cachedTotalAmount     Float
   stripeCustomerId      String?
   stripePaymentIntentId String? // Ajout de l'identifiant de l'abonnement Stripe
   transactions          Transaction[]

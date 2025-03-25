@@ -1,0 +1,34 @@
+.bookingList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bookingCard {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bookingCard h2 {
+  margin: 0;
+}
+
+.bookingCard p {
+  margin: 5px 0;
+}
+
+.manageButton {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 15px;
+  background: #007bff;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.manageButton:hover {
+  background: #0056b3;
+}

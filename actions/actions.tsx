@@ -511,22 +511,47 @@ export async function getTotalOptionCount(clerkUserId: string, period: string) {
 }
 
 // Récupérer tous les services
+// export const getAllServices = async () => {
+//   try {
+//     // Récupère tous les services sans filtrer par email
+//     const services = await prisma.service.findMany({
+//       include: {
+//         options: true, // Inclure les options associées si nécessaire
+//       },
+//     });
+
+//     return services; // Retourne la liste de tous les services
+//   } catch (error) {
+//     console.error(
+//       "Erreur lors de la récupération de tous les services:",
+//       error
+//     );
+//     throw error; // Lève l'erreur pour qu'elle soit gérée ailleurs
+//   }
+// };
 export const getAllServices = async () => {
   try {
-    // Récupère tous les services sans filtrer par email
     const services = await prisma.service.findMany({
       include: {
         options: true, // Inclure les options associées si nécessaire
       },
     });
 
-    return services; // Retourne la liste de tous les services
+    // Vérification des doublons dans les services récupérés
+    const serviceIds = services.map((service) => service.id);
+    const uniqueServiceIds = new Set(serviceIds);
+
+    if (serviceIds.length !== uniqueServiceIds.size) {
+      console.warn("Il y a des doublons dans les services retournés !");
+    }
+
+    return services;
   } catch (error) {
     console.error(
       "Erreur lors de la récupération de tous les services:",
       error
     );
-    throw error; // Lève l'erreur pour qu'elle soit gérée ailleurs
+    throw error;
   }
 };
 
@@ -715,3 +740,23 @@ async function uploadImageToServer(file: File): Promise<string> {
 //     throw error;
 //   }
 // }
+export async function getDynamicPrice(
+  serviceId: string,
+  startDate: string,
+  endDate: string
+): Promise<number> {
+  try {
+    const pricingRule = await prisma.pricingRule.findFirst({
+      where: {
+        serviceId: serviceId,
+        startDate: { lte: new Date(endDate) },
+        endDate: { gte: new Date(startDate) },
+      },
+    });
+
+    return pricingRule ? pricingRule.price : 1500; // Prix par défaut si aucune règle n'est trouvée
+  } catch (error) {
+    console.error("Erreur lors de la récupération du prix dynamique :", error);
+    return 1500; // Prix par défaut en cas d'erreur
+  }
+}

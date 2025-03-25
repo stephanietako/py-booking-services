@@ -659,49 +659,8 @@ section {
   padding: 0 1rem;
   width: 100%;
   margin-top: 10vh;
-  border: 4px solid red;
 }
 
-.booking_item {
-  display: flex;
-  border: 4px solid pink;
-  width: 100%;
-  height: auto;
-}
-.booking_item__content {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  width: 100%;
-  width: 100%;
-  margin-bottom: 2rem;
-  transition: all 0.3s ease;
-
-  /* Effet au survol */
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-  }
-}
-/* //////////////////booking option///////////// */
-.booking_option {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  /* border: 4px solid turquoise; */
-  flex-direction: column;
-}
-.booking_option__btn {
-  display: flex;
-  width: 100%;
-  height: auto;
-  margin-top: 2rem;
-  justify-content: center;
-}
 /* ////////spinner//////////// */
 
 .spinner_container {
@@ -795,7 +754,7 @@ p {
 /* //////// */
 .options {
   display: flex;
-  width: 100%;
+  width: auto;
   height: auto;
   justify-content: center;
   align-items: center;
@@ -1130,8 +1089,12 @@ tr:hover {
 
 /* Conteneur du tableau */
 .table_container {
+  display: flex;
   padding: 1rem;
-  overflow-x: auto; /* Ajout pour éviter les problèmes sur mobile */
+  overflow-x: auto;
+  width: 100%;
+  border: 5px solid red;
+  flex-direction: column;
 }
 
 /* Cellules */
@@ -1139,7 +1102,7 @@ tr:hover {
 .table_container td {
   border: 1px solid #ddd;
   padding: 10px;
-  min-width: 120px;
+  min-width: 3rem;
 }
 
 /* Amélioration de l'affichage des titres */
