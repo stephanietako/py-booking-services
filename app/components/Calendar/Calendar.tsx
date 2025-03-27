@@ -149,7 +149,11 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
           </p>
           <button
             className="btn_confirm"
-            onClick={() => router.push("/serviceList")}
+            onClick={() =>
+              router.push(
+                `/serviceList?start=${startTime.toISOString()}&end=${endTime.toISOString()}`
+              )
+            }
           >
             Confirmer la réservation
           </button>

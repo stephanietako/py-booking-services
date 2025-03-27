@@ -116,7 +116,6 @@ model Booking {
   endTime               DateTime
   options               Option[]
   totalAmount           Float         @default(0) // Ajout du total
-  cachedTotalAmount     Float
   stripeCustomerId      String?
   stripePaymentIntentId String? // Ajout de l'identifiant de l'abonnement Stripe
   transactions          Transaction[]

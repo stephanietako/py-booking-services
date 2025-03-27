@@ -102,7 +102,6 @@ export interface Booking {
   approvedByAdmin: boolean; // Indique si la réservation a été approuvée par un admin
   amount?: number;
   totalAmount: number;
-  cachedTotalAmount?: number;
   stripeCustomerId?: string | null;
   stripePaymentIntentId?: string | null;
   price?: string | null;

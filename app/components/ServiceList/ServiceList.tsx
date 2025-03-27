@@ -11,60 +11,34 @@ import styles from "./styles.module.scss";
 const ServiceList = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null);
   const [remainingAmount, setRemainingAmount] = useState<number>(1500); // Valeur par défaut
 
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchData = async () => {
       try {
+        // 1. Chargement unique des services
         const data = await getAllServices();
         setServices(data);
+
+        // 2. Calcul du prix UNIQUEMENT si nécessaire
+        const startTime = localStorage.getItem("selectedStartTime");
+        const endTime = localStorage.getItem("selectedEndTime");
+
+        if (startTime && endTime && data.length > 0) {
+          const price = await getDynamicPrice(data[0].id, startTime, endTime);
+          setRemainingAmount(price);
+        }
       } catch (err) {
         console.error(err);
-        setError("Impossible de charger les services.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchServices();
-  }, []);
-
-  // 🕐 Récupérer les dates stockées dans localStorage et calculer le prix
-  useEffect(() => {
-    const startTime = localStorage.getItem("selectedStartTime");
-    const endTime = localStorage.getItem("selectedEndTime");
-
-    if (startTime && endTime) {
-      const fetchPrice = async () => {
-        try {
-          if (services.length > 0) {
-            // Récupère le prix pour le premier service
-            const price = await getDynamicPrice(
-              services[0].id,
-              startTime,
-              endTime
-            );
-            setRemainingAmount(price);
-          }
-        } catch (error) {
-          console.error("Erreur lors du calcul du prix :", error);
-        }
-      };
-
-      fetchPrice();
-    }
-  }, [services]); // Exécuter seulement quand les services sont chargés
-
-  useEffect(() => {
-    const startTime = localStorage.getItem("selectedStartTime");
-    const endTime = localStorage.getItem("selectedEndTime");
-
-    console.log("Vérification LocalStorage :", { startTime, endTime });
-
-    if (startTime) localStorage.setItem("startTime", startTime);
-    if (endTime) localStorage.setItem("endTime", endTime);
-  }, []);
+    fetchData();
+  }, []); // Un seul useEffect pour tout gérer
 
   return (
     <Wrapper>

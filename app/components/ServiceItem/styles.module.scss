@@ -1,227 +1,148 @@
 .service_item {
   padding: 2em;
-  border-radius: 1.25rem;
-  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  border: 1px solid #d1d5db;
   list-style: none;
-  margin: 1rem;
-  width: 70%;
+  margin: 1rem auto;
+  width: 85%;
+  max-width: 600px;
   height: auto;
-  background-color: #fff;
-  box-shadow: 0 4px 12px #00000014;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease-in-out;
-  overflow: hidden;
-  position: relative; /* Important pour que le modal soit contenu à l'intérieur */
+  position: relative;
   align-items: center;
   display: flex;
+  flex-direction: column;
+  text-align: center;
+  overflow: hidden;
 
-  &.hoverEnabled {
-    &:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      border-color: #38bdf8;
-      transform: translateY(-6px);
-      cursor: pointer;
-    }
+  &.hoverEnabled:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    border-color: #2563eb;
+    transform: translateY(-4px);
+    cursor: pointer;
   }
 }
 
 .service_item__content {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 1rem;
   width: 100%;
-  height: 100%;
-  padding: 2rem;
-
-  .service_image {
-    display: flex;
-
-    width: 30%;
-    height: auto;
-    border-radius: 30px;
-    overflow: hidden;
-    margin-right: 1rem;
-    transition: transform 0.3s;
-    justify-content: center;
-
-    .__img {
-      object-fit: cover;
-      width: 100%;
-      height: auto;
-    }
-
-    &:hover {
-      transform: scale(1.1); // Zoom léger
-    }
-  }
-
-  /* Détails du service */
-  .service_item__details {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    flex-direction: column;
-
-    .service_item__infos {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .service_item__title {
-      font-weight: 600;
-      font-size: 1.375rem;
-      color: #333;
-      margin-bottom: 0.5rem;
-      transition: color 0.3s ease;
-      line-height: 1.35;
-
-      &:hover {
-        color: #38bdf8; // Couleur au survol
-      }
-    }
-
-    .service_item__description {
-      color: #6b7280;
-      font-size: 0.7rem;
-      margin-bottom: 1rem;
-    }
-
-    .service_item__option_count {
-      color: #6b7280;
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .service_item__amount {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #38bdf8;
-      margin-top: 0.5rem;
-    }
-
-    .service_item__stats {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 1rem;
-      color: #6b7280;
-      font-size: 0.9rem;
-    }
-
-    .service_item__progress {
-      margin-top: 1rem;
-      width: 100%;
-      position: relative;
-
-      progress {
-        width: 100%;
-        appearance: none;
-        height: 6px; // Barre plus fine
-        border-radius: 1.5rem;
-        background-color: #f3f4f6; // Fond léger
-        transition: background-color 0.3s ease;
-
-        &::-webkit-progress-bar {
-          background-color: #e5e7eb;
-          border-radius: 1rem;
-        }
-
-        &::-webkit-progress-value {
-          background-color: #38bdf8;
-          border-radius: 1rem;
-        }
-
-        &::-moz-progress-bar {
-          background-color: #38bdf8;
-          border-radius: 1rem;
-        }
-      }
-    }
-  }
-  .optionReminder {
-    margin-top: 20px;
-    background-color: #f0f8ff;
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
-  }
+  padding: 1.5rem;
 }
-/* Styles du modal (modifié pour être contenu dans la carte) */
-.modalOverlay {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Fond sombre avec transparence */
-  z-index: 9999; /* Placer le modal devant tous les autres éléments */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: opacity 0.3s ease;
-  position: absolute;
-}
-
-/* Modal positionné absolument par rapport à la carte */
-.modal {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 1rem;
-  width: 80%;
-  max-width: 100%; /* Enlever la limite de largeur pour que ça ne dépasse pas la carte */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Ombre douce pour le modal */
+.service_item__details {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  position: absolute; /* Positionné par rapport à la carte */
-  top: 50%; /* Centré verticalement */
-  left: 50%; /* Centré horizontalement */
-  transform: translate(-50%, -50%); /* Ajuste pour le centrer parfaitement */
-  transition:
-    transform 0.3s ease-out,
-    opacity 0.3s ease-out;
-  max-height: 80%; /* Pour s'assurer qu'il ne dépasse pas la carte */
-  overflow-y: auto; /* Si le contenu déborde, il y aura une barre de défilement */
-  z-index: 10000; /* Pour que le modal soit devant le reste du contenu */
+  width: 100%;
+  padding: 1.5rem;
+}
+.service_item__infos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 1.5rem;
+}
+.service_image {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease-in-out;
+
+  .__img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
 }
 
-.modal h2 {
-  font-size: 1.5rem;
+.service_item__title {
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.service_item__description {
+  color: #4b5563;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  max-width: 90%;
+}
+
+.service_item__option_count {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.service_item__stats {
+  font-size: 1.3rem;
   font-weight: 600;
-  color: #333;
+  color: #2563eb;
+  margin-bottom: 1rem;
+}
+.deleteButton {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: darkred;
+  }
+}
+
+.service_item__option_reminder {
+  background-color: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
   margin-bottom: 1rem;
   text-align: center;
 }
 
-.modal p {
-  font-size: 1rem;
-  color: #555;
+.modifyButton {
+  background-color: #facc15;
+  margin-top: 1rem;
+
+  &:hover {
+    background-color: #eab308;
+  }
+}
+
+.bookingConfirmationMessage {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
   text-align: center;
-  margin-bottom: 1.5rem;
 }
 
-.closeButton {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  color: #333;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
+.manageBookingButton {
+  margin-top: 0.5rem;
+  background-color: #10b981;
 
-.closeButton:hover {
-  color: #38bdf8; /* Couleur au survol */
+  &:hover {
+    background-color: #059669;
+  }
 }
 
 @media (max-width: 600px) {
-  .modal {
-    width: 90%;
-    padding: 1.5rem;
-  }
-
-  .modal h2 {
-    font-size: 1.25rem;
+  .service_item {
+    width: 95%;
   }
 }

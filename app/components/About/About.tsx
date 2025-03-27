@@ -19,9 +19,7 @@ const About: React.FC = () => {
 
   return (
     <div className={styles.about}>
-      {/* Container du logo et du titre */}
       <div className={styles.logo_title_wrapper}>
-        {/* Logo */}
         <div className={styles.logo_container}>
           <Image
             src={logo || placeholder}
@@ -29,13 +27,9 @@ const About: React.FC = () => {
             className={styles.logo}
           />
         </div>
-
-        {/* Titre principal */}
         <h2 className={styles.title}>Qui Sommes-nous</h2>
       </div>
-
       <div className={styles.content_wrapper}>
-        {/* Contenu principal (Texte) */}
         <div className={styles.content}>
           <div className={styles.text_container}>
             <p>

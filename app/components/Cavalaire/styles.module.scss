@@ -1,87 +1,132 @@
-/* styles.module.scss */
-.cavalaireSection {
+.cavalaire_section {
   padding: 40px 20px;
   background-color: #f9f9f9;
   color: #333;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
 
-.title {
-  text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: #003080; /* Bleu Foncé */
-}
+  .logo_title_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+    padding-right: 4rem;
+    .logo_container {
+      max-width: 8rem;
+      padding: 10px 0;
+    }
 
-.text {
-  flex: 1;
-  padding: 20px;
-  background: linear-gradient(180deg, #e3f7ff, #ffffff);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin-bottom: 7vh;
-  transition: box-shadow 0.3s ease;
+    .logo {
+      max-width: 200px;
+      height: auto;
+      object-fit: cover;
+    }
 
-  /* Ici, on applique le style globalement au conteneur de texte */
-  p {
-    margin-bottom: 10px; /* Légère séparation entre les paragraphes */
-    line-height: 1.8;
-    color: #003080;
-    font-family: "Poppins", sans-serif;
-    font-size: 1.1rem;
-    transition: color 0.3s ease;
-    text-align: justify; /* Justifie le texte pour une lisibilité améliorée */
+    .title {
+      font-size: 2.5rem;
+      text-align: left;
+      color: #003080;
+      font-family: "Roboto", sans-serif;
+      font-weight: 700;
+    }
   }
 
-  /* Ajout d'un léger padding pour aérer l'ensemble */
-  padding-bottom: 20px;
+  .content_wrapper {
+    width: 80%;
+    padding: 40px 20px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-top: -50px;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease; /* Transition plus fluide pour l'élévation */
 
-  &:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+    &:hover {
+      transform: translateY(-5px); /* Effet de survol pour le container */
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée */
+    }
+
+    .content {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .text_container {
+      flex: 1;
+      padding: 20px;
+      background: linear-gradient(180deg, #e3f7ff, #ffffff);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: box-shadow 0.3s ease; /* Ajout de la transition uniquement sur l'ombre */
+
+      p {
+        line-height: 1.8;
+        color: #333;
+        font-family: "Poppins", sans-serif;
+        font-size: 1.1rem;
+        transition: color 0.3s ease; /* Transition fluide pour la couleur */
+      }
+
+      &:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+      }
+
+      p:hover {
+        color: #003080; /* Changement de couleur du texte au survol */
+      }
+    }
   }
-}
 
-.carousel {
-  position: relative;
-  max-width: 100%;
-  margin-top: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-}
+  .carousel_container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+  }
+  // .carousel {
+  //   position: relative;
+  //   max-width: 100%;
+  //   margin-top: 20px;
+  //   border-radius: 10px;
+  //   overflow: hidden;
+  // }
 
-.slide {
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-}
+  // .slide {
+  //   opacity: 0;
+  //   transition: opacity 0.5s ease-in-out;
+  // }
 
-.active {
-  opacity: 1;
-}
+  // .active {
+  //   opacity: 1;
+  // }
 
-.indicators {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 10px;
-}
+  // .indicators {
+  //   position: absolute;
+  //   bottom: 10px;
+  //   left: 50%;
+  //   transform: translateX(-50%);
+  //   display: flex;
+  //   gap: 10px;
+  // }
 
-.indicator {
-  width: 10px;
-  height: 10px;
-  background-color: #003080; /* Bleu Foncé */
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+  // .indicator {
+  //   width: 10px;
+  //   height: 10px;
+  //   background-color: #003080; /* Bleu Foncé */
+  //   border-radius: 50%;
+  //   border: none;
+  //   cursor: pointer;
+  //   transition: background-color 0.3s ease;
+  // }
 
-.indicator.active {
-  background-color: #25fde9; /* Bleu turquoise */
-}
+  // .indicator.active {
+  //   background-color: #25fde9; /* Bleu turquoise */
+  // }
 
-.indicator:hover {
-  background-color: #14e9f7; /* Bleu clair */
+  // .indicator:hover {
+  //   background-color: #14e9f7; /* Bleu clair */
+  // }
 }

@@ -5,6 +5,11 @@ import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
 
+//////////////
+const priceCache = new Map<string, number>(); // Cache simple
+
+///////////////
+
 // Récupérer un utilisateur par son clerkUserId
 export async function getRole(clerkUserId: string) {
   try {
@@ -529,6 +534,7 @@ export async function getTotalOptionCount(clerkUserId: string, period: string) {
 //     throw error; // Lève l'erreur pour qu'elle soit gérée ailleurs
 //   }
 // };
+////////////////
 export const getAllServices = async () => {
   try {
     const services = await prisma.service.findMany({
@@ -555,7 +561,6 @@ export const getAllServices = async () => {
   }
 };
 
-//
 export async function updateService(
   serviceId: string,
   name: string,
@@ -740,23 +745,54 @@ async function uploadImageToServer(file: File): Promise<string> {
 //     throw error;
 //   }
 // }
+
+/////////
+// export async function getDynamicPrice(
+//   serviceId: string,
+//   startDate: string,
+//   endDate: string
+// ): Promise<number> {
+//   try {
+//     const pricingRule = await prisma.pricingRule.findFirst({
+//       where: {
+//         serviceId: serviceId,
+//         startDate: { lte: new Date(endDate) },
+//         endDate: { gte: new Date(startDate) },
+//       },
+//     });
+
+//     return pricingRule ? pricingRule.price : 1500; // Prix par défaut si aucune règle n'est trouvée
+//   } catch (error) {
+//     console.error("Erreur lors de la récupération du prix dynamique :", error);
+//     return 1500; // Prix par défaut en cas d'erreur
+//   }
+// }
+
 export async function getDynamicPrice(
   serviceId: string,
   startDate: string,
   endDate: string
 ): Promise<number> {
+  const cacheKey = `${serviceId}-${startDate}-${endDate}`;
+
+  if (priceCache.has(cacheKey)) {
+    return priceCache.get(cacheKey)!;
+  }
+
   try {
     const pricingRule = await prisma.pricingRule.findFirst({
       where: {
-        serviceId: serviceId,
+        serviceId,
         startDate: { lte: new Date(endDate) },
         endDate: { gte: new Date(startDate) },
       },
     });
 
-    return pricingRule ? pricingRule.price : 1500; // Prix par défaut si aucune règle n'est trouvée
+    const price = pricingRule ? pricingRule.price : 1500;
+    priceCache.set(cacheKey, price);
+    return price;
   } catch (error) {
-    console.error("Erreur lors de la récupération du prix dynamique :", error);
-    return 1500; // Prix par défaut en cas d'erreur
+    console.error("Erreur prix dynamique:", error);
+    return 1500;
   }
 }

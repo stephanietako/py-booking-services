@@ -20,6 +20,7 @@
     "@supabase/supabase-js": "^2.47.10",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
+    "framer-motion": "^12.6.2",
     "jsonwebtoken": "^9.0.2",
     "mime": "^4.0.6",
     "next": "^15.1.5",
