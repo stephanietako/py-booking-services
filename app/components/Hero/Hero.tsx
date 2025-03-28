@@ -32,7 +32,7 @@ const Hero: React.FC<HeroProps> = ({ days, closedDays }) => {
       <div className={styles.heroWrapper}>
         <Image
           src={backgroundImg}
-          alt="Coucher de soleil avec vue sur des palmiers"
+          alt="Vue du bateau en pleine mer avec des passagers"
           className={styles.heroImage}
           priority={true}
           fill={true}

@@ -50,7 +50,7 @@ async function main() {
       price: 1500,
       currency: "EUR",
       categories: ["Simplicité"],
-      imageUrl: "/assets/default.jpg",
+      imageUrl: "/assets/logo/logo-full.png",
     },
   });
 
@@ -66,7 +66,7 @@ async function main() {
       price: 1500,
       currency: "EUR",
       categories: ["Premium"],
-      imageUrl: "/assets/default.jpg",
+      imageUrl: "/assets/logo/logo-full.png",
     },
   });
 

@@ -1,9 +1,10 @@
 import Image from "next/image";
-import Carousel from "../Carousel/Carousel"; // Assurez-vous que le composant Carousel existe et fonctionne correctement
+import Carousel from "../Carousel/Carousel";
 import image1 from "@/public/assets/vue-exterieur.jpg";
 import image2 from "@/public/assets/image2.jpg";
 import logo from "@/public/assets/logo/hippo.png";
 import placeholder from "@/public/assets/placeholder.svg";
+// Styles
 import styles from "./styles.module.scss";
 import Link from "next/link";
 
@@ -25,6 +26,8 @@ const About: React.FC = () => {
             src={logo || placeholder}
             alt="Yachting Day Logo"
             className={styles.logo}
+            width={200}
+            height={100}
           />
         </div>
         <h2 className={styles.title}>Qui Sommes-nous</h2>
@@ -35,11 +38,14 @@ const About: React.FC = () => {
             <p>
               Je me nomme Pierre-Yves Hemard, âgé de 39 ans, originaire de la
               région de Saint-Tropez, où j&apos;ai grandi et réside
-              actuellement. Depuis mon enfance, je suis passionné par la
-              navigation, ce qui m&apos;a conduit à devenir moniteur de voile et
-              régatier assidu. À 22 ans, j&apos;ai accédé au poste de capitaine
-              sur les pontons de Saint-Tropez, affirmant ainsi mon engagement et
-              mes compétences dans le domaine maritime.
+              actuellement.
+            </p>
+            <p>
+              Depuis mon enfance, je suis passionné par la navigation, ce qui
+              m&apos;a conduit à devenir moniteur de voile et régatier assidu. À
+              22 ans, j&apos;ai accédé au poste de capitaine sur les pontons de
+              Saint-Tropez, affirmant ainsi mon engagement et mes compétences
+              dans le domaine maritime.
             </p>
             <p>
               En 2023, j&apos;ai fondé Yachting Day pour mettre à profit mon
@@ -64,11 +70,15 @@ const About: React.FC = () => {
               src={image1 || placeholder}
               alt="Pierre-Yves Hemard"
               className={styles.image}
+              width={400}
+              height={400}
             />
             <Image
               src={image2 || placeholder}
               alt="Skippy One"
               className={styles.image}
+              width={400}
+              height={400}
             />
           </div>
         </div>
@@ -86,10 +96,12 @@ const About: React.FC = () => {
           </p>
           <p>
             Soucieux du détail, sérieux et rigoureux, je suis également
-            spécialisé dans l&apos;entretien de yachts. Grâce à un réseau de
-            contacts privilégié parmi les meilleurs artisans locaux, je vous
-            accompagnerai avec plaisir et facilité dans l&apos;entretien de
-            votre bateau.
+            spécialisé dans l&apos;entretien de yachts.
+          </p>
+          <p>
+            Grâce à un réseau de contacts privilégié parmi les meilleurs
+            artisans locaux, je vous accompagnerai avec plaisir et facilité dans
+            l&apos;entretien de votre bateau.
           </p>
         </div>
 

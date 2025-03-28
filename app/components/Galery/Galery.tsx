@@ -158,17 +158,17 @@ import Image from "next/image";
 import styles from "./styles.module.scss";
 
 const images = [
-  "/assets/gallery/gal11-ext.webp",
-  "/assets/gallery/gal9-ext.webp",
-  "/assets/gallery/gal10-ext.webp",
-  "/assets/gallery/gal6-ext.webp",
-  "/assets/gallery/gal1.webp",
-  "/assets/gallery/gal2.webp",
-  "/assets/gallery/gal3.webp",
-  "/assets/gallery/gal4.webp",
-  "/assets/gallery/gal5.webp",
-  "/assets/gallery/gal7.webp",
-  "/assets/gallery/gal3.webp",
+  "/assets/galery/gal11-ext.webp",
+  "/assets/galery/gal9-ext.webp",
+  "/assets/galery/gal10-ext.webp",
+  "/assets/galery/gal6-ext.webp",
+  "/assets/galery/gal1.webp",
+  "/assets/galery/gal2.webp",
+  "/assets/galery/gal3.webp",
+  "/assets/galery/gal4.webp",
+  "/assets/galery/gal5.webp",
+  "/assets/galery/gal7.webp",
+  "/assets/galery/gal3.webp",
 ];
 
 const Carousel = () => {

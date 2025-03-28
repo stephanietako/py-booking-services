@@ -20,6 +20,8 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
     object-fit: cover;
     filter: brightness(90%); // Légèrement plus clair
     object-position: center;
+    width: auto;
+    height: 100%;
   }
 }
 
@@ -77,7 +79,9 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
   border-radius: 50px; // Plus arrondi pour un look premium
   cursor: pointer;
   text-transform: uppercase;
-  transition: all 0.3s ease-in-out;
+  transition:
+    all 0.3s ease-in-out,
+    backdrop-filter 0.3s ease-in-out;
   background: rgba(255, 255, 255, 0.15); // Fond semi-transparent
   color: $blanc;
   backdrop-filter: blur(10px); // Effet "Glassmorphism"
@@ -88,8 +92,9 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
   &:hover {
     background: rgba(255, 255, 255, 0.3);
     border: 2px solid rgba(255, 255, 255, 0.6);
-    transform: scale(1.05);
+    transform: scale(1.02);
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
   }
 
   &:active {

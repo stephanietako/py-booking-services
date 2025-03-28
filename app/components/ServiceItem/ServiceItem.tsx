@@ -12,6 +12,7 @@ import {
   deleteUserBooking,
 } from "@/actions/bookings";
 import OptionManager from "../OptionManager/OptionManager";
+// Styles
 import styles from "./styles.module.scss";
 import { useRouter } from "next/navigation";
 
@@ -120,18 +121,17 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
 
   // Classe CSS conditionnelle pour le hover
   const hoverClass = enableHover === 1 ? styles.hoverEnabled : "";
-  const imageUrl = service.imageUrl || "/assets/default.jpg";
+  const imageUrl = service.imageUrl || "/assets/logo/logo-full.png";
 
   return (
     <li className={`${styles.service_item} ${hoverClass}`}>
       <div className={styles.service_item__content}>
-        {/* 📷 Image du service */}
-        <div className={styles.service_image}>
+        <div className={styles.__img_content}>
           <Image
-            src={imageUrl}
+            src={imageUrl || "/assets/logo/logo-full.png"}
             alt={service.name}
-            width={60}
-            height={60}
+            width={200}
+            height={200}
             className={styles.__img}
           />
         </div>

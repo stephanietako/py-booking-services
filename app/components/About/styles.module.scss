@@ -35,7 +35,7 @@
 
   .content_wrapper {
     width: 100%;
-    padding: 40px 20px;
+    padding: 24px 20px;
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
@@ -58,17 +58,17 @@
 
   .text_container {
     flex: 1;
-    padding: 20px;
+    padding: 3rem;
     background: linear-gradient(180deg, #e3f7ff, #ffffff);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: box-shadow 0.3s ease; /* Ajout de la transition uniquement sur l'ombre */
 
     p {
-      line-height: 1.8;
+      line-height: 1.5;
       color: #333;
       font-family: "Poppins", sans-serif;
-      font-size: 1.1rem;
+      font-size: 1rem;
       transition: color 0.3s ease; /* Transition fluide pour la couleur */
     }
 
@@ -129,8 +129,8 @@
 
     p {
       margin-bottom: 20px;
-      font-size: 1.1rem;
-      line-height: 1.8;
+      font-size: 1rem;
+      line-height: 1.5;
       color: #333;
       font-family: "Poppins", sans-serif;
       transition: color 0.3s ease;

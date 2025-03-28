@@ -4,7 +4,7 @@ import image1 from "@/public/assets/Cap-Camarat1-Plan-de-Cabine.jpg";
 import image2 from "@/public/assets/Cap-Camarat3-Plan-de-Pont.jpg";
 import image3 from "@/public/assets/Cap-Camarat1-Plan-de-Cabine.jpg";
 import styles from "./styles.module.scss";
-import Gallery from "../Gallery/Gallery";
+import Galery from "../Galery/Galery";
 
 export const dynamic = "force-dynamic";
 
@@ -13,13 +13,15 @@ const Boat = () => {
     <div className={styles.boat}>
       <div className={styles.header}>
         <h2 className={styles.title}>Le Bateau</h2>
-        <Image
-          src={image1}
-          alt="Cap Camarat 12.5 Wa"
-          className={styles.mainImage}
-          width={400}
-          height={300}
-        />
+        <div className={styles.main_image}>
+          <Image
+            src={image1}
+            alt="Cap Camarat 12.5 Wa"
+            className={styles.__img}
+            width={400}
+            height={300}
+          />
+        </div>
       </div>
 
       <div className={styles.description}>
@@ -127,7 +129,7 @@ const Boat = () => {
         </div>
       </div>
       <div className={styles.gallery__content}>
-        <Gallery />
+        <Galery />
       </div>
     </div>
   );

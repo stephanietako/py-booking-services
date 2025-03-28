@@ -28,18 +28,19 @@ const Home = async () => {
         <section>
           <About />
         </section>
-        {/* <section>
-          <TarifsDisponibilites />
-        </section> */}
+
         <section>
           <Boat />
         </section>
+
         <section>
           <Cavalaire images={images} />
         </section>
+
         <section>
           <Cruise />
         </section>
+
         <section>
           <Maintenance />
         </section>

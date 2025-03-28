@@ -4,6 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
+import Image from "next/image";
 import {
   deleteUserBooking,
   getBookingById,
@@ -14,7 +15,6 @@ import { createStripeCheckoutSession } from "@/actions/actionsStripe";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 import ServiceCompt from "@/app/components/ServicesCompt/ServiceCompt";
 import { Booking } from "@/types";
-
 export const dynamic = "force-dynamic";
 
 const ManageBookingPage: FC = () => {
@@ -207,75 +207,92 @@ const ManageBookingPage: FC = () => {
 
   return (
     <Wrapper>
-      <div className="manage_booking">
-        <h1>Ma Réservation</h1>
-        <br />
-        <span className="manage_booking__text">
-          <h2>Voici votre réservation, vous avez un imprévu ?</h2>
-          <p>
-            Pas de souci ! Vous pouvez demander la confirmation de votre
-            réservation ici. Une fois confirmée, elle sera en attente de
-            validation par l&apos;administrateur.
-          </p>
-        </span>
+      <div className="section">
+        <div className="manage_booking">
+          <div className="manage_booking__bloc_left">
+            <div className="logo_title_wrapper">
+              <div className="logo_container">
+                <Image
+                  src="/assets/logo/hipo-transparent.svg"
+                  alt="Yachting Day Logo"
+                  width={200}
+                  height={100}
+                />
+              </div>
+              <h2 className="title">Ma réservation</h2>
+            </div>
+            <span className="manage_booking__text">
+              <h2>Voici votre réservation, vous avez un imprévu ?</h2>
+              <p>
+                Pas de souci ! Vous pouvez demander la confirmation de votre
+                réservation ici. Une fois confirmée, elle sera en attente de
+                validation par l&apos;administrateur.
+              </p>
+            </span>
+          </div>
+          <div className="manage_booking_container">
+            <ServiceCompt
+              name={booking.service.name}
+              description={
+                booking.service.description || "Aucune description disponible"
+              }
+              imageUrl={
+                booking.service.imageUrl || "/assets/logo/logo-full.png"
+              }
+              categories={booking.service.categories}
+              startTime={booking.startTime}
+              endTime={booking.endTime}
+              options={booking.options || []}
+              totalAmount={totalAmount}
+            />
 
-        <div className="manage_booking_container">
-          <ServiceCompt
-            name={booking.service.name}
-            description={
-              booking.service.description || "Aucune description disponible"
-            }
-            imageUrl={booking.service.imageUrl || "/assets/default.jpg"}
-            categories={booking.service.categories}
-            startTime={booking.startTime}
-            endTime={booking.endTime}
-            options={booking.options || []}
-            totalAmount={totalAmount}
-          />
+            {/* Bouton Annuler la réservation */}
+            <button
+              onClick={handleDeleteBooking}
+              className="btn_form"
+              disabled={deleting}
+            >
+              {deleting ? "Annulation en cours..." : "Annuler la réservation"}
+            </button>
 
-          {/* Bouton Annuler la réservation */}
-          <button
-            onClick={handleDeleteBooking}
-            className="btn_form"
-            disabled={deleting}
-          >
-            {deleting ? "Annulation en cours..." : "Annuler la réservation"}
-          </button>
-
-          {/* Afficher la notification si la réservation est en attente */}
-          {confirmationMessage && (
-            <div className="confirmation_message">{confirmationMessage}</div>
-          )}
-
-          {/* Afficher le bouton de demande de confirmation seulement si la réservation est en attente */}
-          {booking.status === "PENDING" &&
-            !booking.approvedByAdmin &&
-            !confirmationMessage && (
-              <button
-                onClick={handleRequestConfirmation}
-                disabled={isRequestingConfirmation}
-              >
-                {isRequestingConfirmation
-                  ? "Demande en cours..."
-                  : "Demander confirmation"}
-              </button>
+            {/* Afficher la notification si la réservation est en attente */}
+            {confirmationMessage && (
+              <div className="confirmation_message">{confirmationMessage}</div>
             )}
 
-          {/* Afficher le bouton Payer maintenant ou le message "Paiement effectué" */}
-          {booking.approvedByAdmin && !isPaid ? (
-            <>
-              <p>✅ Réservation approuvée</p>
-              <p>Vous pouvez maintenant accéder à votre portail de paiement.</p>
-              <p>
-                Si vous avez des questions, n&apos;hésitez pas à nous contacter.
-              </p>
-              <button onClick={handlePayNow} className="btn_form">
-                Payer maintenant
-              </button>
-            </>
-          ) : isPaid ? (
-            <p>✅ Paiement effectué. Merci de votre paiement !</p>
-          ) : null}
+            {/* Afficher le bouton de demande de confirmation seulement si la réservation est en attente */}
+            {booking.status === "PENDING" &&
+              !booking.approvedByAdmin &&
+              !confirmationMessage && (
+                <button
+                  onClick={handleRequestConfirmation}
+                  disabled={isRequestingConfirmation}
+                >
+                  {isRequestingConfirmation
+                    ? "Demande en cours..."
+                    : "Demander confirmation"}
+                </button>
+              )}
+
+            {/* Afficher le bouton Payer maintenant ou le message "Paiement effectué" */}
+            {booking.approvedByAdmin && !isPaid ? (
+              <>
+                <p>✅ Réservation approuvée</p>
+                <p>
+                  Vous pouvez maintenant accéder à votre portail de paiement.
+                </p>
+                <p>
+                  Si vous avez des questions, n&apos;hésitez pas à nous
+                  contacter.
+                </p>
+                <button onClick={handlePayNow} className="btn_form">
+                  Payer maintenant
+                </button>
+              </>
+            ) : isPaid ? (
+              <p>✅ Paiement effectué. Merci de votre paiement !</p>
+            ) : null}
+          </div>
         </div>
       </div>
     </Wrapper>
