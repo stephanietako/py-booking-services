@@ -39,7 +39,7 @@
 
           p {
             font-size: 0.7rem;
-            font-family: var(--nixie_one);
+            text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
           }
         }
 
@@ -111,6 +111,8 @@
           height: 100%;
           overflow: hidden;
           position: relative;
+          justify-content: center;
+          align-items: center;
 
           // 🌟 Image de fond
           .footer_image {
@@ -119,67 +121,26 @@
             left: 0;
             width: 100%;
             height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
             object-fit: cover;
             filter: brightness(90%) blur(1.3px);
           }
-
-          .footer_list__border {
-            display: flex;
-            transition: border-width ease-in;
-            width: 100%;
-            align-items: center;
-            max-height: 20rem;
-            position: relative;
-            border: 2px solid transparent;
-            flex-direction: column;
-            padding: 2rem;
-            justify-content: center;
+          .bloc_text {
             text-align: center;
-
-            p {
-              line-height: 2;
-              color: #12c3de;
-            }
-
-            &::before,
-            &::after {
-              display: block;
-              content: "";
-              width: 40px;
-              height: 40px;
-              position: absolute;
-            }
-
-            &::before {
-              top: -2px;
-              left: -2px;
-              border-top: 2px solid #1009ee;
-              border-left: 2px solid #1009ee;
-              transition:
-                width 0.5s ease-in-out,
-                height 0.5s ease-in-out;
-            }
-
-            &::after {
-              bottom: -2px;
-              right: -2px;
-              border-bottom: 2px solid #1009ee;
-              border-right: 2px solid #1009ee;
-              transition:
-                width 0.5s ease-in-out,
-                height 0.5s ease-in-out;
-            }
-
-            &:hover::before,
-            &:hover::after {
-              width: 15%;
-              height: 30%;
-              color: red;
-            }
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.15); // Plus transparent
+            backdrop-filter: blur(5px); // Effet de flou pour le "Glassmorphism"
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            flex-direction: column;
           }
         }
       }
     }
+
     ///////////////// bloc bottom
     .footer_infos {
       display: flex;
@@ -265,6 +226,7 @@
                 height: 100%;
                 justify-content: center;
                 line-height: 1.7;
+
                 &#number_phone {
                   margin-top: 1rem;
                   margin-bottom: 2rem;

@@ -143,10 +143,10 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
       {/* Affichage du créneau sélectionné avec bouton de confirmation */}
       {startTime && endTime && (
         <div>
-          <p>
+          {/* <p>
             Réservation de {format(startTime, "kk:mm")} à{" "}
             {format(endTime, "kk:mm")}
-          </p>
+          </p> */}
           <button
             className="btn_confirm"
             onClick={() =>

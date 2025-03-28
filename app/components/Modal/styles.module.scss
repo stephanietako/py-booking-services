@@ -28,6 +28,9 @@
   padding: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease-in-out;
+  width: 50%;
+  max-width: 800px;
+  height: 80%;
 }
 
 .closeButton {
@@ -51,6 +54,7 @@
   margin-top: 33px;
   font-size: 1.2rem;
   overflow: hidden;
+
   p {
     color: #003080;
   }

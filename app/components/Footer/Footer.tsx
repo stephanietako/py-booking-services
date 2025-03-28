@@ -67,38 +67,41 @@ const Footer: React.FC = () => {
               <div className={styles.google}>
                 <Map />
               </div>
+
               <div className={styles.footer_list__content}>
                 <Image
                   src={backgroundImg}
-                  alt="Coucher de soleil avec vue sur des palmiers"
+                  alt="Vue de l'avant du bateau"
                   className={styles.footer_image}
                   priority={true}
                   fill={true}
                   placeholder="blur"
                 />
-                <ul className={styles.footer_list__border}>
-                  <li>
-                    <p>Retrouvez-nous à :</p>
-                  </li>
-                  <li>
-                    <p>Port de Cavalaire, 83240 Cavalaire-sur-Mer</p>
-                  </li>
-                  <li>
-                    <p>
-                      <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
-                    </p>
-                  </li>
-                  <li>
-                    <p>
-                      <a href="mailto:yachtingday@gmail.com">
-                        yachtingday@gmail.com
-                      </a>
-                    </p>
-                  </li>
-                  <li>
-                    <p>Venez découvrir le Golfe de Saint-Tropez</p>
-                  </li>
-                </ul>
+                <div className={styles.bloc_text__content}>
+                  <ul className={styles.bloc_text}>
+                    <li>
+                      <p>Retrouvez-nous à :</p>
+                    </li>
+                    <li>
+                      <p>Port de Cavalaire, 83240 Cavalaire-sur-Mer</p>
+                    </li>
+                    <li>
+                      <p>
+                        <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
+                      </p>
+                    </li>
+                    <li>
+                      <p>
+                        <a href="mailto:yachtingday@gmail.com">
+                          yachtingday@gmail.com
+                        </a>
+                      </p>
+                    </li>
+                    <li>
+                      <p>Venez découvrir le Golfe de Saint-Tropez</p>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

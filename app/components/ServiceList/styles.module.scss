@@ -1,6 +1,11 @@
 .service_list {
   display: flex;
   gap: 20px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0.5rem;
+  margin-top: 20vh;
 
   .service_list__container {
     display: flex;

@@ -124,95 +124,97 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
   const imageUrl = service.imageUrl || "/assets/logo/logo-full.png";
 
   return (
-    <li className={`${styles.service_item} ${hoverClass}`}>
-      <div className={styles.service_item__content}>
-        <div className={styles.__img_content}>
-          <Image
-            src={imageUrl || "/assets/logo/logo-full.png"}
-            alt={service.name}
-            width={200}
-            height={200}
-            className={styles.__img}
-          />
-        </div>
-
-        {/* ℹ️ Détails du service */}
-        <div className={styles.service_item__details}>
-          <div className={styles.service_item__infos}>
-            <span className={styles.service_item__title}>{service.name}</span>
-            <span className={styles.service_item__description}>
-              {service.description
-                ?.split("\n")
-                .map((line, index) => <span key={index}>{line}</span>)}
-            </span>
-            <span className={styles.service_item__option_count}>
-              {service.options?.length} option(s)
-            </span>
+    <div>
+      <li className={`${styles.service_item} ${hoverClass}`}>
+        <div className={styles.service_item__content}>
+          <div className={styles.__img_content}>
+            <Image
+              src={imageUrl || "/assets/logo/logo-full.png"}
+              alt={service.name}
+              width={200}
+              height={200}
+              className={styles.__img}
+            />
           </div>
 
-          {/* 💰 Montant */}
-          <div className={styles.service_item__stats}>
-            <span>
-              {new Intl.NumberFormat("fr-FR", {
-                style: "currency",
-                currency: "EUR",
-              }).format(remainingAmount)}
-            </span>
-          </div>
-          {bookingId && (
-            <div className={styles.service_item__option_reminder}>
-              <p>Ajoutez des options pour votre réservation :</p>
-              <OptionManager
-                bookingId={bookingId}
-                serviceAmount={remainingAmount}
-                onTotalUpdate={() => {}}
-              />
+          {/* ℹ️ Détails du service */}
+          <div className={styles.service_item__details}>
+            <div className={styles.service_item__infos}>
+              <span className={styles.service_item__title}>{service.name}</span>
+              <span className={styles.service_item__description}>
+                {service.description
+                  ?.split("\n")
+                  .map((line, index) => <span key={index}>{line}</span>)}
+              </span>
+              <span className={styles.service_item__option_count}>
+                {service.options?.length} option(s)
+              </span>
             </div>
-          )}
-          {/* 🎟️ Bouton de réservation */}
-          {!bookingId ? (
-            <button
-              disabled={isBooking}
-              onClick={handleBooking}
-              aria-label={
-                isBooking ? "Réservation en cours" : "Réserver ce service"
-              }
-              className={isBooking ? styles.loading : ""}
-            >
-              {isBooking ? "Réservation en cours..." : "Réserver ce service"}
-            </button>
-          ) : (
-            <button
-              onClick={handleCancelBooking} // Appel à la fonction pour annuler la réservation
-              className={styles.cancelButton} // Ajouter une classe pour styliser le bouton
-            >
-              Annuler ma réservation
-            </button>
-          )}
-        </div>
-      </div>
 
-      {/* 📩 Message de confirmation */}
-      {bookingMessage && (
-        <div className={styles.bookingConfirmationMessage}>
-          <p>{bookingMessage}</p>
-          {bookingId && user && (
-            <button
-              className={styles.manageBookingButton}
-              onClick={async () => {
-                // Générer le token à chaque fois que l'utilisateur clique sur ce bouton
-                const token = await generateBookingToken(bookingId, user.id);
-
-                // Redirection vers la page de gestion
-                router.push(`/manage-booking?token=${token}`);
-              }}
-            >
-              Gérer ma réservation
-            </button>
-          )}
+            {/* 💰 Montant */}
+            <div className={styles.service_item__stats}>
+              <span>
+                {new Intl.NumberFormat("fr-FR", {
+                  style: "currency",
+                  currency: "EUR",
+                }).format(remainingAmount)}
+              </span>
+            </div>
+            {bookingId && (
+              <div className={styles.service_item__option_reminder}>
+                <p>Ajoutez des options pour votre réservation :</p>
+                <OptionManager
+                  bookingId={bookingId}
+                  serviceAmount={remainingAmount}
+                  onTotalUpdate={() => {}}
+                />
+              </div>
+            )}
+            {/* 🎟️ Bouton de réservation */}
+            {!bookingId ? (
+              <button
+                disabled={isBooking}
+                onClick={handleBooking}
+                aria-label={
+                  isBooking ? "Réservation en cours" : "Réserver ce service"
+                }
+                className={isBooking ? styles.loading : ""}
+              >
+                {isBooking ? "Réservation en cours..." : "Réserver ce service"}
+              </button>
+            ) : (
+              <button
+                onClick={handleCancelBooking} // Appel à la fonction pour annuler la réservation
+                className={styles.cancelButton} // Ajouter une classe pour styliser le bouton
+              >
+                Annuler ma réservation
+              </button>
+            )}
+          </div>
         </div>
-      )}
-    </li>
+
+        {/* 📩 Message de confirmation */}
+        {bookingMessage && (
+          <div className={styles.bookingConfirmationMessage}>
+            <p>{bookingMessage}</p>
+            {bookingId && user && (
+              <button
+                className={styles.manageBookingButton}
+                onClick={async () => {
+                  // Générer le token à chaque fois que l'utilisateur clique sur ce bouton
+                  const token = await generateBookingToken(bookingId, user.id);
+
+                  // Redirection vers la page de gestion
+                  router.push(`/manage-booking?token=${token}`);
+                }}
+              >
+                Gérer ma réservation
+              </button>
+            )}
+          </div>
+        )}
+      </li>
+    </div>
   );
 };
 
