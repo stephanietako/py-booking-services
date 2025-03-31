@@ -21,9 +21,9 @@ interface Property {
 
 const properties: Property[] = [
   {
-    title: "Maison Essenza",
-    description: `Du Mardi au Vendredi de 10h00 à 19h00 <br />
-                  Le samedi de 10h00 à 16h00`,
+    title: "Yatching Day ",
+    description: `Port de Cavalaire <br />
+                  83240 Cavalaire-sur-Mer`,
     position: {
       lat: 43.17278473616548,
       lng: 6.536504524006781,
@@ -66,8 +66,8 @@ const Map: React.FC = () => {
         markerLibrary as typeof google.maps.marker;
 
       const position = {
-        lat: 43.251496859869185,
-        lng: 6.532052481579163,
+        lat: 43.17278473616548,
+        lng: 6.536504524006781,
       };
 
       const mapOptions: google.maps.MapOptions = {

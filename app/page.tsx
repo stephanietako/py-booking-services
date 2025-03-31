@@ -16,32 +16,30 @@ const Home = async () => {
   const closedDays = await getClosedDays(); // Récupérer les jours fermés
   // Liste d'images pour le carrousel
   const images = [
-    "/assets/Calanques-de-Cavalaire.jpg",
-    "/assets/Port-Cros1.webp",
-    "/assets/Beach-Notre-Dame-Porquerolles.jpg",
-    // Ajoutez plus d'images si nécessaire
+    "/assets/images/cavalaire-plage-bonporteau.webp",
+    "/assets/images/portcros-rocher-rascasse.webp",
+    "/assets/images/ramatuelle-cap-taillat.webp",
   ];
   return (
     <Wrapper>
       <main>
-        {/* Passer les données récupérées à Hero */}
-        <Hero days={days} closedDays={closedDays} />
-        <section>
+        <Hero />
+        <section id="about">
           <About />
         </section>
-        <section>
+        <section id="tarifs">
           <Header days={days} closedDays={closedDays} />
         </section>
-        <section>
+        <section id="boat">
           <Boat />
         </section>
-        <section>
+        <section id="cavalaire">
           <Cavalaire images={images} />
         </section>
-        <section>
+        <section id="cruise">
           <Cruise />
         </section>
-        <section>
+        <section id="maintenance">
           <Maintenance />
         </section>
       </main>

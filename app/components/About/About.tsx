@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Carousel from "../Carousel/Carousel";
-import image1 from "@/public/assets/vue-exterieur.jpg";
-import image2 from "@/public/assets/image2.jpg";
+import image1 from "@/public/assets/images/vue-exterieur.webp";
+import image2 from "@/public/assets/images/image2.jpg";
 import logo from "@/public/assets/logo/hippo.png";
-import placeholder from "@/public/assets/placeholder.svg";
+import placeholder from "@/public/assets/images/placeholder.svg";
 // Styles
 import styles from "./styles.module.scss";
 import Link from "next/link";
@@ -12,10 +12,10 @@ export const dynamic = "force-dynamic";
 
 const About: React.FC = () => {
   const carouselImages = [
-    "/assets/image1.jpg",
-    "/assets/image2.jpg",
-    "/assets/image3.jpg",
-    "/assets/image4.jpg",
+    "/assets/images/image1.jpg",
+    "/assets/images/image2.jpg",
+    "/assets/images/image3.jpg",
+    "/assets/images/image4.jpg",
   ];
 
   return (
@@ -109,11 +109,14 @@ const About: React.FC = () => {
         <div className={styles.cta}>
           <p>Cliquez ci-dessous pour plus d&apos;information.</p>
           <div className={styles.buttons}>
-            <Link href="/entretien" className={styles.button}>
+            <Link href="#maintenance" className={styles.button}>
               Entretien de bateaux
             </Link>
-            <Link href="/location" className={styles.button}>
+            <Link href="#tarifs" className={styles.button}>
               Location de bateaux
+            </Link>
+            <Link href="#cruise" className={styles.button}>
+              Nos excursions
             </Link>
           </div>
         </div>

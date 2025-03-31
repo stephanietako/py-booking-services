@@ -1,26 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState } from "react"; // Ajout de useEffect
 import Calendar from "../Calendar/Calendar";
 import { Day } from "@prisma/client";
 import Image from "next/image";
-import backgroundImg from "@/public/assets/hero.jpg";
+import logo from "@/public/assets/logo/hippo.png";
+import placeholder from "@/public/assets/images/placeholder.svg";
+import backgroundImg from "@/public/assets/images/header.webp";
 import Modal from "../Modal/Modal";
-// Styles
 import styles from "./styles.module.scss";
 
 export const dynamic = "force-dynamic";
 
-interface HeroProps {
+interface HeaderProps {
   days: Day[];
   closedDays: string[];
 }
 
-const Header: React.FC<HeroProps> = ({ days, closedDays }) => {
+const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Ajout de isLoading
 
   const toggleCalendarVisibility = () => {
-    setIsCalendarVisible(!isCalendarVisible);
+    setIsCalendarVisible(true);
+    setIsLoading(true);
+
+    // Simule le chargement du calendrier
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Ajuste le temps si besoin
   };
 
   return (
@@ -36,7 +44,18 @@ const Header: React.FC<HeroProps> = ({ days, closedDays }) => {
         />
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
-            <h2>Yachting Day</h2>
+            <div className={styles.logo_title_wrapper}>
+              <div className={styles.logo_container}>
+                <Image
+                  src={logo || placeholder}
+                  alt="Yachting Day Logo"
+                  className={styles.logo}
+                  width={100}
+                  height={100}
+                />
+              </div>
+              <h2 className={styles.title}>Location et tarifications</h2>
+            </div>
             <h3>Grilles tarifaires</h3>
             <p>Période du 16 octobre au 31 mai: 1500 euros/jour.</p>
             <p>
@@ -50,20 +69,22 @@ const Header: React.FC<HeroProps> = ({ days, closedDays }) => {
               onClick={toggleCalendarVisibility}
               className={styles.calendarBtn}
             >
-              {isCalendarVisible
-                ? "Cacher le calendrier"
-                : "Voir le calendrier"}
+              Voir le calendrier
             </button>
           </div>
         </div>
       </div>
+
       <Modal
         isOpen={isCalendarVisible}
-        onClose={toggleCalendarVisibility}
-        title="Choisissez une date"
+        onClose={() => setIsCalendarVisible(false)}
+        title="Calendrier de réservation"
       >
-        <p>Réservez votre bateau dès maintenant !</p>
-        <Calendar days={days} closedDays={closedDays} />
+        {isLoading ? (
+          <p>Chargement du calendrier...</p>
+        ) : (
+          <Calendar days={days} closedDays={closedDays} />
+        )}
       </Modal>
     </>
   );

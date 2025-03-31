@@ -87,7 +87,31 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
 
   return (
     <div className="calendar_container">
-      {date ? (
+      {!date ? (
+        <>
+          <h3>Choisissez une date:</h3>
+          <DynamicCalendar
+            minDate={now}
+            className="REACT-CALENDAR p-2"
+            view="month"
+            tileDisabled={({ date }) =>
+              Array.isArray(closedDays) && closedDays.includes(formatISO(date))
+            }
+            tileClassName={({ date }) =>
+              Array.isArray(closedDays) && closedDays.includes(formatISO(date))
+                ? "closed-day"
+                : ""
+            }
+            onClickDay={(date) => {
+              if (!closedDays.includes(formatISO(date))) {
+                setDate(date);
+                setStartTime(null);
+                setEndTime(null);
+              }
+            }}
+          />
+        </>
+      ) : (
         <div className="time">
           <h3>Choisissez vos horaires :</h3>
 
@@ -117,46 +141,22 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
               {format(endTime, "kk:mm")}
             </p>
           )}
-        </div>
-      ) : (
-        <DynamicCalendar
-          minDate={now}
-          className="REACT-CALENDAR p-2"
-          view="month"
-          tileDisabled={({ date }) =>
-            Array.isArray(closedDays) && closedDays.includes(formatISO(date))
-          }
-          tileClassName={({ date }) =>
-            Array.isArray(closedDays) && closedDays.includes(formatISO(date))
-              ? "closed-day"
-              : ""
-          }
-          onClickDay={(date) => {
-            if (!closedDays.includes(formatISO(date))) {
-              setDate(date);
-              setStartTime(null);
-              setEndTime(null);
-            }
-          }}
-        />
-      )}
-      {/* Affichage du créneau sélectionné avec bouton de confirmation */}
-      {startTime && endTime && (
-        <div>
-          {/* <p>
-            Réservation de {format(startTime, "kk:mm")} à{" "}
-            {format(endTime, "kk:mm")}
-          </p> */}
-          <button
-            className="btn_confirm"
-            onClick={() =>
-              router.push(
-                `/serviceList?start=${startTime.toISOString()}&end=${endTime.toISOString()}`
-              )
-            }
-          >
-            Confirmer la réservation
-          </button>
+
+          {/* Bouton de confirmation */}
+          {startTime && endTime && (
+            <div>
+              <button
+                className="btn_confirm"
+                onClick={() =>
+                  router.push(
+                    `/serviceList?start=${startTime.toISOString()}&end=${endTime.toISOString()}`
+                  )
+                }
+              >
+                Confirmer la réservation
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

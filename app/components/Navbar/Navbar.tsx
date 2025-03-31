@@ -1,165 +1,54 @@
-// "use client";
-
-// import React, { useEffect, useState } from "react";
-// import Link from "next/link";
-// import styles from "./styles.module.scss";
-// import { UserButton, useUser } from "@clerk/nextjs";
-// import { addUserToDatabase } from "@/actions/actions";
-// import logo from "@/public/assets/logo/logo-full.png";
-// import Image from "next/image";
-
-// const Navbar: React.FC = () => {
-//   const { isLoaded, isSignedIn, user } = useUser();
-//   const [menuOpen, setMenuOpen] = useState(false);
-
-//   useEffect(() => {
-//     if (user?.id && user.primaryEmailAddress?.emailAddress && user.firstName) {
-//       addUserToDatabase(
-//         user.primaryEmailAddress.emailAddress,
-//         user.firstName,
-//         user.imageUrl || "", // Ajout de l'image ici (assure-toi que `imageUrl` existe)
-//         user.id
-//       );
-//     }
-//   }, [user]);
-
-//   const toggleMenu = () => setMenuOpen(!menuOpen);
-
-//   if (!isLoaded) return null;
-
-//   return (
-//     <nav className={styles.navbar}>
-//       <div className={styles.logo}>
-//         <Link href="/">
-//           <Image src={logo} alt="Logo" width={150} height={50} priority />
-//         </Link>
-//       </div>
-
-//       <div className={styles.menuToggle} onClick={toggleMenu}>
-//         ☰
-//       </div>
-//       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
-//         {isSignedIn ? (
-//           <>
-//             <>
-//               <Link href="/my-bookings">
-//                 <div className="btn">Mes réservations</div>
-//               </Link>
-//               <Link href="/dashboard">
-//                 <div className="btn">Dashboard</div>
-//               </Link>
-
-//               <Link href="/admin/services">
-//                 <div className="btn">Mes Services</div>
-//               </Link>
-//               <Link href="/admin">
-//                 <div className="btn">ADMIN</div>
-//               </Link>
-//             </>
-//             <UserButton />
-//           </>
-//         ) : (
-//           <>
-//             <Link href="/sign-in">Se connecter</Link>
-//             <Link href="/sign-up">S&apos;inscrire</Link>
-//           </>
-//         )}
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-// "use client";
-
-// import React, { useEffect, useState } from "react";
-// import Link from "next/link";
-// import Image from "next/image";
-// import styles from "./styles.module.scss";
-// import { UserButton, useUser } from "@clerk/nextjs";
-// import { addUserToDatabase } from "@/actions/actions";
-
-// const Navbar: React.FC = () => {
-//   const { isLoaded, isSignedIn, user } = useUser();
-//   const [menuOpen, setMenuOpen] = useState(false);
-
-//   useEffect(() => {
-//     if (user?.id && user.primaryEmailAddress?.emailAddress && user.firstName) {
-//       addUserToDatabase(
-//         user.primaryEmailAddress.emailAddress,
-//         user.firstName,
-//         user.imageUrl || "", // Ajout de l'image ici
-//         user.id
-//       );
-//     }
-//   }, [user]);
-
-//   const toggleMenu = () => setMenuOpen(!menuOpen);
-
-//   if (!isLoaded) return null;
-
-//   return (
-//     <nav className={styles.navbar}>
-//       {/* Logo */}
-//       <div className={styles.logo}>
-//         <Link href="/">
-//           <Image
-//             src="/assets/logo/logo-full.png" // Assure-toi que le fichier est bien dans /public/assets/
-//             alt="Logo"
-//             width={150}
-//             height={50}
-//             priority
-//           />
-//         </Link>
-//       </div>
-
-//       {/* Menu Toggle pour mobile */}
-//       <div className={styles.menuToggle} onClick={toggleMenu}>
-//         ☰
-//       </div>
-
-//       {/* Liens de navigation */}
-//       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
-//         {isSignedIn ? (
-//           <>
-//             <Link href="/my-bookings">Mes réservations</Link>
-//             <Link href="/dashboard">Dashboard</Link>
-//             <Link href="/admin/services">Mes Services</Link>
-//             <Link href="/admin">ADMIN</Link>
-//             <UserButton />
-//           </>
-//         ) : (
-//           <div className={styles.authLinks}>
-//             <Link href="/sign-in">Se connecter</Link>
-//             <Link href="/sign-up">S&apos;inscrire</Link>
-//           </div>
-//         )}
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 // Styles
 import styles from "./styles.module.scss";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { addUserToDatabase, getRole } from "@/actions/actions";
-import { getUserBookings, generateBookingToken } from "@/actions/bookings"; // Ajoute ces fonctions
+import { getUserBookings, generateBookingToken } from "@/actions/bookings";
 
 const Navbar: React.FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false); // ✅ Ajout de isClient
+  const [isClient, setIsClient] = useState(false);
   // const { user, isSignedIn } = useUser();
   const [bookingToken, setBookingToken] = useState<string | null>(null);
+  const navbarElement = useRef<HTMLDivElement>(null);
+  const navigationHeight = useRef(0);
 
+  useEffect(() => {
+    // This effect will only run after the navbar element has been rendered
+    if (navbarElement.current) {
+      navigationHeight.current = navbarElement.current.offsetHeight;
+      console.info("Navbar height:", navbarElement.current.offsetHeight);
+      navbarElement.current.style.setProperty(
+        "--scroll-padding",
+        navigationHeight.current.toString()
+      );
+    }
+  }, []);
+
+  // Écoute du scroll pour changer l'état de la navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 125) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Récupérer le token de réservation de l'utilisateur
   useEffect(() => {
     const fetchBooking = async () => {
       if (!user || !isSignedIn) return;
@@ -198,22 +87,7 @@ const Navbar: React.FC = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    // Écoute du scroll pour changer l'état de la navbar
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
+  // Fonction pour récupérer le rôle de l'utilisateur
   useEffect(() => {
     const fetchUserRole = async () => {
       if (user?.id) {
@@ -231,12 +105,15 @@ const Navbar: React.FC = () => {
   //////////////////
 
   return (
-    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
+    <nav
+      ref={navbarElement}
+      className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}
+    >
       {/* Logo */}
       <div className={styles.logo}>
         <Link href="/">
           <Image
-            src="/assets/logo/logo-full.png"
+            src="/assets/logo/logo-new.png"
             alt="Logo"
             width={250}
             height={150}

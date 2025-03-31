@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import Carousel from "../Carousel/Carousel";
 import logo from "@/public/assets/logo/hippo.png";
-import placeholder from "@/public/assets/placeholder.svg";
+import placeholder from "@/public/assets/images/placeholder.svg";
 
 import styles from "./styles.module.scss";
 
@@ -20,6 +20,8 @@ const Cavalaire: React.FC<CavalaireProps> = ({ images }) => {
             src={logo || placeholder}
             alt="Yachting Day Logo"
             className={styles.logo}
+            width={100}
+            height={100}
           />
         </div>
         <h2 className={styles.title}>Les environs</h2>

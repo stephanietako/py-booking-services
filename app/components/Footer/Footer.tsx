@@ -8,7 +8,7 @@ import Map from "../Map/Map";
 import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 // Styles
 import styles from "./styles.module.scss";
-import backgroundImg from "@/public/assets/table-avant.webp";
+import backgroundImg from "@/public/assets/images/ramatuelle-cap-taillat.webp";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +48,7 @@ const Footer: React.FC = () => {
             </li>
             <li className={styles.link}>
               <div className={styles.link__txt}>
-                <p>+33 (0)1 23 45 67 89</p>
+                <p>+33 (0) 7 67 21 00 17</p>
               </div>
               <span className={styles.link__img}>
                 <a href="tel:+33 7 67 21 00 17">
@@ -69,20 +69,13 @@ const Footer: React.FC = () => {
               </div>
 
               <div className={styles.footer_list__content}>
-                <Image
-                  src={backgroundImg}
-                  alt="Vue de l'avant du bateau"
-                  className={styles.footer_image}
-                  priority={true}
-                  fill={true}
-                  placeholder="blur"
-                />
                 <div className={styles.bloc_text__content}>
                   <ul className={styles.bloc_text}>
                     <li>
                       <p>Retrouvez-nous à :</p>
                     </li>
                     <li>
+                      <p>Pierre-Yves Hemard</p>
                       <p>Port de Cavalaire, 83240 Cavalaire-sur-Mer</p>
                     </li>
                     <li>
@@ -107,19 +100,17 @@ const Footer: React.FC = () => {
           </div>
 
           <div className={styles.footer_infos}>
+            <Image
+              src={backgroundImg}
+              alt="Vue de l'avant du bateau"
+              className={styles.footer_image}
+              priority={true}
+              fill={true}
+              placeholder="blur"
+            />
             <div className={styles.footer_infos__container}>
               <div className={styles.column}>
-                <h3>RESTONS CONNECTÉS</h3>
-                <ul>
-                  <li>
-                    <a href="mailto:yachtingday@gmail.com">
-                      <FaEnvelope size={20} /> Mail
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div className={styles.column}>
-                <h3>LIENS UTILES</h3>
+                <h4>LIENS UTILES</h4>
                 <ul>
                   <li>
                     <Link href="/">Accueil</Link>
@@ -138,7 +129,7 @@ const Footer: React.FC = () => {
                 </ul>
               </div>
               <div className={styles.column}>
-                <h3>CONTACT</h3>
+                <h4>CONTACT</h4>
                 <ul>
                   <li id={styles.__copyright}>
                     Port de Cavalaire, 83240 Cavalaire-sur-Mer
@@ -146,13 +137,29 @@ const Footer: React.FC = () => {
                   <li id={styles.number_phone}>
                     <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
                   </li>
+                  <li>
+                    <a href="mailto:yachtingday@gmail.com">
+                      <FaEnvelope size={20} />
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
 
             <div className={styles.__copyright}>
               <div onClick={handleIconClick}>
-                <span className={styles.__copyright__img}>LOGO</span>
+                <span className={styles.__copyright__img}>
+                  {" "}
+                  <Link href="/">
+                    <Image
+                      src="/assets/logo/logo-new.png"
+                      alt="Logo"
+                      width={150}
+                      height={80}
+                      priority
+                    />
+                  </Link>
+                </span>
               </div>
               &#169; {currentYear} | <a href="#">Tako Dev</a>
             </div>

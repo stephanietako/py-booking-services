@@ -49,13 +49,6 @@
           width: 5rem;
           height: auto;
           justify-content: center;
-
-          .__icon {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-            cursor: pointer;
-          }
         }
       }
     }
@@ -65,37 +58,44 @@
 .footer__container {
   display: flex;
   width: 100%;
-  height: 80vh;
+  height: 100%;
   clip-path: polygon(0% 0, 100% 0%, 100% 100%, 0 100%);
-  background-color: #fff;
+  // background-color: #fff;
 
   .footer__bloc {
-    height: auto;
+    height: 100%;
     width: 100%;
     justify-content: center;
     display: flex;
     bottom: 0;
-    padding: 2rem;
-    margin-top: 5vh;
+    padding: 1rem;
     background-color: #fff;
-    //border: 4px solid rgb(0, 179, 255);
+    background: linear-gradient(#e3f7ff, #fff);
 
     .__bloc_container {
-      height: 55%;
+      height: 80vh;
       width: 100%;
       justify-content: center;
       display: flex;
       padding: 1rem;
-      //border: 4px solid red;
 
       .__bloc_content {
         display: flex;
         width: 100%;
-        height: auto;
-        /* justify-content: center; */
-        align-items: center;
-        background-color: #fff;
+        height: 65%;
         justify-content: space-evenly;
+        z-index: 999;
+        background-color: rgba(
+          3,
+          169,
+          244,
+          0.2
+        ); /* Couleur de fond avec transparence */
+        border-radius: 10px;
+        padding: 1rem;
+        backdrop-filter: blur(10px); /* Flou de l'arrière-plan */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour un effet de profondeur */
+        border: 1px solid rgba(255, 255, 255, 0.3); /* Bordure subtile */
 
         .google {
           display: flex;
@@ -104,7 +104,7 @@
           justify-content: center;
           align-items: center;
         }
-        /* bloc droit map */
+
         .footer_list__content {
           display: flex;
           width: 40%;
@@ -114,25 +114,13 @@
           justify-content: center;
           align-items: center;
 
-          // 🌟 Image de fond
-          .footer_image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
-            overflow: hidden;
-            object-fit: cover;
-            filter: brightness(90%) blur(1.3px);
-          }
           .bloc_text {
             text-align: center;
             display: flex;
             align-items: center;
             padding: 2rem;
-            background: rgba(255, 255, 255, 0.15); // Plus transparent
-            backdrop-filter: blur(5px); // Effet de flou pour le "Glassmorphism"
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
             border-radius: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             flex-direction: column;
@@ -141,18 +129,29 @@
       }
     }
 
-    ///////////////// bloc bottom
     .footer_infos {
       display: flex;
       width: 100%;
-      height: auto;
+      height: 100%;
       bottom: 0;
-      background-color: #fff;
+      background-color: transparent;
       align-items: center;
       justify-content: flex-end;
       flex-direction: column;
       position: fixed;
-      padding: 2rem;
+
+      .footer_image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        object-fit: cover;
+        filter: opacity(49%);
+        object-position: bottom;
+        z-index: -1;
+      }
 
       .footer_infos__container {
         display: flex;
@@ -161,8 +160,6 @@
         width: 70%;
         height: auto;
         justify-content: space-evenly;
-        background-color: #fff;
-        //border: 4px solid rgb(13, 0, 255);
 
         .column {
           width: 100%;
@@ -170,108 +167,41 @@
           display: flex;
           flex-direction: column;
           position: relative;
-          color: #003080;
-          align-items: center;
 
-          .column__title {
-            display: flex;
-            width: 100%;
-            height: auto;
-            //height: 1.5rem;
-            justify-content: center;
-            text-align: center;
-          }
+          align-items: center;
+          z-index: 999;
 
           ul {
             list-style-type: none;
             padding: 0;
             display: flex;
             flex-direction: column;
-            //width: 100%;
             height: 100%;
             padding: 0.5rem;
             text-align: center;
-            //border: 4px solid rgb(217, 0, 255);
-            //justify-content: center;
             align-content: center;
             align-items: center;
-
-            .__info {
+            z-index: 999;
+            li {
               display: flex;
-              width: 100%;
-              height: auto;
-              align-items: center;
-              cursor: pointer;
-              position: relative;
               justify-content: center;
-              align-items: flex-start;
-              //color: aqua;
-              //border: 4px solid rgb(238, 255, 0);
+              align-items: center;
+              width: 100%;
+              height: 100%;
+              position: relative;
+              margin-bottom: 0.5rem;
+              z-index: 999;
 
-              &#__info_mail {
-                display: flex;
-                align-items: center;
-                width: 100%;
-                height: auto;
-                justify-content: flex-start;
-                //border: 4px solid rgb(0, 247, 255);
-                justify-content: flex-start;
-                width: 31%;
-              }
+              a {
+                text-decoration: none;
+                font-size: 0.7rem;
+                font-weight: 600;
+                text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease-in-out;
 
-              .__txt {
-                display: flex;
-                align-items: center;
-                width: 100%;
-                height: 100%;
-                justify-content: center;
-                line-height: 1.7;
-
-                &#number_phone {
-                  margin-top: 1rem;
-                  margin-bottom: 2rem;
-                }
-
-                &#__text_mail {
-                  width: 100%;
-                  height: auto;
-                  display: flex;
-                }
-
-                p {
-                  font-size: 1rem;
-                  text-align: center;
-
-                  &#adress {
-                    cursor: default;
-                    font-size: 1rem;
-                    line-height: 1.4;
-                  }
-                }
-
-                .__img {
-                  display: flex;
-                  justify-content: center;
-                  width: 2rem;
-                  height: 100%;
-                  align-items: center;
-
-                  .__icon {
-                    object-fit: contain;
-                  }
-                }
-
-                .__info_adress_bloc {
-                  display: flex;
-                  width: 100%;
-                  height: 4rem;
-                  border: none;
-                }
-                &#brand {
+                &:hover {
                   color: #000;
-                  &:hover {
-                    color: gray;
-                  }
+                  transform: scale(1.05);
                 }
               }
             }
@@ -284,7 +214,6 @@
         font-size: 10px;
         width: 100%;
         align-items: center;
-        justify-content: center;
         bottom: 0;
         padding: 1rem;
         height: 3rem;
@@ -293,10 +222,10 @@
         .__copyright__img {
           display: flex;
           justify-content: center;
-          width: auto;
+          width: 100%;
           height: auto;
           align-items: center;
-          margin-right: 1rem;
+          padding-top: 0.5rem;
           cursor: pointer;
         }
       }
@@ -304,7 +233,6 @@
   }
 }
 
-/////////////////// RESPONSIVE /////////////////
 @media screen and (max-width: 1440px) {
   .footer__container {
     .footer__bloc {
@@ -312,7 +240,6 @@
       height: 80%;
       .__bloc_container {
         height: 60%;
-        //border: 5px solid blue;
         .footer_infos {
           display: flex;
           width: 100%;
@@ -323,14 +250,6 @@
             width: 80%;
             .column {
               width: 100%;
-              ul {
-                .__info {
-                  &#__info_insta,
-                  &#__info_mail {
-                    width: 45%;
-                  }
-                }
-              }
             }
           }
         }
@@ -338,6 +257,7 @@
     }
   }
 }
+
 @media screen and (max-width: 1024px) {
   .footer__header {
     width: 100%;
@@ -363,15 +283,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            #phone {
-              height: 40px;
-              width: 40px;
-            }
-            .__icon {
-              width: 100%;
-              height: auto;
-              object-fit: cover;
-            }
           }
         }
       }
@@ -420,77 +331,6 @@
               text-align: center;
               align-content: center;
               align-items: center;
-              .__info {
-                display: flex;
-                width: 100%;
-                height: auto;
-                align-items: center;
-                cursor: pointer;
-                position: relative;
-                justify-content: center;
-                align-items: flex-start;
-                font-size: 0.8rem;
-                &#__info_insta,
-                &#__info_mail {
-                  display: flex;
-                  align-items: center;
-                  width: 100%;
-                  height: auto;
-                  justify-content: flex-start;
-                  //border: 4px solid rgb(0, 247, 255);
-                  justify-content: flex-start;
-                  width: 36%;
-                }
-
-                .__txt {
-                  display: flex;
-                  align-items: center;
-                  width: 100%;
-                  height: 100%;
-                  justify-content: center;
-                  line-height: 1.7;
-
-                  &#__text_insta,
-                  &#__text_mail {
-                    width: 100%;
-                    height: auto;
-                    display: flex;
-                  }
-
-                  p {
-                    font-size: 0.7rem;
-                    text-align: center;
-
-                    &#adress {
-                      cursor: default;
-                      font-size: 0.8rem;
-                      line-height: 1.4;
-                    }
-                  }
-                  .__img {
-                    display: flex;
-                    justify-content: center;
-                    width: 2rem;
-                    height: 100%;
-                    align-items: center;
-                    .__icon {
-                      object-fit: contain;
-                    }
-                  }
-                  .__info_adress_bloc {
-                    display: flex;
-                    width: 100%;
-                    height: 4rem;
-                    border: none;
-                  }
-                  &#brand {
-                    color: #000;
-                    &:hover {
-                      color: gray;
-                    }
-                  }
-                }
-              }
             }
           }
         }
@@ -504,7 +344,6 @@
           padding: 1rem;
           height: 3rem;
           position: relative;
-
           .__copyright__img {
             display: flex;
             justify-content: center;
@@ -543,14 +382,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            #phone {
-              width: 40px;
-            }
-            .__icon {
-              width: 100%;
-              height: auto;
-              object-fit: cover;
-            }
           }
         }
       }
@@ -576,12 +407,6 @@
             width: 100%;
             padding: 0;
             margin-top: 2rem;
-            .footer_list__border {
-              padding: 1rem;
-              p {
-                font-size: 0.7rem;
-              }
-            }
           }
         }
       }
@@ -593,25 +418,13 @@
           .column {
             margin-bottom: 2rem;
             width: auto;
-            .column__title {
-              h3 {
-                font-size: 1rem;
-              }
-            }
-            ul {
-              .__info {
-                &#__info_insta,
-                &#__info_mail {
-                  width: 69%;
-                }
-              }
-            }
           }
         }
       }
     }
   }
 }
+
 @media screen and (max-width: 500px) {
   .footer__container {
     margin-top: 4vh;
@@ -635,20 +448,6 @@
           flex-direction: column;
           .column {
             margin-bottom: 1rem;
-            .column__title {
-              h3 {
-                font-size: 0.8rem;
-              }
-            }
-            ul {
-              .__info {
-                font-size: 0.7rem;
-                &#__info_insta,
-                &#__info_mail {
-                  width: 32%;
-                }
-              }
-            }
           }
         }
       }

@@ -34,6 +34,8 @@ html {
   overflow-x: hidden;
   font-size: 16px;
   font-family: var(--font-family);
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--scroll-padding, 120px);
 }
 
 body {
@@ -66,7 +68,7 @@ p {
 }
 
 a {
-  color: var(--primary-color);
+  color: #3f51b5;
   text-decoration: none;
   list-style: none;
 }
@@ -156,6 +158,18 @@ button {
   color: #374151;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+}
+
+.time p {
+  padding: 0.5rem 1rem;
+  /* border: 4px solid red; */
+  color: blue;
+}
+
+.time h3 {
+  padding: 0.5rem 1rem;
+  /* border: 4px solid red; */
+  color: blue;
 }
 
 .btn_time.active {
@@ -266,7 +280,7 @@ button {
 .confirmation_message {
   margin-top: 10px;
   font-size: 14px;
-  color: #ff9800; /* Couleur d'alerte ou de statut */
+  color: #ff9800;
   font-weight: bold;
 }
 
@@ -334,17 +348,6 @@ select {
   transition: border-color 0.3s ease;
 }
 
-/* textarea {
-  width: 100%;
-  min-width: 100%;
-  padding: var(--spacing-small);
-  font-size: 1rem;
-  color: var(--text-color);
-  border: 1px solid var(--gray);
-  border-radius: var(--border-radius);
-  outline: none;
-  transition: border-color 0.3s ease;
-} */
 input:focus,
 textarea:focus,
 select:focus {
@@ -371,10 +374,10 @@ label {
   padding: var(--spacing-large);
 }
 
-.calendar-container {
+/* .calendar-container {
   text-align: center;
   margin-top: var(--spacing-large);
-}
+} */
 
 .error {
   color: var(--danger-color);
@@ -391,7 +394,7 @@ label {
 }
 
 /* Calendrier */
-.REACT-CALENDAR {
+/* .REACT-CALENDAR {
   background-color: var(--white);
   border-radius: var(--border-radius);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -428,7 +431,7 @@ label {
   display: flex;
   flex-wrap: wrap;
   margin-top: 0.2rem;
-}
+} */
 
 /* ///////////////sign in sign up //////////////////// */
 .signup_page,
@@ -454,17 +457,7 @@ section {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 5vh;
-}
-
-.section {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin-top: 20vh;
+  margin-top: 10vh;
 }
 
 /* /////////// */
@@ -496,7 +489,7 @@ section {
 }
 
 /* Modal */
-.modalOverlay {
+/* .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -528,7 +521,7 @@ section {
 
 .modalContent {
   margin-top: 1rem;
-}
+} */
 
 /* ////////////////service/////////// */
 /* .text_service__title {

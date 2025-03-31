@@ -1,8 +1,6 @@
 .modalOverlay {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
   bottom: 0;
   background: rgba(240, 240, 240, 0.7); // Ajuste l'opacité selon l'effet voulu
   backdrop-filter: blur(3px); // Applique un flou au fond
@@ -10,27 +8,72 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  width: 100%;
+  height: 100%;
 }
 
-// .modal {
-//   background: rgba(255, 255, 255, 0.29);
-//   padding: 20px;
-//   max-width: 725px;
-//   width: 100%;
-//   position: relative;
-//   border-radius: 30px;
-//   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
-// }
 .modal {
+  position: fixed;
+  // inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(223, 224, 237, 0.11);
+  z-index: 1000;
+}
+
+.modalContent {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(12px);
   border-radius: 12px;
-  padding: 20px;
+  padding: 3rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease-in-out;
-  width: 50%;
+  width: 90%;
   max-width: 800px;
-  height: 80%;
+  height: auto; // Correction pour éviter d'étirer le modal
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative; // Garde le positionnement propre pour le bouton de fermeture
+}
+
+.modalBody {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.section2__container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.section2__bloc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  h1 {
+    font-size: 3.5rem;
+    text-align: center;
+  }
+}
+
+.section2__image_logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.__image_logo__bloc {
+  max-width: 970px;
+  height: auto;
 }
 
 .closeButton {
@@ -39,41 +82,26 @@
   right: 10px;
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 24px;
   cursor: pointer;
   color: #003080;
 }
 
-.modalTitle {
-  margin-top: 0;
-  font-size: 1.8rem;
-  color: #003080;
-}
-
-.modalContent {
-  margin-top: 33px;
-  font-size: 1.2rem;
-  overflow: hidden;
-
-  p {
-    color: #003080;
+// RESPONSIVE //
+@media screen and (max-width: 1024px) {
+  .section2__bloc h1 {
+    font-size: 2.5rem;
   }
 }
 
-.modalImage {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  margin-bottom: 15px;
+@media screen and (max-width: 768px) {
+  .section2__bloc h1 {
+    font-size: 2rem;
+  }
 }
 
-.modalContent p {
-  margin-bottom: 10px;
-}
-
-.modalContent strong {
-  font-weight: bold;
+@media screen and (max-width: 500px) {
+  .section2__bloc h1 {
+    font-size: 1.5rem;
+  }
 }
