@@ -113,7 +113,7 @@ const Map: React.FC = () => {
 
         marker.content = content;
 
-        marker.addListener("click", () => {
+        marker.addListener("gmp-click", () => {
           toggleHighlight(marker);
           if (infoWindowInstance) {
             infoWindowInstance.setContent(`
@@ -122,6 +122,7 @@ const Map: React.FC = () => {
                 <p>${property.description}</p>
               </div>
             `);
+            infoWindowInstance.open(map, marker);
           }
         });
       });
@@ -129,7 +130,7 @@ const Map: React.FC = () => {
     };
 
     initMap();
-  }, []);
+  }, [map]);
 
   // Fonction pour centrer la carte sur la position de l'utilisateur
   const centerMyLocation = () => {
@@ -159,7 +160,7 @@ const Map: React.FC = () => {
 
             setUserMarker(userLocationMarker);
 
-            userLocationMarker.addListener("click", () => {
+            userLocationMarker.addListener("gmp-click", () => {
               if (infoWindow) {
                 infoWindow.setContent(`
                   <div class="${styles["custom_info_window"]}">

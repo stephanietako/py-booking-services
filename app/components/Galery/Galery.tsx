@@ -62,19 +62,25 @@ const Carousel = () => {
               className={styles.imageWrapper}
               initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
               animate={{
-                opacity: isActive ? 1 : isPrevious || isNext ? 0.5 : 0.2,
+                opacity: isActive ? 1 : isPrevious || isNext ? 0.6 : 0.2,
                 scale: isActive ? 1 : isPrevious || isNext ? 0.85 : 0.7,
                 filter: isActive ? "blur(0px)" : "blur(10px)",
-                zIndex: isActive ? 3 : isPrevious || isNext ? 2 : 1,
                 x: isActive ? 0 : isPrevious ? -100 : isNext ? 100 : 0,
+                zIndex: isActive ? 3 : isPrevious || isNext ? 2 : 1,
               }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
+              transition={{
+                duration: 0.6,
+                ease: "easeInOut",
+                // Ajout d'un `staggerChildren` pour fluidifier l'entrée des images
+              }}
             >
               <Image
                 src={src}
                 alt={`Gallery image ${index + 1}`}
                 className={styles.image}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority
               />
             </motion.div>
           );
