@@ -52,6 +52,7 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
                   className={styles.logo}
                   width={100}
                   height={100}
+                  priority
                 />
               </div>
               <h2 className={styles.title}>Location et tarifications</h2>

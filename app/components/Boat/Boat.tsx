@@ -20,6 +20,7 @@ const Boat = () => {
             className={styles.__img}
             width={400}
             height={300}
+            priority
           />
         </div>
       </div>
@@ -125,6 +126,7 @@ const Boat = () => {
             className={styles.image}
             width={400}
             height={250}
+            priority
           />
         </div>
       </div>

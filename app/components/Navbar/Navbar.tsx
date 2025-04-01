@@ -110,13 +110,14 @@ const Navbar: React.FC = () => {
       className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}
     >
       {/* Logo */}
-      <div className={styles.logo}>
+      <div className={styles.logo_image}>
         <Link href="/">
           <Image
             src="/assets/logo/logo-new.png"
             alt="Logo"
             width={250}
             height={150}
+            className={styles.logo}
             priority
           />
         </Link>

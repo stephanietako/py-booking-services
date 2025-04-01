@@ -30,7 +30,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "lib/db.ts",
-    "prisma/seed.ts"
+    "prisma/seed.ts",
+    "app/api/webhook/clerk"
   ],
   "exclude": ["node_modules"]
 }

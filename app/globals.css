@@ -109,7 +109,7 @@ button {
     transform 0.3s ease;
   margin-top: 1rem;
   margin-right: 1rem;
-  max-width: 10rem;
+  max-width: 20rem;
   height: auto;
 
   &:hover {

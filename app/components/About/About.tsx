@@ -28,6 +28,7 @@ const About: React.FC = () => {
             className={styles.logo}
             width={200}
             height={100}
+            priority
           />
         </div>
         <h2 className={styles.title}>Qui Sommes-nous</h2>
@@ -72,6 +73,7 @@ const About: React.FC = () => {
               className={styles.image}
               width={400}
               height={400}
+              priority
             />
             <Image
               src={image2 || placeholder}
@@ -79,6 +81,7 @@ const About: React.FC = () => {
               className={styles.image}
               width={400}
               height={400}
+              priority
             />
           </div>
         </div>

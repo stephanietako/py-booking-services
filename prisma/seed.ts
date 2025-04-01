@@ -18,13 +18,13 @@ async function main() {
 
   // Insertion des jours de la semaine
   const daysOfWeek = [
-    { dayOfWeek: 0, name: "sunday", openTime: "08:00", closeTime: "20:00" },
-    { dayOfWeek: 1, name: "monday", openTime: "08:00", closeTime: "20:00" },
-    { dayOfWeek: 2, name: "tuesday", openTime: "08:00", closeTime: "20:00" },
-    { dayOfWeek: 3, name: "wednesday", openTime: "08:00", closeTime: "20:00" },
-    { dayOfWeek: 4, name: "thursday", openTime: "08:00", closeTime: "20:00" },
-    { dayOfWeek: 5, name: "friday", openTime: "08:00", closeTime: "20:00" },
-    { dayOfWeek: 6, name: "saturday", openTime: "08:00", closeTime: "20:00" },
+    { dayOfWeek: 0, name: "sunday", openTime: "09:00", closeTime: "18:00" },
+    { dayOfWeek: 1, name: "monday", openTime: "09:00", closeTime: "18:00" },
+    { dayOfWeek: 2, name: "tuesday", openTime: "09:00", closeTime: "18:00" },
+    { dayOfWeek: 3, name: "wednesday", openTime: "09:00", closeTime: "18:00" },
+    { dayOfWeek: 4, name: "thursday", openTime: "09:00", closeTime: "18:00" },
+    { dayOfWeek: 5, name: "friday", openTime: "09:00", closeTime: "18:00" },
+    { dayOfWeek: 6, name: "saturday", openTime: "09:00", closeTime: "18:00" },
   ];
 
   for (const day of daysOfWeek) {
@@ -72,12 +72,19 @@ async function main() {
 
   console.log("✅ Services fixes insérés.");
 
+  // // Récupérer les IDs des services fixes
+  // const simplicite = await prisma.service.findFirst({
+  //   where: { name: "Simplicité" },
+  // });
+  // const premium = await prisma.service.findFirst({
+  //   where: { name: "Premium" },
+  // });
   // Récupérer les IDs des services fixes
-  const simplicite = await prisma.service.findFirst({
-    where: { name: "Simplicité" },
+  const simplicite = await prisma.service.findUnique({
+    where: { id: "simpliciteId" },
   });
-  const premium = await prisma.service.findFirst({
-    where: { name: "Premium" },
+  const premium = await prisma.service.findUnique({
+    where: { id: "premiumId" },
   });
 
   if (!simplicite || !premium) {

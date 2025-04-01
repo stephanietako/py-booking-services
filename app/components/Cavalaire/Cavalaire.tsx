@@ -22,6 +22,7 @@ const Cavalaire: React.FC<CavalaireProps> = ({ images }) => {
             className={styles.logo}
             width={100}
             height={100}
+            priority
           />
         </div>
         <h2 className={styles.title}>Les environs</h2>

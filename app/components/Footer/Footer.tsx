@@ -119,12 +119,16 @@ const Footer: React.FC = () => {
                     <a href="tel:+33123456789">Nous contacter</a>
                   </li>
                   <li>
-                    <Link href="/mentions">Mentions Légales</Link>
+                    <Link href="/">Mentions Légales</Link>
                   </li>
                   <li>
-                    <Link href="/rgpd">
-                      RGPD - Politique de confidentialité
-                    </Link>
+                    <Link href="/">CGU</Link>
+                  </li>
+                  <li>
+                    <Link href="/">Politique de confidentialité</Link>
+                  </li>
+                  <li>
+                    <Link href="/">Politique de cookies</Link>
                   </li>
                 </ul>
               </div>
@@ -149,13 +153,13 @@ const Footer: React.FC = () => {
             <div className={styles.__copyright}>
               <div onClick={handleIconClick}>
                 <span className={styles.__copyright__img}>
-                  {" "}
                   <Link href="/">
                     <Image
                       src="/assets/logo/logo-new.png"
                       alt="Logo"
                       width={150}
                       height={80}
+                      className={styles.logo}
                       priority
                     />
                   </Link>

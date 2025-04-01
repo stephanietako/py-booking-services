@@ -29,6 +29,7 @@ model User {
   bookings         Booking[] // Un utilisateur peut avoir plusieurs réservations
   role             Role      @relation(fields: [roleId], references: [id])
   stripeCustomerId String?   @unique
+  termsAcceptedAt  DateTime?
 }
 
 model Role {

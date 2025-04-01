@@ -14,12 +14,12 @@
     .logo_container {
       max-width: 8rem;
       padding: 10px 0;
-    }
 
-    .logo {
-      max-width: 200px;
-      height: auto;
-      object-fit: cover;
+      .logo {
+        width: auto;
+        height: auto;
+        object-fit: cover;
+      }
     }
 
     .title {

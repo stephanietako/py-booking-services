@@ -22,14 +22,17 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
   /* Légère couche blanche avec opacité */
   background: rgba(255, 255, 255, 0.3); /* Couleur blanche avec opacité */
 
-  .logo {
+  .logo_image {
     display: flex;
     align-items: center;
     height: 8rem;
 
-    img {
-      width: 250px;
+    logo {
+      width: 100%;
       height: auto;
+      max-width: 200px;
+      margin-right: 1rem;
+      object-fit: cover;
     }
   }
 

@@ -10,6 +10,7 @@ export interface User {
   role?: { name: string };
   services?: Service[];
   stripeCustomerId?: string | null;
+  termsAcceptedAt: DateTime;
 }
 
 export interface Role {
