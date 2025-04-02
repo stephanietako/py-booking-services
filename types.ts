@@ -10,7 +10,7 @@ export interface User {
   role?: { name: string };
   services?: Service[];
   stripeCustomerId?: string | null;
-  termsAcceptedAt: DateTime;
+  termsAcceptedAt: Date | null;
 }
 
 export interface Role {
@@ -107,6 +107,7 @@ export interface Booking {
   stripePaymentIntentId?: string | null;
   price?: string | null;
   token?: string;
+  termsAcceptedAt?: Date | null;
 }
 
 export interface PricingRule {

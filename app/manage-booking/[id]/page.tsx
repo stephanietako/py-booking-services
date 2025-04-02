@@ -1,3 +1,5 @@
+//app/manage-booking/[id]/page.tsx
+
 "use client";
 
 import React, { FC, useEffect } from "react";

@@ -131,34 +131,6 @@ export const getAllBookings = async (userId: string): Promise<Booking[]> => {
 };
 
 // Recupère la reservation individuelle
-// export async function getBookingById(bookingId: string, userId: string) {
-//   try {
-//     const booking = await prisma.booking.findUniqueOrThrow({
-//       where: { id: bookingId },
-//       include: { service: true, user: true, options: true },
-//     });
-
-//     if (booking.user.clerkUserId !== userId) {
-//       throw new Error("⛔ Accès refusé.");
-//     }
-
-//     const token = jwt.sign(
-//       { bookingId: booking.id, userId: booking.user.clerkUserId },
-//       process.env.JWT_SECRET as string,
-//       { expiresIn: "1h" }
-//     );
-
-//     console.log("✅ Token JWT créé.");
-//     return { booking, token };
-//   } catch (error) {
-//     console.error(
-//       "❌ Erreur lors de la récupération de la réservation :",
-//       error
-//     );
-//     throw new Error("Impossible de récupérer la réservation.");
-//   }
-// }
-// Recupère la reservation individuelle
 export async function getBookingById(bookingId: string, userId: string) {
   try {
     const booking = await prisma.booking.findUniqueOrThrow({
@@ -447,6 +419,7 @@ export const updateBookingTotal = async (
     return 0;
   }
 };
+
 // Récupérer les créneaux réservés pour une date donnée
 export async function getBookedTimes(date: string) {
   const startOfDay = new Date(date);
@@ -473,7 +446,7 @@ export async function getBookedTimes(date: string) {
   }));
 }
 
-// actions/bookings.ts (ou un fichier similaire)
+// Récupérer les réservations d'un utilisateur
 export async function generateBookingToken(bookingId: string, userId: string) {
   try {
     const secret = process.env.JWT_SECRET;
@@ -504,17 +477,47 @@ export async function generateBookingToken(bookingId: string, userId: string) {
 //     return null;
 //   }
 // }
-export async function getBookingIdFromToken(token: string): Promise<string> {
+// export async function getBookingIdFromToken(token: string): Promise<string> {
+//   try {
+//     const secret = process.env.JWT_SECRET;
+//     if (!secret) {
+//       throw new Error("Configuration serveur invalide");
+//     }
+
+//     const decoded = jwt.verify(token, secret) as { bookingId: string };
+//     return decoded.bookingId;
+//   } catch (error) {
+//     console.error("Erreur de vérification du token:", error);
+//     throw new Error("Token invalide ou expiré");
+//   }
+// }
+
+export async function getBookingIdFromToken(
+  token: string
+): Promise<string | null> {
   try {
+    console.log("Token reçu dans getBookingIdFromToken :", token);
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      throw new Error("Configuration serveur invalide");
+      console.error("JWT_SECRET est manquant dans l'environnement.");
+      return null;
     }
 
-    const decoded = jwt.verify(token, secret) as { bookingId: string };
-    return decoded.bookingId;
+    const decoded = jwt.verify(token, secret);
+    console.log("Token décodé dans getBookingIdFromToken :", decoded);
+
+    if (
+      typeof decoded === "object" &&
+      decoded !== null &&
+      "bookingId" in decoded
+    ) {
+      return decoded.bookingId;
+    } else {
+      console.error("bookingId manquant ou token malformé");
+      return null;
+    }
   } catch (error) {
-    console.error("Erreur de vérification du token:", error);
-    throw new Error("Token invalide ou expiré");
+    console.error("Erreur lors de la vérification du token :", error);
+    return null;
   }
 }

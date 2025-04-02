@@ -73,18 +73,11 @@ async function main() {
   console.log("✅ Services fixes insérés.");
 
   // // Récupérer les IDs des services fixes
-  // const simplicite = await prisma.service.findFirst({
-  //   where: { name: "Simplicité" },
-  // });
-  // const premium = await prisma.service.findFirst({
-  //   where: { name: "Premium" },
-  // });
-  // Récupérer les IDs des services fixes
   const simplicite = await prisma.service.findUnique({
-    where: { id: "simpliciteId" },
+    where: { name: "Simplicité" },
   });
   const premium = await prisma.service.findUnique({
-    where: { id: "premiumId" },
+    where: { name: "Premium" },
   });
 
   if (!simplicite || !premium) {

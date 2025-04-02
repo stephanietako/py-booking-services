@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "ESNext", // Utilisation de ESNext pour les dernières fonctionnalités JavaScript
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true, // Défini sur true pour ignorer les erreurs dans les fichiers de bibliothèque
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "ESNext", // Utilisation de ESNext pour les modules modernes
+    "moduleResolution": "Node", // Résolution standard des modules
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "typeRoots": ["./node_modules/@types", "./types"], // Garde cette ligne, elle indique à TypeScript où chercher les types
+    "typeRoots": ["./node_modules/@types", "./types"], // Indique où chercher les types
     "types": ["node", "jsonwebtoken"], // Ajoute les types pour "node" et "jsonwebtoken"
     "paths": {
       "@/*": ["./*"]
@@ -30,8 +30,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "lib/db.ts",
-    "prisma/seed.ts",
-    "app/api/webhook/clerk"
+    "prisma/seed.ts"
   ],
   "exclude": ["node_modules"]
 }
