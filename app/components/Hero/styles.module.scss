@@ -23,88 +23,95 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
     width: auto;
     height: 100%;
   }
-}
 
-// 🌟 Contenu principal (effet verre dépoli)
-.heroContent {
-  position: absolute;
-  text-align: center;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.3); // Plus transparent
-  backdrop-filter: blur(5px); // Effet de flou pour le "Glassmorphism"
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  max-width: 80%;
-  margin-top: 3rem;
-}
+  // 🌟 Contenu principal (effet verre dépoli)
+  .heroContent {
+    position: absolute;
+    text-align: center;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.3); // Plus transparent
+    backdrop-filter: blur(5px); // Effet de flou pour le "Glassmorphism"
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 80%;
+    margin-top: 3rem;
+  }
 
-// 🌟 Texte principal
-.heroText {
-  h1 {
-    font-size: 3rem;
+  // 🌟 Texte principal
+  .heroText {
+    .heroText__tarifs_btn {
+      padding: 2rem;
+      display: flex;
+      height: auto;
+      width: 100%;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      color: $bleu-fonce;
+      text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin: 1rem 0;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: $bleu-fonce;
+    }
+  }
+
+  .heroButtons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .buttonHero,
+  .calendarBtn {
+    padding: 14px 28px;
+    font-size: 0.7rem;
     font-weight: bold;
-    color: $bleu-fonce;
-    text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
-  }
+    border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
+    border-radius: 50px; // Plus arrondi pour un look premium
+    cursor: pointer;
+    text-transform: uppercase;
+    transition:
+      all 0.3s ease-in-out,
+      backdrop-filter 0.3s ease-in-out;
+    background: rgba(255, 255, 255, 0.15); // Fond semi-transparent
+    color: #003080;
+    backdrop-filter: blur(10px); // Effet "Glassmorphism"
+    box-shadow:
+      inset 0 2px 5px rgba(255, 255, 255, 0.2),
+      0 4px 10px rgba(0, 0, 0, 0.15); // Effet lumineux
 
-  h2 {
-    font-size: 2rem;
-    margin: 1rem 0;
-  }
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      transform: scale(1.02);
+      box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+    }
 
-  p {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: $bleu-fonce;
-  }
-}
-
-.heroButtons {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.buttonHero,
-.calendarBtn {
-  padding: 14px 28px;
-  font-size: 0.7rem;
-  font-weight: bold;
-  border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
-  border-radius: 50px; // Plus arrondi pour un look premium
-  cursor: pointer;
-  text-transform: uppercase;
-  transition:
-    all 0.3s ease-in-out,
-    backdrop-filter 0.3s ease-in-out;
-  background: rgba(255, 255, 255, 0.15); // Fond semi-transparent
-  color: #003080;
-  backdrop-filter: blur(10px); // Effet "Glassmorphism"
-  box-shadow:
-    inset 0 2px 5px rgba(255, 255, 255, 0.2),
-    0 4px 10px rgba(0, 0, 0, 0.15); // Effet lumineux
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.6);
-    transform: scale(1.02);
-    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-  }
-
-  &:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(251, 251, 255, 0.1);
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 8px rgba(251, 251, 255, 0.1);
+    }
   }
 }
-
-// 🌟 Responsive 📱
+///////////////// Responsive //////////////
 @media (max-width: 768px) {
   .heroContent {
     max-width: 90%;

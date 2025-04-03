@@ -157,7 +157,7 @@ const Footer: React.FC = () => {
                     <Image
                       src="/assets/logo/logo-new.png"
                       alt="Logo"
-                      width={150}
+                      width={90}
                       height={80}
                       className={styles.logo}
                       priority

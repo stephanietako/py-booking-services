@@ -29,17 +29,19 @@ export default async function Dashboard() {
 
   return (
     <Wrapper>
-      <section className="dashboard_user_container__section">
-        <div className="dashboard_user_container__bloc">
-          <SignOutButton />
-          <CardProfil userId={userId} />
+      <section>
+        <div className="dashboard_user_container__section">
+          <div className="dashboard_user_container__bloc">
+            <SignOutButton />
+            <CardProfil userId={userId} />
+          </div>
+          <div className="dashboard_user_container__content">
+            <FormUpdate userId={userId} />
+            {userRole?.role?.name === "admin" && <ListUser />}
+          </div>
+          <br />
+          <div>{userRole?.role?.name === "admin" && <UsersBookings />} </div>
         </div>
-        <div className="dashboard_user_container__content">
-          <FormUpdate userId={userId} />
-          {userRole?.role?.name === "admin" && <ListUser />}
-        </div>
-        <br />
-        <div>{userRole?.role?.name === "admin" && <UsersBookings />} </div>
       </section>
     </Wrapper>
   );

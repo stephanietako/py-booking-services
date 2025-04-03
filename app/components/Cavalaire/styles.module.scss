@@ -1,9 +1,12 @@
-.cavalaire_section {
+.cavalaire {
   padding: 40px 20px;
-  background-color: #f9f9f9;
-  color: #333;
+  background: linear-gradient(#e3f7ff, #fff);
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px #0000001a;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 
   .logo_title_wrapper {
     display: flex;
@@ -11,6 +14,7 @@
     justify-content: center;
     margin-bottom: 40px;
     padding-right: 4rem;
+
     .logo_container {
       max-width: 8rem;
       padding: 10px 0;

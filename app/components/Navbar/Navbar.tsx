@@ -138,7 +138,7 @@ const Navbar: React.FC = () => {
               </Link>
             )}
 
-            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/dashboard">Tabeau de bord</Link>
             {bookingToken && (
               <Link
                 href={`/manage-booking?token=${bookingToken}`}

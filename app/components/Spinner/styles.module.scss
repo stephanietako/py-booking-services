@@ -1,0 +1,67 @@
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(146, 228, 244, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .logo {
+    margin-bottom: 20px; // Espace entre le logo et le spinner
+  }
+
+  .spinner {
+    animation: rotate 1s linear infinite;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px; // Espace entre le spinner et le texte
+  }
+
+  .text {
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .path {
+    stroke: #4a90e2;
+    stroke-dasharray: 150, 200;
+    stroke-dashoffset: 0;
+    stroke-width: 6;
+    stroke-linecap: round;
+    animation: dash 1.5s ease-in-out infinite;
+  }
+
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -125;
+    }
+  }
+}

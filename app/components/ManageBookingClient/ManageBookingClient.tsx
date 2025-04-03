@@ -17,9 +17,13 @@ import ServiceCompt from "@/app/components/ServicesCompt/ServiceCompt";
 import { Booking } from "@/types";
 import { createStripeCheckoutSession } from "@/actions/actionsStripe";
 
+// Styles
+import styles from "./styles.module.scss"; // Import du fichier SCSS
+import Spinner from "../Spinner/Spinner";
+
 const ManageBookingClient: FC = () => {
   const { user, isSignedIn, isLoaded } = useUser();
-  const searchParams = useSearchParams(); // Utilisation de useSearchParams pour obtenir le token
+  const searchParams = useSearchParams();
   const router = useRouter();
 
   const [booking, setBooking] = useState<Booking | null>(null);
@@ -46,7 +50,7 @@ const ManageBookingClient: FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const token = searchParams.get("token"); // Récupération du token via les searchParams
+        const token = searchParams.get("token");
         const bookingId = token ? await getBookingIdFromToken(token) : null;
 
         if (!bookingId) {
@@ -74,19 +78,19 @@ const ManageBookingClient: FC = () => {
   if (loading)
     return (
       <Wrapper>
-        <p>Chargement...</p>
+        <Spinner />
       </Wrapper>
     );
   if (error)
     return (
       <Wrapper>
-        <p className="error">{error}</p>
+        <p className={styles.error}>{error}</p>
       </Wrapper>
     );
   if (!booking)
     return (
       <Wrapper>
-        <p>Réservation introuvable.</p>
+        <p className={styles.not_found}>Réservation introuvable.</p>
       </Wrapper>
     );
 
@@ -178,84 +182,93 @@ const ManageBookingClient: FC = () => {
 
   return (
     <Wrapper>
-      <div className="section">
-        <div className="manage_booking">
-          <div className="manage_booking__bloc_left">
-            <div className="logo_title_wrapper">
-              <div className="logo_container">
-                <Image
-                  src="/assets/logo/hipo-transparent.svg"
-                  alt="Logo"
-                  width={200}
-                  height={100}
-                />
+      <section>
+        <div className={styles.manage_booking}>
+          <div className={styles.manage_booking_container}>
+            <div className={styles.manage_booking__bloc_left}>
+              <div className={styles.logo_title_wrapper}>
+                <div className={styles.logo_container}>
+                  <Image
+                    src="/assets/logo/hippo.png"
+                    alt="Logo"
+                    width={100}
+                    height={110}
+                  />
+                </div>
+                <h3 className={styles.title}>Ma réservation</h3>
               </div>
-              <h2 className="title">Ma réservation</h2>
+              <span className={styles.manage_booking__text}>
+                <p>Voici votre réservation, vous avez un imprévu ?</p>
+                <p>
+                  Pas de souci ! Vous pouvez demander la confirmation de votre
+                  réservation ici.
+                </p>
+                <p>
+                  Une fois confirmée, elle sera en attente de validation par
+                  l&apos;administrateur.
+                </p>
+              </span>
             </div>
-            <span className="manage_booking__text">
-              <h2>Voici votre réservation, vous avez un imprévu ?</h2>
-              <p>
-                Pas de souci ! Vous pouvez demander la confirmation de votre
-                réservation ici. Une fois confirmée, elle sera en attente de
-                validation par l&apos;administrateur.
-              </p>
-            </span>
-          </div>
-
-          <div className="manage_booking_container">
-            <ServiceCompt
-              name={booking.service.name}
-              description={
-                booking.service.description || "Aucune description disponible"
-              }
-              imageUrl={
-                booking.service.imageUrl || "/assets/logo/logo-full.png"
-              }
-              categories={booking.service.categories}
-              startTime={booking.startTime}
-              endTime={booking.endTime}
-              options={booking.options || []}
-              totalAmount={totalAmount}
-            />
-
-            <button
-              onClick={handleDeleteBooking}
-              className="btn_form"
-              disabled={deleting}
-            >
-              {deleting ? "Annulation en cours..." : "Annuler la réservation"}
-            </button>
-
-            {confirmationMessage && (
-              <div className="confirmation_message">{confirmationMessage}</div>
-            )}
-
-            {booking.status === "PENDING" &&
-              !booking.approvedByAdmin &&
-              !confirmationMessage && (
+            <div className={styles.manage_booking__bloc_right}>
+              <ServiceCompt
+                name={booking.service.name}
+                description={
+                  booking.service.description || "Aucune description disponible"
+                }
+                imageUrl={
+                  booking.service.imageUrl || "/assets/logo/logo-full.png"
+                }
+                categories={booking.service.categories}
+                startTime={booking.startTime}
+                endTime={booking.endTime}
+                options={booking.options || []}
+                totalAmount={totalAmount}
+              />
+              <span className={styles.manage_booking__btn}>
                 <button
-                  onClick={handleRequestConfirmation}
-                  disabled={isRequestingConfirmation}
+                  onClick={handleDeleteBooking}
+                  className={styles.btn_form}
+                  disabled={deleting}
                 >
-                  {isRequestingConfirmation
-                    ? "Demande en cours..."
-                    : "Demander confirmation"}
+                  {deleting
+                    ? "Annulation en cours..."
+                    : "Annuler la réservation"}
                 </button>
-              )}
 
-            {booking.approvedByAdmin && !isPaid ? (
-              <>
-                <p>✅ Réservation approuvée</p>
-                <button onClick={handlePayNow} className="btn_form">
-                  Payer maintenant
-                </button>
-              </>
-            ) : isPaid ? (
-              <p>✅ Paiement effectué. Merci de votre paiement !</p>
-            ) : null}
+                {confirmationMessage && (
+                  <div className={styles.confirmation_message}>
+                    {confirmationMessage}
+                  </div>
+                )}
+
+                {booking.status === "PENDING" &&
+                  !booking.approvedByAdmin &&
+                  !confirmationMessage && (
+                    <button
+                      onClick={handleRequestConfirmation}
+                      disabled={isRequestingConfirmation}
+                    >
+                      {isRequestingConfirmation
+                        ? "Demande en cours..."
+                        : "Demander confirmation"}
+                    </button>
+                  )}
+
+                {booking.approvedByAdmin && !isPaid ? (
+                  <>
+                    <p>✅ Réservation approuvée</p>
+                    <button onClick={handlePayNow} className={styles.btn_form}>
+                      Payer maintenant
+                    </button>
+                  </>
+                ) : isPaid ? (
+                  <p>✅ Paiement effectué. Merci de votre paiement !</p>
+                ) : null}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </Wrapper>
   );
 };

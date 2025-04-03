@@ -71,16 +71,16 @@ const About: React.FC = () => {
               src={image1 || placeholder}
               alt="Pierre-Yves Hemard"
               className={styles.image}
-              width={400}
-              height={400}
+              width={300}
+              height={300}
               priority
             />
             <Image
               src={image2 || placeholder}
               alt="Skippy One"
               className={styles.image}
-              width={400}
-              height={400}
+              width={300}
+              height={300}
               priority
             />
           </div>

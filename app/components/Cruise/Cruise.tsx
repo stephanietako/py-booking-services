@@ -4,6 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import styles from "./styles.module.scss";
 import Modal from "../Modal/Modal";
+import logo from "@/public/assets/logo/hippo.png";
+import placeholder from "@/public/assets/images/placeholder.svg";
 
 export const dynamic = "force-dynamic";
 
@@ -115,8 +117,19 @@ const Cruise = () => {
 
   return (
     <section className={styles.cruise}>
-      <h1 className={styles.title}>Nos Excursions</h1>
-
+      <div className={styles.logo_title_wrapper}>
+        <div className={styles.logo_container}>
+          <Image
+            src={logo || placeholder}
+            alt="Yachting Day Logo"
+            className={styles.logo}
+            width={100}
+            height={100}
+            priority
+          />
+        </div>
+        <h2 className={styles.title}>Nos Excursions</h2>
+      </div>
       <div className={styles.excursions}>
         {excursions.map((excursion, index) => (
           <div

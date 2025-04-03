@@ -22,6 +22,12 @@ const Hero: React.FC = () => {
         <div className={styles.heroText}>
           <h1>Yachting Day</h1>
           <h2>Faites votre réservation facilement</h2>
+          <span className={styles.heroText__tarifs_btn}>
+            <Link href="#tarifs" className={styles.buttonHero}>
+              Location de bateau
+            </Link>
+          </span>
+
           <p>
             Bienvenue sur la plateforme de réservation de
             <strong>Yachting Day</strong> ! Situé sur le port de Cavalaire, au
@@ -47,13 +53,13 @@ const Hero: React.FC = () => {
           <Link href="#about" className={styles.buttonHero}>
             Qui sommes-nous
           </Link>
-          {/* link location */}
-          <Link href="#tarifs" className={styles.buttonHero}>
-            Location de bateau
-          </Link>
           {/* link maintenance */}
           <Link href="#maintenance" className={styles.buttonHero}>
             Entretien de bateaux
+          </Link>
+          {/* link location */}
+          <Link href="#footer" className={styles.buttonHero}>
+            Contact
           </Link>
         </div>
       </div>

@@ -68,7 +68,7 @@
     justify-content: center;
     display: flex;
     bottom: 0;
-    padding: 1rem;
+    padding: 2rem;
     background-color: #fff;
     background: linear-gradient(#e3f7ff, #fff);
 
@@ -80,8 +80,9 @@
       padding: 1rem;
 
       .__bloc_content {
+        padding: 2rem;
         display: flex;
-        width: 100%;
+        width: 80%;
         height: 65%;
         justify-content: space-evenly;
         z-index: 999;
@@ -92,7 +93,6 @@
           0.2
         ); /* Couleur de fond avec transparence */
         border-radius: 10px;
-        padding: 1rem;
         backdrop-filter: blur(10px); /* Flou de l'arrière-plan */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour un effet de profondeur */
         border: 1px solid rgba(255, 255, 255, 0.3); /* Bordure subtile */
@@ -215,9 +215,9 @@
         width: 100%;
         align-items: center;
         bottom: 0;
-        padding: 1rem;
-        height: 3rem;
+        height: auto;
         position: relative;
+        border: 5px solid rgb(255, 0, 0);
 
         .__copyright__img {
           display: flex;
@@ -227,6 +227,7 @@
           align-items: center;
           padding-top: 0.5rem;
           cursor: pointer;
+          border: 5px solid yellow;
 
           .logo {
             width: 100%;

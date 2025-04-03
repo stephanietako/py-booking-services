@@ -1,0 +1,106 @@
+.manage_booking {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 80%;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  }
+
+  .manage_booking_container {
+    display: flex;
+    width: 100%;
+    height: auto;
+    border: 4px solid rgb(0, 183, 255);
+  }
+
+  .manage_booking__bloc_right {
+    display: flex;
+    width: 100%;
+    height: auto;
+    border: 4px solid rgb(255, 0, 204);
+    flex-direction: column;
+
+    .manage_booking__btn {
+      display: flex;
+      width: 100%;
+      height: auto;
+      flex-direction: column;
+      align-items: center;
+
+      .confirmation_message {
+        background-color: #91faf7; /* Couleur de fond jaune pâle */
+        color: gray;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #7bd4ea;
+        text-align: center;
+        font-weight: bold;
+        margin-top: 10px;
+        animation: fadeIn 0.5s ease-in-out;
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-5px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      }
+    }
+  }
+
+  .manage_booking__bloc_left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+    border: 4px solid blue;
+
+    .logo_title_wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-right: 4rem;
+
+      .logo_container {
+        max-width: 5rem;
+        padding: 10px 0;
+
+        .logo {
+          width: auto;
+          height: auto;
+          object-fit: cover;
+        }
+      }
+
+      .title {
+        font-size: 2rem;
+        text-align: left;
+        color: #003080;
+        font-family: "Roboto", sans-serif;
+        font-weight: 700;
+      }
+    }
+
+    .manage_booking__text {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 1.5rem;
+      display: flex;
+      padding: 1rem;
+      justify-content: center;
+      flex-direction: column;
+    }
+  }
+}

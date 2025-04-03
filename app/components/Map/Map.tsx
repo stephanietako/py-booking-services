@@ -9,7 +9,6 @@ import styles from "./styles.module.scss";
 
 export const dynamic = "force-dynamic";
 
-// Types pour les propriétés
 interface Property {
   title: string;
   description: string;
@@ -57,7 +56,7 @@ const Map: React.FC = () => {
       const loader = new Loader({
         apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
         version: "weekly",
-        libraries: ["places", "marker"], // Assurez-vous d'inclure la bibliothèque "marker"
+        libraries: ["places", "marker"],
       });
 
       const { Map } = await loader.importLibrary("maps");
@@ -113,7 +112,7 @@ const Map: React.FC = () => {
 
         marker.content = content;
 
-        marker.addListener("click", () => {
+        marker.addListener("gmp-click", () => {
           toggleHighlight(marker);
           if (infoWindowInstance) {
             infoWindowInstance.setContent(`

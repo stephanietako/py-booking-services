@@ -13,7 +13,7 @@ interface CavalaireProps {
 
 const Cavalaire: React.FC<CavalaireProps> = ({ images }) => {
   return (
-    <section className={styles.cavalaire_section}>
+    <div className={styles.cavalaire}>
       <div className={styles.logo_title_wrapper}>
         <div className={styles.logo_container}>
           <Image
@@ -70,7 +70,7 @@ const Cavalaire: React.FC<CavalaireProps> = ({ images }) => {
           <Carousel images={images} />
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
