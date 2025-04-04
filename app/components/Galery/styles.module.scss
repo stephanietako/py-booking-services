@@ -1,9 +1,8 @@
 .carouselContainer {
   display: flex;
   align-items: center;
-  justify-content: center;
   height: 70vh;
-  width: 100vw;
+  width: auto;
   position: relative;
   background: linear-gradient(#e3f7ff, #fff);
   flex-direction: column;
@@ -55,7 +54,7 @@
   .previous,
   .next {
     background: rgba(255, 255, 255, 0.3);
-    color: white;
+    color: #fff;
     border: none;
     padding: 10px 15px;
     cursor: pointer;
@@ -73,9 +72,32 @@
   }
 }
 
+//////////////RESPONSIVE//////////////////
 @media screen and (max-width: 768px) {
-  .imagesContainer {
-    width: 90%;
-    height: 300px;
+  .carouselContainer {
+    height: 50vh;
+    width: 80vw;
+    border: 4px solid #f50ace;
+
+    .imagesContainer {
+      width: 100%;
+      height: 400px;
+      display: flex;
+    }
+
+    .controls {
+      position: absolute;
+      bottom: -80px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .previous,
+    .next {
+      padding: 15px 15px;
+      cursor: pointer;
+      font-size: 20px;
+    }
   }
 }

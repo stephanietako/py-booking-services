@@ -111,6 +111,7 @@
   .gallery {
     text-align: center;
     margin-top: 2rem;
+    border: 4px solid rgb(0, 255, 34);
   }
 
   .gallery h3 {
@@ -138,14 +139,23 @@
       }
     }
   }
+}
+////////////RESPONSIVE ////////////
+@media (max-width: 968px) {
+  .boat {
+    width: 90%;
+    padding: 1rem;
+    margin-bottom: 2rem;
 
-  // Responsive
-  @media (max-width: 968px) {
     .header {
       flex-direction: column;
       text-align: center;
     }
 
+    .title {
+      font-size: 2rem;
+      margin-bottom: 0.7rem;
+    }
     .mainImage {
       width: 80%;
       margin-top: 20px;
@@ -164,12 +174,5 @@
     .image {
       max-width: 100%;
     }
-  }
-
-  .gallery__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
   }
 }

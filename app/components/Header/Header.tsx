@@ -45,14 +45,19 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
             <div className={styles.logo_title_wrapper}>
-              <div className={styles.logo_container}>
+              <div
+                className={styles.logo_container}
+                // style={{ position: "relative", width: "170px", height: "170px" }}
+              >
                 <Image
                   src={logo || placeholder}
                   alt="Yachting Day Logo"
                   className={styles.logo}
-                  width={100}
-                  height={100}
+                  fill
                   priority
+                  style={{
+                    objectFit: "cover",
+                  }}
                 />
               </div>
               <h2 className={styles.title}>Location et tarifications</h2>

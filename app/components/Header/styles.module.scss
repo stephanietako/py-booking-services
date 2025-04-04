@@ -64,25 +64,19 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-right: 4rem;
+  margin-bottom: 40px;
 
   .logo_container {
-    max-width: 8rem;
-    padding: 10px 0;
-
-    .logo {
-      width: auto;
-      height: auto;
-      object-fit: cover;
-    }
+    display: flex;
+    height: 125px;
+    width: 85px;
+    position: relative;
   }
 
   .title {
-    font-size: 2.5rem;
     text-align: left;
     color: #003080;
     font-family: "Roboto", sans-serif;
-    font-weight: 700;
   }
 }
 
@@ -126,26 +120,36 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
 }
 
 // 🌟 Responsive 📱
+
+////////////////RESPONSIVE////////////////////
 @media (max-width: 768px) {
+  .logo_title_wrapper {
+    .logo_container {
+      height: 80px;
+      width: 55px;
+    }
+
+    .title {
+      text-align: left;
+      font-size: 1.3rem;
+    }
+  }
   .heroContent {
     max-width: 90%;
     padding: 1.5rem;
   }
-
-  .heroText h1 {
-    font-size: 2.5rem;
-  }
-
-  .heroText h2 {
+}
+.heroText {
+  h2 {
     font-size: 1.5rem;
   }
 
-  .heroButtons {
-    flex-direction: column;
+  p {
+    font-size: 1rem;
   }
+}
 
-  .buttonHero,
-  .calendarBtn {
-    width: 100%;
-  }
+.heroButtons {
+  flex-direction: column;
+  gap: 0.5rem;
 }

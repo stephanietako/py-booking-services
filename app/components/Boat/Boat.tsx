@@ -17,7 +17,7 @@ const Boat = () => {
           <Image
             src={image1}
             alt="Cap Camarat 12.5 Wa"
-            className={styles.__img}
+            className={styles.__image}
             width={400}
             height={300}
             priority

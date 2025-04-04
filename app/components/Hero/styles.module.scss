@@ -78,8 +78,7 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
     margin-top: 1.5rem;
   }
 
-  .buttonHero,
-  .calendarBtn {
+  .buttonHero {
     padding: 14px 28px;
     font-size: 0.7rem;
     font-weight: bold;
@@ -113,25 +112,53 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
 }
 ///////////////// Responsive //////////////
 @media (max-width: 768px) {
-  .heroContent {
-    max-width: 90%;
-    padding: 1.5rem;
-  }
+  .heroWrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 
-  .heroText h1 {
-    font-size: 2.5rem;
-  }
+    .heroContent {
+      max-width: 90%;
+      margin-top: 3rem;
+    }
 
-  .heroText h2 {
-    font-size: 1.5rem;
-  }
+    // 🌟 Texte principal
+    .heroText {
+      .heroText__tarifs_btn {
+        padding: 0;
+        display: flex;
+        height: auto;
+        width: 100%;
+        justify-content: center;
+      }
 
-  .heroButtons {
-    flex-direction: column;
-  }
+      h1 {
+        font-size: 1.2rem;
+      }
 
-  .buttonHero,
-  .calendarBtn {
-    width: 100%;
+      h2 {
+        font-size: 1rem;
+        margin: 1rem 0;
+      }
+
+      p {
+        font-size: 0.7rem;
+        margin-bottom: 1rem;
+        text-align: left;
+      }
+    }
+
+    .heroButtons {
+      flex-direction: column;
+      margin-top: 0;
+    }
+    .buttonHero {
+      font-size: 0.5rem;
+      padding: 7px 14px;
+    }
   }
 }

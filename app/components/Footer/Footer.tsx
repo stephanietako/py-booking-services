@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
               </div>
               <span className={styles.link__img}>
                 <a href="mailto:yachtingday@gmail.com">
-                  <FaEnvelope size={30} />
+                  <FaEnvelope size={20} />
                 </a>
               </span>
             </li>
@@ -42,7 +42,7 @@ const Footer: React.FC = () => {
               </div>
               <span className={styles.link__img}>
                 <a href="#footer">
-                  <FaMapMarkerAlt size={30} />
+                  <FaMapMarkerAlt size={20} />
                 </a>
               </span>
             </li>
@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
               </div>
               <span className={styles.link__img}>
                 <a href="tel:+33 7 67 21 00 17">
-                  <FaPhone size={30} />
+                  <FaPhone size={20} />
                 </a>
               </span>
             </li>

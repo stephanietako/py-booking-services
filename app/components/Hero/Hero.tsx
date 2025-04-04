@@ -30,9 +30,12 @@ const Hero: React.FC = () => {
 
           <p>
             Bienvenue sur la plateforme de réservation de
-            <strong>Yachting Day</strong> ! Situé sur le port de Cavalaire, au
-            cœur de la baie du golfe de Saint-Tropez, nous vous proposons une
-            expérience de navigation unique.
+            <strong>Yachting Day</strong> !
+          </p>
+          <p>
+            Situé sur le port de Cavalaire, au cœur de la baie du golfe de
+            Saint-Tropez, nous vous proposons une expérience de navigation
+            unique.
           </p>
           <p>
             Louez notre bateau et profitez de services personnalisés à bord : un
@@ -44,7 +47,7 @@ const Hero: React.FC = () => {
             Nous proposons également des prestations d’entretien et de
             maintenance navale incluant le lavage de teck, la restauration des
             inox, le polish du gelcoat et bien plus encore, avec intervention
-            dans les ports de St-Tropez, Port-Grimaud, Marine de Cogolin et
+            dans les ports de Saint-Tropez, Port-Grimaud, Marine de Cogolin et
             Cavalaire.
           </p>
         </div>

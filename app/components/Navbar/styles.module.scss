@@ -9,12 +9,12 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
   height: 7rem;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 2rem 2rem 2rem 0rem;
   position: fixed;
   width: 100%;
   top: 0;
   left: 0;
-  z-index: 1000;
+  z-index: 5;
   transition:
     background 0.3s ease-in-out,
     box-shadow 0.3s ease-in-out;
@@ -24,16 +24,9 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
 
   .logo_image {
     display: flex;
-    align-items: center;
-    height: 8rem;
-
-    logo {
-      width: 100%;
-      height: auto;
-      max-width: 200px;
-      margin-right: 1rem;
-      object-fit: cover;
-    }
+    height: 100px;
+    width: 250px;
+    position: relative;
   }
 
   // 🔹 MENU BURGER (Mobile)
@@ -120,14 +113,16 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     }
 
     .navLinks {
+      background-color: #14e9f7;
       display: none;
       flex-direction: column;
       gap: 0;
       position: absolute;
-      top: 4rem;
+      top: 5rem;
       right: 0;
-      background-color: rgba($blanc, 0.85);
+      // background-color: rgba($blanc, 0.85);
       width: 100%;
+      height: 100vh;
       text-align: center;
       padding: 1rem 0;
       border-top: 2px solid $bleu-clair;

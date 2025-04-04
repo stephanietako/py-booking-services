@@ -8,6 +8,7 @@ import styles from "./styles.module.scss";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { addUserToDatabase, getRole } from "@/actions/actions";
 import { getUserBookings, generateBookingToken } from "@/actions/bookings";
+import logo from "@/public/assets/logo/logo-new.png";
 
 const Navbar: React.FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -113,12 +114,14 @@ const Navbar: React.FC = () => {
       <div className={styles.logo_image}>
         <Link href="/">
           <Image
-            src="/assets/logo/logo-new.png"
-            alt="Logo"
-            width={250}
-            height={150}
+            src={logo}
+            alt="Yachting Day Logo"
             className={styles.logo}
+            fill
             priority
+            style={{
+              objectFit: "cover",
+            }}
           />
         </Link>
       </div>

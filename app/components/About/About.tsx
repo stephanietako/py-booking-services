@@ -21,17 +21,22 @@ const About: React.FC = () => {
   return (
     <div className={styles.about}>
       <div className={styles.logo_title_wrapper}>
-        <div className={styles.logo_container}>
+        <div
+          className={styles.logo_container}
+          // style={{ position: "relative", width: "170px", height: "170px" }}
+        >
           <Image
             src={logo || placeholder}
             alt="Yachting Day Logo"
             className={styles.logo}
-            width={200}
-            height={100}
+            fill
             priority
+            style={{
+              objectFit: "cover",
+            }}
           />
         </div>
-        <h2 className={styles.title}>Qui Sommes-nous</h2>
+        <h2 className={styles.title}>Qui sommes-nous</h2>
       </div>
       <div className={styles.content_wrapper}>
         <div className={styles.content}>

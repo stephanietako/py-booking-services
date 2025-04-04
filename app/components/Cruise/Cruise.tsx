@@ -123,9 +123,11 @@ const Cruise = () => {
             src={logo || placeholder}
             alt="Yachting Day Logo"
             className={styles.logo}
-            width={100}
-            height={100}
+            fill
             priority
+            style={{
+              objectFit: "cover",
+            }}
           />
         </div>
         <h2 className={styles.title}>Nos Excursions</h2>

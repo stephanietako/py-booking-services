@@ -12,33 +12,26 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 40px;
-    padding-right: 4rem;
 
     .logo_container {
-      max-width: 8rem;
-      padding: 10px 0;
-
-      .logo {
-        width: auto;
-        height: auto;
-        object-fit: cover;
-      }
+      display: flex;
+      height: 125px;
+      width: 85px;
+      position: relative;
     }
 
     .title {
-      font-size: 2.5rem;
       text-align: left;
       color: #003080;
       font-family: "Roboto", sans-serif;
-      font-weight: 700;
     }
   }
 
   .excursions {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 30px;
+    justify-content: space-evenly;
+    gap: 25px;
   }
 
   .excursionCard {
@@ -98,5 +91,23 @@
     line-height: 1.5;
     color: #555;
     flex-grow: 1;
+  }
+}
+
+////////////////RESPONSIVE////////////////////
+@media (max-width: 768px) {
+  .cruise {
+    .logo_title_wrapper {
+      margin-bottom: 10px;
+      .logo_container {
+        height: 80px;
+        width: 55px;
+      }
+
+      .title {
+        text-align: left;
+        font-size: 1.5rem;
+      }
+    }
   }
 }

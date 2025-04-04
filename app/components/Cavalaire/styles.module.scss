@@ -13,25 +13,18 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 40px;
-    padding-right: 4rem;
 
     .logo_container {
-      max-width: 8rem;
-      padding: 10px 0;
-
-      .logo {
-        width: auto;
-        height: auto;
-        object-fit: cover;
-      }
+      display: flex;
+      height: 125px;
+      width: 55px;
+      position: relative;
     }
 
     .title {
-      font-size: 2.5rem;
       text-align: left;
       color: #003080;
       font-family: "Roboto", sans-serif;
-      font-weight: 700;
     }
   }
 
@@ -90,47 +83,25 @@
     align-items: center;
     margin-top: 40px;
   }
-  // .carousel {
-  //   position: relative;
-  //   max-width: 100%;
-  //   margin-top: 20px;
-  //   border-radius: 10px;
-  //   overflow: hidden;
-  // }
+}
+////////////////RESPONSIVE////////////////////
+@media (max-width: 768px) {
+  .cavalaire {
+    padding: 30px 10px;
+    .logo_title_wrapper {
+      margin-bottom: 50px;
+      .logo_container {
+        height: 80px;
+        width: 55px;
+      }
 
-  // .slide {
-  //   opacity: 0;
-  //   transition: opacity 0.5s ease-in-out;
-  // }
-
-  // .active {
-  //   opacity: 1;
-  // }
-
-  // .indicators {
-  //   position: absolute;
-  //   bottom: 10px;
-  //   left: 50%;
-  //   transform: translateX(-50%);
-  //   display: flex;
-  //   gap: 10px;
-  // }
-
-  // .indicator {
-  //   width: 10px;
-  //   height: 10px;
-  //   background-color: #003080; /* Bleu Foncé */
-  //   border-radius: 50%;
-  //   border: none;
-  //   cursor: pointer;
-  //   transition: background-color 0.3s ease;
-  // }
-
-  // .indicator.active {
-  //   background-color: #25fde9; /* Bleu turquoise */
-  // }
-
-  // .indicator:hover {
-  //   background-color: #14e9f7; /* Bleu clair */
-  // }
+      .title {
+        text-align: left;
+        font-size: 1.5rem;
+      }
+    }
+    .content_wrapper {
+      width: 90%;
+    }
+  }
 }
