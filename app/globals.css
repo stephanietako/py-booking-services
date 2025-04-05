@@ -462,7 +462,6 @@ section {
   align-items: center;
   flex-direction: column;
   margin-top: 10vh;
-  border: 3px solid red;
   overflow: hidden;
 }
 
@@ -1382,11 +1381,6 @@ input[type="time"]:focus {
   }
 }
 /* ///////// RESPONSIVE //////////////////// */
-@media screen and (max-width: 767px) {
-  #video {
-    display: none;
-  }
-}
 
 @media (max-width: 768px) {
   .container {

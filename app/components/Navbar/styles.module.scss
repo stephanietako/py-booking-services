@@ -107,30 +107,32 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
   }
 
   // 🔹 Responsive pour mobile 📱
-  @media (max-width: 768px) {
+  @media (max-width: 1244px) {
     .menuToggle {
       display: block;
     }
 
     .navLinks {
-      background-color: #14e9f7;
+      background-color: rgba(146, 228, 244, 0.5);
+      backdrop-filter: blur(5px);
       display: none;
       flex-direction: column;
       gap: 0;
       position: absolute;
-      top: 5rem;
+      top: 7rem;
       right: 0;
       // background-color: rgba($blanc, 0.85);
       width: 100%;
       height: 100vh;
       text-align: center;
       padding: 1rem 0;
-      border-top: 2px solid $bleu-clair;
+      //border-top: 2px solid $bleu-clair;
       transition: all 0.3s ease-in-out;
 
       &.showMenu {
         display: flex;
         animation: slideIn 0.3s ease-in-out;
+        justify-content: center;
       }
     }
 

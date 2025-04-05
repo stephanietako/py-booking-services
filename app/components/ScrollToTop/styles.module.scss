@@ -6,6 +6,8 @@
   bottom: 15rem;
   right: 7px;
   background: whitesmoke;
+  display: flex;
+  justify-content: center;
   border: none;
   backdrop-filter: blur(10px); /* Flou de l'arrière-plan */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour un effet de profondeur */
@@ -15,4 +17,12 @@
 .scrollToTopButton.visible {
   opacity: 1;
   z-index: 4;
+}
+////////////RESPONSIVE ////////////
+@media (max-width: 768px) {
+  .scrollToTopButton {
+    bottom: 15rem;
+    right: 3px;
+    width: 2rem;
+  }
 }
