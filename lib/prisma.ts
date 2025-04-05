@@ -4,10 +4,14 @@ const prismaClientSingleton = () => {
   return new PrismaClient();
 };
 
-declare const globalThis: {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
-} & typeof global;
+// 👇 Ajoute cette ligne de sécurité
+const globalForPrisma = globalThis as unknown as {
+  prismaGlobal?: ReturnType<typeof prismaClientSingleton>;
+};
 
-export const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+export const prisma = globalForPrisma.prismaGlobal ?? prismaClientSingleton();
 
-if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+// 👇 Et assigne uniquement en non-prod
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prismaGlobal = prisma;
+}
