@@ -1,6 +1,5 @@
 .about {
   padding: 40px 20px;
-  background: linear-gradient(#e3f7ff, #fff);
   border-radius: 10px;
   box-shadow: 0 4px 10px #0000001a;
   justify-content: center;
@@ -8,29 +7,9 @@
   display: flex;
   flex-direction: column;
 
-  .logo_title_wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 50px;
-
-    .logo_container {
-      display: flex;
-      height: 125px;
-      width: 85px;
-      position: relative;
-    }
-
-    .title {
-      text-align: left;
-      color: #003080;
-      font-family: "Roboto", sans-serif;
-    }
-  }
-
   .content_wrapper {
     width: 80%;
-    padding: 40px 20px;
+    padding: 42px;
     background-color: #fff;
     box-shadow: 0 4px 6px #0000001a;
     border-radius: 10px;
@@ -43,151 +22,183 @@
       transform: translateY(-5px); /* Effet de survol pour le container */
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée */
     }
-  }
 
-  .content {
-    display: flex;
-    gap: 40px;
-    margin-bottom: 40px;
-  }
+    .logo_title_wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 4rem;
 
-  .text_container {
-    flex: 1;
-    padding: 3rem;
-    background: linear-gradient(180deg, #e3f7ff, #ffffff);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: box-shadow 0.3s ease; /* Ajout de la transition uniquement sur l'ombre */
+      .title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #003080;
+        font-family: "Roboto", sans-serif;
+        text-align: center;
+        z-index: 1;
+      }
 
-    p {
-      line-height: 1.5;
-      color: #333;
-      font-family: "Poppins", sans-serif;
-      font-size: 1rem;
-      transition: color 0.3s ease; /* Transition fluide pour la couleur */
+      .logo_container {
+        position: absolute;
+        left: calc(50% - 202px); // décale à gauche du centre
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100px;
+        height: 100px;
+        //border: 3px solid red;
+
+        .logo {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+      }
     }
 
-    &:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+    .content {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 40px;
     }
 
-    p:hover {
+    .text_container {
+      flex: 1;
+      padding: 3rem;
+      background: linear-gradient(180deg, #e3f7ff, #ffffff);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: box-shadow 0.3s ease; /* Ajout de la transition uniquement sur l'ombre */
+
+      p {
+        line-height: 1.5;
+        color: #333;
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        transition: color 0.3s ease; /* Transition fluide pour la couleur */
+      }
+
+      &:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+      }
+
+      p:hover {
+        color: #003080;
+      }
+    }
+
+    .images_container {
+      display: flex;
+      gap: 20px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .image {
+        width: 100%;
+        object-fit: cover;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+
+        &:hover {
+          transform: scale(1.05); /* Zoom de l'image au survol */
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus marquée */
+        }
+      }
+
+      .image:nth-child(1) {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+
+        &:hover {
+          transform: scale(1.05); /* Zoom de l'image au survol */
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus marquée */
+        }
+      }
+    }
+
+    .carousel_container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 40px;
+    }
+
+    .additional_info {
+      padding: 30px;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-top: 40px;
+      transition:
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px); /* Légère élévation au survol */
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+      }
+
+      p {
+        margin-bottom: 20px;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #333;
+        font-family: "Poppins", sans-serif;
+        transition: color 0.3s ease;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        &:hover {
+          color: #003080; /* Changement de couleur du texte au survol */
+        }
+      }
+    }
+
+    .cta {
+      text-align: center;
+      margin-top: 40px;
+
+      p {
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: #003080;
+      }
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #14e9f7;
       color: #003080;
-    }
-  }
-
-  .images_container {
-    display: flex;
-    gap: 20px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    .image {
-      width: 100%;
-      object-fit: cover;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-
-      &:hover {
-        transform: scale(1.05); /* Zoom de l'image au survol */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus marquée */
-      }
-    }
-
-    .image:nth-child(1) {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-
-      &:hover {
-        transform: scale(1.05); /* Zoom de l'image au survol */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus marquée */
-      }
-    }
-  }
-
-  .carousel_container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 40px;
-  }
-
-  .additional_info {
-    padding: 30px;
-    background: linear-gradient(135deg, #e0f7fa, #ffffff);
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-top: 40px;
-    transition:
-      box-shadow 0.3s ease,
-      transform 0.3s ease;
-
-    &:hover {
-      transform: translateY(-5px); /* Légère élévation au survol */
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
-    }
-
-    p {
-      margin-bottom: 20px;
-      font-size: 1rem;
-      line-height: 1.5;
-      color: #333;
-      font-family: "Poppins", sans-serif;
-      transition: color 0.3s ease;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      &:hover {
-        color: #003080; /* Changement de couleur du texte au survol */
-      }
-    }
-  }
-
-  .cta {
-    text-align: center;
-    margin-top: 40px;
-
-    p {
-      margin-bottom: 20px;
+      text-decoration: none;
+      border-radius: 5px;
       font-weight: bold;
-      color: #003080;
-    }
-  }
+      transition:
+        background-color 0.3s ease,
+        transform 0.3s ease;
 
-  .buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
-
-  .button {
-    display: inline-block;
-    padding: 12px 24px;
-    background-color: #14e9f7;
-    color: #003080;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-
-    &:hover {
-      background-color: #25fde9;
-      transform: translateY(-3px);
+      &:hover {
+        background-color: #25fde9;
+        transform: translateY(-3px);
+      }
     }
   }
 }
@@ -195,59 +206,66 @@
 @media (max-width: 1200px) {
   .about {
     padding: 30px 10px;
-
-    .logo_title_wrapper {
-      .logo_container {
-        height: 80px;
-        width: 55px;
-      }
-
-      .title {
-        text-align: left;
-        font-size: 1.5rem;
-      }
-    }
-
     .content_wrapper {
       width: 90%;
-    }
-    .content {
-      flex-direction: column;
-    }
-
-    .text_container {
-      padding: 1rem;
-    }
-
-    .carousel_container {
-      flex: none;
-      width: 100%;
-    }
-
-    .carousel_container {
-      margin-top: 20px;
-    }
-
-    .buttons {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .button {
-      width: 100%;
-      max-width: 300px;
-      margin-bottom: 10px;
-    }
-
-    .images_container {
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .image {
-      max-width: 100%;
-      margin-bottom: 10px;
+      .logo_title_wrapper {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 4rem;
+        .title {
+          font-size: 2rem;
+          font-weight: bold;
+          color: #003080;
+          font-family: "Roboto", sans-serif;
+          text-align: center;
+          z-index: 1; // au-dessus du logo si besoin
+        }
+        .logo_container {
+          position: absolute;
+          left: calc(50% - 202px); // décale à gauche du centre
+          top: 50%;
+          transform: translateY(-50%);
+          width: 100px;
+          height: 100px;
+          .logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+      }
+      .content {
+        flex-direction: column;
+      }
+      .text_container {
+        padding: 1rem;
+      }
+      .carousel_container {
+        flex: none;
+        width: 100%;
+      }
+      .carousel_container {
+        margin-top: 20px;
+      }
+      .buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .button {
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 10px;
+      }
+      .images_container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .image {
+        max-width: 100%;
+        margin-bottom: 10px;
+      }
     }
   }
 }
@@ -255,59 +273,66 @@
 @media (max-width: 400px) {
   .about {
     padding: 30px 10px;
-
-    .logo_title_wrapper {
-      .logo_container {
-        height: 80px;
-        width: 55px;
-      }
-
-      .title {
-        text-align: left;
-        font-size: 1.2rem;
-      }
-    }
-
     .content_wrapper {
       width: 90%;
-    }
-    .content {
-      flex-direction: column;
-    }
-
-    .text_container {
-      padding: 1rem;
-    }
-
-    .carousel_container {
-      flex: none;
-      width: 100%;
-    }
-
-    .carousel_container {
-      margin-top: 20px;
-    }
-
-    .buttons {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .button {
-      width: 100%;
-      max-width: 300px;
-      margin-bottom: 10px;
-    }
-
-    .images_container {
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .image {
-      max-width: 100%;
-      margin-bottom: 10px;
+      .logo_title_wrapper {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 4rem;
+        .title {
+          font-size: 1.3rem;
+          font-weight: bold;
+          color: #003080;
+          font-family: "Roboto", sans-serif;
+          text-align: center;
+          z-index: 1; // au-dessus du logo si besoin
+        }
+        .logo_container {
+          position: absolute;
+          left: calc(50% - 153px); // décale à gauche du centre
+          top: 50%;
+          transform: translateY(-50%);
+          width: 100px;
+          height: 100px;
+          .logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+      }
+      .content {
+        flex-direction: column;
+      }
+      .text_container {
+        padding: 1rem;
+      }
+      .carousel_container {
+        flex: none;
+        width: 100%;
+      }
+      .carousel_container {
+        margin-top: 20px;
+      }
+      .buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .button {
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 10px;
+      }
+      .images_container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .image {
+        max-width: 100%;
+        margin-bottom: 10px;
+      }
     }
   }
 }

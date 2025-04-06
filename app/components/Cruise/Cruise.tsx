@@ -125,9 +125,6 @@ const Cruise = () => {
             className={styles.logo}
             fill
             priority
-            style={{
-              objectFit: "cover",
-            }}
           />
         </div>
         <h2 className={styles.title}>Nos Excursions</h2>

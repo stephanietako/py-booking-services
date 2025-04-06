@@ -14,22 +14,19 @@ interface CavalaireProps {
 const Cavalaire: React.FC<CavalaireProps> = ({ images }) => {
   return (
     <div className={styles.cavalaire}>
-      <div className={styles.logo_title_wrapper}>
-        <div className={styles.logo_container}>
-          <Image
-            src={logo || placeholder}
-            alt="Yachting Day Logo"
-            className={styles.logo}
-            fill
-            priority
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        </div>
-        <h2 className={styles.title}>Les environs</h2>
-      </div>
       <div className={styles.content_wrapper}>
+        <div className={styles.logo_title_wrapper}>
+          <div className={styles.logo_container}>
+            <Image
+              src={logo || placeholder}
+              alt="Yachting Day Logo"
+              className={styles.logo}
+              fill
+              priority
+            />
+          </div>
+          <h2 className={styles.title}>Les environs</h2>
+        </div>
         <div className={styles.content}>
           <div className={styles.text_container}>
             <p>

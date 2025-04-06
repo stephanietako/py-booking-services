@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link"; // Importation de Link
-import backgroundImg from "@/public/assets/images/hero.webp";
+import backgroundImg from "@/public/assets/images/fond-mer.webp";
 // Styles
 import styles from "./styles.module.scss";
 
@@ -12,7 +12,7 @@ const Hero: React.FC = () => {
     <div className={styles.heroWrapper}>
       <Image
         src={backgroundImg}
-        alt="Vue du bateau en pleine mer avec des passagers"
+        alt="plan rapproché vue mer"
         className={styles.heroImage}
         priority={true}
         fill={true}
@@ -23,7 +23,11 @@ const Hero: React.FC = () => {
           <h1>Yachting Day</h1>
           <h2>Faites votre réservation facilement</h2>
           <span className={styles.heroText__tarifs_btn}>
-            <Link href="#tarifs" className={styles.buttonHero}>
+            <Link
+              href="#tarifs"
+              className={styles.buttonHero}
+              id={styles.btn_tarifs}
+            >
               Location de bateau
             </Link>
           </span>
@@ -33,9 +37,8 @@ const Hero: React.FC = () => {
             <strong>Yachting Day</strong> !
           </p>
           <p>
-            Situé sur le port de Cavalaire, au cœur de la baie du golfe de
-            Saint-Tropez, nous vous proposons une expérience de navigation
-            unique.
+            Situé sur le port de Cavalaire, nous vous proposons une expérience
+            de navigation unique.
           </p>
           <p>
             Louez notre bateau et profitez de services personnalisés à bord : un
@@ -45,10 +48,8 @@ const Hero: React.FC = () => {
           </p>
           <p>
             Nous proposons également des prestations d’entretien et de
-            maintenance navale incluant le lavage de teck, la restauration des
-            inox, le polish du gelcoat et bien plus encore, avec intervention
-            dans les ports de Saint-Tropez, Port-Grimaud, Marine de Cogolin et
-            Cavalaire.
+            maintenance nautique avec intervention dans les ports de
+            Saint-Tropez, Port-Grimaud, Marine de Cogolin et Cavalaire.
           </p>
         </div>
         <div className={styles.heroButtons}>

@@ -1,3 +1,6 @@
+"use client";
+
+import React from "react";
 import Image from "next/image";
 import Carousel from "../Carousel/Carousel";
 import image1 from "@/public/assets/images/vue-exterieur.webp";
@@ -20,25 +23,20 @@ const About: React.FC = () => {
 
   return (
     <div className={styles.about}>
-      <div className={styles.logo_title_wrapper}>
-        <div
-          className={styles.logo_container}
-          // style={{ position: "relative", width: "170px", height: "170px" }}
-        >
-          <Image
-            src={logo || placeholder}
-            alt="Yachting Day Logo"
-            className={styles.logo}
-            fill
-            priority
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        </div>
-        <h2 className={styles.title}>Qui sommes-nous</h2>
-      </div>
       <div className={styles.content_wrapper}>
+        <div className={styles.logo_title_wrapper}>
+          <div className={styles.logo_container}>
+            <Image
+              src={logo || placeholder}
+              alt="Yachting Day Logo"
+              className={styles.logo}
+              fill
+              priority
+            />
+          </div>
+          <h2 className={styles.title}>Qui sommes-nous</h2>
+        </div>
+
         <div className={styles.content}>
           <div className={styles.text_container}>
             <p>

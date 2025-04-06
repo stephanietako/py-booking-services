@@ -68,7 +68,23 @@ $transparent-white: rgba(255, 255, 255, 0.85);
 ////////////////RESPONSIVE////////////////////
 @media (max-width: 768px) {
   .maintenanceContainer {
-    width: 350px;
+    width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+
+    .logoContainer {
+      margin-bottom: 10px;
+    }
+    .title {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+  }
+}
+
+@media (max-width: 400px) {
+  .maintenanceContainer {
+    width: 320px;
     margin: 50px auto;
     padding: 30px;
 

@@ -6,7 +6,7 @@ import { Day } from "@prisma/client";
 import Image from "next/image";
 import logo from "@/public/assets/logo/hippo.png";
 import placeholder from "@/public/assets/images/placeholder.svg";
-import backgroundImg from "@/public/assets/images/header.webp";
+import backgroundImg from "@/public/assets/images/plage-pampelonne.webp";
 import Modal from "../Modal/Modal";
 import styles from "./styles.module.scss";
 
@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
       <div className={styles.heroWrapper}>
         <Image
           src={backgroundImg}
-          alt="Vue du bateau en pleine mer avec des passagers"
+          alt="Plage de Pampelonne"
           className={styles.heroImage}
           priority={true}
           fill={true}
@@ -55,12 +55,9 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
                   className={styles.logo}
                   fill
                   priority
-                  style={{
-                    objectFit: "cover",
-                  }}
                 />
               </div>
-              <h2 className={styles.title}>Location et tarifications</h2>
+              <h2 className={styles.title}>Réservez votre location</h2>
             </div>
             <h3>Grilles tarifaires</h3>
             <p>Période du 16 octobre au 31 mai: 1500 euros/jour.</p>
