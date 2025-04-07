@@ -12,11 +12,12 @@
     align-items: center;
 
     .map__container {
-      height: 20rem;
-      width: 100%;
+      height: 30rem;
+      width: 50rem;
       overflow: hidden;
       justify-content: center;
       display: flex;
+      border: 4px solid red;
     }
 
     .__btn_box {

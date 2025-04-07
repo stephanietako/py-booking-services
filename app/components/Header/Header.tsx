@@ -9,6 +9,7 @@ import placeholder from "@/public/assets/images/placeholder.svg";
 import backgroundImg from "@/public/assets/images/plage-pampelonne.webp";
 import Modal from "../Modal/Modal";
 import styles from "./styles.module.scss";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -36,29 +37,33 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
       <div className={styles.heroWrapper}>
         <Image
           src={backgroundImg}
-          alt="Plage de Pampelonne"
+          alt="Vue mer sur la plage de Pampelonne"
           className={styles.heroImage}
           priority={true}
           fill={true}
           placeholder="blur"
         />
+
+        <div className={styles.logo_title_wrapper}>
+          <div
+            className={styles.logo_container}
+            // style={{ position: "relative", width: "170px", height: "170px" }}
+          >
+            <Image
+              src={logo || placeholder}
+              alt="Yachting Day Logo"
+              className={styles.logo}
+              fill
+              priority
+              style={{
+                objectFit: "cover",
+              }}
+            />
+          </div>
+          <h2 className={styles.title}>Location et tarifications</h2>
+        </div>
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
-            <div className={styles.logo_title_wrapper}>
-              <div
-                className={styles.logo_container}
-                // style={{ position: "relative", width: "170px", height: "170px" }}
-              >
-                <Image
-                  src={logo || placeholder}
-                  alt="Yachting Day Logo"
-                  className={styles.logo}
-                  fill
-                  priority
-                />
-              </div>
-              <h2 className={styles.title}>Réservez votre location</h2>
-            </div>
             <h3>Grilles tarifaires</h3>
             <p>Période du 16 octobre au 31 mai: 1500 euros/jour.</p>
             <p>
@@ -72,8 +77,19 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
               onClick={toggleCalendarVisibility}
               className={styles.calendarBtn}
             >
-              Voir le calendrier
+              Reserver
             </button>
+            <div className={styles.buttons}>
+              <Link href="/#boat" className={styles.button}>
+                Le Bateau
+              </Link>
+              <Link href="/environs" className={styles.button}>
+                Environs
+              </Link>
+              <Link href="/excursion" className={styles.button}>
+                Excursions
+              </Link>
+            </div>
           </div>
         </div>
       </div>

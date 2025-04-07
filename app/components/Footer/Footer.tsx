@@ -67,35 +67,6 @@ const Footer: React.FC = () => {
               <div className={styles.google}>
                 <Map />
               </div>
-
-              <div className={styles.footer_list__content}>
-                <div className={styles.bloc_text__content}>
-                  <ul className={styles.bloc_text}>
-                    <li>
-                      <p>Retrouvez-nous à :</p>
-                    </li>
-                    <li>
-                      <p>Pierre-Yves Hemard</p>
-                      <p>Port de Cavalaire, 83240 Cavalaire-sur-Mer</p>
-                    </li>
-                    <li>
-                      <p>
-                        <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
-                      </p>
-                    </li>
-                    <li>
-                      <p>
-                        <a href="mailto:yachtingday@gmail.com">
-                          yachtingday@gmail.com
-                        </a>
-                      </p>
-                    </li>
-                    <li>
-                      <p>Venez découvrir le Golfe de Saint-Tropez</p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -135,9 +106,8 @@ const Footer: React.FC = () => {
               <div className={styles.column}>
                 <h4>CONTACT</h4>
                 <ul>
-                  <li id={styles.__copyright}>
-                    Port de Cavalaire, 83240 Cavalaire-sur-Mer
-                  </li>
+                  <li id={styles.__copyright}>Pierre-Yves Hemard</li>
+                  <li>Port de Cavalaire, 83240 Cavalaire-sur-Mer</li>
                   <li id={styles.number_phone}>
                     <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
                   </li>
@@ -148,24 +118,24 @@ const Footer: React.FC = () => {
                   </li>
                 </ul>
               </div>
-            </div>
 
-            <div className={styles.__copyright}>
-              <div onClick={handleIconClick}>
-                <span className={styles.__copyright__img}>
-                  <Link href="/">
-                    <Image
-                      src="/assets/logo/logo-new.png"
-                      alt="Logo"
-                      width={90}
-                      height={80}
-                      className={styles.logo}
-                      priority
-                    />
-                  </Link>
-                </span>
+              <div className={styles.__copyright}>
+                <div onClick={handleIconClick}>
+                  <span className={styles.__copyright__img}>
+                    <Link href="/">
+                      <Image
+                        src="/assets/logo/logo-new.png"
+                        alt="Logo"
+                        width={90}
+                        height={80}
+                        className={styles.logo}
+                        priority
+                      />
+                    </Link>
+                  </span>
+                </div>
+                &#169; {currentYear} | <a href="#">Tako Dev</a>
               </div>
-              &#169; {currentYear} | <a href="#">Tako Dev</a>
             </div>
           </div>
         </div>

@@ -6,10 +6,10 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
 
 .navbar {
   display: flex;
-  height: 7rem;
+  height: auto;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem 2rem 2rem 0rem;
+  // padding: 2rem 2rem 2rem 0rem;
   position: fixed;
   width: 100%;
   top: 0;
@@ -61,26 +61,28 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
       margin: 1rem;
 
       &:hover {
-        background: $bleu-turquoise;
+        background: transparent;
         color: $blanc;
         box-shadow: 0 4px 15px rgba(37, 253, 233, 0.5);
       }
     }
   }
 
-  // 🔹 Boutons de connexion modernisés
+  // 🔹 Boutons de connexion
   .authLinks {
     a {
       padding: 0.6rem 1.8rem;
-      background: $bleu-clair;
+      background: transparent;
+
       color: $bleu-fonce;
       font-weight: bold;
-      border-radius: 50px;
+
       transition: all 0.3s ease-in-out;
       border: 2px solid transparent;
 
       &:hover {
-        background: $bleu-turquoise;
+        border: 2px solid $bleu-turquoise;
+        border-radius: 50px;
         color: $blanc;
         transform: translateY(-2px);
         box-shadow: 0 4px 15px rgba(20, 233, 247, 0.4);

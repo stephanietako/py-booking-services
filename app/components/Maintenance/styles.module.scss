@@ -5,33 +5,62 @@ $blanc: #fff;
 $transparent-white: rgba(255, 255, 255, 0.85);
 
 .maintenanceContainer {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 50px auto;
   padding: 30px;
   background: $transparent-white;
   border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px #0000007a;
   text-align: center;
 
-  .logoContainer {
+  .boatContainer {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
+    border-radius: 30px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin-bottom: 3rem;
 
-    .logo {
-      width: 100px;
+    .boat {
+      width: 100%;
       height: auto;
-      margin-right: 10px;
       object-fit: cover;
     }
   }
 
-  .title {
-    font-size: 2rem;
-    font-weight: bold;
-    color: $bleu-fonce;
-    margin-bottom: 10px;
+  .logo_title_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    position: relative;
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #003080;
+      font-family: "Roboto", sans-serif;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .logo_container {
+      position: absolute;
+      left: calc(50% - 209px); // décale à gauche du centre
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100px;
+      height: 100px;
+
+      .logo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
   }
 
   .subtitle {
@@ -62,6 +91,45 @@ $transparent-white: rgba(255, 255, 255, 0.85);
     &:hover {
       background: $bleu-turquoise;
       transform: translateY(-2px);
+    }
+  }
+  .heroButtons {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 1.5rem;
+    // border: 4px solid turquoise;
+    padding: 3rem;
+
+    .buttonHero {
+      padding: 14px 28px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
+      border-radius: 50px; // Plus arrondi pour un look premium
+      cursor: pointer;
+      text-transform: uppercase;
+      transition:
+        all 0.3s ease-in-out,
+        backdrop-filter 0.3s ease-in-out;
+      background: rgba(255, 255, 255, 0.15); // Fond semi-transparent
+      color: #003080;
+      backdrop-filter: blur(10px); // Effet "Glassmorphism"
+      box-shadow:
+        inset 0 2px 5px rgba(255, 255, 255, 0.2),
+        0 4px 10px rgba(0, 0, 0, 0.15); // Effet lumineux
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+      }
+
+      &:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(251, 251, 255, 0.1);
+      }
     }
   }
 }

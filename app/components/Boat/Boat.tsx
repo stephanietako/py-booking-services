@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import image1 from "@/public/assets/images/Cap-Camarat1-Plan-de-Cabine.jpg";
+import image1 from "@/public/assets/images/boat-cote1.jpg";
 import image2 from "@/public/assets/images/Cap-Camarat3-Plan-de-Pont.jpg";
 import image3 from "@/public/assets/images/Cap-Camarat1-Plan-de-Cabine.jpg";
 import styles from "./styles.module.scss";
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 const Boat = () => {
   return (
-    <div className={styles.boat}>
+    <div className={styles.boat} id="boat">
       <div className={styles.header}>
         <h2 className={styles.title}>Le Bateau</h2>
         <div className={styles.main_image}>

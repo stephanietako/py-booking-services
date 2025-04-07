@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
   // Écoute du scroll pour changer l'état de la navbar
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 125) {
+      if (window.scrollY > 90) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);

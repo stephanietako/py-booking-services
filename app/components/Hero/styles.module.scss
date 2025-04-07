@@ -8,18 +8,21 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
 // 🌟 Wrapper principal
 .heroWrapper {
   position: relative;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 
+  // border: 4px solid turquoise;
+
   // 🌟 Image de fond
   .heroImage {
     object-fit: cover;
-    filter: brightness(90%); // Légèrement plus clair
-    object-position: center;
+    // filter: brightness(90%); // Légèrement plus clair
+    // object-position: center;
+    object-position: 37%;
     width: auto;
     height: 100%;
   }
@@ -35,92 +38,106 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
     justify-content: center;
     color: #fff;
     padding: 2rem;
-    background: rgba(255, 255, 255, 0.3); // Plus transparent
-    backdrop-filter: blur(5px); // Effet de flou pour le "Glassmorphism"
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    max-width: 80%;
-    margin-top: 3rem;
-  }
 
-  // 🌟 Texte principal
-  .heroText {
-    .heroText__tarifs_btn {
-      padding: 2rem;
+    // border: 4px solid red;
+    width: 100%;
+    height: 100%;
+
+    .hero_container {
       display: flex;
-      height: auto;
+      flex-direction: column;
+      align-items: center;
+      /* justify-content: center; */
+      color: #fff;
+      // border: 4px solid #fff;
+      /* max-width: 80%; */
       width: 100%;
-      justify-content: center;
-    }
+      height: 100%;
 
-    h1 {
-      font-size: 3rem;
-      font-weight: bold;
-      color: $bleu-fonce;
-      text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    h2 {
-      font-size: 2rem;
-      margin: 1rem 0;
-    }
-
-    p {
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      color: $bleu-fonce;
-    }
-  }
-
-  .heroButtons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  .buttonHero {
-    padding: 14px 28px;
-    font-size: 0.7rem;
-    font-weight: bold;
-    border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
-    border-radius: 50px; // Plus arrondi pour un look premium
-    cursor: pointer;
-    text-transform: uppercase;
-    transition:
-      all 0.3s ease-in-out,
-      backdrop-filter 0.3s ease-in-out;
-    background: rgba(255, 255, 255, 0.15); // Fond semi-transparent
-    color: #003080;
-    backdrop-filter: blur(10px); // Effet "Glassmorphism"
-    box-shadow:
-      inset 0 2px 5px rgba(255, 255, 255, 0.2),
-      0 4px 10px rgba(0, 0, 0, 0.15); // Effet lumineux
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.3);
-      border: 2px solid rgba(255, 255, 255, 0.6);
-      transform: scale(1.02);
-      box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(5px);
-    }
-
-    &:active {
-      transform: scale(0.98);
-      box-shadow: 0 2px 8px rgba(251, 251, 255, 0.1);
-    }
-
-    &#btn_tarifs {
-      font-size: 1.7rem;
-      background: transparent;
-      color: $blanc;
-      border: 2px solid $bleu-fonce;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-      transition: all 0.3s ease-in-out;
-
-      &:hover {
-        background: transparent;
+      // 🌟 Texte principal
+      .hero_bloc {
+        display: flex;
+        width: auto;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         color: $blanc;
-        box-shadow: 0 5px 15px rgba(197, 251, 245, 0.2);
+        padding: 2rem;
+        // border: 4px solid yellow;
+
+        .heroButtons {
+          display: flex;
+          gap: 2.5rem;
+          margin-top: 1.5rem;
+          // border: 4px solid turquoise;
+          padding: 3rem;
+
+          .buttonHero {
+            padding: 14px 28px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
+            border-radius: 50px; // Plus arrondi pour un look premium
+            cursor: pointer;
+            text-transform: uppercase;
+            transition:
+              all 0.3s ease-in-out,
+              backdrop-filter 0.3s ease-in-out;
+            background: rgba(255, 255, 255, 0.15); // Fond semi-transparent
+            color: #003080;
+            backdrop-filter: blur(10px); // Effet "Glassmorphism"
+            box-shadow:
+              inset 0 2px 5px rgba(255, 255, 255, 0.2),
+              0 4px 10px rgba(0, 0, 0, 0.15); // Effet lumineux
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.3);
+              border: 2px solid rgba(255, 255, 255, 0.6);
+              transform: scale(1.02);
+              box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+              backdrop-filter: blur(5px);
+            }
+
+            &:active {
+              transform: scale(0.98);
+              box-shadow: 0 2px 8px rgba(251, 251, 255, 0.1);
+            }
+          }
+        }
+      }
+      .hero_text {
+        display: flex;
+        height: auto;
+        width: 100%;
+
+        /* justify-content: center; */
+        flex-direction: column;
+        align-items: flex-end;
+        /* justify-content: center; */
+
+        text-align: center;
+        /* border: 4px solid red; */
+        position: absolute;
+        bottom: 0;
+        font-style: italic;
+        display: flex;
+        height: auto;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-end;
+        text-align: center;
+        position: absolute;
+
+        font-style: italic;
+        right: 5rem;
+        /* padding: 3rem; */
+        bottom: 3rem;
+        padding: 3rem;
+        h1 {
+          font-size: 2rem;
+          color: #003080;
+          text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+        }
       }
     }
   }
@@ -130,7 +147,7 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
   .heroWrapper {
     position: relative;
     width: 100vw;
-    height: 100vh;
+    height: 50vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -183,7 +200,7 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
   .heroWrapper {
     position: relative;
     width: 100vw;
-    height: 100vh;
+    height: 50vh;
     display: flex;
     align-items: center;
     justify-content: center;
