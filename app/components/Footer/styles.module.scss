@@ -40,6 +40,7 @@
           p {
             font-size: 0.7rem;
             text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+            color: gray;
           }
         }
 
@@ -60,7 +61,6 @@
   width: 100%;
   height: 100%;
   clip-path: polygon(0% 0, 100% 0%, 100% 100%, 0 100%);
-  border: 4px solid blue;
 
   .footer__bloc {
     height: 100%;
@@ -71,7 +71,7 @@
     padding: 2rem;
     background-color: #fff;
     background: linear-gradient(#e3f7ff, #fff);
-    border: 4px solid rgb(251, 0, 255);
+
     .__bloc_container {
       height: 80vh;
       width: 100%;
@@ -80,17 +80,18 @@
       padding: 1rem;
 
       .__bloc_content {
-        padding: 2rem;
+        padding: 1rem;
         display: flex;
-        width: auto;
-        height: 60%;
+        width: 100%;
+        height: 70%;
         justify-content: space-evenly;
         z-index: 999;
-        background-color: #03a9f400;
+        background-color: #111719b0;
         border-radius: 10px;
-        backdrop-filter: blur(2px);
-        box-shadow: 0 4px 6px #a0e8f2;
-        border: 1px solid #f30707ed;
+        backdrop-filter: blur(4px);
+        box-shadow: 2px 4px 6px #bac6c8;
+        padding: 2rem;
+        overflow: hidden;
 
         .google {
           display: flex;
@@ -98,6 +99,41 @@
           height: 100%;
           justify-content: center;
           align-items: center;
+        }
+
+        .footer_list__content {
+          display: flex;
+          width: 40%;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+
+          .bloc_text {
+            text-align: center;
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+            background: #ffffffcf;
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            flex-direction: column;
+          }
+          .footer_baseline {
+            display: flex;
+            width: 100%;
+            height: auto;
+            padding: 1rem;
+            justify-content: center;
+            p {
+              color: #fff;
+              font-style: italic;
+              font-weight: lighter;
+            }
+          }
         }
       }
     }
@@ -107,12 +143,11 @@
       width: 100%;
       height: 100%;
       bottom: 0;
-      background-color: transparent;
+      background-color: #2c323b;
       align-items: center;
       justify-content: flex-end;
       flex-direction: column;
       position: fixed;
-      border: 4px solid rgb(0, 255, 21);
 
       .footer_image {
         position: absolute;
@@ -131,11 +166,12 @@
         display: flex;
         width: 100%;
         height: auto;
-        width: 70%;
+        width: 100%;
         height: auto;
         justify-content: space-evenly;
         padding: 1rem;
-        border: 4px solid rgb(255, 238, 0);
+        flex-direction: column;
+        background: #e3f7ff;
 
         .column {
           width: 100%;
@@ -143,7 +179,7 @@
           display: flex;
           flex-direction: column;
           position: relative;
-
+          padding: 1rem;
           align-items: center;
           z-index: 999;
 
@@ -151,13 +187,15 @@
             list-style-type: none;
             padding: 0;
             display: flex;
-            flex-direction: column;
+            /* flex-direction: column; */
             height: 100%;
             padding: 0.5rem;
             text-align: center;
             align-content: center;
             align-items: center;
             z-index: 999;
+            color: gray;
+            width: 100%;
             li {
               display: flex;
               justify-content: center;
@@ -167,6 +205,7 @@
               position: relative;
               margin-bottom: 0.5rem;
               z-index: 999;
+              color: gray;
 
               a {
                 text-decoration: none;
@@ -174,6 +213,7 @@
                 font-weight: 600;
                 text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
                 transition: all 0.3s ease-in-out;
+                color: gray;
 
                 &:hover {
                   color: #000;
@@ -190,8 +230,8 @@
           align-items: center;
           bottom: 0;
           height: auto;
-          position: absolute;
-          border: 4px solid blue;
+          position: relative;
+          justify-content: center;
           bottom: 0;
 
           .__copyright__img {
@@ -202,6 +242,7 @@
             align-items: center;
             padding-top: 0.5rem;
             cursor: pointer;
+            justify-content: center;
 
             .logo {
               width: 100%;

@@ -46,6 +46,16 @@
     }
   }
 
+  .description {
+    display: flex;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    justify-content: space-around;
+  }
+
   .description,
   .equipements {
     background: #fff;
@@ -111,9 +121,45 @@
     }
   }
 
+  .content {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+
+  .text_container {
+    flex: 1;
+    padding: 3rem;
+    background: linear-gradient(180deg, #e3f7ff, #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s ease; /* Ajout de la transition uniquement sur l'ombre */
+    h2 {
+      font-size: 1.5rem;
+      color: #003080;
+      margin-bottom: 1rem;
+      font-family: "Poppins", sans-serif;
+    }
+    p {
+      line-height: 1.5;
+      color: #333;
+      font-family: "Poppins", sans-serif;
+      font-size: 1.1rem;
+      transition: color 0.3s ease; /* Transition fluide pour la couleur */
+    }
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+    }
+
+    p:hover {
+      color: #003080;
+    }
+  }
   .gallery {
     text-align: center;
     margin-top: 2rem;
+    height: 300px; // test temporaire
   }
 
   .gallery h3 {
@@ -139,6 +185,30 @@
       &:hover {
         transform: scale(1.05);
       }
+    }
+  }
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 3rem;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #14e9f7;
+    color: #003080;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+
+    &:hover {
+      background-color: #25fde9;
+      transform: translateY(-3px);
     }
   }
 }

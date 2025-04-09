@@ -4,35 +4,43 @@ import Image from "next/image";
 import Carousel from "../Carousel/Carousel";
 import logo from "@/public/assets/logo/hippo.png";
 import placeholder from "@/public/assets/images/placeholder.svg";
+import calanque from "@/public/assets/images/cavalaire-calanque-cavalaire.webp";
+import courtade from "@/public/assets/images/porquerolles-la-courtade.webp";
+import pampelonne from "@/public/assets/images/ramatuelle-plage-pampelonne.webp";
+import bonporteau from "@/public/assets/images/cavalaire-plage-bonporteau.webp";
+import portelet from "@/public/assets/images/saint-tropez-le-portalet.webp";
+import portcro from "@/public/assets/images/port-cro-baie-de-port-man.webp";
 
+//Styles
 import styles from "./styles.module.scss";
 
 interface CavalaireProps {
   images: string[];
 }
 
-const Cavalaire: React.FC<CavalaireProps> = ({ images }) => {
+const Cavalaire: React.FC<CavalaireProps> = () => {
   return (
     <div className={styles.cavalaire}>
-      <div className={styles.content_wrapper}>
-        <div className={styles.logo_title_wrapper}>
-          <div className={styles.logo_container}>
-            <Image
-              src={logo || placeholder}
-              alt="Yachting Day Logo"
-              className={styles.logo}
-              fill
-              priority
-            />
-          </div>
-          <h2 className={styles.title}>Les environs</h2>
+      <div className={styles.logo_title_wrapper}>
+        <div className={styles.logo_container}>
+          <Image
+            src={logo || placeholder}
+            alt="Yachting Day Logo"
+            className={styles.logo}
+            fill
+            priority
+          />
         </div>
+        <h2 className={styles.title}>LES ENVIRONS</h2>
+      </div>
+      <div className={styles.content_wrapper}>
         <div className={styles.content}>
           <div className={styles.text_container}>
+            <p>Bienvenue dans la baie de Cavalaire !</p>
             <p>
-              Bienvenue dans la baie de Cavalaire ! Voisine du golf de St
-              Tropez, entre mer et collines, en face des îles d’or, la commune
-              de Cavalaire a de nombreux avantages pour vous séduire !
+              Voisine du golf de Saint-Tropez, entre mer et collines, en face
+              des îles d’or, la commune de Cavalaire a de nombreux avantages
+              pour vous séduire !
             </p>
 
             <p>
@@ -65,8 +73,39 @@ const Cavalaire: React.FC<CavalaireProps> = ({ images }) => {
             </p>
           </div>
         </div>
+      </div>
+      <div className={styles.carousel_container}>
         <div className={styles.carousel_container}>
-          <Carousel images={images} />
+          <div className={styles.carousel_container}>
+            <Carousel
+              images={[
+                {
+                  src: calanque,
+                  title: "Cavalaire Calanque de Cavalaire",
+                },
+                {
+                  src: courtade,
+                  title: "Porquerolles La Courtade",
+                },
+                {
+                  src: pampelonne,
+                  title: "Ramatuelle Plage de Pampelonne",
+                },
+                {
+                  src: bonporteau,
+                  title: "Cavalaire Plage Ponporteau",
+                },
+                {
+                  src: portelet,
+                  title: "Saint-Tropez Le Portelet",
+                },
+                {
+                  src: portcro,
+                  title: "Port-Cro Baie de Port-Man",
+                },
+              ]}
+            />
+          </div>
         </div>
       </div>
     </div>

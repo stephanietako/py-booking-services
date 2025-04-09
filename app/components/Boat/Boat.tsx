@@ -1,10 +1,11 @@
 import React from "react";
 import Image from "next/image";
-import image1 from "@/public/assets/images/boat-cote1.jpg";
+import image1 from "@/public/assets/images/vue-exterieur.webp";
 import image2 from "@/public/assets/images/Cap-Camarat3-Plan-de-Pont.jpg";
 import image3 from "@/public/assets/images/Cap-Camarat1-Plan-de-Cabine.jpg";
 import styles from "./styles.module.scss";
 import Galery from "../Galery/Galery";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -26,21 +27,34 @@ const Boat = () => {
       </div>
 
       <div className={styles.description}>
-        <h3>Caractéristiques principales</h3>
-        <ul>
-          <li>
-            <strong>Bateau :</strong> Cap Camarat 12.5 Wa (2021)
-          </li>
-          <li>
-            <strong>Taille :</strong> 12m x 3.60m
-          </li>
-          <li>
-            <strong>Moteurs :</strong> 3 x 300 Ch V6 Yamaha
-          </li>
-          <li>
-            <strong>Capacité :</strong> 11 personnes (capitaine inclus)
-          </li>
-        </ul>
+        <div className={styles.description__left}>
+          <h3>Caractéristiques principales</h3>
+          <ul>
+            <li>
+              <strong>Bateau :</strong> Cap Camarat 12.5 Wa (2021)
+            </li>
+            <li>
+              <strong>Taille :</strong> 12m x 3.60m
+            </li>
+            <li>
+              <strong>Moteurs :</strong> 3 x 300 Ch V6 Yamaha
+            </li>
+            <li>
+              <strong>Capacité :</strong> 11 personnes (capitaine inclus)
+            </li>
+          </ul>
+        </div>
+        <div className={styles.description__right}>
+          <h3>Equipements principaux du bateau</h3>
+          <ul>
+            <li>Seakeeper (stabilisateur anti-tanguage)</li>
+            <li>Climatisation</li>
+            <li>chauffe-eau</li>
+            <li>Frigos extérieurs et intérieur</li>
+            <li>Machines à glaçons</li>
+            <li>Groupe électrogène</li>
+          </ul>
+        </div>
       </div>
 
       {/* Équipements */}
@@ -109,7 +123,45 @@ const Boat = () => {
           </div>
         </div>
       </div>
-
+      <div className={styles.content}>
+        <div className={styles.text_container}>
+          <h2>
+            <strong>A l’intérieur :</strong>
+          </h2>
+          <p>
+            L’intérieur du bateau se compose d’une cabine arrière avec un lit
+            double (140x195) et un lit simple (60x180). Une salle de bain avec
+            cabine de douche et WC électriques et un carré avec table
+            transformable en lit double (180x200). La partie cuisine se compose
+            d’un réfrigérateur, d’un four à micro-ondes, d’un évier, d’une
+            plaque de cuisson, d’une bouilloire, d’une machine à café et de tous
+            les ustensiles de cuisines nécessaires.
+          </p>
+          <br />
+          <h2>
+            <strong>Divertissements et confort :</strong>
+          </h2>
+          <p>
+            Le bateau est équipé d’un système de musique Bluetooth haut de gamme
+            avec dix haut-parleurs répartis sur le bateau, amplis et caisson de
+            basse. Largement de quoi satisfaire vos envies musicales !
+          </p>
+          <p>
+            Une cuisine extérieure, une télévision et une belle table à manger
+            qui accueillera confortablement 6 à 8 personnes.
+          </p>
+          <p>
+            Une grande plate-forme latérale agrandira votre espace de vie au
+            mouillage et animera vos baignades.
+          </p>
+          <p>
+            Le pont avant et le pont arrière peuvent être entièrement abrités
+            par des taux de soleil et sont également modulables à la demande,
+            espace apéritif, déjeuner, ou bain de soleil, choisissez la
+            disposition qui vous conviendra !
+          </p>
+        </div>
+      </div>
       {/* Galerie d'images */}
       <div className={styles.gallery}>
         <div className={styles.images}>
@@ -132,6 +184,12 @@ const Boat = () => {
       </div>
       <div className={styles.gallery__content}>
         <Galery />
+      </div>
+
+      <div className={styles.buttons}>
+        <Link href="/tarifs" className={styles.button}>
+          Réservez
+        </Link>
       </div>
     </div>
   );

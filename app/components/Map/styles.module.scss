@@ -1,23 +1,24 @@
 .googlemap {
   display: flex;
   width: 100%;
-  // align-items: flex-start;
   height: 100%;
+
+  justify-content: center;
+  align-items: center;
 
   .map {
     display: flex;
-    width: 100%;
+    width: 70%;
     height: auto;
     flex-direction: column;
     align-items: center;
 
     .map__container {
-      height: 30rem;
+      height: 20rem;
       width: 50rem;
       overflow: hidden;
       justify-content: center;
       display: flex;
-      border: 4px solid red;
     }
 
     .__btn_box {
@@ -42,32 +43,36 @@
           border: none;
           position: relative;
           overflow: hidden;
-          color: gray;
+
+          p {
+            color: whitesmoke;
+            font-weight: lighter;
+          }
 
           &:hover {
-            color: #000;
+            color: gray;
           }
 
-          &::before {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background-color: #000;
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-          }
+          // &::before {
+          //   content: "";
+          //   position: absolute;
+          //   bottom: 0;
+          //   left: 0;
+          //   width: 100%;
+          //   height: 1px;
+          //   background-color: #000;
+          //   transform: scaleX(0);
+          //   transform-origin: left;
+          //   transition: transform 0.3s ease;
+          // }
 
-          &:hover::before {
-            transform: scaleX(1);
-          }
+          // &:hover::before {
+          //   transform: scaleX(1);
+          // }
 
-          img {
-            width: 21px;
-          }
+          // img {
+          //   width: 21px;
+          // }
         }
       }
     }

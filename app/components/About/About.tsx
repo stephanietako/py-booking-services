@@ -6,6 +6,10 @@ import Carousel from "../Carousel/Carousel";
 import image1 from "@/public/assets/images/vue-exterieur.webp";
 import image2 from "@/public/assets/images/image2.jpg";
 import logo from "@/public/assets/logo/hippo.png";
+import cavalairePlage from "@/public/assets/images/cavalaire-plage-bonporteau.webp";
+import calanqueDattier from "@/public/assets/images/cavalaire-calanque-du-dattier.webp";
+import laPonche from "@/public/assets/images/saint-tropez-la-ponche.webp";
+import vueBoat from "@/public/assets/images/vue-boat.webp";
 import placeholder from "@/public/assets/images/placeholder.svg";
 // Styles
 import styles from "./styles.module.scss";
@@ -14,13 +18,6 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 const About: React.FC = () => {
-  const carouselImages = [
-    "/assets/images/image1.jpg",
-    "/assets/images/image2.jpg",
-    "/assets/images/image3.jpg",
-    "/assets/images/image4.jpg",
-  ];
-
   return (
     <div className={styles.about}>
       <div className={styles.content_wrapper}>
@@ -34,7 +31,7 @@ const About: React.FC = () => {
               priority
             />
           </div>
-          <h2 className={styles.title}>Qui sommes-nous</h2>
+          <h2 className={styles.title}>Qui sommes-nous ?</h2>
         </div>
 
         <div className={styles.content}>
@@ -91,7 +88,26 @@ const About: React.FC = () => {
 
         {/* Carousel */}
         <div className={styles.carousel_container}>
-          <Carousel images={carouselImages} />
+          <Carousel
+            images={[
+              {
+                src: cavalairePlage,
+                title: "Cavalaire Plage de Bonporteau",
+              },
+              {
+                src: calanqueDattier,
+                title: "Cavalaire Calanque Du Dattier",
+              },
+              {
+                src: laPonche,
+                title: "Saint-Tropez La Ponche",
+              },
+              {
+                src: vueBoat,
+                title: "Notre bateau Cap Camarat",
+              },
+            ]}
+          />
         </div>
 
         <div className={styles.additional_info}>
@@ -115,14 +131,14 @@ const About: React.FC = () => {
         <div className={styles.cta}>
           <p>Cliquez ci-dessous pour plus d&apos;information.</p>
           <div className={styles.buttons}>
-            <Link href="#maintenance" className={styles.button}>
-              Entretien de bateaux
+            <Link href="/entretien" className={styles.button}>
+              Entretien
             </Link>
-            <Link href="#tarifs" className={styles.button}>
-              Location de bateaux
+            <Link href="/tarifs" className={styles.button}>
+              Location
             </Link>
-            <Link href="#cruise" className={styles.button}>
-              Nos excursions
+            <Link href="excursions" className={styles.button}>
+              excursions
             </Link>
           </div>
         </div>

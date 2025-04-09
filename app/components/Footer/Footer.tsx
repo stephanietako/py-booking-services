@@ -8,7 +8,7 @@ import Map from "../Map/Map";
 import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 // Styles
 import styles from "./styles.module.scss";
-import backgroundImg from "@/public/assets/images/ramatuelle-cap-taillat.webp";
+//import backgroundImg from "@/public/assets/images/ramatuelle-cap-taillat.webp";
 
 export const dynamic = "force-dynamic";
 
@@ -67,21 +67,41 @@ const Footer: React.FC = () => {
               <div className={styles.google}>
                 <Map />
               </div>
+
+              <div className={styles.footer_list__content}>
+                <div className={styles.bloc_text__content}>
+                  <ul className={styles.bloc_text}>
+                    <li>
+                      <p>CONTACT</p>
+                    </li>
+                    <li>
+                      <p>Pierre-Yves Hemard</p>
+                      <p>Port de Cavalaire, 83240 Cavalaire-sur-Mer</p>
+                    </li>
+                    <li>
+                      <p>
+                        <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
+                      </p>
+                    </li>
+                    <li>
+                      <p>
+                        <a href="mailto:yachtingday@gmail.com">
+                          yachtingday@gmail.com
+                        </a>
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+                <span className={styles.footer_baseline}>
+                  <p>N’attendez pas, réservez votre journée !</p>
+                </span>
+              </div>
             </div>
           </div>
 
           <div className={styles.footer_infos}>
-            <Image
-              src={backgroundImg}
-              alt="Vue de l'avant du bateau"
-              className={styles.footer_image}
-              priority={true}
-              fill={true}
-              placeholder="blur"
-            />
             <div className={styles.footer_infos__container}>
               <div className={styles.column}>
-                <h4>LIENS UTILES</h4>
                 <ul>
                   <li>
                     <Link href="/">Accueil</Link>
@@ -103,11 +123,12 @@ const Footer: React.FC = () => {
                   </li>
                 </ul>
               </div>
-              <div className={styles.column}>
+              {/* <div className={styles.column}>
                 <h4>CONTACT</h4>
                 <ul>
-                  <li id={styles.__copyright}>Pierre-Yves Hemard</li>
-                  <li>Port de Cavalaire, 83240 Cavalaire-sur-Mer</li>
+                  <li id={styles.__copyright}>
+                    Port de Cavalaire, 83240 Cavalaire-sur-Mer
+                  </li>
                   <li id={styles.number_phone}>
                     <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
                   </li>
@@ -117,8 +138,7 @@ const Footer: React.FC = () => {
                     </a>
                   </li>
                 </ul>
-              </div>
-
+              </div> */}
               <div className={styles.__copyright}>
                 <div onClick={handleIconClick}>
                   <span className={styles.__copyright__img}>
@@ -126,8 +146,8 @@ const Footer: React.FC = () => {
                       <Image
                         src="/assets/logo/logo-new.png"
                         alt="Logo"
-                        width={90}
-                        height={80}
+                        width={100}
+                        height={100}
                         className={styles.logo}
                         priority
                       />
@@ -137,6 +157,24 @@ const Footer: React.FC = () => {
                 &#169; {currentYear} | <a href="#">Tako Dev</a>
               </div>
             </div>
+
+            {/* <div className={styles.__copyright}>
+              <div onClick={handleIconClick}>
+                <span className={styles.__copyright__img}>
+                  <Link href="/">
+                    <Image
+                      src="/assets/logo/logo-new.png"
+                      alt="Logo"
+                      width={90}
+                      height={80}
+                      className={styles.logo}
+                      priority
+                    />
+                  </Link>
+                </span>
+              </div>
+              &#169; {currentYear} | <a href="#">Tako Dev</a>
+            </div> */}
           </div>
         </div>
       </div>

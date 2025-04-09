@@ -2,7 +2,7 @@ import React from "react";
 import { getClosedDays, getDays } from "@/actions/openingActions"; // Les actions que tu utilises pour récupérer les données
 import Wrapper from "../components/Wrapper/Wrapper";
 import Header from "../components/Header/Header";
-import Boat from "../components/Boat/Boat";
+//import Boat from "../components/Boat/Boat";
 
 const tarifs = async () => {
   const days = await getDays(); // Récupérer les jours d'ouverture
@@ -12,7 +12,7 @@ const tarifs = async () => {
     <Wrapper>
       <section>
         <Header days={days} closedDays={closedDays} />
-        <Boat />
+        {/* <Boat /> */}
       </section>
     </Wrapper>
   );

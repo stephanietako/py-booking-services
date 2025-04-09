@@ -2,11 +2,17 @@
 
 import type React from "react";
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
+// Styles
 import styles from "./styles.module.scss";
 
+interface CarouselImage {
+  src: StaticImageData;
+  title: string;
+}
+
 interface CarouselProps {
-  images: string[];
+  images: CarouselImage[];
 }
 
 const Carousel: React.FC<CarouselProps> = ({ images }) => {
@@ -22,19 +28,28 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
 
   return (
     <div className={styles.carousel}>
-      {images.map((src, index) => (
+      {images.map((image, index) => (
         <div
-          key={src}
+          key={`${image.title}-${index}`}
           className={`${styles.slide} ${index === currentIndex ? styles.active : ""}`}
         >
           <Image
-            src={src || "/placeholder.svg"}
-            alt={`Slide ${index + 1}`}
+            src={image.src}
+            alt={image.title}
             fill
-            style={{ objectFit: "cover" }}
+            style={{
+              objectFit: "cover",
+              objectPosition: "top",
+              width: "100%",
+              height: "100%",
+            }}
           />
+          <div className={styles.caption}>
+            <h2>{image.title}</h2>
+          </div>
         </div>
       ))}
+
       <div className={styles.indicators}>
         {images.map((_, index) => (
           <button

@@ -9,7 +9,7 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
 .heroWrapper {
   position: relative;
   width: 100vw;
-  height: 60vh;
+  height: 65vh;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -17,6 +17,8 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
   padding: 1rem;
   flex-direction: column;
   align-items: center;
+  padding: 3rem;
+  margin-top: 2rem;
 
   // 🌟 Image de fond
   .heroImage {
@@ -36,19 +38,30 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
     position: relative;
     z-index: 999;
     top: 0;
-    border: 4px solid blue;
-
-    .logo_container {
-      display: flex;
-      height: 125px;
-      width: 85px;
-      position: relative;
-    }
-
+    flex-direction: column;
     .title {
       text-align: left;
       color: #003080;
       font-family: "Roboto", sans-serif;
+      //padding-left: 2rem;
+    }
+    .subtitle {
+      text-align: left;
+      color: #003080;
+      font-family: "Roboto", sans-serif;
+      font-weight: 400;
+      font-size: 1.5rem;
+      margin-top: 0.5rem;
+      font-weight: bolder;
+    }
+
+    .logo_container {
+      position: absolute;
+      left: calc(50% - 229px);
+      top: 19%;
+      transform: translateY(-50%);
+      width: 100px;
+      height: 100px;
     }
   }
   // 🌟 Contenu principal (effet verre dépoli)
@@ -67,28 +80,45 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
     border-radius: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     max-width: 80%;
-    //   height: 80%;
-  }
+    margin-top: 3rem;
 
-  .heroText {
-    h2 {
-      font-size: 2rem;
-      margin: 1rem 0;
-      color: $bleu-fonce;
-      text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
-    }
+    .heroText {
+      display: flex;
+      height: auto;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      h2 {
+        margin: 1rem 0;
+        color: $bleu-fonce;
+        text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+      }
+      h3 {
+        font-size: 1.2rem;
+        margin: 1rem 0;
+        color: $bleu-fonce;
+        text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+      }
+      h4 {
+        margin: 1rem 0;
+        color: $bleu-fonce;
+        text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+      }
 
-    p {
-      font-size: 1.2rem;
-      margin-bottom: 0.7rem;
-      color: $bleu-fonce;
-      text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+      p {
+        font-size: 1rem;
+        margin-bottom: 0.2rem;
+        color: $bleu-fonce;
+        text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+      }
     }
   }
 
   .calendarBtn {
     padding: 14px 28px;
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     font-weight: bold;
     border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
     border-radius: 50px; // Plus arrondi pour un look premium

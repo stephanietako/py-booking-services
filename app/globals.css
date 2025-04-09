@@ -41,8 +41,8 @@ html {
 body {
   margin: 0;
   padding: 0;
-  /* background-color: var(--background-light);
-  color: var(--text-color); */
+  background-color: #000000e3;
+  color: var(--text-color);
 }
 
 h1 {
@@ -50,6 +50,7 @@ h1 {
   color: #003080;
   margin-bottom: 20px;
   text-align: center;
+  font-weight: lighter;
 }
 
 h2 {
@@ -461,8 +462,9 @@ section {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 12vh;
+  margin-top: 15vh;
   margin-bottom: 3rem;
+  /* background: #000000e6; */
 }
 
 /* /////////// */

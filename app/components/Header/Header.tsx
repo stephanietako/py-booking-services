@@ -60,11 +60,12 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
               }}
             />
           </div>
-          <h2 className={styles.title}>Location et tarifications</h2>
+          <h2 className={styles.title}>Tarifs et disponibilités </h2>
+          <br />
+          <h3 className={styles.subtitle}>Grilles tarifaires</h3>
         </div>
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
-            <h3>Grilles tarifaires</h3>
             <p>Période du 16 octobre au 31 mai: 1500 euros/jour.</p>
             <p>
               Période du 1er juin au 07 juillet et du 1er septembre au 15
@@ -80,13 +81,13 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
               Reserver
             </button>
             <div className={styles.buttons}>
-              <Link href="/#boat" className={styles.button}>
+              <Link href="/boat" className={styles.button}>
                 Le Bateau
               </Link>
               <Link href="/environs" className={styles.button}>
                 Environs
               </Link>
-              <Link href="/excursion" className={styles.button}>
+              <Link href="/excursions" className={styles.button}>
                 Excursions
               </Link>
             </div>
