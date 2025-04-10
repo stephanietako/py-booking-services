@@ -120,7 +120,12 @@ const Navbar: React.FC = () => {
             width={200}
             height={150}
             priority
-            style={{ objectFit: "cover", width: "100%", height: "100%" }}
+            style={{
+              objectFit: "cover",
+              width: "100%",
+              height: "100%",
+              cursor: "pointer",
+            }}
           />
         </Link>
       </div>
