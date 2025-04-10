@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
   // Écoute du scroll pour changer l'état de la navbar
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 90) {
+      if (window.scrollY > 700) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -117,31 +117,38 @@ const Navbar: React.FC = () => {
             src={logo}
             alt="Yachting Day Logo"
             className={styles.logo}
-            fill
+            width={200}
+            height={150}
             priority
-            style={{
-              objectFit: "cover",
-            }}
+            style={{ objectFit: "cover", width: "100%", height: "100%" }}
           />
         </Link>
       </div>
-
-      {/* Menu Toggle pour mobile */}
+      <div className={styles.heroButtons}>
+        <Link href="/tarifs" className={styles.buttonHero}>
+          Location
+        </Link>
+        <Link href="/entretien" className={styles.buttonHero}>
+          Entretien
+        </Link>
+      </div>
+      {/* Burger */}
       <div className={styles.menuToggle} onClick={toggleMenu}>
-        ☰
+        {menuOpen ? "✕" : "☰"}
       </div>
 
-      {/* Liens de navigation */}
+      {/* Overlay */}
+      {menuOpen && <div className={styles.overlay} onClick={toggleMenu} />}
+
+      {/* Menu */}
       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
         {isSignedIn ? (
           <>
-            {isSignedIn && (
-              <Link href="/my-bookings" className="nav-link">
-                Mes réservations
-              </Link>
-            )}
+            <Link href="/my-bookings" className="nav-link">
+              Mes réservations
+            </Link>
+            <Link href="/dashboard">Tableau de bord</Link>
 
-            <Link href="/dashboard">Tabeau de bord</Link>
             {bookingToken && (
               <Link
                 href={`/manage-booking?token=${bookingToken}`}
@@ -150,8 +157,6 @@ const Navbar: React.FC = () => {
                 Ma réservation
               </Link>
             )}
-
-            {/* Affichage conditionnel pour les utilisateurs avec le rôle admin */}
             {userRole === "admin" && (
               <Link href="/admin/services">Mes Services</Link>
             )}
@@ -162,6 +167,10 @@ const Navbar: React.FC = () => {
           <div className={styles.authLinks}>
             <Link href="/sign-in">Se connecter</Link>
             <Link href="/sign-up">S&apos;inscrire</Link>
+            <Link href="/about" className={styles.buttonHero}>
+              Qui sommes-nous
+            </Link>
+            <Link href="#footer">Contact</Link>
           </div>
         )}
       </div>

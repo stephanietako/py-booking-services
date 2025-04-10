@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
                 <div className={styles.bloc_text__content}>
                   <ul className={styles.bloc_text}>
                     <li>
-                      <p>CONTACT</p>
+                      <p id={styles.bloc_text__contact}>CONTACT</p>
                     </li>
                     <li>
                       <p>Pierre-Yves Hemard</p>

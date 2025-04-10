@@ -56,7 +56,7 @@ const Cruise = () => {
       time: "10-15 min",
       description:
         "Naviguez 10 min pour rejoindre les merveilles du Cap Lardier, faisant partie, à l’instar du littoral de Cavalaire, du Parc National de Port-Cros. Des mouillages aux eaux turquoise vous attendent de part et d’autre du Cap Lardier. Appréciez le snorkeling ou débarquez sur la plage de la Bastide Blanche avec notre paddle board. Nombreuses seront les possibilités de vous émerveiller dans de tels endroits !",
-      photo: "/assets/images/cap-lardier-gigaro.webp",
+      photo: "/assets/images/baie-de-gigaro.webp",
       width: 800,
       height: 600,
     },

@@ -20,20 +20,19 @@ export const dynamic = "force-dynamic";
 const About: React.FC = () => {
   return (
     <div className={styles.about}>
-      <div className={styles.content_wrapper}>
-        <div className={styles.logo_title_wrapper}>
-          <div className={styles.logo_container}>
-            <Image
-              src={logo || placeholder}
-              alt="Yachting Day Logo"
-              className={styles.logo}
-              fill
-              priority
-            />
-          </div>
-          <h2 className={styles.title}>Qui sommes-nous ?</h2>
+      <div className={styles.logo_title_wrapper}>
+        <div className={styles.logo_container}>
+          <Image
+            src={logo || placeholder}
+            alt="Yachting Day Logo"
+            className={styles.logo}
+            fill
+            priority
+          />
         </div>
-
+        <h2 className={styles.title}>Qui sommes-nous ?</h2>
+      </div>
+      <div className={styles.content_wrapper}>
         <div className={styles.content}>
           <div className={styles.text_container}>
             <p>

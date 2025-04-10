@@ -6,6 +6,7 @@
   align-items: center;
   display: flex;
   flex-direction: column;
+
   .logo_title_wrapper {
     display: flex;
     align-items: center;
@@ -13,21 +14,13 @@
     margin-bottom: 3rem;
     position: relative;
 
-    .title {
-      font-weight: lighter;
-      color: #00bcd4;
-
-      text-align: center;
-      z-index: 1;
-    }
-
     .logo_container {
       position: absolute;
-      left: calc(50% - 174px); // décale à gauche du centre
+      left: calc(50% - 228px); // décale à gauche du centre
       top: 50%;
       transform: translateY(-50%);
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
 
       .logo {
         width: 100%;
@@ -36,6 +29,7 @@
       }
     }
   }
+
   .content_wrapper {
     width: 80%;
     margin-top: 2rem;
@@ -53,38 +47,6 @@
       box-shadow: 0 8px 24px rgba(233, 228, 228, 0.2); /* Ombre plus marquée */
     }
 
-    .logo_title_wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 3rem;
-      position: relative;
-
-      .title {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #003080;
-        font-family: "Roboto", sans-serif;
-        text-align: center;
-        z-index: 1;
-      }
-
-      .logo_container {
-        position: absolute;
-        left: calc(50% - 161px); // décale à gauche du centre
-        top: 50%;
-        transform: translateY(-50%);
-        width: 150px;
-        height: 150px;
-
-        .logo {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-        }
-      }
-    }
-
     .content {
       display: flex;
       gap: 40px;
@@ -94,25 +56,25 @@
     .text_container {
       flex: 1;
       padding: 2rem;
-      background: linear-gradient(180deg, #e3f7ff, #ffffff);
+      //background: linear-gradient(180deg, #e3f7ff, #ffffff);
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transition: box-shadow 0.3s ease; /* Ajout de la transition uniquement sur l'ombre */
 
       p {
         line-height: 1.5;
-        color: #333;
+        color: whitesmoke;
         font-family: "Poppins", sans-serif;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         transition: color 0.3s ease; /* Transition fluide pour la couleur */
       }
 
       &:hover {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+        box-shadow: 0 8px 24px rgba(223, 224, 230, 0.2);
       }
 
       p:hover {
-        color: #003080; /* Changement de couleur du texte au survol */
+        color: #25fde9;
       }
     }
   }
@@ -122,7 +84,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 40px;
+    margin-top: 35px;
     width: 100%;
     height: 100%;
   }

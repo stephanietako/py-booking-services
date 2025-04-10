@@ -122,6 +122,10 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             flex-direction: column;
           }
+
+          #bloc_text__contact {
+            font-weight: bolder;
+          }
           .footer_baseline {
             display: flex;
             width: 100%;
@@ -165,13 +169,13 @@
       .footer_infos__container {
         display: flex;
         width: 100%;
-        height: auto;
+        height: 8rem;
         width: 100%;
         height: auto;
         justify-content: space-evenly;
-        padding: 1rem;
+        //padding: 1rem;
         flex-direction: column;
-        background: #e3f7ff;
+        //background: #e3f7ff;
 
         .column {
           width: 100%;
@@ -179,7 +183,7 @@
           display: flex;
           flex-direction: column;
           position: relative;
-          padding: 1rem;
+          //padding: 1rem;
           align-items: center;
           z-index: 999;
 
@@ -288,7 +292,7 @@
     display: flex;
     justify-content: center;
     position: fixed;
-    top: 0;
+    bottom: 0;
     z-index: 999;
     .link_infos {
       width: 50%;

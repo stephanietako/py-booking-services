@@ -1,3 +1,9 @@
+/* $bleu-fonce: #003080;
+$bleu-turquoise: #25fde9;
+$bleu-clair: #14e9f7;
+$blanc: #fff;
+$transparent-white: rgba(255, 255, 255, 0.85);  */
+
 :root {
   --primary-color: #14e9f7;
   --primary-hover: #25fde9;
@@ -46,29 +52,31 @@ body {
 }
 
 h1 {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
   font-size: 2.5rem;
-  color: #003080;
-  margin-bottom: 20px;
+  color: #25fde9;
   text-align: center;
   font-weight: lighter;
 }
 
 h2 {
   font-size: 2rem;
-  color: #003080;
+  color: #25fde9;
+  font-weight: lighter;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 h3,
 h4,
 h5,
 h6 {
-  font-weight: bold;
-  margin-bottom: var(--spacing-small);
+  font-weight: lighter;
   color: #003080;
 }
 
 p {
-  font-size: 1rem;
-  color: var(--muted-text);
+  font-size: 1.3rem;
 }
 
 a {

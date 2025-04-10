@@ -28,7 +28,11 @@ const Boat = () => {
 
       <div className={styles.description}>
         <div className={styles.description__left}>
-          <h3>Caractéristiques principales</h3>
+          <div className={styles.description__subtitle}>
+            {" "}
+            <h3>Caractéristiques principales</h3>
+          </div>
+
           <ul>
             <li>
               <strong>Bateau :</strong> Cap Camarat 12.5 Wa (2021)
@@ -45,7 +49,10 @@ const Boat = () => {
           </ul>
         </div>
         <div className={styles.description__right}>
-          <h3>Equipements principaux du bateau</h3>
+          <div className={styles.description__subtitle}>
+            <h3>Equipements principaux du bateau</h3>
+          </div>
+
           <ul>
             <li>Seakeeper (stabilisateur anti-tanguage)</li>
             <li>Climatisation</li>
@@ -125,9 +132,7 @@ const Boat = () => {
       </div>
       <div className={styles.content}>
         <div className={styles.text_container}>
-          <h2>
-            <strong>A l’intérieur :</strong>
-          </h2>
+          <h2>A l’intérieur :</h2>
           <p>
             L’intérieur du bateau se compose d’une cabine arrière avec un lit
             double (140x195) et un lit simple (60x180). Une salle de bain avec
@@ -138,9 +143,7 @@ const Boat = () => {
             les ustensiles de cuisines nécessaires.
           </p>
           <br />
-          <h2>
-            <strong>Divertissements et confort :</strong>
-          </h2>
+          <h2>Divertissements et confort :</h2>
           <p>
             Le bateau est équipé d’un système de musique Bluetooth haut de gamme
             avec dix haut-parleurs répartis sur le bateau, amplis et caisson de

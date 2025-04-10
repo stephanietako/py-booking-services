@@ -6,8 +6,8 @@
 
   .caption {
     position: absolute;
-    top: 10px; /* Décale le titre du bord supérieur */
-    left: 10px; /* Décale le titre du bord gauche */
+    top: 15px; /* Décale le titre du bord supérieur */
+    left: 15px; /* Décale le titre du bord gauche */
     background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
     padding: 0.5rem 1rem;
     border-radius: 5px;
@@ -16,7 +16,7 @@
 
   .caption h2 {
     color: #fff;
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     margin: 0; /* Enlève les marges par défaut du h2 */
   }
 

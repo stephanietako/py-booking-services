@@ -31,7 +31,7 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
             priority
           />
         </div>
-        <h2 className={styles.title}>LES ENVIRONS</h2>
+        <h2 className={styles.title}>les environs</h2>
       </div>
       <div className={styles.content_wrapper}>
         <div className={styles.content}>

@@ -83,15 +83,15 @@ const Maintenance = () => {
       <div className={styles.heroButtons}>
         <p>Cliquez ci-dessous pour plus d&apos;information.</p>
         <div className={styles.heroButtons__container}>
-          <Link href="/about" className={styles.buttonHero}>
+          {/* <Link href="/about" className={styles.buttonHero}>
             Qui sommes-nous
-          </Link>
+          </Link> */}
           <Link href="/tarifs" className={styles.buttonHero}>
             Location
           </Link>
-          <Link href="#footer" className={styles.buttonHero}>
+          {/* <Link href="#footer" className={styles.buttonHero}>
             Contact
-          </Link>
+          </Link> */}
         </div>
       </div>
     </section>

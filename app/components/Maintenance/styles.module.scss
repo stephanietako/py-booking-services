@@ -8,7 +8,7 @@ $transparent-white: rgba(255, 255, 255, 0.85);
   max-width: 1000px;
   margin: 50px auto;
   padding: 30px;
-  background: $transparent-white;
+  background: #fffffff5;
   border-radius: 15px;
   box-shadow: 0 4px 10px #0000007a;
   text-align: center;
@@ -49,7 +49,7 @@ $transparent-white: rgba(255, 255, 255, 0.85);
 
     .logo_container {
       position: absolute;
-      left: calc(50% - 209px); // décale à gauche du centre
+      left: calc(50% - 287px); // décale à gauche du centre
       top: 50%;
       transform: translateY(-50%);
       width: 100px;
@@ -66,12 +66,12 @@ $transparent-white: rgba(255, 255, 255, 0.85);
   .subtitle {
     font-size: 1.5rem;
     font-weight: bold;
-    color: $bleu-turquoise;
+    color: #003080;
     margin-bottom: 15px;
   }
 
   .text {
-    font-size: 1rem;
+    font-size: 1.3rem;
     color: $bleu-fonce;
     margin-bottom: 15px;
   }
@@ -106,6 +106,7 @@ $transparent-white: rgba(255, 255, 255, 0.85);
       display: flex;
       gap: 2.5rem;
       margin-top: 1.5rem;
+      justify-content: center;
       .buttonHero {
         padding: 14px 28px;
         font-size: 0.7rem;

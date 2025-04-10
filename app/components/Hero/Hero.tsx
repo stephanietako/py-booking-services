@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/link"; // Importation de Link
+//import Link from "next/link"; // Importation de Link
 import backgroundImg from "@/public/assets/images/hero.jpg"; // Importation de l'image de fond
 // Styles
 import styles from "./styles.module.scss";
@@ -21,7 +21,7 @@ const Hero: React.FC = () => {
       <div className={styles.heroContent}>
         <div className={styles.hero_container}>
           <div className={styles.hero_bloc}>
-            <div className={styles.heroButtons}>
+            {/* <div className={styles.heroButtons}>
               <Link href="/about" className={styles.buttonHero}>
                 Qui sommes-nous
               </Link>
@@ -34,9 +34,9 @@ const Hero: React.FC = () => {
               <Link href="#footer" className={styles.buttonHero}>
                 Contact
               </Link>
-            </div>
+            </div> */}
             <div className={styles.hero_text}>
-              <h1>Locations de bateau à la journée</h1>
+              <h1>Locations & Entretiens</h1>
             </div>
           </div>
         </div>

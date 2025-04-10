@@ -7,52 +7,41 @@
   display: flex;
   flex-direction: column;
 
+  .logo_title_wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 4rem;
+
+    .logo_container {
+      position: absolute;
+      left: calc(50% - 283px); // décale à gauche du centre
+      top: 50%;
+      transform: translateY(-50%);
+      width: 120px;
+      height: 120px;
+
+      .logo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+  }
+
   .content_wrapper {
     width: 80%;
+    margin-top: 2rem;
     padding: 42px;
-    background-color: #fff;
-    box-shadow: 0 4px 6px #0000001a;
+    background-color: #000;
     border-radius: 10px;
-    margin-top: -50px;
     transition:
-      transform 0.3s,
-      box-shadow 0.3s;
+      transform 0.3s ease,
+      box-shadow 0.3s ease; /* Transition plus fluide pour l'élévation */
 
     &:hover {
       transform: translateY(-5px); /* Effet de survol pour le container */
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée */
-    }
-
-    .logo_title_wrapper {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      margin-bottom: 4rem;
-
-      .title {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #003080;
-        font-family: "Roboto", sans-serif;
-        text-align: center;
-        z-index: 1;
-      }
-
-      .logo_container {
-        position: absolute;
-        left: calc(50% - 202px); // décale à gauche du centre
-        top: 50%;
-        transform: translateY(-50%);
-        width: 100px;
-        height: 100px;
-        //border: 3px solid red;
-
-        .logo {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-        }
-      }
+      box-shadow: 0 8px 24px rgba(229, 231, 238, 0.2); /* Ombre plus marquée */
     }
 
     .content {
@@ -63,26 +52,26 @@
 
     .text_container {
       flex: 1;
-      padding: 3rem;
-      background: linear-gradient(180deg, #e3f7ff, #ffffff);
+      padding: 2rem;
+      //background: linear-gradient(180deg, #e3f7ff, #ffffff);
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transition: box-shadow 0.3s ease; /* Ajout de la transition uniquement sur l'ombre */
 
       p {
         line-height: 1.5;
-        color: #333;
+        color: whitesmoke;
         font-family: "Poppins", sans-serif;
-        font-size: 1rem;
+        font-size: 1.3rem;
         transition: color 0.3s ease; /* Transition fluide pour la couleur */
       }
 
       &:hover {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+        box-shadow: 0 8px 24px rgba(223, 224, 230, 0.2); /* Ombre plus marquée au survol */
       }
 
       p:hover {
-        color: #003080;
+        color: #25fde9; /* Changement de couleur du texte au survol */
       }
     }
 
