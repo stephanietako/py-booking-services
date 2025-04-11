@@ -161,7 +161,7 @@ const Boat = () => {
               <li>2 réfrigérateurs</li>
               <li>1 machine à glaçons</li>
               <li>1 plaques de cuissons</li>
-              <li>1 plancha/gril</li>
+              <li>1 plancha/grill</li>
               <li>1 évier</li>
             </ul>
           </div>

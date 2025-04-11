@@ -35,7 +35,6 @@
         font-weight: lighter;
         text-align: center;
         flex: 1;
-
         align-content: center;
       }
 
@@ -60,7 +59,6 @@
       display: flex;
       width: 100%;
       height: auto;
-
       padding: 2rem;
 
       .header__bloc2__text {
@@ -110,7 +108,6 @@
   .column {
     flex: 1;
     min-width: 248px;
-
     background: #fff;
     padding: 1.5rem;
     border-radius: 8px;
@@ -146,7 +143,6 @@
   .equipements li,
   .description li {
     font-size: 1.3rem;
-
     line-height: 1.6;
     color: #000;
     padding-left: 1rem;
@@ -170,7 +166,6 @@
     flex: 1;
     padding: 3rem;
     background: #fff;
-
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: box-shadow 0.3s ease;
@@ -196,38 +191,6 @@
       color: #003080;
     }
   }
-
-  // .gallery {
-  //   text-align: center;
-  //   margin-top: 2rem;
-  //   height: 300px;
-  // }
-
-  // .gallery h3 {
-  //   font-size: 1.5rem;
-  //   color: #003080;
-  //   margin-bottom: 1rem;
-  // }
-
-  // .images {
-  //   display: flex;
-  //   gap: 1rem;
-  //   justify-content: center;
-  //   margin-bottom: 3rem;
-
-  //   .image {
-  //     width: 100%;
-  //     max-width: 300px;
-  //     height: auto;
-  //     border-radius: 10px;
-  //     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  //     transition: transform 0.3s ease;
-
-  //     &:hover {
-  //       transform: scale(1.05);
-  //     }
-  //   }
-  // }
 
   .buttons {
     display: flex;
@@ -371,7 +334,6 @@
   .boat {
     width: 100%;
     padding: 1rem;
-    border: 7px solid orangered;
   }
 
   .header {
@@ -391,7 +353,6 @@
 
   .header__bloc2 {
     padding: 1rem !important;
-    border: 2px solid blue; /* Tu peux le retirer si ce n'est pas nécessaire */
   }
 
   .header__bloc2__text p {
@@ -410,12 +371,17 @@
     font-size: 1.4rem !important;
   }
 
+  .equipements li,
+  .description li {
+    font-size: 1.2rem !important;
+  }
+
   .description__left {
     margin-bottom: 2rem;
   }
 
   .column {
-    padding: 1rem;
+    padding: 1.5rem !important;
 
     h4 {
       font-size: 1.3rem !important;
@@ -431,10 +397,13 @@
     h3 {
       font-size: 1.4rem !important;
     }
+    p {
+      font-size: 1.2rem !important;
+    }
   }
 
   .button {
-    font-size: 1.4rem !important;
+    font-size: 1rem !important;
     padding: 10px 20px !important;
   }
 }
