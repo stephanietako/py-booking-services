@@ -65,45 +65,45 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
         padding: 2rem;
         // border: 4px solid yellow;
 
-        .heroButtons {
-          display: flex;
-          gap: 2.5rem;
-          margin-top: 1.5rem;
-          // border: 4px solid turquoise;
-          padding: 3rem;
+        // .heroButtons {
+        //   display: flex;
+        //   gap: 2.5rem;
+        //   margin-top: 1.5rem;
+        //   // border: 4px solid turquoise;
+        //   padding: 3rem;
 
-          .buttonHero {
-            padding: 14px 28px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
-            border-radius: 50px; // Plus arrondi pour un look premium
-            cursor: pointer;
-            text-transform: uppercase;
-            transition:
-              all 0.3s ease-in-out,
-              backdrop-filter 0.3s ease-in-out;
-            background: rgba(255, 255, 255, 0.15); // Fond semi-transparent
-            color: #003080;
-            backdrop-filter: blur(10px); // Effet "Glassmorphism"
-            box-shadow:
-              inset 0 2px 5px rgba(255, 255, 255, 0.2),
-              0 4px 10px rgba(0, 0, 0, 0.15); // Effet lumineux
+        //   .buttonHero {
+        //     padding: 14px 28px;
+        //     font-size: 0.7rem;
+        //     font-weight: bold;
+        //     border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
+        //     border-radius: 50px; // Plus arrondi pour un look premium
+        //     cursor: pointer;
+        //     text-transform: uppercase;
+        //     transition:
+        //       all 0.3s ease-in-out,
+        //       backdrop-filter 0.3s ease-in-out;
+        //     background: rgba(255, 255, 255, 0.15); // Fond semi-transparent
+        //     color: #003080;
+        //     backdrop-filter: blur(10px); // Effet "Glassmorphism"
+        //     box-shadow:
+        //       inset 0 2px 5px rgba(255, 255, 255, 0.2),
+        //       0 4px 10px rgba(0, 0, 0, 0.15); // Effet lumineux
 
-            &:hover {
-              background: rgba(255, 255, 255, 0.3);
-              border: 2px solid rgba(255, 255, 255, 0.6);
-              transform: scale(1.02);
-              box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
-              backdrop-filter: blur(5px);
-            }
+        //     &:hover {
+        //       background: rgba(255, 255, 255, 0.3);
+        //       border: 2px solid rgba(255, 255, 255, 0.6);
+        //       transform: scale(1.02);
+        //       box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        //       backdrop-filter: blur(5px);
+        //     }
 
-            &:active {
-              transform: scale(0.98);
-              box-shadow: 0 2px 8px rgba(251, 251, 255, 0.1);
-            }
-          }
-        }
+        //     &:active {
+        //       transform: scale(0.98);
+        //       box-shadow: 0 2px 8px rgba(251, 251, 255, 0.1);
+        //     }
+        //   }
+        // }
       }
       .hero_text {
         display: flex;

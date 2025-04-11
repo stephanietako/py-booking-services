@@ -6,20 +6,30 @@ import Image from "next/image";
 import styles from "./styles.module.scss";
 
 const images = [
-  "/assets/galery/gal11-ext.webp",
+  "/assets/images/boat-cote2.jpg",
+  "/assets/galery/table-avant.webp",
+  "/assets/galery/Cap-Camarat1-Plan-de-Cabine.jpg",
+  "/assets/galery/Cap-Camarat2-Plan-de-Pont.jpg",
+  "/assets/galery/Cap-Camarat3-Plan-de-Pont.jpg",
+  "/assets/galery/gal6-ext.webp",
   "/assets/galery/gal9-ext.webp",
   "/assets/galery/gal10-ext.webp",
-  "/assets/galery/gal6-ext.webp",
+  "/assets/galery/gal11-ext.webp",
+  "/assets/galery/gal12-ext.webp",
   "/assets/galery/gal1.webp",
-  "/assets/galery/gal2.webp",
+  "/assets/galery/gal13.webp",
+  "/assets/galery/gal14.webp",
+  "/assets/galery/gal15.webp",
   "/assets/galery/gal3.webp",
   "/assets/galery/gal4.webp",
+  "/assets/galery/gal15.webp",
   "/assets/galery/gal5.webp",
   "/assets/galery/gal7.webp",
-  "/assets/galery/gal3.webp",
+  "/assets/galery/gal2.webp",
+  "/assets/galery/gal7.webp",
 ];
 
-const Carousel = () => {
+const Galery = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [zoomIndex, setZoomIndex] = useState<number | null>(null);
@@ -174,4 +184,4 @@ const Carousel = () => {
   );
 };
 
-export default Carousel;
+export default Galery;

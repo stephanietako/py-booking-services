@@ -1,6 +1,6 @@
 .footer__header {
   width: 100%;
-  height: auto;
+  height: 3rem;
   display: flex;
   justify-content: center;
   // background-color: #fff;
@@ -293,7 +293,7 @@
     justify-content: center;
     position: fixed;
     bottom: 0;
-    z-index: 999;
+    // z-index: 999;
     .link_infos {
       width: 50%;
       .link_list {

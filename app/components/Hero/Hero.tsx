@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 //import Link from "next/link"; // Importation de Link
-import backgroundImg from "@/public/assets/images/hero.jpg"; // Importation de l'image de fond
+import backgroundImg from "@/public/assets/images/hero.webp"; // Importation de l'image de fond
 // Styles
 import styles from "./styles.module.scss";
 
