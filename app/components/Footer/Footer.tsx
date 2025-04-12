@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Map from "../Map/Map";
-import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
+//import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 // Styles
 import styles from "./styles.module.scss";
 //import backgroundImg from "@/public/assets/images/ramatuelle-cap-taillat.webp";
@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
 
   return (
     <>
-      <div className={styles.footer__header}>
+      {/* <div className={styles.footer__header}>
         <div className={styles.link_infos}>
           <ul className={styles.link_list}>
             <li className={styles.link}>
@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
             </li>
           </ul>
         </div>
-      </div>
+      </div> */}
 
       <div className={styles.footer__container} id="footer">
         <div className={styles.footer__bloc}>

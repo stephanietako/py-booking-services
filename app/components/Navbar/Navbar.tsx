@@ -170,11 +170,12 @@ const Navbar: React.FC = () => {
           </>
         ) : (
           <div className={styles.authLinks}>
-            <Link href="/sign-in">Se connecter</Link>
-            <Link href="/sign-up">S&apos;inscrire</Link>
+            <Link href="/">Accueil</Link>
             <Link href="/about" className={styles.buttonHero}>
               Qui sommes-nous
             </Link>
+            <Link href="/sign-in">Se connecter</Link>
+            <Link href="/sign-up">S&apos;inscrire</Link>
             <Link href="#footer">Contact</Link>
           </div>
         )}

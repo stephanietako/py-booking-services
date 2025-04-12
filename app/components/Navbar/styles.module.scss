@@ -33,7 +33,6 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
   .heroButtons {
     display: flex;
     gap: 2.5rem;
-
     position: absolute;
     top: 0;
     width: 100%;
@@ -52,6 +51,7 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
         inset 0 2px 5px #fff3,
         0 4px 10px #e3e3ed4d;
       padding: 0.6rem 1.8rem;
+      // background: rgba(29, 29, 31, 0.72);
       background: none;
       transition: all 0.3s ease-in-out;
       border: 2px solid #0a4aec00;
@@ -59,7 +59,7 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
       border: 2px solid #003080;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(29, 29, 31, 0.72);
         border: 2px solid rgba(255, 255, 255, 0.6);
         transform: scale(1.02);
         box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
@@ -141,8 +141,8 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     padding: 0.8rem 1.4rem;
     margin-top: 1rem;
     background: transparent;
+    font-weight: lighter;
     color: $blanc;
-    font-weight: bold;
     border: 2px solid transparent;
     transition: all 0.3s ease-in-out;
     flex-direction: column;
