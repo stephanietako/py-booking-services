@@ -6,18 +6,18 @@
 
   .caption {
     position: absolute;
-    top: 15px; /* Décale le titre du bord supérieur */
-    left: 15px; /* Décale le titre du bord gauche */
-    background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    top: 15px;
+    left: 15px;
+    background: rgba(0, 0, 0, 0.5);
     padding: 0.5rem 1rem;
     border-radius: 5px;
-    z-index: 999; /* S'assure que le titre soit au-dessus de l'image */
+    z-index: 999;
   }
 
   .caption h2 {
     color: #fff;
     font-size: 1.1rem;
-    margin: 0; /* Enlève les marges par défaut du h2 */
+    margin: 0;
   }
 
   .slide {
@@ -43,18 +43,79 @@
     transform: translateX(-50%);
     display: flex;
     gap: 10px;
+    width: 100%;
+    height: auto;
+    justify-content: center;
+    align-items: center;
   }
 
   .indicator {
-    width: 12px;
+    width: 20px;
     height: 12px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.5);
     border: none;
     cursor: pointer;
+    appearance: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
 
     &.active {
-      background-color: white;
+      background-color: #fff;
+    }
+  }
+}
+/////////RESPONSIVE////////////////
+@media (max-width: 1024px) {
+  .carousel {
+    width: 80%;
+    height: 400px;
+
+    .caption h2 {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel {
+    width: 95%;
+    height: 320px;
+
+    .caption {
+      top: 10px;
+      left: 10px;
+      padding: 0.4rem 0.8rem;
+
+      h2 {
+        font-size: 0.7rem;
+      }
+    }
+
+    .indicators {
+      bottom: 15px;
+      gap: 8px;
+
+      .indicator {
+        width: 15px;
+        height: 12px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel {
+    height: 250px;
+
+    .caption h2 {
+      font-size: 0.5rem;
+    }
+
+    .indicators {
+      bottom: 10px;
+      gap: 6px;
     }
   }
 }

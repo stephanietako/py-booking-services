@@ -15,7 +15,6 @@
 
     .title {
       font-size: 2rem;
-
       color: #25fde9;
       font-family: "Roboto", sans-serif;
       text-align: center;
@@ -68,10 +67,11 @@
 
   .excursionImage {
     width: 100%;
-    height: 200px;
+    height: auto;
     overflow: hidden;
+    height: 100%;
 
-    img {
+    .__images {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -109,6 +109,8 @@
 ////////////////RESPONSIVE////////////////////
 @media (max-width: 400px) {
   .cruise {
+    width: 95%;
+    margin-top: 3rem;
     .logo_title_wrapper {
       position: relative;
       display: flex;
@@ -116,28 +118,32 @@
       margin-bottom: 4rem;
 
       .title {
-        font-size: 1.3rem;
-        font-weight: bold;
-        color: #003080;
-        font-family: "Roboto", sans-serif;
-        text-align: center;
-        z-index: 1;
+        font-size: 1.5rem;
       }
 
       .logo_container {
         position: absolute;
-        left: calc(50% - 143px);
+        left: calc(50% - 194px);
         top: 50%;
         transform: translateY(-50%);
         width: 100px;
         height: 100px;
-
-        // .logo {
-        //   width: 100%;
-        //   height: 100%;
-        //   object-fit: contain;
-        // }
       }
+    }
+
+    .excursions {
+      margin-top: -1.5rem !important;
+    }
+    .excursionContent {
+      padding: 10px;
+    }
+
+    .excursionTitle {
+      font-size: 1.2rem;
+    }
+
+    .excursionDescription {
+      font-size: 1.2rem !important;
     }
   }
 }

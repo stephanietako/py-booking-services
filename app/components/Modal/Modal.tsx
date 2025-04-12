@@ -28,7 +28,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
             <AiOutlineClose size={24} />
           </button>
           <h3 className={styles.modalTitle}>{title}</h3>
-          <div className={styles.modalBody}>{children}</div>
+          <div className={styles.modalBody}>
+            {/* Assurez-vous que l'image est bien rendue ici */}
+            <div className={styles.modalImage}>{children}</div>
+          </div>
         </div>
       </motion.div>
     </div>

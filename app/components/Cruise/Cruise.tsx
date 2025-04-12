@@ -116,7 +116,7 @@ const Cruise = () => {
   };
 
   return (
-    <section className={styles.cruise}>
+    <div className={styles.cruise}>
       <div className={styles.logo_title_wrapper}>
         <div className={styles.logo_container}>
           <Image
@@ -138,6 +138,7 @@ const Cruise = () => {
           >
             <div className={styles.excursionImage}>
               <Image
+                className={styles.__images}
                 src={excursion.photo}
                 alt={excursion.title}
                 width={excursion.width}
@@ -147,7 +148,7 @@ const Cruise = () => {
             </div>
             <div className={styles.excursionContent}>
               <h2 className={styles.excursionTitle}>{excursion.title}</h2>
-              <p className={styles.excursionTime}>{excursion.time}</p>
+              {/* <p className={styles.excursionTime}>{excursion.time}</p> */}
               <p className={styles.excursionDescription}>
                 {excursion.description.slice(0, 100)}...
               </p>
@@ -169,8 +170,8 @@ const Cruise = () => {
                 className={styles.__image}
                 src={selectedExcursion.photo}
                 alt={selectedExcursion.title}
-                width={700}
-                height={350}
+                width={500}
+                height={250}
                 priority
               />
             </div>
@@ -183,7 +184,7 @@ const Cruise = () => {
           </div>
         )}
       </Modal>
-    </section>
+    </div>
   );
 };
 

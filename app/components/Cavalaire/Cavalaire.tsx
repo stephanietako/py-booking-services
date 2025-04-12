@@ -10,9 +10,12 @@ import pampelonne from "@/public/assets/images/ramatuelle-plage-pampelonne.webp"
 import bonporteau from "@/public/assets/images/cavalaire-plage-bonporteau.webp";
 import portelet from "@/public/assets/images/saint-tropez-le-portalet.webp";
 import portcro from "@/public/assets/images/port-cro-baie-de-port-man.webp";
+import image1 from "@/public/assets/images/plage-pampelonne.webp";
 
 //Styles
 import styles from "./styles.module.scss";
+
+export const dynamic = "force-dynamic";
 
 interface CavalaireProps {
   images: string[];
@@ -72,8 +75,20 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
               traversée !
             </p>
           </div>
+
+          <div className={styles.main_image}>
+            <Image
+              src={image1}
+              alt="Cap Camarat 12.5 Wa"
+              className={styles.__image}
+              width={400}
+              height={300}
+              priority
+            />
+          </div>
         </div>
       </div>
+
       <div className={styles.carousel_container}>
         <div className={styles.carousel_container}>
           <div className={styles.carousel_container}>
