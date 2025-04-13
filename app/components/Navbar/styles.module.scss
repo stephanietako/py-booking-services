@@ -54,13 +54,13 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
       // background: rgba(29, 29, 31, 0.72);
       background: none;
       transition: all 0.3s ease-in-out;
-      border: 2px solid #0a4aec00;
+      // border: 2px solid #0a4aec00;
       color: #fff;
       border: 2px solid #003080;
 
       &:hover {
-        background: rgba(29, 29, 31, 0.72);
-        border: 2px solid rgba(255, 255, 255, 0.6);
+        background: rgba(2, 19, 80, 0.4);
+        border: 2px solid #fff;
         transform: scale(1.02);
         box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(5px);

@@ -21,7 +21,10 @@ $transparent-white: rgba(255, 255, 255, 0.85);  */
   /* Bleu Foncé  : #003080
 Bleu turquoise : #25fde9
 Bleu clair : #14e9f7 */
-  --font-family: "Inter", sans-serif;
+  /* --font-family: "Inter", sans-serif; */
+  /* --font-family: var(--font-montserrat), cursive; */
+  --font-family: var(--roboto), sans-serif;
+  font-family: "Roboto", sans-serif;
   --border-radius: 8px;
   --spacing-small: 0.5rem;
   --spacing-medium: 1rem;
@@ -502,7 +505,7 @@ section {
   font-size: 2.5rem;
   text-align: left;
   color: #003080;
-  font-family: "Roboto", sans-serif;
+
   font-weight: 700;
 }
 

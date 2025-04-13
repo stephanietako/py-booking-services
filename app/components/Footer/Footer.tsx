@@ -90,10 +90,13 @@ const Footer: React.FC = () => {
                         </a>
                       </p>
                     </li>
+                    <li id={styles.bloc_text__subtext}>
+                      Embarque pour une journée de rêve avec Yatching Day
+                    </li>
                   </ul>
                 </div>
                 <span className={styles.footer_baseline}>
-                  <p>N’attendez pas, réservez votre journée !</p>
+                  <p>N&apos;attendez pas réservez votre journée !</p>
                 </span>
               </div>
             </div>

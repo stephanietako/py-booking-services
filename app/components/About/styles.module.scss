@@ -61,7 +61,7 @@
       p {
         line-height: 1.5;
         color: whitesmoke;
-        font-family: "Poppins", sans-serif;
+
         font-size: 1.3rem;
         transition: color 0.3s ease; /* Transition fluide pour la couleur */
       }
@@ -142,7 +142,7 @@
         font-size: 1rem;
         line-height: 1.5;
         color: #333;
-        font-family: "Poppins", sans-serif;
+
         transition: color 0.3s ease;
 
         &:last-child {
@@ -206,7 +206,7 @@
           font-size: 2rem;
           font-weight: bold;
           color: #003080;
-          font-family: "Roboto", sans-serif;
+
           text-align: center;
           z-index: 1; // au-dessus du logo si besoin
         }
@@ -273,7 +273,7 @@
           font-size: 1.3rem;
           font-weight: bold;
           color: #003080;
-          font-family: "Roboto", sans-serif;
+
           text-align: center;
           z-index: 1; // au-dessus du logo si besoin
         }

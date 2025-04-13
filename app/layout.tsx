@@ -1,19 +1,30 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Roboto, Montserrat, Gloria_Hallelujah } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import "./globals.css";
 import Footer from "./components/Footer/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const roboto = Roboto({
+  variable: "--roboto",
+  weight: "400",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const montserrat = Montserrat({
   subsets: ["latin"],
+  variable: "--font-montserrat",
+  weight: ["400", "700"], // ou "100" à "900"
+  display: "swap",
+});
+
+const gloria = Gloria_Hallelujah({
+  variable: "--gloria_hallelujah",
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +40,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="fr">
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <body
+          className={`${roboto.variable} ${montserrat.variable} ${gloria.variable}`}
+        >
           <Toaster position="top-center" />
           {children}
           <div className="scroll">
