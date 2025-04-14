@@ -141,7 +141,7 @@ const Navbar: React.FC = () => {
         </Link>
       </div> */}
       <div className={styles.primaryLinks}>
-        <Link href="/tarifs" className={styles.navButton}>
+        <Link href="/location" className={styles.navButton}>
           Location
         </Link>
         <Link href="/entretien" className={styles.navButton}>
