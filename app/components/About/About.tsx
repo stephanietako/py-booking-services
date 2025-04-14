@@ -130,10 +130,10 @@ const About: React.FC = () => {
             <Link href="/entretien" className={styles.button}>
               Entretien
             </Link>
-            <Link href="/tarifs" className={styles.button}>
+            <Link href="/location" className={styles.button}>
               Location
             </Link>
-            <Link href="excursions" className={styles.button}>
+            <Link href="/excursions" className={styles.button}>
               excursions
             </Link>
           </div>
