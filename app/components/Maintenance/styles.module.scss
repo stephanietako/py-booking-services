@@ -39,17 +39,14 @@ $transparent-white: rgba(255, 255, 255, 0.85);
     position: relative;
 
     .title {
-      font-size: 2rem;
-      font-weight: bold;
       color: #003080;
-
       text-align: center;
       z-index: 1;
     }
 
     .logo_container {
       position: absolute;
-      left: calc(50% - 287px); // décale à gauche du centre
+      left: calc(50% - 311px); // décale à gauche du centre
       top: 50%;
       transform: translateY(-50%);
       width: 100px;
@@ -87,57 +84,35 @@ $transparent-white: rgba(255, 255, 255, 0.85);
     text-decoration: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease-in-out;
-
+    margin-top: 2rem;
     &:hover {
       background: $bleu-turquoise;
       transform: translateY(-2px);
     }
   }
-  .heroButtons {
+  .buttons {
     display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 2rem;
+  }
 
-    margin-bottom: 1.5rem;
-    flex-direction: column;
-    padding: 3rem;
-    p {
-      color: #003080;
-    }
-    .heroButtons__container {
-      display: flex;
-      gap: 2.5rem;
-      margin-top: 1.5rem;
-      justify-content: center;
-      .buttonHero {
-        padding: 14px 28px;
-        font-size: 0.7rem;
-        font-weight: bold;
-        border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
-        border-radius: 50px; // Plus arrondi pour un look premium
-        cursor: pointer;
-        text-transform: uppercase;
-        transition:
-          all 0.3s ease-in-out,
-          backdrop-filter 0.3s ease-in-out;
-        background: rgba(255, 255, 255, 0.15); // Fond semi-transparent
-        color: #003080;
-        backdrop-filter: blur(10px); // Effet "Glassmorphism"
-        box-shadow:
-          inset 0 2px 5px rgba(255, 255, 255, 0.2),
-          0 4px 10px rgba(0, 0, 0, 0.15); // Effet lumineux
+  .button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #14e9f7;
+    color: #003080;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1.5rem;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
 
-        &:hover {
-          background: rgba(255, 255, 255, 0.3);
-          border: 2px solid rgba(255, 255, 255, 0.6);
-          transform: scale(1.02);
-          box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(5px);
-        }
-
-        &:active {
-          transform: scale(0.98);
-          box-shadow: 0 2px 8px rgba(251, 251, 255, 0.1);
-        }
-      }
+    &:hover {
+      background-color: #25fde9;
+      transform: translateY(-3px);
     }
   }
 }
@@ -148,8 +123,19 @@ $transparent-white: rgba(255, 255, 255, 0.85);
     margin: 50px auto;
     padding: 30px;
 
-    .logoContainer {
-      margin-bottom: 10px;
+    .logo_container {
+      position: absolute;
+      left: calc(50% - 247px); // décale à gauche du centre
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100px;
+      height: 100px;
+
+      .logo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
     }
     .title {
       font-size: 1.5rem;
@@ -164,11 +150,19 @@ $transparent-white: rgba(255, 255, 255, 0.85);
     margin: 50px auto;
     padding: 30px;
 
-    .logoContainer {
-      margin-bottom: 10px;
+    .logo_container {
+      .logo_container {
+        left: calc(50% - 180px); // adaptatif
+      }
+
+      .logo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
     }
     .title {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       margin-bottom: 5px;
     }
   }

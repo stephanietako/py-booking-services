@@ -1,7 +1,7 @@
 .about {
   padding: 40px 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 10px #0000001a;
+  box-shadow: 0 4px 10px #eff0f71a;
   justify-content: center;
   align-items: center;
   display: flex;
@@ -32,8 +32,8 @@
   .content_wrapper {
     width: 80%;
     margin-top: 2rem;
-    padding: 42px;
-    background-color: #000;
+    //padding: 42px;
+
     border-radius: 10px;
     transition:
       transform 0.3s ease,
@@ -53,25 +53,14 @@
     .text_container {
       flex: 1;
       padding: 2rem;
+      background-color: #fff;
       //background: linear-gradient(180deg, #e3f7ff, #ffffff);
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transition: box-shadow 0.3s ease; /* Ajout de la transition uniquement sur l'ombre */
 
-      p {
-        line-height: 1.5;
-        color: whitesmoke;
-
-        font-size: 1.3rem;
-        transition: color 0.3s ease; /* Transition fluide pour la couleur */
-      }
-
       &:hover {
         box-shadow: 0 8px 24px rgba(223, 224, 230, 0.2); /* Ombre plus marquée au survol */
-      }
-
-      p:hover {
-        color: #25fde9; /* Changement de couleur du texte au survol */
       }
     }
 
@@ -190,138 +179,81 @@
       }
     }
   }
+  .carousel_container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+  }
 }
 ////////////////RESPONSIVE////////////////////
 @media (max-width: 1200px) {
   .about {
-    padding: 30px 10px;
-    .content_wrapper {
-      width: 90%;
-      .logo_title_wrapper {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        margin-bottom: 4rem;
-        .title {
-          font-size: 2rem;
-          font-weight: bold;
-          color: #003080;
+    .title {
+      font-size: 1.5rem; // OK ici
+    }
 
-          text-align: center;
-          z-index: 1; // au-dessus du logo si besoin
-        }
-        .logo_container {
-          position: absolute;
-          left: calc(50% - 202px); // décale à gauche du centre
-          top: 50%;
-          transform: translateY(-50%);
-          width: 100px;
-          height: 100px;
-          .logo {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-          }
+    .content {
+      flex-direction: column;
+
+      .images_container {
+        order: -1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+
+        .image {
+          width: 100%;
+          max-width: 300px;
         }
       }
-      .content {
-        flex-direction: column;
-      }
+
       .text_container {
+        order: 0;
         padding: 1rem;
       }
-      .carousel_container {
-        flex: none;
-        width: 100%;
-      }
-      .carousel_container {
-        margin-top: 20px;
-      }
-      .buttons {
-        flex-direction: column;
-        align-items: center;
-      }
-      .button {
-        width: 100%;
-        max-width: 300px;
-        margin-bottom: 10px;
-      }
-      .images_container {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-      }
-      .image {
-        max-width: 100%;
-        margin-bottom: 10px;
-      }
+    }
+
+    .carousel_container {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .button {
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 10px;
     }
   }
 }
 
 @media (max-width: 400px) {
   .about {
-    padding: 30px 10px;
-    .content_wrapper {
-      width: 90%;
-      .logo_title_wrapper {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        margin-bottom: 4rem;
-        .title {
-          font-size: 1.3rem;
-          font-weight: bold;
-          color: #003080;
+    .logo_title_wrapper {
+      .logo_container {
+        position: absolute;
+        left: calc(50% - 192px); // décale à gauche du centre
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100px;
+        height: 100px;
+      }
+    }
+    .title {
+      font-size: 1.3rem;
+    }
 
-          text-align: center;
-          z-index: 1; // au-dessus du logo si besoin
-        }
-        .logo_container {
-          position: absolute;
-          left: calc(50% - 153px); // décale à gauche du centre
-          top: 50%;
-          transform: translateY(-50%);
-          width: 100px;
-          height: 100px;
-          .logo {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-          }
-        }
-      }
-      .content {
-        flex-direction: column;
-      }
-      .text_container {
-        padding: 1rem;
-      }
-      .carousel_container {
-        flex: none;
-        width: 100%;
-      }
-      .carousel_container {
-        margin-top: 20px;
-      }
-      .buttons {
-        flex-direction: column;
-        align-items: center;
-      }
-      .button {
-        width: 100%;
-        max-width: 300px;
-        margin-bottom: 10px;
-      }
-      .images_container {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-      }
-      .image {
-        max-width: 100%;
-        margin-bottom: 10px;
-      }
+    .images_container {
+      flex-direction: column;
+      align-items: center;
+      margin-top: -3rem;
     }
   }
 }

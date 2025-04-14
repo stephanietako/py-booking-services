@@ -62,6 +62,20 @@ const About: React.FC = () => {
               exceptionnelles et confort optimal. Soigneusement entretenu, il
               vous promet une journée inoubliable en mer.
             </p>
+            <p>
+              J&apos;aurai à cœur de vous faire découvrir les merveilles de la
+              région à bord de Skippy One, dans une ambiance conviviale et
+              sécurisée.
+            </p>
+            <p>
+              Soucieux du détail, sérieux et rigoureux, je suis également
+              spécialisé dans l&apos;entretien de yachts.
+            </p>
+            <p>
+              Grâce à un réseau de contacts privilégié parmi les meilleurs
+              artisans locaux, je vous accompagnerai avec plaisir et facilité
+              dans l&apos;entretien de votre bateau.
+            </p>
           </div>
 
           {/* Section des images */}
@@ -107,23 +121,6 @@ const About: React.FC = () => {
               },
             ]}
           />
-        </div>
-
-        <div className={styles.additional_info}>
-          <p>
-            J&apos;aurai à cœur de vous faire découvrir les merveilles de la
-            région à bord de Skippy One, dans une ambiance conviviale et
-            sécurisée.
-          </p>
-          <p>
-            Soucieux du détail, sérieux et rigoureux, je suis également
-            spécialisé dans l&apos;entretien de yachts.
-          </p>
-          <p>
-            Grâce à un réseau de contacts privilégié parmi les meilleurs
-            artisans locaux, je vous accompagnerai avec plaisir et facilité dans
-            l&apos;entretien de votre bateau.
-          </p>
         </div>
 
         {/* Call to action (CTA) */}

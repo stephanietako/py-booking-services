@@ -22,7 +22,7 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
     object-fit: cover;
     // filter: brightness(90%); // Légèrement plus clair
     // object-position: center;
-    object-position: 37%;
+    object-position: 38% 25%;
     width: auto;
     height: 100%;
   }
@@ -64,47 +64,8 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
         color: $blanc;
         padding: 2rem;
         // border: 4px solid yellow;
-
-        // .heroButtons {
-        //   display: flex;
-        //   gap: 2.5rem;
-        //   margin-top: 1.5rem;
-        //   // border: 4px solid turquoise;
-        //   padding: 3rem;
-
-        //   .buttonHero {
-        //     padding: 14px 28px;
-        //     font-size: 0.7rem;
-        //     font-weight: bold;
-        //     border: 2px solid rgba(255, 255, 255, 0.4); // Légère bordure transparente
-        //     border-radius: 50px; // Plus arrondi pour un look premium
-        //     cursor: pointer;
-        //     text-transform: uppercase;
-        //     transition:
-        //       all 0.3s ease-in-out,
-        //       backdrop-filter 0.3s ease-in-out;
-        //     background: rgba(255, 255, 255, 0.15); // Fond semi-transparent
-        //     color: #003080;
-        //     backdrop-filter: blur(10px); // Effet "Glassmorphism"
-        //     box-shadow:
-        //       inset 0 2px 5px rgba(255, 255, 255, 0.2),
-        //       0 4px 10px rgba(0, 0, 0, 0.15); // Effet lumineux
-
-        //     &:hover {
-        //       background: rgba(255, 255, 255, 0.3);
-        //       border: 2px solid rgba(255, 255, 255, 0.6);
-        //       transform: scale(1.02);
-        //       box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
-        //       backdrop-filter: blur(5px);
-        //     }
-
-        //     &:active {
-        //       transform: scale(0.98);
-        //       box-shadow: 0 2px 8px rgba(251, 251, 255, 0.1);
-        //     }
-        //   }
-        // }
       }
+
       .hero_text {
         display: flex;
         height: auto;
@@ -143,108 +104,180 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
   }
 }
 ///////////////// Responsive //////////////
-@media (max-width: 768px) {
-  .heroWrapper {
-    position: relative;
-    width: 100vw;
-    height: 50vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+// @media (max-width: 768px) {
+//   .heroWrapper {
+//     position: relative;
+//     width: 100vw;
+//     height: 50vh;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     overflow: hidden;
 
-    .heroContent {
-      max-width: 90%;
-      margin-top: 5rem;
-      padding: 1rem;
-    }
+//     .heroContent {
+//       max-width: 90%;
+//       margin-top: 5rem;
+//       padding: 1rem;
+//     }
 
-    // 🌟 Texte principal
-    .heroText {
-      .heroText__tarifs_btn {
-        padding: 0;
-        display: flex;
-        height: auto;
-        width: 100%;
-        justify-content: center;
-      }
+//     // 🌟 Texte principal
+//     .heroText {
+//       .heroText__tarifs_btn {
+//         padding: 0;
+//         display: flex;
+//         height: auto;
+//         width: 100%;
+//         justify-content: center;
+//       }
 
-      h1 {
-        font-size: 1.2rem;
-      }
+//       h1 {
+//         font-size: 1.2rem;
+//       }
 
-      h2 {
-        font-size: 1rem;
-        margin: 1rem 0;
-      }
+//       h2 {
+//         font-size: 1rem;
+//         margin: 1rem 0;
+//       }
 
-      p {
-        font-size: 0.7rem;
-        margin-bottom: 1rem;
-        text-align: left;
-      }
-    }
+//       p {
+//         font-size: 0.7rem;
+//         margin-bottom: 1rem;
+//         text-align: left;
+//       }
+//     }
 
-    .heroButtons {
-      flex-direction: column;
-      margin-top: 0;
-    }
-    .buttonHero {
-      font-size: 0.5rem;
-      padding: 7px 14px;
+//     .heroButtons {
+//       flex-direction: column;
+//       margin-top: 0;
+//     }
+//     .buttonHero {
+//       font-size: 0.5rem;
+//       padding: 7px 14px;
+//     }
+//   }
+// }
+
+// @media screen and (max-width: 375px) {
+//   .heroWrapper {
+//     position: relative;
+//     width: 100vw;
+//     height: 50vh;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     overflow: hidden;
+
+//     .heroContent {
+//       max-width: 90%;
+//       margin-top: 7rem;
+//       padding: 0.7rem;
+//     }
+
+//     // 🌟 Texte principal
+//     .heroText {
+//       .heroText__tarifs_btn {
+//         padding: 0;
+//         display: flex;
+//         height: auto;
+//         width: 100%;
+//         justify-content: center;
+//       }
+
+//       h1 {
+//         font-size: 1.2rem;
+//       }
+
+//       h2 {
+//         font-size: 1rem;
+//         margin: 1rem 0;
+//       }
+
+//       p {
+//         font-size: 0.7rem;
+//         margin-bottom: 1rem;
+//         text-align: left;
+//       }
+//     }
+
+//     .heroButtons {
+//       flex-direction: column;
+//       margin-top: 0;
+//     }
+//     .buttonHero {
+//       font-size: 0.5rem;
+//       padding: 7px 14px;
+//     }
+//   }
+// }
+//////////////////// RESPONSIVE ////////////////////
+
+@media screen and (max-width: 1200px) {
+  .hero_text {
+    right: 3rem;
+    bottom: 2rem;
+    padding: 2rem;
+
+    h1 {
+      font-size: 1.8rem;
     }
   }
 }
 
-@media screen and (max-width: 375px) {
+@media screen and (max-width: 920px) {
   .heroWrapper {
-    position: relative;
-    width: 100vw;
-    height: 50vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    height: 60vh; // conserve le format full height
 
     .heroContent {
-      max-width: 90%;
-      margin-top: 7rem;
-      padding: 0.7rem;
-    }
+      padding: 1.5rem;
 
-    // 🌟 Texte principal
-    .heroText {
-      .heroText__tarifs_btn {
-        padding: 0;
-        display: flex;
-        height: auto;
-        width: 100%;
-        justify-content: center;
-      }
+      .hero_container {
+        .hero_bloc {
+          padding: 1.5rem;
+        }
 
-      h1 {
-        font-size: 1.2rem;
-      }
+        .hero_text {
+          right: 0 !important;
+          bottom: 2rem;
+          align-items: flex-end;
+          padding: 2rem;
 
-      h2 {
-        font-size: 1rem;
-        margin: 1rem 0;
-      }
-
-      p {
-        font-size: 0.7rem;
-        margin-bottom: 1rem;
-        text-align: left;
+          h1 {
+            font-size: 1.6rem;
+            text-align: right;
+          }
+        }
       }
     }
+  }
+}
 
-    .heroButtons {
-      flex-direction: column;
-      margin-top: 0;
+@media screen and (max-width: 768px) {
+  .heroWrapper {
+    .heroImage {
+      object-position: 38% 25%;
     }
-    .buttonHero {
-      font-size: 0.5rem;
-      padding: 7px 14px;
+
+    .heroContent {
+      .hero_container {
+        .hero_text {
+          padding: 1rem;
+          align-items: center;
+          text-align: center;
+
+          h1 {
+            font-size: 1.4rem;
+            color: $bleu-fonce;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero_text {
+    h1 {
+      font-size: 1.2rem;
     }
   }
 }

@@ -150,7 +150,7 @@ const Galery = () => {
           onClick={() => setZoomIndex(null)}
           style={{ cursor: "zoom-out" }}
         >
-          <button
+          {/* <button
             className={styles.closeZoom}
             onClick={(e) => {
               e.stopPropagation();
@@ -158,7 +158,7 @@ const Galery = () => {
             }}
           >
             ✕
-          </button>
+          </button> */}
 
           <motion.div
             className={styles.zoomWrapper}
@@ -172,7 +172,7 @@ const Galery = () => {
               alt="Zoomed"
               className={styles.zoomedImage}
               width={1200}
-              height={800}
+              height={870}
               sizes="(max-width: 768px) 100vw, 1200px"
               style={{ objectFit: "contain", width: "100%", height: "100%" }}
               priority

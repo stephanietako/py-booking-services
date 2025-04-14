@@ -153,7 +153,12 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
     justify-content: center;
     gap: 20px;
     padding: 1rem;
-
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 1rem;
+    position: absolute;
+    top: 0;
     .button {
       display: inline-block;
       padding: 12px 24px;

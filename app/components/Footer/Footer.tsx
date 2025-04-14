@@ -23,81 +23,48 @@ const Footer: React.FC = () => {
 
   return (
     <>
-      {/* <div className={styles.footer__header}>
-        <div className={styles.link_infos}>
-          <ul className={styles.link_list}>
-            <li className={styles.link}>
-              <div className={styles.link__txt}>
-                <p>Envoyez-nous un email</p>
-              </div>
-              <span className={styles.link__img}>
-                <a href="mailto:yachtingday@gmail.com">
-                  <FaEnvelope size={20} />
-                </a>
-              </span>
-            </li>
-            <li className={styles.link}>
-              <div className={styles.link__txt}>
-                <p>Nous rendre visite</p>
-              </div>
-              <span className={styles.link__img}>
-                <a href="#footer">
-                  <FaMapMarkerAlt size={20} />
-                </a>
-              </span>
-            </li>
-            <li className={styles.link}>
-              <div className={styles.link__txt}>
-                <p>+33 (0) 7 67 21 00 17</p>
-              </div>
-              <span className={styles.link__img}>
-                <a href="tel:+33 7 67 21 00 17">
-                  <FaPhone size={20} />
-                </a>
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div> */}
-
       <div className={styles.footer__container} id="footer">
         <div className={styles.footer__bloc}>
           <div className={styles.__bloc_container}>
             <div className={styles.__bloc_content}>
-              <div className={styles.google}>
-                <Map />
-              </div>
-
-              <div className={styles.footer_list__content}>
-                <div className={styles.bloc_text__content}>
-                  <ul className={styles.bloc_text}>
-                    <li>
-                      <p id={styles.bloc_text__contact}>CONTACT</p>
-                    </li>
-                    <li>
-                      <p>Pierre-Yves Hemard</p>
-                      <p>Port de Cavalaire, 83240 Cavalaire-sur-Mer</p>
-                    </li>
-                    <li>
-                      <p>
-                        <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
-                      </p>
-                    </li>
-                    <li>
-                      <p>
-                        <a href="mailto:yachtingday@gmail.com">
-                          yachtingday@gmail.com
-                        </a>
-                      </p>
-                    </li>
-                    <li id={styles.bloc_text__subtext}>
-                      Embarque pour une journée de rêve avec Yatching Day
-                    </li>
-                  </ul>
+              <div className={styles.__bloc_content__inner}>
+                <div className={styles.google}>
+                  <Map />
                 </div>
-                <span className={styles.footer_baseline}>
-                  <p>N&apos;attendez pas réservez votre journée !</p>
-                </span>
+
+                <div className={styles.footer_list__content}>
+                  <div className={styles.bloc_text__content}>
+                    <ul className={styles.bloc_text}>
+                      <li>
+                        <p id={styles.bloc_text__contact}>CONTACT</p>
+                      </li>
+                      <li>
+                        <p>Yachting Day</p>
+                        <p>Port de Cavalaire</p>
+                      </li>
+
+                      <li>
+                        <p>
+                          <a href="mailto:yachtingday@gmail.com">
+                            yachtingday@gmail.com
+                          </a>
+                        </p>
+                        <p>Pierre-Yves Hemard</p>
+                      </li>
+                      <li>
+                        <p>
+                          <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
+                        </p>
+                      </li>
+                      <li id={styles.bloc_text__subtext}>
+                        Embarquez pour une journée de rêve avec Yatching Day
+                      </li>
+                    </ul>
+                  </div>
+                  <span className={styles.footer_baseline}>
+                    <p>N&apos;attendez pas réservez votre journée !</p>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -126,22 +93,7 @@ const Footer: React.FC = () => {
                   </li>
                 </ul>
               </div>
-              {/* <div className={styles.column}>
-                <h4>CONTACT</h4>
-                <ul>
-                  <li id={styles.__copyright}>
-                    Port de Cavalaire, 83240 Cavalaire-sur-Mer
-                  </li>
-                  <li id={styles.number_phone}>
-                    <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
-                  </li>
-                  <li>
-                    <a href="mailto:yachtingday@gmail.com">
-                      <FaEnvelope size={20} />
-                    </a>
-                  </li>
-                </ul>
-              </div> */}
+
               <div className={styles.__copyright}>
                 <div onClick={handleIconClick}>
                   <span className={styles.__copyright__img}>
@@ -160,24 +112,6 @@ const Footer: React.FC = () => {
                 &#169; {currentYear} | <a href="#">Tako Dev</a>
               </div>
             </div>
-
-            {/* <div className={styles.__copyright}>
-              <div onClick={handleIconClick}>
-                <span className={styles.__copyright__img}>
-                  <Link href="/">
-                    <Image
-                      src="/assets/logo/logo-new.png"
-                      alt="Logo"
-                      width={90}
-                      height={80}
-                      className={styles.logo}
-                      priority
-                    />
-                  </Link>
-                </span>
-              </div>
-              &#169; {currentYear} | <a href="#">Tako Dev</a>
-            </div> */}
           </div>
         </div>
       </div>

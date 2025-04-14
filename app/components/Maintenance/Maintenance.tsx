@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import logo from "@/public/assets/logo/hippo.png";
+//import logo from "@/public/assets/logo/hippo.png";
 import boat from "@/public/assets/images/boat-cote1.jpg";
 // Styles
 import styles from "./styles.module.scss";
@@ -22,7 +22,7 @@ const Maintenance = () => {
       </div>
       {/* Logo avec Next.js Image */}
       <div className={styles.logo_title_wrapper}>
-        <div className={styles.logo_container}>
+        {/* <div className={styles.logo_container}>
           <Image
             src={logo}
             alt="Yachting Day Logo"
@@ -30,8 +30,8 @@ const Maintenance = () => {
             fill
             priority
           />
-        </div>
-        <h2 className={styles.title}>Maintenance navale</h2>
+        </div> */}
+        <h2 className={styles.title}>Maintenance Nautique</h2>
       </div>
 
       {/* Contenu */}
@@ -80,19 +80,11 @@ const Maintenance = () => {
           Faire une demande d’entretien <FaDownload />
         </a>
       </div>
-      <div className={styles.heroButtons}>
-        <p>Cliquez ci-dessous pour plus d&apos;information.</p>
-        <div className={styles.heroButtons__container}>
-          {/* <Link href="/about" className={styles.buttonHero}>
-            Qui sommes-nous
-          </Link> */}
-          <Link href="/tarifs" className={styles.buttonHero}>
-            Location
-          </Link>
-          {/* <Link href="#footer" className={styles.buttonHero}>
-            Contact
-          </Link> */}
-        </div>
+
+      <div className={styles.buttons}>
+        <Link href="/location" className={styles.button}>
+          Location
+        </Link>
       </div>
     </section>
   );

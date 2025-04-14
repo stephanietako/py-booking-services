@@ -4,11 +4,12 @@
   transition: opacity 0.3s ease-in-out;
   position: fixed;
   bottom: 15rem;
-  right: 7px;
+  right: 4px;
   background: whitesmoke;
   display: flex;
   justify-content: center;
   border: none;
+  padding: 0.5rem 1rem;
   backdrop-filter: blur(10px); /* Flou de l'arrière-plan */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour un effet de profondeur */
   border: 1px solid rgba(255, 255, 255, 0.3); /* Bordure subtile */

@@ -38,6 +38,13 @@ Bleu clair : #14e9f7 */
   }
 }
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 html {
   max-width: 100vw;
   overflow-x: hidden;
@@ -52,6 +59,7 @@ body {
   padding: 0;
   background-color: #000000e3;
   color: var(--text-color);
+  position: relative;
 }
 
 h1 {
@@ -86,7 +94,7 @@ p {
 }
 
 a {
-  color: #3f51b5;
+  color: #003080;
   text-decoration: none;
   list-style: none;
 }
@@ -94,13 +102,6 @@ a {
 a:hover {
   text-decoration: none;
   color: gray;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 /* header {
@@ -472,7 +473,7 @@ label {
 /* section */
 section {
   display: flex;
-  width: 100vw;
+  width: 100%;
   height: 100%;
   justify-content: center;
   align-items: center;

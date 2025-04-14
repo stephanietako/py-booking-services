@@ -56,15 +56,12 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
               Gigaro, Le cap Lardier et ses merveilles ou la baie de la Baside
               blanche sont à environ 15 min de navigation. Juste après, le
               littoral de Ramatuelle vous séduira avec les très fameuses baies
-              de l’Escalet et de Pampelonne.
-            </p>
-
-            <p>
-              Enfin, il vous faudra environ 40 min pour rejoindre le port de St
-              Tropez. La baie de Cavalaire ne connaît pas l’agitation permanente
-              du golf de St Tropez durant la haute saison, la navigation y est
-              donc bien plus agréable et l’accès aux principaux points d’intérêt
-              cités ci-dessus est plus direct.
+              de l’Escalet et de Pampelonne. Enfin, il vous faudra environ 40
+              min pour rejoindre le port de St Tropez. La baie de Cavalaire ne
+              connaît pas l’agitation permanente du golf de St Tropez durant la
+              haute saison, la navigation y est donc bien plus agréable et
+              l’accès aux principaux points d’intérêt cités ci-dessus est plus
+              direct.
             </p>
 
             <p>
@@ -82,7 +79,7 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
               alt="Cap Camarat 12.5 Wa"
               className={styles.__image}
               width={400}
-              height={300}
+              height={350}
               priority
             />
           </div>

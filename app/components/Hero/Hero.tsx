@@ -14,27 +14,13 @@ const Hero: React.FC = () => {
         src={backgroundImg}
         alt="plan rapproché vue mer"
         className={styles.heroImage}
-        priority={true}
-        fill={true}
+        priority
+        fill
         placeholder="blur"
       />
       <div className={styles.heroContent}>
         <div className={styles.hero_container}>
           <div className={styles.hero_bloc}>
-            {/* <div className={styles.heroButtons}>
-              <Link href="/about" className={styles.buttonHero}>
-                Qui sommes-nous
-              </Link>
-              <Link href="/tarifs" className={styles.buttonHero}>
-                Location
-              </Link>
-              <Link href="/entretien" className={styles.buttonHero}>
-                Entretien
-              </Link>
-              <Link href="#footer" className={styles.buttonHero}>
-                Contact
-              </Link>
-            </div> */}
             <div className={styles.hero_text}>
               <h1>Locations & Entretiens</h1>
             </div>

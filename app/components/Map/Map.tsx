@@ -185,22 +185,8 @@ const Map: React.FC = () => {
   return (
     <>
       <div className={styles.googlemap}>
-        {/* <div className={styles.__btn_box}>
-          <button className={styles.__btn_position} onClick={centerMyLocation}>
-            <p>Me localiser sur la carte</p>
-          </button>
-          <a
-            href="https://maps.app.goo.gl/P8YWn9kBxpecbK9m9"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            <button className={styles.__btn_googlemap}>
-              <p>Ouvrir un lien vers Google Map</p>
-            </button>
-          </a>
-        </div> */}
         <div className={styles.map__container} ref={mapRef} />
-        <div className={styles.map}></div>
+
         <div className={styles.__btn_box}>
           <button className={styles.__btn_position} onClick={centerMyLocation}>
             <p>Me localiser sur la carte</p>
@@ -216,20 +202,6 @@ const Map: React.FC = () => {
           </a>
         </div>
       </div>
-      {/* <div className={styles.__btn_box}>
-        <button className={styles.__btn_position} onClick={centerMyLocation}>
-          <p>Me localiser sur la carte</p>
-        </button>
-        <a
-          href="https://maps.app.goo.gl/P8YWn9kBxpecbK9m9"
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          <button className={styles.__btn_googlemap}>
-            <p>Ouvrir un lien vers Google Map</p>
-          </button>
-        </a>
-      </div> */}
     </>
   );
 };
