@@ -31,7 +31,7 @@
   }
 
   .content_wrapper {
-    width: 80%;
+    width: 90%;
     margin-top: 2rem;
     padding: 42px;
     background-color: #fff;
@@ -51,11 +51,15 @@
     }
 
     .text_container {
-      flex: 1;
+      display: flex;
       padding: 2rem;
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: box-shadow 0.3s ease; /* Ajout de la transition uniquement sur l'ombre */
+      box-shadow: 0 4px 12px #00000026;
+      transition: box-shadow 0.3s;
+      flex-direction: column;
+      min-width: 45%;
+      width: 45%;
+      height: auto;
 
       p {
         line-height: 1.5;
@@ -74,9 +78,13 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 500%;
+    height: auto;
+    //border: 5px solid red;
 
     .__image {
       width: 100%;
+      height: auto;
       object-fit: cover;
       height: auto;
       border-radius: 8px;
@@ -103,9 +111,18 @@
   }
 }
 ////////////////RESPONSIVE////////////////////
+@media (max-width: 1440px) {
+  .cavalaire {
+    .content_wrapper {
+      width: 95%;
+      padding: 2rem;
+    }
+  }
+}
+
 @media (max-width: 1024px) {
   .content_wrapper {
-    width: 90%;
+    width: 95% !important;
     padding: 2rem;
 
     .content {
@@ -115,6 +132,7 @@
 
     .text_container {
       padding: 1.5rem;
+      width: 100% !important;
     }
 
     .main_image {
@@ -152,6 +170,7 @@
 
     .text_container {
       padding: 0.8rem !important;
+      width: 100% !important;
 
       p {
         font-size: 1.3rem;
@@ -181,7 +200,7 @@
 @media (max-width: 480px) {
   .cavalaire {
     width: 100%;
-    padding: 1rem;
+    padding: 5rem 0 1rem 0 !important;
   }
 
   .logo_title_wrapper {

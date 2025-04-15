@@ -5,9 +5,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Map from "../Map/Map";
+import logo from "@/public/assets/logo/logo-new.png";
 //import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 // Styles
 import styles from "./styles.module.scss";
+import { FaEnvelope, FaPhone } from "react-icons/fa";
 //import backgroundImg from "@/public/assets/images/ramatuelle-cap-taillat.webp";
 
 export const dynamic = "force-dynamic";
@@ -28,42 +30,65 @@ const Footer: React.FC = () => {
           <div className={styles.__bloc_container}>
             <div className={styles.__bloc_content}>
               <div className={styles.__bloc_content__inner}>
-                <div className={styles.google}>
+                {/* <div className={styles.google}>
                   <Map />
-                </div>
+                </div> */}
 
                 <div className={styles.footer_list__content}>
                   <div className={styles.bloc_text__content}>
                     <ul className={styles.bloc_text}>
                       <li>
-                        <p id={styles.bloc_text__contact}>CONTACT</p>
+                        {/* Logo */}
+                        <div className={styles.logo_image}>
+                          <Image
+                            src={logo}
+                            alt="Yachting Day Logo"
+                            className={styles.logo}
+                            width={200}
+                            height={150}
+                            priority
+                            style={{
+                              objectFit: "cover",
+                              width: "100%",
+                              height: "100%",
+                            }}
+                          />
+                        </div>
+                        <p>
+                          <strong>N’hésitez pas à nous contacter:</strong>
+                        </p>
+                      </li>
+                      <li className={styles.mail}>
+                        <a href="mailto:yachtingday@gmail.com">
+                          <FaEnvelope size={20} className={styles.icon} />
+                          yachtingday@gmail.com
+                        </a>
                       </li>
                       <li>
-                        <p>Yachting Day</p>
-                        <p>Port de Cavalaire</p>
+                        <p>
+                          <strong>Pierre-Yves Hemard</strong>
+                        </p>
+                        <p>
+                          <a href="tel:+33767210017">
+                            <FaPhone size={20} className={styles.icon} />
+                            +33 (0) 7 67 21 00 17
+                          </a>
+                        </p>
                       </li>
 
                       <li>
                         <p>
-                          <a href="mailto:yachtingday@gmail.com">
-                            yachtingday@gmail.com
-                          </a>
+                          <strong>Port de Cavalaire-sur-Mer</strong>
                         </p>
-                        <p>Pierre-Yves Hemard</p>
-                      </li>
-                      <li>
-                        <p>
-                          <a href="tel:+33767210017">+33 (0) 7 67 21 00 17</a>
-                        </p>
-                      </li>
-                      <li id={styles.bloc_text__subtext}>
-                        Embarquez pour une journée de rêve avec Yatching Day
                       </li>
                     </ul>
                   </div>
                   <span className={styles.footer_baseline}>
-                    <p>N&apos;attendez pas réservez votre journée !</p>
+                    <p> N&apos;attendez pas réservez votre journée !</p>
                   </span>
+                </div>
+                <div className={styles.google}>
+                  <Map />
                 </div>
               </div>
             </div>

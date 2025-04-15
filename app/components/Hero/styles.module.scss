@@ -225,8 +225,8 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
 
 @media screen and (max-width: 920px) {
   .heroWrapper {
-    height: 60vh; // conserve le format full height
-
+    // height: 60vh; // conserve le format full height
+    margin-top: 20vh;
     .heroContent {
       padding: 1.5rem;
 
@@ -275,9 +275,27 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
 }
 
 @media screen and (max-width: 480px) {
-  .hero_text {
-    h1 {
-      font-size: 1.2rem;
+  .heroWrapper {
+    height: 62vh;
+    margin-top: 20vh;
+    .heroImage {
+      object-position: 38% 25%;
+    }
+
+    .heroContent {
+      .hero_container {
+        margin-top: 10vh;
+        .hero_text {
+          padding: 1rem;
+          align-items: center;
+          text-align: center;
+
+          h1 {
+            font-size: 1.2rem;
+            color: $bleu-fonce;
+          }
+        }
+      }
     }
   }
 }

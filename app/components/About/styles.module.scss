@@ -190,6 +190,7 @@
 ////////////////RESPONSIVE////////////////////
 @media (max-width: 1200px) {
   .about {
+    padding: 5rem 0 1rem 0 !important;
     .title {
       font-size: 1.5rem; // OK ici
     }
@@ -236,6 +237,7 @@
 
 @media (max-width: 400px) {
   .about {
+    padding: 5rem 0 1rem 0 !important;
     .logo_title_wrapper {
       .logo_container {
         position: absolute;

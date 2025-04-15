@@ -1,70 +1,136 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import styles from "./styles.module.scss";
-import backgroundImg from "@/public/assets/images/plage-pampelonne.webp";
+import Image from "next/image";
+import image1 from "@/public/assets/images/vue-exterieur.webp";
+import logo from "@/public/assets/logo/hippo.png";
+import placeholder from "@/public/assets/images/placeholder.svg";
 import Link from "next/link";
+import Wrapper from "../Wrapper/Wrapper";
 
 const Location: React.FC = () => {
   return (
-    <div className={styles.locationSection} id="location">
-      <div className={styles.titleBlock}>
-        <h2>Location</h2>
-        <div className={styles.buttons}>
-          <Link href="/boat" className={styles.button}>
-            Le bateau
-          </Link>
-          <Link href="/environs" className={styles.button}>
-            Les environs
-          </Link>
-          <Link href="/excursions" className={styles.button}>
-            Nos Excursions
-          </Link>
-        </div>
-      </div>
-
-      <div className={styles.hero}>
-        <Image
-          src={backgroundImg}
-          alt="Plage Pampelonne"
-          fill
-          priority
-          placeholder="blur"
-          className={styles.heroBg}
-        />
-        <div className={styles.heroContent}>
-          <div className={styles.left}>
-            <p>
-              Période du 16 octobre au 31 mai: <strong>1500€ / jour</strong>
-            </p>
-            <p>
-              Période du 1er juin au 07 juillet et du 1er septembre au 15
-              octobre: <strong>1700€ / jour</strong>
-            </p>
-            <p>
-              Période du 08 juillet au 31 août: <strong>1900€ / jour</strong>
-            </p>
-            <h4>Faites votre réservation facilement</h4>
-            <p>Réservez votre bateau et vos services en un clic.</p>
+    <Wrapper>
+      <section>
+        <div className={styles.location} id="location">
+          <div className={styles.logo_title_wrapper}>
+            <div className={styles.logo_container}>
+              <Image
+                src={logo || placeholder}
+                alt="Yachting Day Logo"
+                className={styles.logo}
+                fill
+                priority
+              />
+            </div>
+            <h2 className={styles.title}>Location</h2>
           </div>
-          <div className={styles.heroContent}>
-            <div className={styles.right}>
-              <p id={styles.right_text}>
+          {/* BOUTONS POUR DESKTOP */}
+          <div className={styles.topButtonsDesktop}>
+            <Link href="/boat" className={styles.button}>
+              Le bateau
+            </Link>
+            <Link href="/environs" className={styles.button}>
+              Les environs
+            </Link>
+            <Link href="/excursions" className={styles.button}>
+              Nos Excursions
+            </Link>
+          </div>
+
+          {/* <div className={styles.location_header_bloc__content}>
+            <div className={styles.subtitle}>
+              <p id={styles.sub_text}>
+                Depuis le port de Cavalaire, embarquez pour une journée de rêve
+                avec Yachting Day
+              </p>
+            </div>
+          </div> */}
+
+          <div className={styles.content_wrapper}>
+            <div className={styles.content}>
+              <div className={styles.text_container}>
+                <span className={styles.top_text}>
+                  <p id={styles.top_text__typo1}>
+                    Offrez-vous le plaisir d&apos;une sortie en mer et venez
+                    découvrir notre Cap Camarat 12.5 WA
+                  </p>
+                  {/* <p id={styles.top_text__typo2}>
+                    et venez découvrir notre Cap Camarat 12.5 WA
+                  </p> */}
+                  {/* <p id={styles.top_text__typo2}>
+                    et venez découvrir notre Cap Camarat 12.5 WA
+                  </p> */}
+                </span>
+
+                <div className={styles.row}>
+                  <strong>Basse Saison</strong>
+                  <strong>1500 Euros</strong>
+                </div>
+                <p className={styles.dates}>(du 16 Octobre au 31 Mai)</p>
+                <br />
+                <div className={styles.row}>
+                  <strong>Moyenne Saison</strong>
+                  <strong>1700 Euros</strong>
+                </div>
+                <p className={styles.dates}>
+                  (01er Juin - 07 Juillet et 01er Sept. - 15 Oct.)
+                </p>
+                <br />
+                <div className={styles.row}>
+                  <strong>Haute Saison</strong>
+                  <strong>1900 Euros</strong>
+                </div>
+                <p className={styles.dates}>(du 08 Juillet au 31 Aout)</p>
+                <br />
+
+                <div className={styles.buttons}>
+                  <a
+                    href="mailto:yachtingday@gmail.com"
+                    className={styles.button}
+                    id={styles.buttons__reservation}
+                  >
+                    Réservez votre bateau
+                  </a>
+                </div>
+              </div>
+
+              <div className={styles.main_image}>
+                <Image
+                  src={image1}
+                  alt="Cap Camarat 12.5 Wa"
+                  className={styles.__image}
+                  width={387}
+                  height={300}
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+          {/* BOUTONS POUR MOBILE */}
+          <div className={styles.topButtonsMobile}>
+            <Link href="/boat" className={styles.button}>
+              Le bateau
+            </Link>
+            <Link href="/environs" className={styles.button}>
+              Les environs
+            </Link>
+            <Link href="/excursions" className={styles.button}>
+              Nos Excursions
+            </Link>
+          </div>
+          <div className={styles.location_header_bloc__content}>
+            <div className={styles.subtitle}>
+              <p id={styles.sub_text}>
                 Depuis le port de Cavalaire, embarquez pour une journée de rêve
                 avec Yachting Day
               </p>
             </div>
           </div>
         </div>
-      </div>
-
-      <div className={styles.cta}>
-        <a href="mailto:yachtingday@gmail.com" className={styles.ctaButton}>
-          Réservez votre bateau
-        </a>
-      </div>
-    </div>
+      </section>
+    </Wrapper>
   );
 };
 

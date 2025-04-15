@@ -36,40 +36,35 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
         </div>
         <h2 className={styles.title}>les environs</h2>
       </div>
+
       <div className={styles.content_wrapper}>
         <div className={styles.content}>
           <div className={styles.text_container}>
             <p>Bienvenue dans la baie de Cavalaire !</p>
             <p>
-              Voisine du golf de Saint-Tropez, entre mer et collines, en face
-              des îles d’or, la commune de Cavalaire a de nombreux avantages
-              pour vous séduire !
+              Voisine du célèbre golfe de Saint-Tropez, nichée entre mer et
+              collines et faisant face aux majestueuses Îles d’Or, la commune de
+              Cavalaire a de nombreux avantages pour vous séduire.
             </p>
 
             <p>
-              À proximité immédiate de tous les plus fameux mouillages des
-              environs dont la réputation n’est plus à faire, le port de
-              Cavalaire est le point de départ idéal pour toutes vos excursions.
+              Idéalement situé à proximité des plus beaux mouillages de la
+              région, dont la réputation n’est plus à faire, le port de
+              Cavalaire est le point de départ idéale pour toutes vos
+              excursions.
             </p>
 
             <p>
-              Gigaro, Le cap Lardier et ses merveilles ou la baie de la Baside
-              blanche sont à environ 15 min de navigation. Juste après, le
-              littoral de Ramatuelle vous séduira avec les très fameuses baies
-              de l’Escalet et de Pampelonne. Enfin, il vous faudra environ 40
-              min pour rejoindre le port de St Tropez. La baie de Cavalaire ne
-              connaît pas l’agitation permanente du golf de St Tropez durant la
-              haute saison, la navigation y est donc bien plus agréable et
-              l’accès aux principaux points d’intérêt cités ci-dessus est plus
-              direct.
-            </p>
-
-            <p>
-              Enfin, le port de Cavalaire est à quelques 20 min de navigation de
-              l’île de Port-Cros et environ 45 min pour l’île de Porquerolles
-              quand il vous en faudra plus du double au départ du golf de
-              St-Tropez. N’hésitez donc pas s’il vous prend l’envie d‘une
-              traversée !
+              Partez explorer, d’un côté, Saint-Tropez, Pampelonne, la baie de
+              l’Escalet aux eaux cristallines, le cap Lardier et ses paysages
+              préservés, ou encore la baie sauvage de la Bastide Blanche. De
+              l’autre, découvrez les calanques secrètes de Cavalaire et du
+              Rayol, les sublimes Îles d’Or ou le Cap Bénat et ses panoramas
+              grandioses. Malgré sa situation privilégiée, la baie de Cavalaire
+              conserve une quiétude rare, même en haute saison. Loin de
+              l’effervescence du golfe de Saint-Tropez, la navigation y est
+              généralement plus paisible. N’hésitez donc plus s’il vous prend
+              l’envie d’une traversée !
             </p>
           </div>
 
@@ -78,8 +73,8 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
               src={image1}
               alt="Cap Camarat 12.5 Wa"
               className={styles.__image}
-              width={400}
-              height={350}
+              width={610}
+              height={510}
               priority
             />
           </div>

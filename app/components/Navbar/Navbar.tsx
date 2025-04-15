@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
   // Écoute du scroll pour changer l'état de la navbar
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 500) {
+      if (window.scrollY > 400) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -129,17 +129,7 @@ const Navbar: React.FC = () => {
           />
         </Link>
       </div>
-      {/* <div className={styles.heroButtons}>
-        <Link href="/tarifs" className={styles.buttonHero}>
-          Location
-        </Link>
-        <Link href="/entretien" className={styles.buttonHero}>
-          Entretien
-        </Link>
-        <Link href="#footer" className={styles.buttonHero}>
-          Contact
-        </Link>
-      </div> */}
+
       <div className={styles.primaryLinks}>
         <Link href="/location" className={styles.navButton}>
           Location
@@ -160,46 +150,10 @@ const Navbar: React.FC = () => {
       {/* Overlay */}
       {menuOpen && <div className={styles.overlay} onClick={toggleMenu} />}
 
-      {/* Menu */}
-      {/* <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
-        {isSignedIn ? (
-          <>
-            <Link href="/my-bookings" className="nav-link">
-              Mes réservations
-            </Link>
-            <Link href="/dashboard">Tableau de bord</Link>
-
-            {bookingToken && (
-              <Link
-                href={`/manage-booking?token=${bookingToken}`}
-                className="nav-link"
-              >
-                Ma réservation
-              </Link>
-            )}
-            {userRole === "admin" && (
-              <Link href="/admin/services">Mes Services</Link>
-            )}
-            {userRole === "admin" && <Link href="/admin">ADMIN</Link>}
-            <UserButton />
-          </>
-        ) : (
-          <div className={styles.authLinks}>
-            <Link href="/">Accueil</Link>
-            <Link href="/about" className={styles.buttonHero}>
-              Qui sommes-nous
-            </Link>
-            <Link href="/sign-in">Se connecter</Link>
-            <Link href="/sign-up">S&apos;inscrire</Link>
-            <Link href="#footer">Contact</Link>
-          </div>
-        )}
-      </div> */}
-      {/* Menu */}
       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
         {/* --- Mobile-only links visible dans le burger --- */}
         <div className={styles.mobileOnlyLinks}>
-          <Link href="/tarifs" onClick={toggleMenu}>
+          <Link href="/location" onClick={toggleMenu}>
             Location
           </Link>
           <Link href="/entretien" onClick={toggleMenu}>

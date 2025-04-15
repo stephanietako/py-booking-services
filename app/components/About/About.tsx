@@ -133,8 +133,8 @@ const About: React.FC = () => {
             <Link href="/location" className={styles.button}>
               Location
             </Link>
-            <Link href="/excursions" className={styles.button}>
-              excursions
+            <Link href="#footer" className={styles.button}>
+              Contact
             </Link>
           </div>
         </div>
