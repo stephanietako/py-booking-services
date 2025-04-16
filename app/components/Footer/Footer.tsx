@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Map from "../Map/Map";
 import logo from "@/public/assets/logo/logo-new.png";
@@ -17,11 +16,6 @@ export const dynamic = "force-dynamic";
 const Footer: React.FC = () => {
   const date = new Date();
   const currentYear = date.getFullYear();
-  const router = useRouter();
-
-  const handleIconClick = () => {
-    router.push("sectionHome");
-  };
 
   return (
     <>
@@ -120,7 +114,7 @@ const Footer: React.FC = () => {
               </div>
 
               <div className={styles.__copyright}>
-                <div onClick={handleIconClick}>
+                <div>
                   <span className={styles.__copyright__img}>
                     <Link href="/">
                       <Image
@@ -134,7 +128,7 @@ const Footer: React.FC = () => {
                     </Link>
                   </span>
                 </div>
-                &#169; {currentYear} | <a href="#">Tako Dev</a>
+                &#169; {currentYear} | Tako Dev
               </div>
             </div>
           </div>
