@@ -209,7 +209,11 @@ const Boat = () => {
       </div>
 
       <div className={styles.buttons}>
-        <Link href="/tarifs" className={styles.button}>
+        <Link
+          href="/location
+        "
+          className={styles.button}
+        >
           Réservez Votre Journée
         </Link>
       </div>
