@@ -87,14 +87,19 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
       font-size: 1.3rem;
       text-transform: uppercase;
       border: 2px solid $bleu-fonce;
-      background: none;
       color: $blanc;
       padding: 0.6rem 1.6rem;
+      background: rgba(255, 255, 255, 0.05); // léger fond transparent
+      backdrop-filter: blur(6px); // flou derrière = effet "verre"
+      -webkit-backdrop-filter: blur(6px); // pour Safari
+      border-radius: 50px; // look plus arrondi comme un hublot
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); // halo léger
       transition: all 0.3s ease;
 
       &:hover {
-        background: rgba(2, 19, 80, 0.4);
+        background: rgba(2, 19, 80, 0.3); // un peu plus de contraste au survol
         border-color: $blanc;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); // halo plus fort
         transform: scale(1.05);
       }
     }

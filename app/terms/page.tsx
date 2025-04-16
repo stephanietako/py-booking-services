@@ -11,6 +11,8 @@ const page = () => {
             width: "100%",
             height: "100%",
             padding: "3rem",
+            flexDirection: "column",
+            background: "#fff",
           }}
         >
           <h2>Politique de confidentialité</h2>
