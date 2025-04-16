@@ -105,16 +105,16 @@ const Footer: React.FC = () => {
                     <a href="tel:+33123456789">Nous contacter</a>
                   </li>
                   <li>
-                    <Link href="/">Mentions Légales</Link>
+                    <Link href="/mention">Mentions Légales</Link>
                   </li>
                   <li>
-                    <Link href="/">CGU</Link>
+                    <Link href="/cgu">CGU</Link>
                   </li>
                   <li>
-                    <Link href="/">Politique de confidentialité</Link>
+                    <Link href="/terms">Politique de confidentialité</Link>
                   </li>
                   <li>
-                    <Link href="/">Politique de cookies</Link>
+                    <Link href="/cookies">Politique de cookies</Link>
                   </li>
                 </ul>
               </div>
