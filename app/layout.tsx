@@ -28,8 +28,8 @@ const gloria = Gloria_Hallelujah({
 });
 
 export const metadata: Metadata = {
-  title: "Yatching services",
-  description: "Booking services",
+  title: "Yatching Day",
+  description: "Locations et entretiens de bateaux",
 };
 
 export default function RootLayout({
