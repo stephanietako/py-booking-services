@@ -7,7 +7,11 @@ import styles from "./styles.module.scss";
 
 const images = [
   "/assets/images/boat-cote2.jpg",
+  "/assets/images/vue-boat.webp",
+
+  "/assets/images/vue-exterieur.webp",
   "/assets/galery/table-avant.webp",
+  "/assets/images/interieur-capitaine.jpg",
   "/assets/galery/Cap-Camarat1-Plan-de-Cabine.jpg",
   "/assets/galery/Cap-Camarat2-Plan-de-Pont.jpg",
   "/assets/galery/Cap-Camarat3-Plan-de-Pont.jpg",
@@ -17,16 +21,14 @@ const images = [
   "/assets/galery/gal11-ext.webp",
   "/assets/galery/gal12-ext.webp",
   "/assets/galery/gal1.webp",
+  "/assets/images/table-jour-avant.jpg",
   "/assets/galery/gal13.webp",
-  "/assets/galery/gal14.webp",
-  "/assets/galery/gal15.webp",
   "/assets/galery/gal3.webp",
   "/assets/galery/gal4.webp",
   "/assets/galery/gal15.webp",
   "/assets/galery/gal5.webp",
   "/assets/galery/gal7.webp",
   "/assets/galery/gal2.webp",
-  "/assets/galery/gal7.webp",
 ];
 
 const Galery = () => {

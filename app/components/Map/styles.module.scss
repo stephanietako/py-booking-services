@@ -1,21 +1,22 @@
 .googlemap {
   display: flex;
-  width: auto;
+  width: 100%;
   height: 100%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: relative;
+  border: 5px solid turquoise;
 
   .map__container {
     max-height: 20rem;
     max-width: 100%;
     width: 28rem;
-    height: 18rem;
+    height: 16rem;
     overflow: hidden;
     justify-content: center;
     display: flex;
-    //border: 5px solid blue;
+    border: 5px solid blue;
 
     .property {
       align-items: center;
@@ -169,8 +170,7 @@
 
 @media (max-width: 480px) {
   .map__container {
-    // height: 14rem !important;
-    border-width: 3px;
+    height: 14rem !important;
   }
 
   .__btn_box {

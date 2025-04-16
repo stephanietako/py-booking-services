@@ -10,6 +10,8 @@ import pampelonne from "@/public/assets/images/ramatuelle-plage-pampelonne.webp"
 import bonporteau from "@/public/assets/images/cavalaire-plage-bonporteau.webp";
 import portelet from "@/public/assets/images/saint-tropez-le-portalet.webp";
 import portcro from "@/public/assets/images/port-cro-baie-de-port-man.webp";
+import gigaro from "@/public/assets/images/baie-gigaro.jpg";
+import dattier from "@/public/assets/images/calanque-dattier.jpg";
 import image1 from "@/public/assets/images/plage-pampelonne.webp";
 
 //Styles
@@ -89,6 +91,14 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
                 {
                   src: calanque,
                   title: "Cavalaire Calanque de Cavalaire",
+                },
+                {
+                  src: dattier,
+                  title: "Cavalaire Calanque du Dattier",
+                },
+                {
+                  src: gigaro,
+                  title: "Baie de Gigaro",
                 },
                 {
                   src: courtade,

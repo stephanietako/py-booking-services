@@ -166,9 +166,9 @@ const Navbar: React.FC = () => {
 
         {isSignedIn ? (
           <>
-            <Link href="/my-bookings" className="nav-link">
+            {/* <Link href="/my-bookings" className="nav-link">
               Mes réservations
-            </Link>
+            </Link> */}
             <Link href="/dashboard">Tableau de bord</Link>
             {bookingToken && (
               <Link href={`/manage-booking?token=${bookingToken}`}>
