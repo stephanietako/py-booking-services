@@ -140,19 +140,39 @@
     padding: 0;
   }
 
+  // .equipements li,
+  // .description li {
+  //   font-size: 1.3rem;
+  //   line-height: 1.6;
+  //   color: #000;
+  //   padding-left: 1rem;
+  //   position: relative;
+
+  //   &:before {
+  //     content: "✔";
+  //     color: #14e9f7;
+  //     position: absolute;
+  //     left: 0;
+  //   }
+  // }
   .equipements li,
   .description li {
     font-size: 1.3rem;
     line-height: 1.6;
     color: #000;
-    padding-left: 1rem;
+    padding-left: 1.7rem;
     position: relative;
+
+    /* Fix for different browsers */
+    -webkit-font-smoothing: antialiased; /* For smoother text rendering in Webkit browsers */
+    -moz-osx-font-smoothing: grayscale; /* For better text rendering on MacOS Firefox */
 
     &:before {
       content: "✔";
       color: #14e9f7;
       position: absolute;
       left: 0;
+      font-size: 1.5rem; /* Adjust size if needed */
     }
   }
 

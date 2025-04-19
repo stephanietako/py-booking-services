@@ -184,26 +184,7 @@ const Boat = () => {
           </div>
         </div>
       </div>
-      {/* Galerie d'images */}
-      {/* <div className={styles.gallery}>
-        <div className={styles.images}>
-          <Image
-            src={image2}
-            alt="Bateau vue latérale"
-            className={styles.image}
-            width={400}
-            height={250}
-          />
-          <Image
-            src={image3}
-            alt="Intérieur du bateau"
-            className={styles.image}
-            width={400}
-            height={250}
-            priority
-          />
-        </div>
-      </div> */}
+
       <div className={styles.gallery__content}>
         <Galery />
       </div>
