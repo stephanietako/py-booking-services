@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { format, formatISO, isBefore } from "date-fns";
-import type { Day } from "@prisma/client";
+import { DayInput } from "@/types";
 import { getOpeningTimes, filterAvailableTimes } from "@/utils/helpers";
 import { now } from "@/app/constants/config";
 import { getBookedTimes } from "@/actions/bookings";
@@ -17,7 +17,7 @@ const DynamicCalendar = React.memo(
 );
 
 interface CalendarProps {
-  days: Day[];
+  days: DayInput[]; // Utiliser DayInput au lieu de Day
   closedDays: string[];
 }
 

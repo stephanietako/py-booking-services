@@ -43,9 +43,14 @@ const BookingWithOptions: React.FC<BookingWithOptionsProps> = ({ booking }) => {
         booking.id
       );
       setOptions(booking.id, fetchedOptions);
+      // Fonction pour récupérer le total des options
       const total =
         booking.totalAmount +
-        fetchedOptions.reduce((sum, opt) => sum + opt.amount, 0);
+        fetchedOptions.reduce(
+          (sum: number, opt: { amount: number }) => sum + opt.amount,
+          0
+        );
+
       setTotalAmount(booking.id, total);
     } catch (error) {
       console.error("❌ Erreur:", error);

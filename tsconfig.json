@@ -1,20 +1,20 @@
 {
   "compilerOptions": {
-    "target": "ESNext", // Utilisation de ESNext pour les dernières fonctionnalités JavaScript
+    "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "skipLibCheck": true, // Défini sur true pour ignorer les erreurs dans les fichiers de bibliothèque
+    "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "ESNext", // Utilisation de ESNext pour les modules modernes
-    "moduleResolution": "Node", // Résolution standard des modules
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "typeRoots": ["./node_modules/@types", "./types"], // Indique où chercher les types
-    "types": ["node", "jsonwebtoken"], // Ajoute les types pour "node" et "jsonwebtoken"
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "types": ["node"], // On retire "jsonwebtoken" d'ici
     "paths": {
       "@/*": ["./*"]
     },

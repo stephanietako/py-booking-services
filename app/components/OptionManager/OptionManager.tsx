@@ -46,7 +46,11 @@ const OptionManager: React.FC<OptionManagerProps> = ({
         // Calcul du total
         const total =
           serviceAmount +
-          options.reduce((sum, option) => sum + option.amount, 0);
+          options.reduce(
+            (sum: number, option: Option) => sum + option.amount,
+            0
+          );
+
         setTotalAmount(total);
 
         if (onTotalUpdate) {

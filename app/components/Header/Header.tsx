@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"; // Ajout de useEffect
 import Calendar from "../Calendar/Calendar";
-import { Day } from "@prisma/client";
+import { DayInput } from "@/types";
 import Image from "next/image";
 import logo from "@/public/assets/logo/hippo.png";
 import placeholder from "@/public/assets/images/placeholder.svg";
@@ -15,7 +15,7 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 interface HeaderProps {
-  days: Day[];
+  days: DayInput[];
   closedDays: string[];
 }
 

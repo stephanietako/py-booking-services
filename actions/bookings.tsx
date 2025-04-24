@@ -4,8 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { Booking } from "@/types";
 import { transformBookings } from "@/helpers/transformBookings";
 import { stripe } from "@/lib/stripe";
-import jwt from "jsonwebtoken";
-
+// import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 // Créer une réservation
 export async function createBooking(
   userId: string,
@@ -92,7 +92,24 @@ export async function createBooking(
 }
 
 // Recupérer les réservations d'un utilisateur
-export async function getUserBookings(userId: string) {
+// export async function getUserBookings(userId: string) {
+//   try {
+//     const bookings = await prisma.booking.findMany({
+//       where: { user: { clerkUserId: userId } },
+//       include: { service: true, user: true, options: true },
+//       orderBy: { createdAt: "desc" },
+//     });
+
+//     return bookings.map((booking) => ({
+//       ...booking,
+//       totalAmount: booking.totalAmount, // ✅ On garde uniquement `totalAmount`
+//     }));
+//   } catch {
+//     console.error("Erreur lors de la récupération des réservations");
+//     throw new Error("Impossible de charger les réservations.");
+//   }
+// }
+export async function getUserBookings(userId: string): Promise<Booking[]> {
   try {
     const bookings = await prisma.booking.findMany({
       where: { user: { clerkUserId: userId } },
@@ -100,9 +117,11 @@ export async function getUserBookings(userId: string) {
       orderBy: { createdAt: "desc" },
     });
 
-    return bookings.map((booking) => ({
+    return bookings.map((booking: Booking) => ({
       ...booking,
-      totalAmount: booking.totalAmount, // ✅ On garde uniquement `totalAmount`
+      startTime: new Date(booking.startTime), // Date type
+      endTime: new Date(booking.endTime), // Date type
+      totalAmount: booking.totalAmount,
     }));
   } catch {
     console.error("Erreur lors de la récupération des réservations");
@@ -181,45 +200,6 @@ export async function updateBooking(
   }
 }
 
-// Supprimer une réservation et ses options associées
-// Supprimer une réservation et ses options associées
-// export async function deleteUserBooking(
-//   bookingId: string,
-//   clerkUserId: string
-// ) {
-//   try {
-//     // Récupérer la réservation avec l'utilisateur associé
-//     const booking = await prisma.booking.findUnique({
-//       where: { id: bookingId },
-//       include: { user: true }, // Inclure l'utilisateur associé pour accéder au clerkUserId
-//     });
-
-//     if (!booking) {
-//       throw new Error("❌ Réservation introuvable.");
-//     }
-
-//     // Vérification que le clerkUserId correspond à celui de l'utilisateur connecté
-//     if (booking.user.clerkUserId !== clerkUserId) {
-//       throw new Error(
-//         "⛔ Accès refusé : Vous ne pouvez pas supprimer cette réservation."
-//       );
-//     }
-
-//     // Supprimer les options avant la réservation
-//     await prisma.option.deleteMany({ where: { bookingId } });
-
-//     // Supprimer la réservation après les options
-//     await prisma.booking.delete({ where: { id: bookingId } });
-
-//     return {
-//       message: "✅ Réservation et options associées supprimées avec succès.",
-//     };
-//   } catch {
-//     console.error("❌ Erreur lors de la suppression ");
-//     throw new Error("Impossible de supprimer la réservation.");
-//   }
-// }
-// Supprimer une réservation et ses options associées avec transaction
 export async function deleteUserBooking(
   bookingId: string,
   clerkUserId: string
@@ -281,46 +261,6 @@ export async function getOptionsByBookingId(bookingId: string) {
   }
 }
 
-// Ajouter une option à une réservation
-// export async function addOptionToBooking(
-//   bookingId: string,
-//   amount: number,
-//   description: string
-// ) {
-//   try {
-//     // Vérifier si la réservation existe et récupérer les options + service
-//     const booking = await prisma.booking.findUnique({
-//       where: { id: bookingId },
-//       include: {
-//         options: true, // Récupérer les options existantes
-//         service: true, // Récupérer le service associé à la réservation
-//       },
-//     });
-
-//     if (!booking) {
-//       throw new Error("❌ Réservation non trouvée.");
-//     }
-
-//     if (!booking.service) {
-//       throw new Error("❌ Le service lié à cette réservation n'existe plus.");
-//     }
-
-//     // Vérifier si l'option est autorisée pour ce service
-//     const newOption = await prisma.option.create({
-//       data: {
-//         bookingId,
-//         amount,
-//         description,
-//       },
-//     });
-
-//     console.log(" Option ajoutée avec succès :", newOption);
-//     return newOption;
-//   } catch (error) {
-//     console.error("❌ Erreur lors de l'ajout de l'option ");
-//     throw error;
-//   }
-// }
 export async function addOptionToBooking(
   bookingId: string,
   amount: number,
@@ -356,29 +296,6 @@ export async function addOptionToBooking(
   }
 }
 
-// supprimer une option
-// export async function deleteOption(optionId: string) {
-//   try {
-//     // Vérifie si l'option existe
-//     const option = await prisma.option.findUnique({
-//       where: { id: optionId },
-//     });
-
-//     if (!option) {
-//       throw new Error("❌ Option introuvable.");
-//     }
-
-//     // Supprime l'option
-//     await prisma.option.delete({
-//       where: { id: optionId },
-//     });
-
-//     return { message: "✅ Option supprimée avec succès." };
-//   } catch {
-//     console.error("❌ Erreur lors de la suppression de l'option ");
-//     throw new Error("Impossible de supprimer l'option.");
-//   }
-// }
 export async function deleteOption(optionId: string) {
   try {
     const option = await prisma.option.findUnique({
@@ -421,7 +338,33 @@ export const updateBookingTotal = async (
 };
 
 // Récupérer les créneaux réservés pour une date donnée
-export async function getBookedTimes(date: string) {
+// export async function getBookedTimes(date: string) {
+//   const startOfDay = new Date(date);
+//   startOfDay.setHours(0, 0, 0, 0);
+//   const endOfDay = new Date(date);
+//   endOfDay.setHours(23, 59, 59, 999);
+
+//   const bookings = await prisma.booking.findMany({
+//     where: {
+//       reservedAt: {
+//         gte: startOfDay,
+//         lte: endOfDay,
+//       },
+//     },
+//     select: {
+//       startTime: true,
+//       endTime: true,
+//     },
+//   });
+
+//   return bookings.map(({ startTime, endTime }) => ({
+//     startTime: new Date(startTime),
+//     endTime: new Date(endTime),
+//   }));
+// }
+export async function getBookedTimes(
+  date: string
+): Promise<{ startTime: Date; endTime: Date }[]> {
   const startOfDay = new Date(date);
   startOfDay.setHours(0, 0, 0, 0);
   const endOfDay = new Date(date);
@@ -440,10 +383,16 @@ export async function getBookedTimes(date: string) {
     },
   });
 
-  return bookings.map(({ startTime, endTime }) => ({
-    startTime: new Date(startTime),
-    endTime: new Date(endTime),
-  }));
+  // Conversion explicite des startTime et endTime en objets Date
+  return bookings.map(
+    (booking: {
+      startTime: string | number | Date;
+      endTime: string | number | Date;
+    }) => ({
+      startTime: new Date(booking.startTime), // Convertir startTime en Date
+      endTime: new Date(booking.endTime), // Convertir endTime en Date
+    })
+  );
 }
 
 // Récupérer les réservations d'un utilisateur
@@ -462,35 +411,6 @@ export async function generateBookingToken(bookingId: string, userId: string) {
     );
   }
 }
-
-// Récupérer l'ID de réservation à partir du token
-// export async function getBookingIdFromToken(token: string) {
-//   try {
-//     const secret = process.env.JWT_SECRET as string; // Typage explicite
-//     const decoded = jwt.verify(token, secret) as { bookingId: string };
-//     return decoded.bookingId;
-//   } catch (error) {
-//     console.error(
-//       "Erreur lors de la récupération de l'ID de réservation :",
-//       error
-//     );
-//     return null;
-//   }
-// }
-// export async function getBookingIdFromToken(token: string): Promise<string> {
-//   try {
-//     const secret = process.env.JWT_SECRET;
-//     if (!secret) {
-//       throw new Error("Configuration serveur invalide");
-//     }
-
-//     const decoded = jwt.verify(token, secret) as { bookingId: string };
-//     return decoded.bookingId;
-//   } catch (error) {
-//     console.error("Erreur de vérification du token:", error);
-//     throw new Error("Token invalide ou expiré");
-//   }
-// }
 
 export async function getBookingIdFromToken(
   token: string
