@@ -101,9 +101,13 @@ export async function getServicesByUser(clerkUserId: string) {
       where: { clerkUserId },
       include: { bookings: { include: { service: true } } },
     });
+
     if (!user) throw new Error("Utilisateur non trouvé");
 
-    return user.bookings.filter((b) => b.service).map((b) => b.service!); // "!" car on a filtré les nulls
+    // Typage explicite pour les éléments de `bookings`
+    return user.bookings
+      .filter((b) => b.service !== null && b.service !== undefined) // Vérifier si `service` existe
+      .map((b) => b.service!); // Utilisation de `!` pour indiquer que `service` est défini après la vérification
   } catch (error) {
     console.error("Erreur lors de la récupération des services:", error);
     throw error;
