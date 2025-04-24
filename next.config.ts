@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  eslint: {
+    dirs: ["components", "lib"], // Vérifie les répertoires où ESLint doit s'exécuter
+  },
 };
 
 export default nextConfig;
