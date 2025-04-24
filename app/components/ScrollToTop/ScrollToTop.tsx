@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+// Styles
 import styles from "./styles.module.scss";
 import scrollIcon from "@/public/assets/icon/ancre.png";
 

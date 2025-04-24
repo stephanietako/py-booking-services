@@ -1,4 +1,3 @@
-// Variables for reuse
 $overlay-bg: rgba(0, 0, 0, 0.9);
 $control-bg: rgba(0, 0, 0, 0.5);
 $control-hover: rgba(0, 0, 0, 0.8);
@@ -104,24 +103,6 @@ $transition: 0.3s ease;
       object-fit: contain;
       border-radius: 15px;
     }
-
-    // .closeZoom {
-    //   position: absolute;
-    //   top: 30px;
-    //   right: 30px;
-    //   background: rgba(255, 255, 255, 0.15);
-    //   border: none;
-    //   color: #fff;
-    //   font-size: 2rem;
-    //   border-radius: 50%;
-    //   padding: 0.5rem 0.8rem;
-    //   cursor: pointer;
-    //   transition: background 0.2s ease;
-
-    //   &:hover {
-    //     background: rgba(255, 255, 255, 0.3);
-    //   }
-    // }
   }
 }
 

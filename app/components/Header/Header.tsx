@@ -8,6 +8,7 @@ import logo from "@/public/assets/logo/hippo.png";
 import placeholder from "@/public/assets/images/placeholder.svg";
 import backgroundImg from "@/public/assets/images/plage-pampelonne.webp";
 import Modal from "../Modal/Modal";
+// Styles
 import styles from "./styles.module.scss";
 import Link from "next/link";
 
@@ -51,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
           >
             <Image
               src={logo || placeholder}
-              alt="Yachting Day Logo"
+              alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
               className={styles.logo}
               fill
               priority

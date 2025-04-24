@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-//import logo from "@/public/assets/logo/hippo.png";
 import boat from "@/public/assets/images/boat-cote1.jpg";
 // Styles
 import styles from "./styles.module.scss";
@@ -13,24 +12,15 @@ const Maintenance = () => {
       <div className={styles.boatContainer}>
         <Image
           src={boat}
-          alt="Logo de l'entreprise"
+          alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
           width={450}
           height={250}
           className={styles.boat}
           priority
         />
       </div>
-      {/* Logo avec Next.js Image */}
+
       <div className={styles.logo_title_wrapper}>
-        {/* <div className={styles.logo_container}>
-          <Image
-            src={logo}
-            alt="Yachting Day Logo"
-            className={styles.logo}
-            fill
-            priority
-          />
-        </div> */}
         <h2 className={styles.title}>Maintenance Nautique</h2>
       </div>
 
@@ -68,7 +58,6 @@ const Maintenance = () => {
         le formulaire ci-dessous et je prendrais contact avec vous pour
         organiser un rendez-vous au plus vite.
       </p>
-
       {/* Bouton d'Action */}
       <div className={styles.ctaButtonContainer}>
         <a
@@ -80,7 +69,6 @@ const Maintenance = () => {
           Faire une demande d’entretien <FaDownload />
         </a>
       </div>
-
       <div className={styles.buttons}>
         <Link href="/location" className={styles.button}>
           Location

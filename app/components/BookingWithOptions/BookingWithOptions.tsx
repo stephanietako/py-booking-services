@@ -11,6 +11,7 @@ import { Booking } from "@/types";
 import { useBookingStore } from "@/store/store";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+// Styles
 import styles from "./styles.module.scss";
 
 // Définition des props

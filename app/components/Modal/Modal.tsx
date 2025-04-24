@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { AiOutlineClose } from "react-icons/ai";
+// Styles
 import styles from "./styles.module.scss";
 
 interface ModalProps {

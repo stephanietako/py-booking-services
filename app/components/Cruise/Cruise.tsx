@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+// Styles
 import styles from "./styles.module.scss";
 import Modal from "../Modal/Modal";
 import logo from "@/public/assets/logo/hippo.png";
@@ -121,7 +122,7 @@ const Cruise = () => {
         <div className={styles.logo_container}>
           <Image
             src={logo || placeholder}
-            alt="Yachting Day Logo"
+            alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
             className={styles.logo}
             fill
             priority

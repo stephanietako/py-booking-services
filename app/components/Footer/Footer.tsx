@@ -5,11 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import Map from "../Map/Map";
 import logo from "@/public/assets/logo/logo-new.png";
-//import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
+
 // Styles
 import styles from "./styles.module.scss";
 import { FaEnvelope, FaPhone } from "react-icons/fa";
-//import backgroundImg from "@/public/assets/images/ramatuelle-cap-taillat.webp";
 
 export const dynamic = "force-dynamic";
 
@@ -24,10 +23,6 @@ const Footer: React.FC = () => {
           <div className={styles.__bloc_container}>
             <div className={styles.__bloc_content}>
               <div className={styles.__bloc_content__inner}>
-                {/* <div className={styles.google}>
-                  <Map />
-                </div> */}
-
                 <div className={styles.footer_list__content}>
                   <div className={styles.bloc_text__content}>
                     <ul className={styles.bloc_text}>
@@ -36,7 +31,7 @@ const Footer: React.FC = () => {
                         <div className={styles.logo_image}>
                           <Image
                             src={logo}
-                            alt="Yachting Day Logo"
+                            alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
                             className={styles.logo}
                             width={200}
                             height={150}

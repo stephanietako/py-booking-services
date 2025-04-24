@@ -8,6 +8,7 @@ import type { Day } from "@prisma/client";
 import { getOpeningTimes, filterAvailableTimes } from "@/utils/helpers";
 import { now } from "@/app/constants/config";
 import { getBookedTimes } from "@/actions/bookings";
+// Styles
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.scss";
 

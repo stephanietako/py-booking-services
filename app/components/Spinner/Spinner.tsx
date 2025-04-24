@@ -1,6 +1,7 @@
 import type { FC } from "react";
-import Image from "next/image"; // Import du composant Image de Next.js
-import styles from "./styles.module.scss"; // Import des styles
+import Image from "next/image";
+// Styles
+import styles from "./styles.module.scss";
 
 const Spinner: FC = () => {
   return (
@@ -8,7 +9,7 @@ const Spinner: FC = () => {
       <div className={styles.content}>
         <Image
           src="/assets/logo/hippo.png"
-          alt="Logo"
+          alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
           width={150}
           height={180}
           className={styles.logo}

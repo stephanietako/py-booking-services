@@ -16,7 +16,7 @@ const roboto = Roboto({
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
-  weight: ["400", "700"], // ou "100" à "900"
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -29,7 +29,8 @@ const gloria = Gloria_Hallelujah({
 
 export const metadata: Metadata = {
   title: "Yatching Day",
-  description: "Locations et entretiens de bateaux",
+  description:
+    "Louez un bateau avec skipper depuis le port de Cavalaire-sur-Mer. Excursions en mer, services à bord et entretien nautique sur-mesure",
 };
 
 export default function RootLayout({

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import icon from "@/public/assets/logo/hipo-transparent.svg";
 import geo from "@/public/assets/icon/geo.png";
-// STYLES
+// Styles
 import styles from "./styles.module.scss";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ interface Property {
 
 const properties: Property[] = [
   {
-    title: "Yatching Day ",
+    title: "Yachting Day ",
     description: `Port de Cavalaire <br />
                   83240 Cavalaire-sur-Mer`,
     position: {

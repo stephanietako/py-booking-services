@@ -104,16 +104,6 @@ a:hover {
   color: gray;
 }
 
-/* header {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-} */
-
 /* ////////button///// */
 button {
   background-color: #38bdf8;
@@ -401,11 +391,6 @@ label {
   padding: var(--spacing-large);
 }
 
-/* .calendar-container {
-  text-align: center;
-  margin-top: var(--spacing-large);
-} */
-
 .error {
   color: var(--danger-color);
   background-color: var(--danger-bg);
@@ -413,46 +398,6 @@ label {
   border-radius: var(--border-radius);
   font-size: 0.875rem;
 }
-
-/* Calendrier */
-/* .REACT-CALENDAR {
-  background-color: var(--white);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: var(--spacing-medium);
-}
-
-.REACT-CALENDAR__tile--active {
-  background-color: var(--primary-color);
-  color: var(--white);
-}
-
-.REACT-CALENDAR__tile--now {
-  background-color: var(--secondary-color);
-}
-
-.closed-day {
-  background-color: var(--danger-color);
-  color: var(--white);
-}
-
-.react-calendar__month-view__weekdays {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 0.2rem;
-}
-
-.react-calendar__month-view__weekdays__weekday {
-  font-size: 0.8rem;
-  color: var(--muted-text);
-  font-weight: bolder !important;
-}
-
-.react-calendar__month-view__days {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 0.2rem;
-} */
 
 /* ///////////////sign in sign up //////////////////// */
 .signup_page,
@@ -1192,7 +1137,7 @@ input[type="time"] {
 }
 
 .closed-day {
-  background-color: #f87171 !important; /* Rouge pour les jours fermés */
+  background-color: #f87171 !important;
   color: white !important;
 }
 
@@ -1200,7 +1145,7 @@ input[type="time"] {
   margin-top: 20px;
   padding: 10px 20px;
   background-color: #007bff;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -1310,7 +1255,7 @@ input[type="time"]:focus {
 
 .REACT-CALENDAR {
   border: none;
-  background-color: #ffffff;
+  background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1rem;

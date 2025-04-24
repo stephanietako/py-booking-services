@@ -16,13 +16,11 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
-  // const { user, isSignedIn } = useUser();
   const [bookingToken, setBookingToken] = useState<string | null>(null);
   const navbarElement = useRef<HTMLDivElement>(null);
   const navigationHeight = useRef(0);
 
   useEffect(() => {
-    // This effect will only run after the navbar element has been rendered
     if (navbarElement.current) {
       navigationHeight.current = navbarElement.current.offsetHeight;
       console.info("Navbar height:", navbarElement.current.offsetHeight);
@@ -57,7 +55,6 @@ const Navbar: React.FC = () => {
       try {
         const bookings = await getUserBookings(user.id);
         if (bookings.length > 0) {
-          // Prendre la dernière réservation active
           const latestBooking = bookings[0];
           const token = await generateBookingToken(latestBooking.id, user.id);
           setBookingToken(token);
@@ -74,7 +71,7 @@ const Navbar: React.FC = () => {
   }, [user, isSignedIn]);
 
   useEffect(() => {
-    setIsClient(true); // ✅ On passe en mode client
+    setIsClient(true);
   }, []);
 
   useEffect(() => {
@@ -82,7 +79,7 @@ const Navbar: React.FC = () => {
       addUserToDatabase(
         user.primaryEmailAddress.emailAddress,
         user.firstName,
-        user.imageUrl || "", // Ajout de l'image ici
+        user.imageUrl || "",
         user.id
       );
     }
@@ -92,16 +89,15 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     const fetchUserRole = async () => {
       if (user?.id) {
-        const role = await getRole(user.id); // Récupère le rôle de l'utilisateur
-        setUserRole(role?.role?.name || null); // Stocke le rôle dans l'état
+        const role = await getRole(user.id);
+        setUserRole(role?.role?.name || null);
       }
     };
-    if (user?.id) fetchUserRole(); // Appel la fonction lorsque l'utilisateur est connecté
+    if (user?.id) fetchUserRole();
   }, [user]);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  // ✅ On s'assure que le composant est bien monté côté client avant d'afficher quoi que ce soit
   if (!isClient || !isLoaded) return null;
   //////////////////
 
@@ -110,12 +106,11 @@ const Navbar: React.FC = () => {
       ref={navbarElement}
       className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}
     >
-      {/* Logo */}
       <div className={styles.logo_image}>
         <Link href="/">
           <Image
             src={logo}
-            alt="Yachting Day Logo"
+            alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
             className={styles.logo}
             width={200}
             height={150}
@@ -166,9 +161,6 @@ const Navbar: React.FC = () => {
 
         {isSignedIn ? (
           <>
-            {/* <Link href="/my-bookings" className="nav-link">
-              Mes réservations
-            </Link> */}
             <Link href="/dashboard">Tableau de bord</Link>
             {bookingToken && (
               <Link href={`/manage-booking?token=${bookingToken}`}>

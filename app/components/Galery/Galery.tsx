@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+// Styles
 import styles from "./styles.module.scss";
 
 const images = [

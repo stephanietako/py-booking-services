@@ -24,7 +24,7 @@ const About: React.FC = () => {
         <div className={styles.logo_container}>
           <Image
             src={logo || placeholder}
-            alt="Yachting Day Logo"
+            alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
             className={styles.logo}
             fill
             priority

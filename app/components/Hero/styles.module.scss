@@ -5,7 +5,6 @@ $bleu-clair: #14e9f7;
 $blanc: #fff;
 $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
 
-// 🌟 Wrapper principal
 .heroWrapper {
   position: relative;
   width: 100%;
@@ -15,19 +14,14 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
   justify-content: center;
   overflow: hidden;
 
-  // border: 4px solid turquoise;
-
-  // 🌟 Image de fond
   .heroImage {
     object-fit: cover;
-    // filter: brightness(90%); // Légèrement plus clair
-    // object-position: center;
+
     object-position: 38% 25%;
     width: auto;
     height: 100%;
   }
 
-  // 🌟 Contenu principal (effet verre dépoli)
   .heroContent {
     position: absolute;
     text-align: center;
@@ -38,8 +32,6 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
     justify-content: center;
     color: #fff;
     padding: 2rem;
-
-    // border: 4px solid red;
     width: 100%;
     height: 100%;
 
@@ -47,14 +39,10 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
       display: flex;
       flex-direction: column;
       align-items: center;
-      /* justify-content: center; */
       color: #fff;
-      // border: 4px solid #fff;
-      /* max-width: 80%; */
       width: 100%;
       height: 100%;
 
-      // 🌟 Texte principal
       .hero_bloc {
         display: flex;
         width: auto;
@@ -63,7 +51,6 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
         justify-content: center;
         color: $blanc;
         padding: 2rem;
-        // border: 4px solid yellow;
       }
 
       .hero_text {
@@ -88,112 +75,7 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
     }
   }
 }
-///////////////// Responsive //////////////
-// @media (max-width: 768px) {
-//   .heroWrapper {
-//     position: relative;
-//     width: 100vw;
-//     height: 50vh;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     overflow: hidden;
 
-//     .heroContent {
-//       max-width: 90%;
-//       margin-top: 5rem;
-//       padding: 1rem;
-//     }
-
-//     // 🌟 Texte principal
-//     .heroText {
-//       .heroText__tarifs_btn {
-//         padding: 0;
-//         display: flex;
-//         height: auto;
-//         width: 100%;
-//         justify-content: center;
-//       }
-
-//       h1 {
-//         font-size: 1.2rem;
-//       }
-
-//       h2 {
-//         font-size: 1rem;
-//         margin: 1rem 0;
-//       }
-
-//       p {
-//         font-size: 0.7rem;
-//         margin-bottom: 1rem;
-//         text-align: left;
-//       }
-//     }
-
-//     .heroButtons {
-//       flex-direction: column;
-//       margin-top: 0;
-//     }
-//     .buttonHero {
-//       font-size: 0.5rem;
-//       padding: 7px 14px;
-//     }
-//   }
-// }
-
-// @media screen and (max-width: 375px) {
-//   .heroWrapper {
-//     position: relative;
-//     width: 100vw;
-//     height: 50vh;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     overflow: hidden;
-
-//     .heroContent {
-//       max-width: 90%;
-//       margin-top: 7rem;
-//       padding: 0.7rem;
-//     }
-
-//     // 🌟 Texte principal
-//     .heroText {
-//       .heroText__tarifs_btn {
-//         padding: 0;
-//         display: flex;
-//         height: auto;
-//         width: 100%;
-//         justify-content: center;
-//       }
-
-//       h1 {
-//         font-size: 1.2rem;
-//       }
-
-//       h2 {
-//         font-size: 1rem;
-//         margin: 1rem 0;
-//       }
-
-//       p {
-//         font-size: 0.7rem;
-//         margin-bottom: 1rem;
-//         text-align: left;
-//       }
-//     }
-
-//     .heroButtons {
-//       flex-direction: column;
-//       margin-top: 0;
-//     }
-//     .buttonHero {
-//       font-size: 0.5rem;
-//       padding: 7px 14px;
-//     }
-//   }
-// }
 //////////////////// RESPONSIVE ////////////////////
 
 @media screen and (max-width: 1200px) {
@@ -210,7 +92,6 @@ $fond-transparent: rgba(255, 255, 255, 0.2); // Légère transparence
 
 @media screen and (max-width: 920px) {
   .heroWrapper {
-    // height: 60vh; // conserve le format full height
     margin-top: 20vh;
     .heroContent {
       padding: 1.5rem;

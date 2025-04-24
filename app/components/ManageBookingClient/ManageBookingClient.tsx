@@ -16,7 +16,6 @@ import Wrapper from "@/app/components/Wrapper/Wrapper";
 import ServiceCompt from "@/app/components/ServicesCompt/ServiceCompt";
 import { Booking } from "@/types";
 import { createStripeCheckoutSession } from "@/actions/actionsStripe";
-
 // Styles
 import styles from "./styles.module.scss"; // Import du fichier SCSS
 import Spinner from "../Spinner/Spinner";
@@ -190,7 +189,7 @@ const ManageBookingClient: FC = () => {
                 <div className={styles.logo_container}>
                   <Image
                     src="/assets/logo/hippo.png"
-                    alt="Logo"
+                    alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
                     width={100}
                     height={110}
                   />
