@@ -78,7 +78,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 500%;
+    width: 100%;
     height: auto;
     //border: 5px solid red;
 
@@ -120,7 +120,7 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
   .content_wrapper {
     width: 95% !important;
     padding: 2rem;
