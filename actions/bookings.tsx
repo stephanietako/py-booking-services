@@ -4,8 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { Booking } from "@/types";
 import { transformBookings } from "@/helpers/transformBookings";
 import { stripe } from "@/lib/stripe";
-// import jwt from "jsonwebtoken";
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+
 // Créer une réservation
 export async function createBooking(
   userId: string,
