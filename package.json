@@ -13,8 +13,8 @@
   "dependencies": {
     "@clerk/nextjs": "^6.9.1",
     "@googlemaps/js-api-loader": "^1.16.8",
-    "@prisma/client": "^6.5.0",
-    "@react-email/components": "^0.0.32",
+    "@prisma/client": "^6.6.0",
+    "@react-email/components": "^0.0.36",
     "@react-email/render": "^1.0.4",
     "@stripe/stripe-js": "^5.8.0",
     "@supabase/supabase-js": "^2.47.10",
@@ -47,7 +47,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.0",
-    "prisma": "^6.5.0",
+    "prisma": "^6.6.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
