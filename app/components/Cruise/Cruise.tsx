@@ -122,7 +122,7 @@ const Cruise = () => {
         <div className={styles.logo_container}>
           <Image
             src={logo || placeholder}
-            alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
+            alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
             className={styles.logo}
             fill
             priority
@@ -141,7 +141,7 @@ const Cruise = () => {
               <Image
                 className={styles.__images}
                 src={excursion.photo}
-                alt={excursion.title}
+                alt={`Excursions en mer avec Cap Camarat 12.5 WA – modèle 2021 : ${excursion.title}, en location avec skipper au port de Cavalaire-sur-Mer`}
                 width={excursion.width}
                 height={excursion.height}
                 priority
@@ -149,7 +149,6 @@ const Cruise = () => {
             </div>
             <div className={styles.excursionContent}>
               <h2 className={styles.excursionTitle}>{excursion.title}</h2>
-              {/* <p className={styles.excursionTime}>{excursion.time}</p> */}
               <p className={styles.excursionDescription}>
                 {excursion.description.slice(0, 100)}...
               </p>

@@ -12,7 +12,7 @@ const Maintenance = () => {
       <div className={styles.boatContainer}>
         <Image
           src={boat}
-          alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
+          alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
           width={450}
           height={250}
           className={styles.boat}

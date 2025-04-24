@@ -67,7 +67,7 @@ const MyBookingPage = () => {
               <div className={styles.logo_container}>
                 <Image
                   src="/assets/logo/hippo.png"
-                  alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
+                  alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
                   width={100}
                   height={110}
                 />

@@ -17,7 +17,7 @@ const Boat = () => {
           <div className={styles.main_image}>
             <Image
               src={image1}
-              alt="Cap Camarat 12.5 Wa"
+              alt="Vue du Cap Camarat 12.5 WA en navigation au large de Cavalaire-sur-Mer"
               className={styles.__image}
               width={400}
               height={300}

@@ -30,7 +30,7 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
         <div className={styles.logo_container}>
           <Image
             src={logo || placeholder}
-            alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
+            alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
             className={styles.logo}
             fill
             priority
@@ -73,7 +73,7 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
           <div className={styles.main_image}>
             <Image
               src={image1}
-              alt="Cap Camarat 12.5 Wa"
+              alt={`Excursions en mer avec Cap Camarat 12.5 WA – modèle 2021 en location avec skipper au port de Cavalaire-sur-Mer`}
               className={styles.__image}
               width={610}
               height={510}

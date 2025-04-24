@@ -9,7 +9,6 @@ import styles from "./styles.module.scss";
 const images = [
   "/assets/images/boat-cote2.jpg",
   "/assets/images/vue-boat.webp",
-
   "/assets/images/vue-exterieur.webp",
   "/assets/galery/table-avant.webp",
   "/assets/images/interieur-capitaine.jpg",
@@ -112,7 +111,7 @@ const Galery = () => {
             >
               <Image
                 src={src}
-                alt={`Gallery image ${index + 1}`}
+                alt={`Excursions en mer avec Cap Camarat 12.5 WA – modèle 2021 : ${index + 1}, en location avec skipper au port de Cavalaire-sur-Mer`}
                 className={styles.image}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -153,16 +152,6 @@ const Galery = () => {
           onClick={() => setZoomIndex(null)}
           style={{ cursor: "zoom-out" }}
         >
-          {/* <button
-            className={styles.closeZoom}
-            onClick={(e) => {
-              e.stopPropagation();
-              setZoomIndex(null);
-            }}
-          >
-            ✕
-          </button> */}
-
           <motion.div
             className={styles.zoomWrapper}
             initial={{ scale: 0.9, opacity: 0 }}

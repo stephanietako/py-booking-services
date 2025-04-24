@@ -24,7 +24,7 @@ const About: React.FC = () => {
         <div className={styles.logo_container}>
           <Image
             src={logo || placeholder}
-            alt="Yachting Day location de bateau port de cavalaire-sur-mer et maintenance nautique"
+            alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
             className={styles.logo}
             fill
             priority

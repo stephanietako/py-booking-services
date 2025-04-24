@@ -39,7 +39,7 @@ const ServiceCompt: React.FC<ServiceComptProps> = ({
       <div className={styles.__img_content}>
         <Image
           src={imageUrl || "/assets/logo/logo-full.png"}
-          alt={name}
+          alt={`Excursions en mer avec Cap Camarat 12.5 WA – modèle 2021 : ${name}, en location avec skipper au port de Cavalaire-sur-Mer`}
           width={200}
           height={200}
           className={styles.__img}
