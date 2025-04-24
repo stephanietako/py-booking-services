@@ -28,7 +28,7 @@ const gloria = Gloria_Hallelujah({
 });
 
 export const metadata: Metadata = {
-  title: "Yatching Day",
+  title: "Yachting Day Cavalaire-sur-Mer",
   description:
     "Profitez de la location de notre bateau Cap Camarat 12.5 WA (modèle 2021) avec skipper depuis le port de Cavalaire-sur-Mer. Ce bateau spacieux, moderne et parfaitement équipé vous offre un confort haut de gamme pour vos excursions en mer. Nous proposons également un service d’entretien nautique personnalisé.",
 };
