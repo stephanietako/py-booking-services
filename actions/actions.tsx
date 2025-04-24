@@ -80,25 +80,30 @@ export async function addUserToDatabase(
   }
 }
 
-// Récupérer les services associés à un utilisateur
-// Récupérer les services associés à un utilisateur
-// Récupérer les services associés à un utilisateur
-export async function getServicesByUser(clerkUserId: string) {
+export async function getServicesByUser(
+  clerkUserId: string
+): Promise<Service[]> {
   try {
+    // Recherche de l'utilisateur avec ses réservations et services associés
     const user = await prisma.user.findUnique({
       where: { clerkUserId },
-      include: { bookings: { include: { service: true } } },
+      include: {
+        bookings: {
+          include: {
+            service: true, // On inclut le service de chaque réservation
+          },
+        },
+      },
     });
 
-    if (!user) throw new Error("Utilisateur non trouvé");
+    if (!user) {
+      throw new Error("Utilisateur non trouvé");
+    }
 
-    // Vérification du type des objets dans user.bookings
+    // Filtrer les réservations où un service est associé et retourner la liste des services
     return user.bookings
-      .filter(
-        (b: { service: Service | null }) =>
-          b.service !== null && b.service !== undefined
-      ) // Vérifier si `service` existe
-      .map((b) => b.service!); // Utilisation de `!` pour indiquer que `service` est défini après la vérification
+      .filter((booking) => booking.service !== null) // On garde les réservations avec un service
+      .map((booking) => booking.service!); // Le `!` garantit que `service` n'est pas `null` après le filtrage
   } catch (error) {
     console.error("Erreur lors de la récupération des services:", error);
     throw error;
