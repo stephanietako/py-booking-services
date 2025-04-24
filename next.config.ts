@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
     ],
   },
   eslint: {
-    dirs: ["components", "lib"], // Vérifie les répertoires où ESLint doit s'exécuter
+    dirs: ["pages, components", "lib"], // Vérifie les répertoires où ESLint doit s'exécuter
   },
 };
 

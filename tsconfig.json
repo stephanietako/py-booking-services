@@ -14,7 +14,7 @@
     "jsx": "preserve",
     "incremental": true,
     "typeRoots": ["./node_modules/@types", "./types"],
-    "types": ["node"], // On retire "jsonwebtoken" d'ici
+    "types": ["node", "jsonwebtoken"], // On ajoute "jsonwebtoken" d'ici
     "paths": {
       "@/*": ["./*"]
     },
