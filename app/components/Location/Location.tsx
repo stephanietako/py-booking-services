@@ -23,6 +23,7 @@ const Location: React.FC = () => {
                 className={styles.logo}
                 fill
                 priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
             <h2 className={styles.title}>Location</h2>

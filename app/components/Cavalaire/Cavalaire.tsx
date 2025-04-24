@@ -78,6 +78,7 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
               width={610}
               height={510}
               priority
+              style={{ width: "auto", height: "100%", objectFit: "cover" }}
             />
           </div>
         </div>

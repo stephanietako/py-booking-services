@@ -35,8 +35,7 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
         >
           <Image
             src={image.src}
-            alt={`Photo du Cap Camarat 12.5 WA (modèle 2021) – ${image.title}, en location avec skipper au départ du port de Cavalaire-sur-Mer`}
-            fill
+            alt={`Excursions en mer avec Cap Camarat 12.5 WA – modèle 2021 : ${image.title}, en location avec skipper au port de Cavalaire-sur-Mer`}
             style={{
               objectFit: "cover",
               objectPosition: "top",

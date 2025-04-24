@@ -13,7 +13,6 @@
   "dependencies": {
     "@clerk/nextjs": "^6.9.1",
     "@googlemaps/js-api-loader": "^1.16.8",
-    "@prisma/client": "^6.6.0",
     "@react-email/components": "^0.0.36",
     "@react-email/render": "^1.0.4",
     "@stripe/stripe-js": "^5.8.0",
@@ -39,6 +38,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@prisma/client": "^6.6.0",
     "@types/google.maps": "^3.58.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/lodash": "^4.17.14",

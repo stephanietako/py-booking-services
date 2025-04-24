@@ -102,8 +102,8 @@ export async function getServicesByUser(
 
     // Filtrer les réservations où un service est associé et retourner la liste des services
     return user.bookings
-      .filter((booking) => booking.service !== null) // On garde les réservations avec un service
-      .map((booking) => booking.service!); // Le `!` garantit que `service` n'est pas `null` après le filtrage
+      .filter((booking) => booking.service !== null)
+      .map((booking) => booking.service!);
   } catch (error) {
     console.error("Erreur lors de la récupération des services:", error);
     throw error;
@@ -246,7 +246,7 @@ export async function getOptionsByEmailAndPeriod(
       throw new Error("Utilisateur non trouvé");
     }
 
-    // Vérification de l'existence de 'service' et 'options' avant d'y accéder
+    // Typage explicite de 'booking' et 'option'
     const options = user.bookings.flatMap((booking) =>
       booking?.service?.options?.length
         ? booking.service.options.map((option) => ({
@@ -346,7 +346,6 @@ export async function getReachedServices(
   clerkUserId: string,
   optionThreshold: number = 5
 ): Promise<Service[]> {
-  // Type explicite de retour : Service[]
   try {
     const user = await prisma.user.findUnique({
       where: { clerkUserId },
@@ -367,13 +366,9 @@ export async function getReachedServices(
       throw new Error("Utilisateur non trouvé");
     }
 
-    // Filtrer les services dont le nombre d'options dépasse le seuil
     const reachedServices = user.bookings
       .map((booking) => booking.service)
-      .filter(
-        (service) =>
-          service.options && service.options.length >= optionThreshold
-      );
+      .filter((service) => service?.options?.length >= optionThreshold);
 
     return reachedServices;
   } catch (error) {
@@ -392,7 +387,7 @@ export async function getTotalOptionAmount(
 ): Promise<number> {
   try {
     const now = new Date();
-    let dateLimit;
+    let dateLimit: Date;
 
     switch (period) {
       case "last30":
@@ -444,7 +439,7 @@ export async function getTotalOptionAmount(
     const totalAmount = user.bookings.reduce((total, booking) => {
       if (booking.service && booking.service.options) {
         const serviceTotal = booking.service.options.reduce(
-          (amountTotal, option) => amountTotal + option.amount,
+          (amountTotal: number, option: Option) => amountTotal + option.amount,
           0
         );
         return total + serviceTotal;
@@ -514,6 +509,7 @@ export async function getTotalOptionCount(
       throw new Error("Utilisateur non trouvé");
     }
 
+    // Calcule le nombre total d'options
     // Calcule le nombre total d'options
     const totalCount = user.bookings.reduce((count, booking) => {
       return count + (booking.service?.options?.length || 0);

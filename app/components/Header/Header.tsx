@@ -40,8 +40,8 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
           src={backgroundImg}
           alt="Vue mer sur la plage de Pampelonne"
           className={styles.heroImage}
-          priority={true}
-          fill={true}
+          priority
+          fill
           placeholder="blur"
         />
 
@@ -56,9 +56,7 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
               className={styles.logo}
               fill
               priority
-              style={{
-                objectFit: "cover",
-              }}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
           <h2 className={styles.title}>Tarifs et disponibilités </h2>
