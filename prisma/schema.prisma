@@ -9,6 +9,7 @@
 // 3️⃣ Chaque Booking stocke quel utilisateur (userId) a réservé quel service (serviceId).
 generator client {
   provider = "prisma-client-js"
+  output   = "./node_modules/@prisma/client"
 }
 
 datasource db {
