@@ -11,7 +11,7 @@ const Hero: React.FC = () => {
     <div className={styles.heroWrapper}>
       <Image
         src={backgroundImg}
-        alt="plan rapproché vue mer"
+        alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
         className={styles.heroImage}
         priority
         fill
