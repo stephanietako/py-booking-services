@@ -192,7 +192,7 @@ const Map: React.FC = () => {
             <p>Me localiser sur la carte</p>
           </button>
           <a
-            href="https://maps.app.goo.gl/P8YWn9kBxpecbK9m9"
+            href="https://maps.app.goo.gl/6ANMPgQFQ9kzfyEo6"
             target="_blank"
             rel="noreferrer noopener"
           >

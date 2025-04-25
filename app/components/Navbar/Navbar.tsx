@@ -165,18 +165,17 @@ const Navbar: React.FC = () => {
           <details className={styles.mobileDropdown}>
             <summary>Location</summary>
             <div className={styles.dropdownLinks}>
-              <Link href="/location#excursions" onClick={toggleMenu}>
-                Nos excursions
-              </Link>
-              <Link href="/location#bateau" onClick={toggleMenu}>
+              <Link href="/boat" onClick={toggleMenu}>
                 Le bateau
               </Link>
-              <Link href="/location#environs" onClick={toggleMenu}>
+              <Link href="/environs" onClick={toggleMenu}>
                 Les environs
+              </Link>
+              <Link href="/excursions" onClick={toggleMenu}>
+                Nos excursions
               </Link>
             </div>
           </details>
-
           <Link href="/entretien" onClick={toggleMenu}>
             Entretien
           </Link>

@@ -208,17 +208,40 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     width: 100%;
     margin-bottom: 1rem;
 
+    // summary {
+    //   font-size: 1rem;
+    //   padding: 0.6rem 1rem;
+    //   color: $blanc;
+    //   cursor: pointer;
+    //   list-style: none;
+    //   position: relative;
+    //   text-align: center;
+
+    //   &::after {
+    //     content: "▾";
+    //     position: absolute;
+    //     right: 1rem;
+    //   }
+
+    //   &:hover {
+    //     color: $bleu-clair;
+    //   }
+    // }
     summary {
       font-size: 1rem;
       padding: 0.6rem 1rem;
       color: $blanc;
       cursor: pointer;
-      list-style: none;
+      list-style: none; // enlève le triangle par défaut
       position: relative;
       text-align: center;
 
+      &::-webkit-details-marker {
+        display: none; // pour Safari et Chrome
+      }
+
       &::after {
-        content: "▾";
+        content: "▾"; // ton triangle personnalisé
         position: absolute;
         right: 1rem;
       }
