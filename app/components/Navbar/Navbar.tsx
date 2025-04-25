@@ -128,12 +128,15 @@ const Navbar: React.FC = () => {
       <div className={styles.primaryLinks}>
         <Link href="/location" className={styles.navButton}>
           Location
+          <span className="shimmer"></span>
         </Link>
         <Link href="/entretien" className={styles.navButton}>
           Entretien
+          <span className="shimmer"></span>
         </Link>
         <Link href="#footer" className={styles.navButton}>
           Contact
+          <span className="shimmer"></span>
         </Link>
       </div>
 
@@ -147,10 +150,33 @@ const Navbar: React.FC = () => {
 
       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
         {/* --- Mobile-only links visible dans le burger --- */}
-        <div className={styles.mobileOnlyLinks}>
+        {/* <div className={styles.mobileOnlyLinks}>
           <Link href="/location" onClick={toggleMenu}>
             Location
           </Link>
+          <Link href="/entretien" onClick={toggleMenu}>
+            Entretien
+          </Link>
+          <Link href="#footer" onClick={toggleMenu}>
+            Contact
+          </Link>
+        </div> */}
+        <div className={styles.mobileOnlyLinks}>
+          <details className={styles.mobileDropdown}>
+            <summary>Location</summary>
+            <div className={styles.dropdownLinks}>
+              <Link href="/location#excursions" onClick={toggleMenu}>
+                Nos excursions
+              </Link>
+              <Link href="/location#bateau" onClick={toggleMenu}>
+                Le bateau
+              </Link>
+              <Link href="/location#environs" onClick={toggleMenu}>
+                Les environs
+              </Link>
+            </div>
+          </details>
+
           <Link href="/entretien" onClick={toggleMenu}>
             Entretien
           </Link>
@@ -179,8 +205,11 @@ const Navbar: React.FC = () => {
             <Link href="/about" className={styles.buttonHero}>
               Qui sommes-nous
             </Link>
-            <Link href="/sign-in">Se connecter</Link>
-            <Link href="/sign-up">S&apos;inscrire</Link>
+            <Link href="/galerie" className={styles.buttonHero}>
+              Galerie
+            </Link>
+            {/* <Link href="/sign-in">Se connecter</Link>
+            <Link href="/sign-up">S&apos;inscrire</Link> */}
             <Link href="#footer">Contact</Link>
           </div>
         )}

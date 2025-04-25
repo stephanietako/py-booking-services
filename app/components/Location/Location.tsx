@@ -41,15 +41,6 @@ const Location: React.FC = () => {
             </Link>
           </div>
 
-          {/* <div className={styles.location_header_bloc__content}>
-            <div className={styles.subtitle}>
-              <p id={styles.sub_text}>
-                Depuis le port de Cavalaire, embarquez pour une journée de rêve
-                avec Yachting Day
-              </p>
-            </div>
-          </div> */}
-
           <div className={styles.content_wrapper}>
             <div className={styles.content}>
               <div className={styles.text_container}>
@@ -58,12 +49,6 @@ const Location: React.FC = () => {
                     Offrez-vous le plaisir d&apos;une sortie en mer et venez
                     découvrir notre Cap Camarat 12.5 WA
                   </p>
-                  {/* <p id={styles.top_text__typo2}>
-                    et venez découvrir notre Cap Camarat 12.5 WA
-                  </p> */}
-                  {/* <p id={styles.top_text__typo2}>
-                    et venez découvrir notre Cap Camarat 12.5 WA
-                  </p> */}
                 </span>
 
                 <div className={styles.row}>

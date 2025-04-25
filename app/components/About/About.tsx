@@ -83,7 +83,7 @@ const About: React.FC = () => {
           <div className={styles.images_container}>
             <Image
               src={image1 || placeholder}
-              alt="Pierre-Yves Hemard"
+              alt=" Yachting day location de bateau Skippy One Cap Camarat 12.5 WA cavalaire-sur-mer"
               className={styles.image}
               width={300}
               height={300}
@@ -91,7 +91,7 @@ const About: React.FC = () => {
             />
             <Image
               src={image2 || placeholder}
-              alt="Skippy One"
+              alt="Vue de Cavalaire-sur-mer balade en mer avec Yachting day location de bateau"
               className={styles.image}
               width={300}
               height={300}
@@ -124,7 +124,6 @@ const About: React.FC = () => {
           />
         </div>
 
-        {/* Call to action (CTA) */}
         <div className={styles.cta}>
           <p>Cliquez ci-dessous pour plus d&apos;information.</p>
           <div className={styles.buttons}>

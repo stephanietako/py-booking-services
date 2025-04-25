@@ -33,66 +33,6 @@ export const roundToNearestMinutes = (
   return addMinutes(date, minutesLeftUntilNextInterval);
 };
 
-// export const getOpeningTimes = (startDate: Date, dbDays: Day[]): Date[] => {
-//   const dayOfWeek = startDate.getDay();
-//   const isToday = isEqual(startDate, new Date(new Date().setHours(0, 0, 0, 0)));
-
-//   // Trouver les horaires correspondants au jour sélectionné dans la base de données
-//   const today = dbDays.find((d) => d.dayOfWeek === dayOfWeek);
-
-//   // Si aucun horaire n'est trouvé pour ce jour, utiliser les horaires par défaut
-//   const openingTime = today ? today.openTime : Service_opening_time;
-//   const closingTime = today ? today.closeTime : Service_closing_time;
-
-//   // Convertir les horaires d'ouverture et de fermeture en objets Date
-//   // const opening = parse(`${openingTime}:00`, "HH:mm:ss", startDate);
-//   // const closing = parse(`${closingTime}:00`, "HH:mm:ss", startDate);
-//   const parseHour = (time: string | number) => {
-//     if (typeof time === "number") return [time, 0]; // Ex: 8 devient [8, 0]
-//     const parts = time.split(":");
-//     return [parseInt(parts[0]), parseInt(parts[1]) || 0]; // Ex: "08:30" devient [8, 30]
-//   };
-
-//   const [openHour, openMinute] = parseHour(openingTime);
-//   const [closeHour, closeMinute] = parseHour(closingTime);
-
-//   const opening = new Date(startDate);
-//   opening.setHours(openHour, openMinute, 0);
-
-//   const closing = new Date(startDate);
-//   closing.setHours(closeHour, closeMinute, 0);
-
-//   // Vérification des horaires pour le jour actuel
-//   let startTime: Date;
-//   if (isToday) {
-//     const roundedNow = roundToNearestMinutes(new Date(), Interval);
-
-//     // Vérifier si l'heure actuelle est trop tardive pour réserver
-//     if (!isBefore(roundedNow, closing)) {
-//       console.warn("⏳ Plus aucun créneau disponible aujourd'hui.");
-//       return []; // Renvoie une liste vide au lieu de lever une erreur
-//     }
-
-//     // Définir l'heure de départ comme maintenant ou l'ouverture
-//     startTime = isBefore(roundedNow, opening) ? opening : roundedNow;
-//   } else {
-//     startTime = opening;
-//   }
-
-//   const endTime = closing;
-
-//   // Générer les créneaux horaires entre startTime et endTime
-//   const times: Date[] = [];
-//   for (
-//     let time = startTime;
-//     isBefore(time, endTime) || isEqual(time, endTime);
-//     time = addMinutes(time, Interval)
-//   ) {
-//     times.push(time);
-//   }
-
-//   return times;
-// };
 export const getOpeningTimes = (
   startDate: Date,
   dbDays: DayInput[]

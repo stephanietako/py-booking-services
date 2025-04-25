@@ -185,6 +185,16 @@ const Cruise = () => {
           </div>
         )}
       </Modal>
+      <br />
+      <div className={styles.buttons}>
+        <a
+          href="mailto:yachtingday@gmail.com"
+          className={styles.button}
+          id={styles.buttons__reservation}
+        >
+          Réservez votre bateau
+        </a>
+      </div>
     </div>
   );
 };

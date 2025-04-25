@@ -21,7 +21,7 @@ const Hero: React.FC = () => {
         <div className={styles.hero_container}>
           <div className={styles.hero_bloc}>
             <div className={styles.hero_text}>
-              <h1>Locations & Entretiens</h1>
+              <h1>Location De Bateau Cavalaire-Sur-Mer</h1>
             </div>
           </div>
         </div>

@@ -111,7 +111,7 @@ const Galery = () => {
             >
               <Image
                 src={src}
-                alt={`Excursions en mer avec Cap Camarat 12.5 WA – modèle 2021 : ${index + 1}, en location avec skipper au port de Cavalaire-sur-Mer`}
+                alt={`Excursions et balades en mer avec le bateau Cap Camarat 12.5 WA – modèle 2021 : ${index + 1}, location bateau avec skipper depuis le port de Cavalaire-sur-Mer`}
                 className={styles.image}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -161,7 +161,9 @@ const Galery = () => {
           >
             <Image
               src={images[zoomIndex]}
-              alt="Zoomed"
+              alt={
+                "Zoom excursions et balades en mer avec le bateau Cap Camarat 12.5 WA – modèle 2021, location bateau avec skipper depuis le port de Cavalaire-sur-Mer"
+              }
               className={styles.zoomedImage}
               width={1200}
               height={870}

@@ -94,11 +94,11 @@ const Cavalaire: React.FC<CavalaireProps> = () => {
                 },
                 {
                   src: dattier,
-                  title: "Cavalaire Calanque du Dattier",
+                  title: "Baie de Gigaro",
                 },
                 {
                   src: gigaro,
-                  title: "Baie de Gigaro",
+                  title: " Cavalaire Calanque du Dattier",
                 },
                 {
                   src: courtade,

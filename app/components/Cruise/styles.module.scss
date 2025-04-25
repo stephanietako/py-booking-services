@@ -104,6 +104,37 @@
     color: #555;
     flex-grow: 1;
   }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    display: flex;
+    margin-top: 1rem;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #14e9f7;
+    color: #003080;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1.3rem;
+    // font-size: 2rem;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+
+    &:hover {
+      background-color: #25fde9;
+      transform: translateY(-3px);
+    }
+  }
+  #buttons__reservation {
+    font-size: 2rem;
+  }
 }
 
 ////////////////RESPONSIVE////////////////////
@@ -156,6 +187,17 @@
 
     .excursionDescription {
       font-size: 1.2rem !important;
+    }
+
+    .buttons {
+      flex-direction: column;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      .button {
+        width: 100%;
+        text-align: center;
+      }
     }
   }
 }

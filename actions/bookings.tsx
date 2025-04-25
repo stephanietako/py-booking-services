@@ -91,24 +91,6 @@ export async function createBooking(
   }
 }
 
-// Recupérer les réservations d'un utilisateur
-// export async function getUserBookings(userId: string) {
-//   try {
-//     const bookings = await prisma.booking.findMany({
-//       where: { user: { clerkUserId: userId } },
-//       include: { service: true, user: true, options: true },
-//       orderBy: { createdAt: "desc" },
-//     });
-
-//     return bookings.map((booking) => ({
-//       ...booking,
-//       totalAmount: booking.totalAmount, // ✅ On garde uniquement `totalAmount`
-//     }));
-//   } catch {
-//     console.error("Erreur lors de la récupération des réservations");
-//     throw new Error("Impossible de charger les réservations.");
-//   }
-// }
 export async function getUserBookings(userId: string): Promise<Booking[]> {
   try {
     const bookings = await prisma.booking.findMany({
@@ -337,31 +319,6 @@ export const updateBookingTotal = async (
   }
 };
 
-// Récupérer les créneaux réservés pour une date donnée
-// export async function getBookedTimes(date: string) {
-//   const startOfDay = new Date(date);
-//   startOfDay.setHours(0, 0, 0, 0);
-//   const endOfDay = new Date(date);
-//   endOfDay.setHours(23, 59, 59, 999);
-
-//   const bookings = await prisma.booking.findMany({
-//     where: {
-//       reservedAt: {
-//         gte: startOfDay,
-//         lte: endOfDay,
-//       },
-//     },
-//     select: {
-//       startTime: true,
-//       endTime: true,
-//     },
-//   });
-
-//   return bookings.map(({ startTime, endTime }) => ({
-//     startTime: new Date(startTime),
-//     endTime: new Date(endTime),
-//   }));
-// }
 export async function getBookedTimes(
   date: string
 ): Promise<{ startTime: Date; endTime: Date }[]> {

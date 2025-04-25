@@ -14,12 +14,11 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
   top: 0;
   left: 0;
   z-index: 5;
-  //background: #222225;
   padding: 0 2.5rem 0 2rem;
   transition:
     background 0.3s ease-in-out,
     box-shadow 0.3s ease-in-out;
-  //background: #fff;
+
   .logo_image {
     height: 100%;
     width: auto;
@@ -51,10 +50,8 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
         inset 0 2px 5px #fff3,
         0 4px 10px #e3e3ed4d;
       padding: 0.6rem 1.8rem;
-      // background: rgba(29, 29, 31, 0.72);
       background: none;
       transition: all 0.3s ease-in-out;
-      // border: 2px solid #0a4aec00;
       color: #fff;
       border: 2px solid #003080;
 
@@ -83,30 +80,173 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     padding: 2rem;
     z-index: 3;
 
+    // .navButton {
+    //   font-size: 1.3rem;
+    //   text-transform: uppercase;
+    //   border: 2px solid $bleu-fonce;
+    //   color: $blanc;
+    //   padding: 0.6rem 1.6rem;
+    //   background: rgba(255, 255, 255, 0.05);
+    //   backdrop-filter: blur(6px);
+    //   -webkit-backdrop-filter: blur(6px);
+    //   border-radius: 50px;
+    //   box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); // halo léger
+    //   transition: all 0.3s ease;
+
+    //   &:hover {
+    //     background: rgba(2, 19, 80, 0.3); // un peu plus de contraste au survol
+    //     border-color: $blanc;
+    //     box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); // halo plus fort
+    //     transform: scale(1.05);
+    //   }
+    // }
     .navButton {
       font-size: 1.3rem;
       text-transform: uppercase;
-      border: 2px solid $bleu-fonce;
       color: $blanc;
-      padding: 0.6rem 1.6rem;
-      background: rgba(255, 255, 255, 0.05); // léger fond transparent
-      backdrop-filter: blur(6px); // flou derrière = effet "verre"
-      -webkit-backdrop-filter: blur(6px); // pour Safari
-      border-radius: 50px; // look plus arrondi comme un hublot
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); // halo léger
+      padding: 0.8rem 1.8rem;
+      border: 2px solid $bleu-fonce;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(6px) saturate(160%);
+      -webkit-backdrop-filter: blur(6px) saturate(160%);
+      border-radius: 50px;
+      position: relative;
+      overflow: hidden;
       transition: all 0.3s ease;
+      cursor: pointer;
 
+      // ombre réaliste
+      box-shadow:
+        inset 0 0 2px rgba(255, 255, 255, 0.15),
+        0 0 0 2px rgba(144, 164, 174, 0.6),
+        0 3px 8px rgba(0, 0, 0, 0.4);
+
+      // rivets discrets
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: radial-gradient(circle, #f0f0f0, #888);
+        border-radius: 50%;
+        box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.4);
+      }
+
+      &::before {
+        top: 10%;
+        left: 10%;
+      }
+
+      &::after {
+        bottom: 10%;
+        right: 10%;
+      }
+
+      // shimmer léger
+      .shimmer {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          120deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.3),
+          rgba(255, 255, 255, 0.05)
+        );
+        transform: rotate(25deg);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      &:hover .shimmer {
+        animation: shimmer 1.2s forwards;
+        opacity: 1;
+      }
+
+      // hover state
       &:hover {
-        background: rgba(2, 19, 80, 0.3); // un peu plus de contraste au survol
-        border-color: $blanc;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); // halo plus fort
-        transform: scale(1.05);
+        background: rgba(2, 19, 80, 0.25); // un bleu foncé transparent
+        border-color: #fff;
+        box-shadow:
+          inset 0 0 3px rgba(255, 255, 255, 0.3),
+          0 0 15px rgba(255, 255, 255, 0.25);
+      }
+
+      &:focus-visible {
+        outline: 2px solid #ffffff;
+        outline-offset: 4px;
+      }
+
+      &:active {
+        box-shadow:
+          inset 0 2px 4px rgba(0, 0, 0, 0.5),
+          0 1px 3px rgba(255, 255, 255, 0.15);
+      }
+    }
+
+    // shimmer animation
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) rotate(25deg);
+      }
+      100% {
+        transform: translateX(100%) rotate(25deg);
       }
     }
   }
+
   .mobileOnlyLinks {
     display: none;
   }
+
+  .mobileDropdown {
+    width: 100%;
+    margin-bottom: 1rem;
+
+    summary {
+      font-size: 1rem;
+      padding: 0.6rem 1rem;
+      color: $blanc;
+      cursor: pointer;
+      list-style: none;
+      position: relative;
+      text-align: center;
+
+      &::after {
+        content: "▾";
+        position: absolute;
+        right: 1rem;
+      }
+
+      &:hover {
+        color: $bleu-clair;
+      }
+    }
+
+    .dropdownLinks {
+      padding-left: 1rem;
+      display: flex;
+      flex-direction: column;
+      margin-top: 0.5rem;
+
+      a {
+        font-size: 0.95rem;
+        padding: 0.4rem 0;
+        color: $blanc;
+        text-decoration: none;
+
+        &:hover {
+          color: $bleu-clair;
+        }
+      }
+    }
+  }
+
   .menuToggle {
     display: block;
     font-size: 3rem;
@@ -193,9 +333,7 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
   }
 
   &.scrolled {
-    //background: #fff;
     background: #121315d9;
-    //box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }
 
   @keyframes slideIn {

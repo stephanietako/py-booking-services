@@ -522,32 +522,6 @@ export async function getTotalOptionCount(
   }
 }
 
-// export const getAllServices = async () => {
-//   try {
-//     const services = await prisma.service.findMany({
-//       include: {
-//         options: true, // Inclure les options associées si nécessaire
-//       },
-//     });
-
-//     // Vérification des doublons dans les services récupérés
-//     const serviceIds = services.map((service) => service.id);
-//     const uniqueServiceIds = new Set(serviceIds);
-
-//     if (serviceIds.length !== uniqueServiceIds.size) {
-//       console.warn("Il y a des doublons dans les services retournés !");
-//     }
-
-//     return services;
-//   } catch (error) {
-//     console.error(
-//       "Erreur lors de la récupération de tous les services:",
-//       error
-//     );
-//     throw error;
-//   }
-// };
-
 export const getAllServices = async (): Promise<Service[]> => {
   try {
     const services = await prisma.service.findMany({
