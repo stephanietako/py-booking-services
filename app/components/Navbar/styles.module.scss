@@ -107,8 +107,8 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
       padding: 0.8rem 1.8rem;
       border: 2px solid $bleu-fonce;
       background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(6px) saturate(160%);
-      -webkit-backdrop-filter: blur(6px) saturate(160%);
+      //backdrop-filter: blur(6px) saturate(160%);
+      //-webkit-backdrop-filter: blur(6px) saturate(160%);
       border-radius: 50px;
       position: relative;
       overflow: hidden;
