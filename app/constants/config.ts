@@ -3,12 +3,7 @@ export const Service_opening_time = 8; // in hours
 export const Service_closing_time = 20; // in hours
 export const Interval = 30; // in minutes
 
-export const categories = [
-  "all",
-  "Découverte",
-  "Simplicité",
-  "Premium",
-] as const;
+export const categories = ["Service"] as const;
 
 export const MAX_FILE_SIZE = 1024 * 1024 * 5; //5M
 

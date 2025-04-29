@@ -2,75 +2,49 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  description?: string | null;
-  image?: string | null;
+  description?: string;
+  image?: string;
   clerkUserId: string;
   createdAt: Date;
-  roleId?: string | null;
-  role?: { name: string };
-  services?: Service[];
-  stripeCustomerId?: string | null;
-  termsAcceptedAt: Date | null;
+  roleId: string;
+  role?: Role; // Include the role relation
+  bookings?: Booking[];
+  stripeCustomerId?: string;
 }
 
 export interface Role {
   id: string;
   name: string;
-  users?: User[];
+  users?: User[]; // Utilise le type User que tu as défini
 }
 
-export type Service = {
+export interface Service {
   id: string;
   name: string;
   amount: number;
-  categories: string[]; // Utilisation d'un tableau de chaînes
-  description: string | null;
+  categories: string[];
+  description?: string;
   imageUrl: string;
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
-  reservedAt: Date | null;
-  startTime?: Date | null;
-  endTime?: Date | null;
-  options?: Option[];
-  bookings?: Booking[]; // Marquer `bookings` comme optionnel
+  // pricingRules?: PricingRule[]; // Utilise le type PricingRule
   price: number;
+  defaultPrice: number;
   currency: string;
-  stripeCustomerId?: string | null;
-  defaultPrice?: number; // Prix par défaut pour les services fixes
-  isFixed: boolean; // Indiquer si c'est un service fixe ou dynamique
-  pricingRules?: PricingRule[]; // Règles de tarification pour services fixes
-  totalAmount?: number;
-};
+  isFixed: boolean;
+}
 
 export interface Option {
-  id: string; // L'ID est de type UUID (généré automatiquement)
-  amount: number; // Montant de la transaction
-  description: string;
-  createdAt?: Date; // Date de création (DateTime dans Prisma)
-  serviceId?: string | null; // serviceId peut être null ou défini
-  service?: Service | null; // Objet Service optionnel, peut être null
-  bookings?: Booking[]; // Réservations associées à la transaction
-}
-
-export interface CustomUser {
   id: string;
-  firstName?: string;
-  lastName?: string;
-  description?: string | null;
-  emailAddresses: Array<{ emailAddress: string }>;
-  imageUrl?: string;
-  image?: string;
-  email?: string;
-  name?: string;
-  role?: { name: string };
-  stripeCustomerId?: string | null;
+  description: string;
+  amount: number;
+  serviceId?: string;
+  service?: Service; // Include service relation if you need it
+  createdAt: Date;
+  bookingId?: number;
+  booking?: Booking; // Include booking relation if needed
 }
-
-export type DateTime = {
-  justDate: Date | null; // Stocke uniquement une date sans heure.
-  dateTime?: Date | null; // Stocke une date avec l'heure.
-};
 
 export interface DayInput {
   id: string;
@@ -87,33 +61,54 @@ export interface CloseDayInput {
 export type BookingStatus = "PENDING" | "APPROVED" | "REJECTED" | "PAID";
 
 export interface Booking {
-  id: string;
-  serviceId: string;
-  userId: string;
-  service: Service; // Service réservé par l'utilisateur
-  user: User; // Utilisateur qui a fait la réservation
-  createdAt: Date;
-  updatedAt: Date;
+  id: number;
+  clientId: number;
+  client?: Client; // Uncomment if you want to include Client object in the booking
+  status: BookingStatus;
+  approvedByAdmin: boolean;
+  reservedAt: Date;
   startTime: Date;
   endTime: Date;
-  reservedAt: Date | null;
-  expiresAt: Date | null; // Permettre à expiresAt d'être null,Date de création de la réservation
-  options?: Option[]; // Liste des options ajoutées à la réservation
-  status: BookingStatus; // Statut de la réservation
-  approvedByAdmin: boolean; // Indique si la réservation a été approuvée par un admin
-  amount?: number;
+  withCaptain: boolean;
+  boatAmount: number;
   totalAmount: number;
-  stripeCustomerId?: string | null;
-  stripePaymentIntentId?: string | null;
-  price?: string | null;
-  token?: string;
-  termsAcceptedAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  service: Service | null;
+  options?: Option[]; // Include options if needed
+  transactions?: Transaction[]; // Include transactions if needed
 }
 
 export interface PricingRule {
   id: string;
   serviceId: string;
+  service?: Service; // Optional, include if needed
   startDate: Date;
   endDate: Date;
   price: number;
+}
+
+export interface Client {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  bookings?: Booking[]; // Optional, as it's a relation
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Transaction {
+  id: string;
+  description: string;
+  amount: number;
+  createdAt: Date;
+  bookingId?: number;
+  booking?: Booking; // Include if you need to refer to a booking in the transaction
+}
+
+export interface ClosedDay {
+  id: string;
+  date: Date;
+  createdAt: Date;
 }

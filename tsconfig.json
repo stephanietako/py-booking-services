@@ -1,21 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "target": "ES2020", // Next.js 15 recommande cette version
+    "module": "ESNext", // Important pour utiliser les imports ES
+    "moduleResolution": "node", // Doit être "node" pour que Next.js fonctionne correctement avec les modules
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
+    "esModuleInterop": true,
+    "jsx": "preserve", // Important pour Next.js et JSX
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
     "incremental": true,
     "typeRoots": ["./node_modules/@types", "./types"],
-    "types": ["node", "jsonwebtoken"], // On ajoute "jsonwebtoken" d'ici
+    "types": ["node", "jsonwebtoken"],
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "isolatedModules": true,
+    "baseUrl": ".", // Ajouté ici
     "paths": {
+      // Ajouté ici
       "@/*": ["./*"]
     },
     "plugins": [
@@ -30,7 +32,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "lib/db.ts",
-    "prisma/seed.ts"
+    "prisma/seed.ts",
+    "app/api/webhook/clerk"
   ],
   "exclude": ["node_modules"]
 }

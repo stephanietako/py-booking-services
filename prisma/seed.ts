@@ -37,58 +37,33 @@ async function main() {
 
   console.log("✅ Seeding completed: Roles and Days inserted or updated.");
 
-  // Création des services fixes "Simplicité" et "Premium"
+  // Création des services d'un service unique
   await prisma.service.upsert({
-    where: { name: "Simplicité" }, // Maintenant, ça fonctionne !
+    where: { name: "Service " },
     update: {},
     create: {
-      name: "Simplicité",
-      description: "Formule simplicité (repas non compris)...",
+      name: "Service",
+      description: "Formule service unique (repas non compris)...",
       defaultPrice: 1500,
       isFixed: true,
       amount: 1500,
       price: 1500,
       currency: "EUR",
-      categories: ["Simplicité"],
+      categories: ["Location bateau"],
       imageUrl: "/assets/logo/logo-full.png",
     },
   });
 
-  await prisma.service.upsert({
-    where: { name: "Premium" },
-    update: {},
-    create: {
-      name: "Premium",
-      description: "Formule Premium avec repas à bord...",
-      defaultPrice: 1500,
-      isFixed: true,
-      amount: 1500,
-      price: 1500,
-      currency: "EUR",
-      categories: ["Premium"],
-      imageUrl: "/assets/logo/logo-full.png",
-    },
-  });
-
-  console.log("✅ Services fixes insérés.");
+  console.log("✅ Service fixe inséré.");
 
   // // Récupérer les IDs des services fixes
-  const simplicite = await prisma.service.findUnique({
-    where: { name: "Simplicité" },
-  });
-  const premium = await prisma.service.findUnique({
-    where: { name: "Premium" },
+  const service = await prisma.service.findUnique({
+    where: { name: "Service" },
   });
 
-  if (!simplicite || !premium) {
-    console.error("❌ Erreur : Impossible de récupérer les services fixes.");
-    process.exit(1); // STOP le script si une erreur se produit
-  }
-
-  // Récupération de tous les services
-  const services = await prisma.service.findMany();
-  if (services.length === 0) {
-    console.error("❌ Erreur : Aucun service trouvé !");
+  // Vérification si le service a été trouvé
+  if (!service) {
+    console.error("❌ Erreur : Service 'Simplicité' non trouvé !");
     process.exit(1);
   }
 
@@ -96,37 +71,35 @@ async function main() {
   const startYear = 2024;
   const endYear = 2030; // Générer les tarifs jusqu'à 2030
 
-  const pricingRules = services.flatMap((service) =>
-    Array.from(
-      { length: endYear - startYear + 1 },
-      (_, i) => startYear + i
-    ).flatMap((year) => [
-      {
-        serviceId: service.id,
-        startDate: new Date(`${year}-10-16`),
-        endDate: new Date(`${year + 1}-05-31`),
-        price: 1500,
-      },
-      {
-        serviceId: service.id,
-        startDate: new Date(`${year + 1}-06-01`),
-        endDate: new Date(`${year + 1}-07-07`),
-        price: 1700,
-      },
-      {
-        serviceId: service.id,
-        startDate: new Date(`${year + 1}-07-08`),
-        endDate: new Date(`${year + 1}-08-31`),
-        price: 1900,
-      },
-      {
-        serviceId: service.id,
-        startDate: new Date(`${year + 1}-09-01`),
-        endDate: new Date(`${year + 1}-10-15`),
-        price: 1700,
-      },
-    ])
-  );
+  const pricingRules = Array.from(
+    { length: endYear - startYear + 1 },
+    (_, i) => startYear + i
+  ).flatMap((year) => [
+    {
+      serviceId: service.id,
+      startDate: new Date(`${year}-10-16`),
+      endDate: new Date(`${year + 1}-05-31`),
+      price: 1500,
+    },
+    {
+      serviceId: service.id,
+      startDate: new Date(`${year + 1}-06-01`),
+      endDate: new Date(`${year + 1}-07-07`),
+      price: 1700,
+    },
+    {
+      serviceId: service.id,
+      startDate: new Date(`${year + 1}-07-08`),
+      endDate: new Date(`${year + 1}-08-31`),
+      price: 1900,
+    },
+    {
+      serviceId: service.id,
+      startDate: new Date(`${year + 1}-09-01`),
+      endDate: new Date(`${year + 1}-10-15`),
+      price: 1700,
+    },
+  ]);
 
   await prisma.pricingRule.createMany({ data: pricingRules });
 

@@ -21,7 +21,7 @@ type Input = {
   id?: string;
   name: string;
   description?: string;
-  amount: number;
+  price: number;
   file?: File;
   categories: string[];
   imageUrl?: string;
@@ -31,7 +31,7 @@ type Input = {
 const initialInput: Input = {
   name: "",
   description: "",
-  amount: 0,
+  price: 0,
   file: undefined,
   categories: [],
   imageUrl: "",
@@ -52,7 +52,6 @@ const Service: FC = () => {
         setServices(
           data.map((service) => ({
             ...service,
-            options: service.options || [],
           }))
         );
       } catch (err) {
@@ -60,7 +59,7 @@ const Service: FC = () => {
           err instanceof Error
             ? err.message
             : "Une erreur inconnue est survenue.";
-        console.error("Erreur lors du chargement des services:", errorMessage); // Affiche l'erreur complète
+        console.error("Erreur lors du chargement des services:", errorMessage);
         setError("Impossible de charger les services.");
       }
     };
@@ -84,12 +83,10 @@ const Service: FC = () => {
 
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-
-    // Vérifie que l'entrée est valide (nombres, un seul point décimal et jusqu'à deux décimales)
     if (/^\d*\.?\d{0,2}$/.test(value)) {
       setInput((prev) => ({
         ...prev,
-        amount: value === "" ? 0 : parseFloat(value),
+        price: value === "" ? 0 : parseFloat(value),
       }));
       setIsFormModified(true);
     }
@@ -122,7 +119,7 @@ const Service: FC = () => {
     if (
       !input.name.trim() ||
       !input.description?.trim() ||
-      input.amount <= 0 ||
+      input.price <= 0 ||
       (!input.file && !input.imageUrl) ||
       input.categories.length === 0
     ) {
@@ -135,19 +132,19 @@ const Service: FC = () => {
         await updateService(
           input.id,
           input.name,
-          input.amount,
+          input.price,
           input.description || "",
           input.file
         );
         setSuccessMessage("Service mis à jour avec succès !");
       } else {
         await createService(
+          input.id || "", // Pass the service ID or an empty string
           input.name,
-          input.amount,
+          input.price,
           input.description || "",
           input.file!,
-          input.categories,
-          input.defaultPrice ?? input.amount
+          input.categories
         );
         setSuccessMessage("Service créé avec succès !");
       }
@@ -178,7 +175,7 @@ const Service: FC = () => {
       id: service.id,
       name: service.name,
       description: service.description || "",
-      amount: service.amount,
+      price: service.price,
       file: undefined,
       categories: service.categories || [],
       imageUrl: service.imageUrl || "",
@@ -203,10 +200,7 @@ const Service: FC = () => {
         <p className="guide_text">
           Bienvenue sur la page de gestion des services. Vous pouvez ajouter,
           modifier et supprimer des services en utilisant les formulaires
-          ci-dessous. Assurez-vous que tous les champs sont correctement remplis
-          avant de sauvegarder un service. Pour modifier un service existant,
-          cliquez sur &quot;Modifier&quot;, et pour supprimer un service,
-          cliquez sur &quot;Supprimer&quot;.
+          ci-dessous.
         </p>
         <div className="menu_form">
           <DynamicSelect
@@ -242,12 +236,12 @@ const Service: FC = () => {
             value={input.description || ""}
           />
           <input
-            name="amount"
+            name="price"
             className="input_price"
             type="text"
             placeholder="Prix"
-            onChange={handlePriceChange} // On utilise la fonction de validation ci-dessus
-            value={input.amount === 0 ? "" : input.amount.toString()} // Empêche l'affichage de "0" dans le champ d'entrée
+            onChange={handlePriceChange}
+            value={input.price === 0 ? "" : input.price.toString()}
           />
 
           <label htmlFor="file" className="label_file">
@@ -292,7 +286,7 @@ const Service: FC = () => {
                 <p>{service.categories.join(", ")}</p>
                 <p>{service.name}</p>
                 <p>{service.description}</p>
-                <p>{service.amount}€</p>
+                <p>{service.price}€</p>
                 <Image
                   src={service.imageUrl || "/default.jpg"}
                   alt={service.name}

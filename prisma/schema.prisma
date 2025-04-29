@@ -1,12 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-// 🏗 Résumé du fonctionnement
-// 1️⃣ L'admin gère la base de services (Service).
-// 2️⃣ L’utilisateur choisit un service et effectue une réservation (Booking).
-// 3️⃣ Chaque Booking stocke quel utilisateur (userId) a réservé quel service (serviceId).
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,32 +8,80 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model User {
-  id               String    @id @default(uuid())
-  email            String
-  name             String
-  image            String?
-  description      String?
-  clerkUserId      String    @unique
-  roleId           String
-  createdAt        DateTime  @default(now())
-  bookings         Booking[] // Un utilisateur peut avoir plusieurs réservations
-  role             Role      @relation(fields: [roleId], references: [id])
-  stripeCustomerId String?   @unique
-  termsAcceptedAt  DateTime?
+model Client {
+  id          Int       @id @default(autoincrement())
+  fullName    String
+  email       String    @unique
+  phoneNumber String
+  bookings    Booking[] @relation("ClientBookings")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
-model Role {
-  id    String @id @default(uuid())
-  name  String @unique
-  users User[]
+model Booking {
+  id                Int             @id @default(autoincrement())
+  clientId          Int?
+  client            Client?         @relation("ClientBookings", fields: [clientId], references: [id])
+  userId            String?
+  user              User?           @relation("UserBookings", fields: [userId], references: [id])
+  status            BookingStatus   @default(PENDING)
+  approvedByAdmin   Boolean         @default(false)
+  reservedAt        DateTime
+  startTime         DateTime
+  endTime           DateTime
+  withCaptain       Boolean         @default(false)
+  boatAmount        Float // prix du bateau uniquement
+  payableOnBoard    Float           @default(0) // options à payer à bord
+  totalAmount       Float           @default(0)
+  stripePaymentLink String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime
+  expiresAt         DateTime
+  bookingOptions    BookingOption[]
+  transactions      Transaction[]
+  Service           Service?        @relation(fields: [serviceId], references: [id])
+  serviceId         String?
+  paymentStatus     PaymentStatus   @default(PENDING)
+}
+
+model Option {
+  id             String          @id @default(uuid())
+  label          String
+  name           String
+  amount         Float
+  payableOnline  Boolean         @default(false)
+  serviceId      String?
+  Service        Service?        @relation(fields: [serviceId], references: [id])
+  createdAt      DateTime        @default(now())
+  bookingOptions BookingOption[]
+}
+
+model BookingOption {
+  id        String  @id @default(uuid())
+  bookingId Int
+  optionId  String
+  quantity  Int     @default(1)
+  unitPrice Float
+  label     String
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  option    Option  @relation(fields: [optionId], references: [id])
+}
+
+model Transaction {
+  id            String        @id @default(uuid())
+  description   String
+  amount        Float
+  createdAt     DateTime      @default(now())
+  bookingId     Int?
+  booking       Booking?      @relation(fields: [bookingId], references: [id])
+  paymentStatus PaymentStatus @default(PENDING)
 }
 
 model Service {
   id               String        @id @default(uuid())
-  name             String        @unique // Ajout de @unique
+  name             String        @unique
   amount           Float
-  categories       String[] // Changement pour un tableau de catégories
+  categories       String[]
   description      String?
   imageUrl         String
   active           Boolean       @default(true)
@@ -53,12 +92,12 @@ model Service {
   endTime          DateTime?
   options          Option[]
   bookings         Booking[]
-  defaultPrice     Float // Prix par défaut (utilisé seulement pour les services fixes)
-  isFixed          Boolean       @default(false) // true pour les services fixes
+  defaultPrice     Float
+  isFixed          Boolean       @default(false)
   pricingRules     PricingRule[]
-  price            Float // Nouveau champ pour le prix dynamique
-  currency         String // Nouveau champ pour la devise
-  stripeCustomerId String? // Ajout de l'identifiant du client Stripe
+  price            Float
+  currency         String
+  stripeCustomerId String?
 }
 
 model PricingRule {
@@ -68,17 +107,16 @@ model PricingRule {
   startDate DateTime
   endDate   DateTime
   price     Float
+
+  @@unique([serviceId, startDate, endDate])
 }
 
-model Option {
-  id          String   @id @default(uuid())
-  description String
-  amount      Float
-  serviceId   String?
-  service     Service? @relation(fields: [serviceId], references: [id])
-  createdAt   DateTime @default(now())
-  bookingId   String?
-  booking     Booking? @relation(fields: [bookingId], references: [id]) // Relation explicite avec Booking
+model Day {
+  id        String @id @default(cuid())
+  name      String
+  dayOfWeek Int    @unique
+  openTime  String
+  closeTime String
 }
 
 model ClosedDay {
@@ -86,12 +124,24 @@ model ClosedDay {
   date DateTime @unique
 }
 
-model Day {
-  id        String @id @default(cuid())
-  name      String // monday, tuesday, ...
-  dayOfWeek Int    @unique
-  openTime  String
-  closeTime String
+model User {
+  id               String    @id @default(uuid())
+  email            String    @unique
+  name             String
+  image            String?
+  description      String?
+  clerkUserId      String    @unique
+  roleId           String
+  role             Role      @relation(fields: [roleId], references: [id])
+  bookings         Booking[] @relation("UserBookings")
+  createdAt        DateTime  @default(now())
+  stripeCustomerId String?   @unique
+}
+
+model Role {
+  id    String @id @default(uuid())
+  name  String @unique
+  users User[]
 }
 
 enum BookingStatus {
@@ -101,32 +151,8 @@ enum BookingStatus {
   PAID
 }
 
-model Booking {
-  id                    String        @id @default(uuid())
-  userId                String
-  serviceId             String
-  user                  User          @relation(fields: [userId], references: [id])
-  service               Service       @relation(fields: [serviceId], references: [id])
-  status                BookingStatus @default(PENDING)
-  approvedByAdmin       Boolean       @default(false)
-  createdAt             DateTime      @default(now())
-  expiresAt             DateTime
-  updatedAt             DateTime      @updatedAt
-  reservedAt            DateTime
-  startTime             DateTime
-  endTime               DateTime
-  options               Option[]
-  totalAmount           Float         @default(0) // Ajout du total
-  stripeCustomerId      String?
-  stripePaymentIntentId String? // Ajout de l'identifiant de l'abonnement Stripe
-  transactions          Transaction[]
-}
-
-model Transaction {
-  id          String   @id @default(uuid())
-  description String
-  amount      Float
-  createdAt   DateTime @default(now())
-  bookingId   String?
-  booking     Booking? @relation(fields: [bookingId], references: [id])
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
 }

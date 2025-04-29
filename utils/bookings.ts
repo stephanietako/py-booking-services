@@ -5,7 +5,7 @@ export const updateBookingStatus = async (
   status: "APPROVED" | "REJECTED"
 ) => {
   const booking = await prisma.booking.update({
-    where: { id: bookingId },
+    where: { id: Number(bookingId) },
     data: {
       status: status,
       approvedByAdmin: status === "APPROVED",

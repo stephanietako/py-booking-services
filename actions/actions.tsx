@@ -5,130 +5,79 @@ import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
 import { Option, Service } from "@/types";
-//////////////
-const priceCache = new Map<string, number>(); // Cache simple
 
-///////////////
+const priceCache = new Map<string, number>();
 
-// Récupérer un utilisateur par son clerkUserId
 export async function getRole(clerkUserId: string) {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      include: { role: true },
-    });
-
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
-    }
-
-    return user;
-  } catch (error) {
-    throw error;
-  }
+  const user = await prisma.user.findUnique({
+    where: { clerkUserId },
+    include: { role: true },
+  });
+  if (!user) throw new Error("Utilisateur non trouvé");
+  return user;
 }
 
-// Ajouter un utilisateur à la base de données
 export async function addUserToDatabase(
   email: string,
   name: string,
   image: string,
   clerkUserId: string
 ) {
-  try {
-    // Recherche uniquement par clerkUserId pour éviter les doublons
-    const existingUser = await prisma.user.findUnique({
+  const existingUser = await prisma.user.findUnique({ where: { clerkUserId } });
+
+  if (existingUser) {
+    return await prisma.user.update({
       where: { clerkUserId },
+      data: { email, name, image },
     });
-
-    // Si l'utilisateur existe déjà, on met à jour ses informations
-    if (existingUser) {
-      const updatedUser = await prisma.user.update({
-        where: { clerkUserId },
-        data: {
-          email,
-          name,
-          image,
-        },
-      });
-      return updatedUser;
-    }
-
-    // Vérifie l'existence du rôle avant création
-    const role = await prisma.role.findUnique({
-      where: { name: "member" },
-    });
-    if (!role) {
-      throw new Error("Le rôle spécifié n'existe pas.");
-    }
-
-    // Crée l'utilisateur seulement si clerkUserId n'existe pas
-    const newUser = await prisma.user.create({
-      data: {
-        clerkUserId,
-        email,
-        name,
-        image,
-        roleId: role.id,
-      },
-    });
-
-    return newUser;
-  } catch (error) {
-    console.error("Erreur lors de l'ajout de l'utilisateur à la base :", error);
-    throw error;
   }
+
+  const role = await prisma.role.findUnique({ where: { name: "member" } });
+  if (!role) throw new Error("Le rôle spécifié n'existe pas.");
+
+  return await prisma.user.create({
+    data: {
+      clerkUserId,
+      email,
+      name,
+      image,
+      roleId: role.id,
+    },
+  });
 }
 
 export async function getServicesByUser(
   clerkUserId: string
 ): Promise<Service[]> {
-  try {
-    // Recherche de l'utilisateur avec ses réservations et services associés
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      include: {
-        bookings: {
-          include: {
-            service: true, // On inclut le service de chaque réservation
-          },
+  const user = await prisma.user.findUnique({
+    where: { clerkUserId },
+    include: {
+      bookings: {
+        include: {
+          Service: true,
         },
       },
-    });
-
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
-    }
-
-    // Filtrer les réservations où un service est associé et retourner la liste des services
-    return user.bookings
-      .filter((booking) => booking.service !== null)
-      .map((booking) => booking.service!);
-  } catch (error) {
-    console.error("Erreur lors de la récupération des services:", error);
-    throw error;
-  }
+    },
+  });
+  if (!user) throw new Error("Utilisateur non trouvé");
+  return user.bookings
+    .map((booking) => {
+      const service = booking.Service!;
+      return {
+        ...service,
+        description: service.description ?? undefined,
+      };
+    })
+    .filter(Boolean);
 }
 
 export async function getOptionsByServiceId(serviceId: string) {
-  try {
-    const service = await prisma.service.findUnique({
-      where: { id: serviceId },
-      include: {
-        options: true,
-      },
-    });
-
-    if (!service) {
-      throw new Error("Service non trouvé");
-    }
-
-    // Typage explicite de 'service' comme étant de type Service
-    return service.options;
-  } catch (error) {
-    console.error("❌ Erreur lors de la récupération des options.");
-    throw error;
-  }
+  const service = await prisma.service.findUnique({
+    where: { id: serviceId },
+    include: { options: true },
+  });
+  if (!service) throw new Error("Service non trouvé");
+  return service.options;
 }
 
 export async function addOptionToService(
@@ -136,417 +85,44 @@ export async function addOptionToService(
   amount: number,
   description: string
 ): Promise<Option> {
-  // Retourne une option
-  try {
-    const option = await prisma.option.create({
-      data: {
-        amount,
-        description,
-        serviceId,
-      },
-    });
+  const createdOption = await prisma.option.create({
+    data: {
+      amount,
+      name: description,
+      label: description,
+      serviceId,
+    },
+  });
 
-    console.log("✅ Option ajoutée avec succès");
-
-    return option; // Option est de type Option
-  } catch (error) {
-    console.error("Erreur lors de l'ajout de la option:", error);
-    throw error;
-  }
+  return {
+    ...createdOption,
+    serviceId: createdOption.serviceId ?? undefined,
+    description: description,
+  };
 }
 
-// Supprimer un service et ses options
 export async function deleteService(serviceId: string) {
-  try {
-    await prisma.option.deleteMany({ where: { serviceId } });
-    await prisma.service.delete({ where: { id: serviceId } });
-    console.log(`✅ Service supprimé (ID: ${serviceId}).`);
-  } catch (error) {
-    console.error("Erreur lors de la suppression du service:", error);
-    throw error;
-  }
+  await prisma.bookingOption.deleteMany({ where: { option: { serviceId } } });
+  await prisma.option.deleteMany({ where: { serviceId } });
+  await prisma.service.delete({ where: { id: serviceId } });
 }
 
-// Supprimer une option
 export async function deleteManyoption(optionId: string) {
-  try {
-    const option = await prisma.option.findUnique({
-      where: {
-        id: optionId,
-      },
-    });
-
-    if (!option) {
-      console.log(` Option déjà supprimée ou introuvable (ID: ${optionId}).`);
-      return;
-    }
-    await prisma.option.delete({ where: { id: optionId } });
-    console.log(`✅ Option supprimée (ID: ${optionId}).`);
-  } catch (error) {
-    console.error("Erreur lors de la suppression de la option:");
-    throw error;
-  }
+  const option = await prisma.option.findUnique({ where: { id: optionId } });
+  if (!option) return;
+  await prisma.bookingOption.deleteMany({ where: { optionId } });
+  await prisma.option.delete({ where: { id: optionId } });
 }
 
-// Récupérer les options d'un utilisateur par période
-export async function getOptionsByEmailAndPeriod(
-  clerkUserId: string,
-  period: string
-): Promise<Option[]> {
-  try {
-    const now = new Date();
-    let dateLimit: Date;
-
-    switch (period) {
-      case "last30":
-        dateLimit = new Date(now);
-        dateLimit.setDate(now.getDate() - 30);
-        break;
-      case "last90":
-        dateLimit = new Date(now);
-        dateLimit.setDate(now.getDate() - 90);
-        break;
-      case "last7":
-        dateLimit = new Date(now);
-        dateLimit.setDate(now.getDate() - 7);
-        break;
-      case "last365":
-        dateLimit = new Date(now);
-        dateLimit.setFullYear(now.getFullYear() - 1);
-        break;
-      default:
-        throw new Error("Période invalide");
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      include: {
-        bookings: {
-          include: {
-            service: {
-              include: {
-                options: {
-                  where: {
-                    createdAt: {
-                      gte: dateLimit,
-                    },
-                  },
-                  orderBy: {
-                    createdAt: "desc",
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
-    }
-
-    // Typage explicite de 'booking' et 'option'
-    const options = user.bookings.flatMap((booking) =>
-      booking?.service?.options?.length
-        ? booking.service.options.map((option) => ({
-            ...option,
-            serviceName: booking.service.name,
-            serviceId: booking.service.id,
-          }))
-        : []
-    );
-
-    return options;
-  } catch (error) {
-    console.error("Erreur lors de la récupération des options", error);
-    throw error;
-  }
+export async function getAllServices(): Promise<Service[]> {
+  const services = await prisma.service.findMany({
+    include: { options: true },
+  });
+  return services.map((service) => ({
+    ...service,
+    description: service.description ?? undefined,
+  }));
 }
-
-export const getLastServices = async (
-  clerkUserId: string
-): Promise<Service[]> => {
-  try {
-    const services = await prisma.service.findMany({
-      where: {
-        bookings: {
-          some: {
-            userId: clerkUserId,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 3,
-      include: {
-        options: true,
-      },
-    });
-
-    return services; // Retourne un tableau de services de type Service[]
-  } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des derniers services",
-      error
-    );
-    throw error;
-  }
-};
-
-// Créer un service
-export async function createService(
-  name: string,
-  amount: number,
-  description: string,
-  file: File,
-  categories: string[],
-  defaultPrice: number
-) {
-  try {
-    if (!name || !amount || !file) {
-      throw new Error("Les informations nécessaires sont manquantes.");
-    }
-
-    const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
-    if (!allowedMimeTypes.includes(file.type)) {
-      throw new Error("Format d'image non pris en charge");
-    }
-
-    // Envoi de l'image sur le serveur
-    const imageUrl = await uploadImageToServer(file);
-
-    // Création du service
-    const newService = await prisma.service.create({
-      data: {
-        name,
-        amount,
-        description,
-        imageUrl,
-        categories: categories.length > 0 ? categories : ["defaultCategory"], // Utilisation des catégories passées en paramètre
-        active: true, // L'état actif du service, tu peux ajuster selon ton besoin
-        price: amount, // Ajout de la propriété price
-        currency: "EUR", // Ajout de la propriété currency, ajustez selon votre besoin
-        defaultPrice: defaultPrice ?? amount,
-      },
-    });
-
-    console.log("Service créé avec succès");
-    return newService;
-  } catch (error) {
-    console.error("Erreur lors de la création du service", error);
-    throw error; // Relancer l'erreur pour que l'appelant puisse gérer l'erreur
-  }
-}
-
-//////////
-// Récupérer les services atteints par un utilisateur (exemple: services ayant plus de 5 options)
-export async function getReachedServices(
-  clerkUserId: string,
-  optionThreshold: number = 5
-): Promise<Service[]> {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      include: {
-        bookings: {
-          include: {
-            service: {
-              include: {
-                options: true, // Inclure les options pour chaque service
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
-    }
-
-    const reachedServices = user.bookings
-      .map((booking) => booking.service)
-      .filter((service) => service?.options?.length >= optionThreshold);
-
-    return reachedServices;
-  } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des services atteints:",
-      error
-    );
-    throw error;
-  }
-}
-
-// Calculer le montant total des optionss d'un utilisateur dans une période donnée
-export async function getTotalOptionAmount(
-  clerkUserId: string,
-  period: string
-): Promise<number> {
-  try {
-    const now = new Date();
-    let dateLimit: Date;
-
-    switch (period) {
-      case "last30":
-        dateLimit = new Date(now);
-        dateLimit.setDate(now.getDate() - 30);
-        break;
-      case "last90":
-        dateLimit = new Date(now);
-        dateLimit.setDate(now.getDate() - 90);
-        break;
-      case "last7":
-        dateLimit = new Date(now);
-        dateLimit.setDate(now.getDate() - 7);
-        break;
-      case "last365":
-        dateLimit = new Date(now);
-        dateLimit.setFullYear(now.getFullYear() - 1);
-        break;
-      default:
-        throw new Error("Période invalide");
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      include: {
-        bookings: {
-          include: {
-            service: {
-              include: {
-                options: {
-                  where: {
-                    createdAt: {
-                      gte: dateLimit,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
-    }
-
-    // Calcule le montant total des options
-    const totalAmount = user.bookings.reduce((total, booking) => {
-      if (booking.service && booking.service.options) {
-        const serviceTotal = booking.service.options.reduce(
-          (amountTotal: number, option: Option) => amountTotal + option.amount,
-          0
-        );
-        return total + serviceTotal;
-      }
-      return total;
-    }, 0);
-
-    return totalAmount;
-  } catch (error) {
-    console.error("Erreur lors du calcul du montant total des options:", error);
-    throw error;
-  }
-}
-
-// Calculer le nombre total d'options d'un utilisateur dans une période donnée
-export async function getTotalOptionCount(
-  clerkUserId: string,
-  period: string
-): Promise<number> {
-  try {
-    const now = new Date();
-    let dateLimit;
-
-    switch (period) {
-      case "last30":
-        dateLimit = new Date(now);
-        dateLimit.setDate(now.getDate() - 30);
-        break;
-      case "last90":
-        dateLimit = new Date(now);
-        dateLimit.setDate(now.getDate() - 90);
-        break;
-      case "last7":
-        dateLimit = new Date(now);
-        dateLimit.setDate(now.getDate() - 7);
-        break;
-      case "last365":
-        dateLimit = new Date(now);
-        dateLimit.setFullYear(now.getFullYear() - 1);
-        break;
-      default:
-        throw new Error("Période invalide");
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      include: {
-        bookings: {
-          include: {
-            service: {
-              include: {
-                options: {
-                  where: {
-                    createdAt: {
-                      gte: dateLimit,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
-    }
-
-    // Calcule le nombre total d'options
-    // Calcule le nombre total d'options
-    const totalCount = user.bookings.reduce((count, booking) => {
-      return count + (booking.service?.options?.length || 0);
-    }, 0);
-
-    return totalCount;
-  } catch (error) {
-    console.error("Erreur lors du calcul du nombre total d'options:", error);
-    throw error;
-  }
-}
-
-export const getAllServices = async (): Promise<Service[]> => {
-  try {
-    const services = await prisma.service.findMany({
-      include: {
-        options: true, // Inclure les options associées si nécessaire
-      },
-    });
-
-    // Vérification des doublons dans les services récupérés
-    const serviceIds = services.map((service: Service) => service.id); // Type explicite pour 'service'
-    const uniqueServiceIds = new Set(serviceIds);
-
-    if (serviceIds.length !== uniqueServiceIds.size) {
-      console.warn("Il y a des doublons dans les services retournés !");
-    }
-
-    return services;
-  } catch (error) {
-    console.error(
-      "Erreur lors de la récupération de tous les services:",
-      error
-    );
-    throw error;
-  }
-};
 
 export async function updateService(
   serviceId: string,
@@ -556,75 +132,39 @@ export async function updateService(
   file?: File,
   categories?: string[]
 ) {
-  try {
-    // Récupération du service existant
-    const service = await prisma.service.findUnique({
-      where: { id: serviceId },
-    });
+  const service = await prisma.service.findUnique({ where: { id: serviceId } });
+  if (!service) throw new Error("Service non trouvé");
 
-    if (!service) {
-      throw new Error("Service non trouvé");
-    }
+  let imageUrl = service.imageUrl;
+  if (file) imageUrl = await uploadImageToServer(file);
 
-    // Vérification du fichier d'image si présent
-    let imageUrl = service.imageUrl; // Conserver l'URL de l'image existante
-    if (file) {
-      // Si un fichier est fourni, on télécharge une nouvelle image
-      imageUrl = await uploadImageToServer(file);
-    }
-
-    // Mise à jour du service
-    const updatedService = await prisma.service.update({
-      where: { id: serviceId },
-      data: {
-        name,
-        amount,
-        description,
-        imageUrl,
-        categories: categories || service.categories, // Si des catégories sont passées, on les met à jour, sinon on garde celles existantes
-      },
-    });
-
-    console.log(
-      "✅ Service mis à jour avec succès (ID: " + updatedService.id + ")."
-    );
-    return updatedService;
-  } catch (error) {
-    console.error("Erreur lors de la mise à jour du service:", error);
-    throw new Error("Impossible de mettre à jour le service");
-  }
+  return await prisma.service.update({
+    where: { id: serviceId },
+    data: {
+      name,
+      amount,
+      description,
+      imageUrl,
+      categories: categories || service.categories,
+    },
+  });
 }
 
-// Fonction pour uploader une image
 async function uploadImageToServer(file: File): Promise<string> {
-  console.log("📂 Début de l'upload...");
-
   const buffer = Buffer.from(await file.arrayBuffer());
-  console.log("✅ Buffer créé");
-
-  const relativeUploadDir = `/uploads/${
-    new Date().toISOString().split("T")[0]
-  }`;
+  const relativeUploadDir = `/uploads/${new Date().toISOString().split("T")[0]}`;
   const uploadDir = join(process.cwd(), "public", relativeUploadDir);
-  console.log("✅ Image uploadée avec succès.");
 
-  try {
-    await stat(uploadDir).catch(() => mkdir(uploadDir, { recursive: true }));
-    console.log("📂 Dossier créé (ou existant)");
+  await stat(uploadDir).catch(() => mkdir(uploadDir, { recursive: true }));
 
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const fileExtension = mime.getExtension(file.type) || "png";
-    const fileName = `${uniqueSuffix}.${fileExtension}`;
-    const filePath = join(uploadDir, fileName);
+  const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+  const fileExtension = mime.getExtension(file.type) || "png";
+  const fileName = `${uniqueSuffix}.${fileExtension}`;
+  const filePath = join(uploadDir, fileName);
 
-    await writeFile(filePath, buffer);
-    console.log("✅ Image uploadée avec succès.");
+  await writeFile(filePath, buffer);
 
-    return `${relativeUploadDir}/${fileName}`;
-  } catch {
-    console.error("❌ Erreur lors du téléchargement de l'image.");
-    throw new Error("Erreur lors de l'upload de l'image");
-  }
+  return `${relativeUploadDir}/${fileName}`;
 }
 
 export async function getDynamicPrice(
@@ -633,25 +173,42 @@ export async function getDynamicPrice(
   endDate: string
 ): Promise<number> {
   const cacheKey = `${serviceId}-${startDate}-${endDate}`;
+  if (priceCache.has(cacheKey)) return priceCache.get(cacheKey)!;
 
-  if (priceCache.has(cacheKey)) {
-    return priceCache.get(cacheKey)!;
-  }
+  const rule = await prisma.pricingRule.findFirst({
+    where: {
+      serviceId,
+      startDate: { lte: new Date(endDate) },
+      endDate: { gte: new Date(startDate) },
+    },
+  });
+  const price = rule ? rule.price : 1500;
+  priceCache.set(cacheKey, price);
+  return price;
+}
 
-  try {
-    const pricingRule = await prisma.pricingRule.findFirst({
-      where: {
-        serviceId,
-        startDate: { lte: new Date(endDate) },
-        endDate: { gte: new Date(startDate) },
-      },
-    });
+export async function createService(
+  serviceId: string,
+  name: string,
+  amount: number,
+  description: string,
+  file?: File,
+  categories?: string[]
+) {
+  const service = await prisma.service.findUnique({ where: { id: serviceId } });
+  if (!service) throw new Error("Service non trouvé");
 
-    const price = pricingRule ? pricingRule.price : 1500;
-    priceCache.set(cacheKey, price);
-    return price;
-  } catch (error) {
-    console.error("Erreur prix dynamique:", error);
-    return 1500;
-  }
+  let imageUrl = service.imageUrl;
+  if (file) imageUrl = await uploadImageToServer(file);
+
+  return await prisma.service.update({
+    where: { id: serviceId },
+    data: {
+      name,
+      amount,
+      description,
+      imageUrl,
+      categories: categories || service.categories,
+    },
+  });
 }

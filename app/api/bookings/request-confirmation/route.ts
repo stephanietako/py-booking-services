@@ -13,34 +13,20 @@ export async function POST(request: NextRequest) {
   try {
     const { userId, bookingId }: RequestBody = await request.json();
 
-    if (process.env.NODE_ENV !== "production") {
-      console.log("📌 Requête reçue avec succès");
-    }
-
     const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
+      where: { id: Number(bookingId) },
       include: { user: true },
     });
 
     if (!booking) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error("⛔ Réservation introuvable.");
-      }
       return NextResponse.json(
         { error: "Réservation introuvable" },
         { status: 404 }
       );
     }
 
-    if (booking.user.clerkUserId !== userId) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error("⛔ Accès refusé : L'utilisateur ne correspond pas !");
-      }
+    if (!booking.user || booking.user.clerkUserId !== userId) {
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
-    }
-
-    if (process.env.NODE_ENV !== "production") {
-      console.log("✅ Accès autorisé, envoi d'email...");
     }
 
     await sendEmailToAdmin({ bookingId, userEmail: booking.user.email });
@@ -49,7 +35,7 @@ export async function POST(request: NextRequest) {
       message: "Demande de confirmation envoyée avec succès.",
     });
   } catch (error) {
-    console.error("❌ Erreur lors du traitement de la requête :", error);
+    console.error("Erreur lors du traitement de la requête :", error);
     return NextResponse.json(
       { error: "Erreur interne du serveur" },
       { status: 500 }
