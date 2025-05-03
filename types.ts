@@ -160,3 +160,20 @@ export interface CustomUser {
 
 export type BookingStatus = "PENDING" | "APPROVED" | "REJECTED" | "PAID";
 export type PaymentStatus = "PENDING" | "PAID" | "FAILED";
+
+export type DateTime = {
+  justDate: Date | null; // Stocke uniquement une date sans heure.
+  dateTime?: Date | null; // Stocke une date avec l'heure.
+};
+
+export interface DayInput {
+  id: string;
+  name: string;
+  dayOfWeek: number;
+  openTime: string;
+  closeTime: string;
+}
+
+export interface CloseDayInput {
+  date: Date;
+}
