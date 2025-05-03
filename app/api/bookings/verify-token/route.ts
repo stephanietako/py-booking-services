@@ -1,4 +1,3 @@
-// filepath: [route.ts](http://_vscodecontentref_/4)
 import { NextRequest, NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";

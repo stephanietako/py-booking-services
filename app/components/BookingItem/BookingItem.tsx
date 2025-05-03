@@ -15,9 +15,9 @@ const BookingItem: React.FC<BookingItemProps> = ({ booking, onCancel }) => {
   return (
     <div className={styles.bookingItem}>
       <div className={styles.bookingItem__header}>
-        <h3>{booking.service.name}</h3>
+        <h3>{booking.service?.name || "Service non disponible"}</h3>
         <p className={styles.bookingItem__description}>
-          {booking.service.description}
+          {booking.service?.description || "Description non disponible"}
         </p>
       </div>
       <div className={styles.bookingItem__content}>
@@ -34,13 +34,15 @@ const BookingItem: React.FC<BookingItemProps> = ({ booking, onCancel }) => {
           </p>
         </div>
         <div className={styles.bookingItem__options}>
-          {booking.options && booking.options.length > 0 && (
+          {booking.bookingOptions && booking.bookingOptions.length > 0 && (
             <div>
               <h4>Options choisies :</h4>
               <ul>
-                {booking.options.map((option) => (
-                  <li key={option.id}>
-                    {option.description} - {option.amount} €
+                {booking.bookingOptions.map((bookingOption) => (
+                  <li key={bookingOption.id}>
+                    {/* Vérification de l'existence de option et de ses propriétés */}
+                    {bookingOption.option?.label} -{" "}
+                    {bookingOption.option?.amount} €
                   </li>
                 ))}
               </ul>

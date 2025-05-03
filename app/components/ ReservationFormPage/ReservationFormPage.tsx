@@ -5,7 +5,7 @@ import { Booking } from "@/types";
 
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 // Styles
-import styles from "./styles.module.scss";
+// import styles from "./styles.module.scss";
 import Spinner from "../Spinner/Spinner";
 import { sendBookingToAdmin } from "@/actions/admin";
 
@@ -53,8 +53,8 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
     <Wrapper>
       <section>
         <h1>Réservation</h1>
-        <form onSubmit={handleSubmit} className={styles.reservationForm}>
-          <div className={styles.formGroup}>
+        <form onSubmit={handleSubmit} className="reservationForm">
+          <div className="formGroup">
             <label htmlFor="firstName">Prénom</label>
             <input
               type="text"
@@ -66,7 +66,7 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
             />
           </div>
 
-          <div className={styles.formGroup}>
+          <div className="formGroup">
             <label htmlFor="lastName">Nom</label>
             <input
               type="text"
@@ -78,7 +78,7 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
             />
           </div>
 
-          <div className={styles.formGroup}>
+          <div className="formGroup">
             <label htmlFor="email">Email</label>
             <input
               type="email"
@@ -90,7 +90,7 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
             />
           </div>
 
-          <div className={styles.formGroup}>
+          <div className="formGroup">
             <label htmlFor="phoneNumber">Numéro de téléphone</label>
             <input
               type="tel"
@@ -102,11 +102,11 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
             />
           </div>
 
-          <button type="submit" className={styles.submitButton}>
+          <button type="submit" className="submitButton">
             Confirmer ma réservation
           </button>
         </form>
-        {error && <p className={styles.error}>{error}</p>}
+        {error && <p className="error">{error}</p>}
       </section>
     </Wrapper>
   );

@@ -5,7 +5,7 @@ const page = () => {
     <div>
       <h1>Echec de paiement !!!</h1>
       <button>
-        <Link href="/my-booking">Retour sur le my booking</Link>
+        <Link href="/">Retour sur la page d&apos;accueil</Link>
       </button>
     </div>
   );

@@ -30,8 +30,8 @@ model Booking {
   startTime         DateTime
   endTime           DateTime
   withCaptain       Boolean         @default(false)
-  boatAmount        Float // prix du bateau uniquement
-  payableOnBoard    Float           @default(0) // options à payer à bord
+  boatAmount        Float
+  payableOnBoard    Float           @default(0)
   totalAmount       Float           @default(0)
   stripePaymentLink String?
   createdAt         DateTime        @default(now())
@@ -50,21 +50,24 @@ model Option {
   name           String
   amount         Float
   payableOnline  Boolean         @default(false)
+  payableAtBoard Boolean         @default(true)
   serviceId      String?
   Service        Service?        @relation(fields: [serviceId], references: [id])
   createdAt      DateTime        @default(now())
   bookingOptions BookingOption[]
+  description    String?
 }
 
 model BookingOption {
-  id        String  @id @default(uuid())
-  bookingId Int
-  optionId  String
-  quantity  Int     @default(1)
-  unitPrice Float
-  label     String
-  booking   Booking @relation(fields: [bookingId], references: [id])
-  option    Option  @relation(fields: [optionId], references: [id])
+  id          String  @id @default(uuid())
+  bookingId   Int
+  optionId    String
+  quantity    Int     @default(1)
+  unitPrice   Float
+  label       String
+  booking     Booking @relation(fields: [bookingId], references: [id])
+  option      Option  @relation(fields: [optionId], references: [id])
+  description String?
 }
 
 model Transaction {
@@ -80,24 +83,24 @@ model Transaction {
 model Service {
   id               String        @id @default(uuid())
   name             String        @unique
-  amount           Float
-  categories       String[]
   description      String?
   imageUrl         String
   active           Boolean       @default(true)
+  categories       String[]
+  amount           Float
+  defaultPrice     Float
+  price            Float
+  isFixed          Boolean       @default(false)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
+  currency         String
+  stripeCustomerId String?
+  options          Option[]
+  bookings         Booking[]
+  pricingRules     PricingRule[]
   reservedAt       DateTime?
   startTime        DateTime?
   endTime          DateTime?
-  options          Option[]
-  bookings         Booking[]
-  defaultPrice     Float
-  isFixed          Boolean       @default(false)
-  pricingRules     PricingRule[]
-  price            Float
-  currency         String
-  stripeCustomerId String?
 }
 
 model PricingRule {
@@ -108,7 +111,7 @@ model PricingRule {
   endDate   DateTime
   price     Float
 
-  @@unique([serviceId, startDate, endDate])
+  @@unique([serviceId, startDate, endDate], name: "serviceId_startDate_endDate")
 }
 
 model Day {

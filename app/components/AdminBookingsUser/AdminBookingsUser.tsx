@@ -29,7 +29,8 @@ const AdminBookingsUser: React.FC<AdminBookingsUserProps> = ({ bookings }) => {
         throw new Error("Statut de réservation invalide");
       }
 
-      await updateBooking(bookingId, newStatus);
+      // Passez un objet contenant le champ à mettre à jour
+      await updateBooking(bookingId, { status: newStatus });
 
       toast.success(
         `Réservation ${newStatus === "APPROVED" ? "validée" : "annulée"} avec succès`,
@@ -56,7 +57,8 @@ const AdminBookingsUser: React.FC<AdminBookingsUserProps> = ({ bookings }) => {
           <li key={booking.id}>
             <div>
               <p>
-                <strong>Service :</strong> {booking.service.name}
+                <strong>Service :</strong>{" "}
+                {booking.service ? booking.service.name : "Non spécifié"}
               </p>
               <p>
                 <strong>Date :</strong>{" "}
@@ -73,18 +75,22 @@ const AdminBookingsUser: React.FC<AdminBookingsUserProps> = ({ bookings }) => {
             <div>
               {/* Boutons pour valider ou annuler la réservation */}
               <button
-                onClick={() => handleUpdateStatus(booking.id, "APPROVED")}
-                disabled={loading === booking.id}
+                onClick={() =>
+                  handleUpdateStatus(booking.id.toString(), "APPROVED")
+                }
+                disabled={loading === booking.id.toString()}
                 aria-label={`Valider la réservation ${booking.id}`}
-                aria-disabled={loading === booking.id}
+                aria-disabled={loading === booking.id.toString()}
               >
                 Valider
               </button>
               <button
-                onClick={() => handleUpdateStatus(booking.id, "REJECTED")}
-                disabled={loading === booking.id}
+                onClick={() =>
+                  handleUpdateStatus(booking.id.toString(), "REJECTED")
+                }
+                disabled={loading === booking.id.toString()}
                 aria-label={`Annuler la réservation ${booking.id}`}
-                aria-disabled={loading === booking.id}
+                aria-disabled={loading === booking.id.toString()}
               >
                 Annuler
               </button>

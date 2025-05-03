@@ -139,12 +139,12 @@ const Service: FC = () => {
         setSuccessMessage("Service mis à jour avec succès !");
       } else {
         await createService(
-          input.id || "", // Pass the service ID or an empty string
           input.name,
           input.price,
           input.description || "",
           input.file!,
-          input.categories
+          input.categories,
+          input.defaultPrice || 1500 // Provide a default value for defaultPrice
         );
         setSuccessMessage("Service créé avec succès !");
       }

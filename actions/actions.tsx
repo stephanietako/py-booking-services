@@ -46,6 +46,44 @@ export async function addUserToDatabase(
   });
 }
 
+export async function createService(
+  name: string,
+  price: number,
+  description: string,
+  file: File,
+  categories: string[],
+  defaultPrice: number
+) {
+  try {
+    // Vérification des paramètres
+    if (!name || !price || !defaultPrice || !file) {
+      throw new Error("Tous les champs obligatoires doivent être remplis.");
+    }
+
+    // Téléchargement de l'image
+    const imageUrl = await uploadImageToServer(file);
+
+    // Création du service dans la base de données
+    const newService = await prisma.service.create({
+      data: {
+        name,
+        amount: price,
+        price,
+        defaultPrice,
+        description,
+        categories,
+        imageUrl,
+        currency: "EUR", // Devise par défaut
+      },
+    });
+
+    return newService;
+  } catch (error) {
+    console.error("Erreur lors de la création du service :", error);
+    throw new Error("Impossible de créer le service.");
+  }
+}
+
 export async function getServicesByUser(
   clerkUserId: string
 ): Promise<Service[]> {
@@ -121,6 +159,11 @@ export async function getAllServices(): Promise<Service[]> {
   return services.map((service) => ({
     ...service,
     description: service.description ?? undefined,
+    options: service.options.map((opt) => ({
+      ...opt,
+      description: opt.label, // 👈 ajout pour correspondre au type `Option`
+      serviceId: opt.serviceId ?? undefined, // Convert null to undefined
+    })),
   }));
 }
 
@@ -182,33 +225,7 @@ export async function getDynamicPrice(
       endDate: { gte: new Date(startDate) },
     },
   });
-  const price = rule ? rule.price : 1500;
+  const price = rule ? rule.price : 1500; // Valeur par défaut si aucune règle n'est trouvée
   priceCache.set(cacheKey, price);
   return price;
-}
-
-export async function createService(
-  serviceId: string,
-  name: string,
-  amount: number,
-  description: string,
-  file?: File,
-  categories?: string[]
-) {
-  const service = await prisma.service.findUnique({ where: { id: serviceId } });
-  if (!service) throw new Error("Service non trouvé");
-
-  let imageUrl = service.imageUrl;
-  if (file) imageUrl = await uploadImageToServer(file);
-
-  return await prisma.service.update({
-    where: { id: serviceId },
-    data: {
-      name,
-      amount,
-      description,
-      imageUrl,
-      categories: categories || service.categories,
-    },
-  });
 }

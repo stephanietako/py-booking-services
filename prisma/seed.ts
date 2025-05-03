@@ -3,43 +3,51 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // Insertion des rôles
-  await prisma.role.upsert({
-    where: { name: "member" },
-    update: {},
-    create: { name: "member" },
-  });
+  // ✅ Insertion des rôles
+  await Promise.all([
+    prisma.role.upsert({
+      where: { name: "member" },
+      update: {},
+      create: { name: "member" },
+    }),
+    prisma.role.upsert({
+      where: { name: "admin" },
+      update: {},
+      create: { name: "admin" },
+    }),
+  ]);
 
-  await prisma.role.upsert({
-    where: { name: "admin" },
-    update: {},
-    create: { name: "admin" },
-  });
-
-  // Insertion des jours de la semaine
+  // ✅ Insertion des jours de la semaine
   const daysOfWeek = [
-    { dayOfWeek: 0, name: "sunday", openTime: "09:00", closeTime: "18:00" },
-    { dayOfWeek: 1, name: "monday", openTime: "09:00", closeTime: "18:00" },
-    { dayOfWeek: 2, name: "tuesday", openTime: "09:00", closeTime: "18:00" },
-    { dayOfWeek: 3, name: "wednesday", openTime: "09:00", closeTime: "18:00" },
-    { dayOfWeek: 4, name: "thursday", openTime: "09:00", closeTime: "18:00" },
-    { dayOfWeek: 5, name: "friday", openTime: "09:00", closeTime: "18:00" },
-    { dayOfWeek: 6, name: "saturday", openTime: "09:00", closeTime: "18:00" },
+    { dayOfWeek: 0, name: "sunday" },
+    { dayOfWeek: 1, name: "monday" },
+    { dayOfWeek: 2, name: "tuesday" },
+    { dayOfWeek: 3, name: "wednesday" },
+    { dayOfWeek: 4, name: "thursday" },
+    { dayOfWeek: 5, name: "friday" },
+    { dayOfWeek: 6, name: "saturday" },
   ];
 
-  for (const day of daysOfWeek) {
-    await prisma.day.upsert({
-      where: { dayOfWeek: day.dayOfWeek }, // Correction ici
-      update: {},
-      create: day,
-    });
-  }
+  await Promise.all(
+    daysOfWeek.map((day) =>
+      prisma.day.upsert({
+        where: { dayOfWeek: day.dayOfWeek },
+        update: {},
+        create: {
+          name: day.name,
+          dayOfWeek: day.dayOfWeek,
+          openTime: "09:00",
+          closeTime: "18:00",
+        },
+      })
+    )
+  );
 
-  console.log("✅ Seeding completed: Roles and Days inserted or updated.");
+  console.log("✅ Roles and Days seeded");
 
-  // Création des services d'un service unique
+  // ✅ Création du service principal
   await prisma.service.upsert({
-    where: { name: "Service " },
+    where: { name: "Service" },
     update: {},
     create: {
       name: "Service",
@@ -54,22 +62,16 @@ async function main() {
     },
   });
 
-  console.log("✅ Service fixe inséré.");
+  console.log("✅ Service principal inséré");
 
-  // // Récupérer les IDs des services fixes
+  // ✅ Insertion des règles de tarification dynamiques
   const service = await prisma.service.findUnique({
     where: { name: "Service" },
   });
+  if (!service) throw new Error("❌ Service introuvable");
 
-  // Vérification si le service a été trouvé
-  if (!service) {
-    console.error("❌ Erreur : Service 'Simplicité' non trouvé !");
-    process.exit(1);
-  }
-
-  // Insertion des tarifs dynamiques pour plusieurs années
   const startYear = 2024;
-  const endYear = 2030; // Générer les tarifs jusqu'à 2030
+  const endYear = 2030;
 
   const pricingRules = Array.from(
     { length: endYear - startYear + 1 },
@@ -101,13 +103,24 @@ async function main() {
     },
   ]);
 
-  await prisma.pricingRule.createMany({ data: pricingRules });
+  for (const rule of pricingRules) {
+    await prisma.pricingRule.upsert({
+      where: {
+        serviceId_startDate_endDate: {
+          serviceId: rule.serviceId,
+          startDate: rule.startDate,
+          endDate: rule.endDate,
+        },
+      },
+      update: {},
+      create: rule,
+    });
+  }
 
-  console.log("✅ Tarifs dynamiques insérés jusqu'à 2030.");
-  console.log("🎉 Seeding terminé avec succès !");
+  console.log("✅ Tarifs dynamiques insérés jusqu'à 2030");
+  console.log("🎉 Seeding terminé avec succès");
 }
 
-// Exécution du script
 main()
   .catch((e) => {
     console.error("❌ Erreur lors du seeding :", e);
