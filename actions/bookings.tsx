@@ -491,3 +491,117 @@ export async function getBookingById(bookingId: string) {
     throw new Error("Impossible de récupérer la réservation.");
   }
 }
+//////////////////////////
+export async function getOptionsByBookingId(bookingId: string) {
+  try {
+    const booking = await prisma.booking.findUnique({
+      where: { id: parseInt(bookingId, 10) },
+      include: {
+        bookingOptions: {
+          include: { option: true },
+        },
+        Service: true,
+      },
+    });
+
+    if (!booking) {
+      throw new Error("❌ Réservation introuvable.");
+    }
+
+    const options = booking.bookingOptions.map((o) => ({
+      id: o.optionId,
+      label: o.label,
+      quantity: o.quantity,
+      unitPrice: o.unitPrice,
+      description: o.option?.description ?? "",
+      amount: o.unitPrice * o.quantity,
+      createdAt: o.option?.createdAt ?? new Date(),
+    }));
+
+    return {
+      options,
+      service: booking.Service,
+    };
+  } catch (error) {
+    console.error("❌ Erreur lors de la récupération des options", error);
+    throw new Error("Impossible de récupérer les options.");
+  }
+}
+/////////////////////////
+export async function addOptionToBooking(
+  bookingId: string,
+  optionId: string,
+  quantity: number
+) {
+  try {
+    const option = await prisma.option.findUnique({ where: { id: optionId } });
+    if (!option) throw new Error("❌ Option introuvable.");
+
+    const subtotal = option.amount * quantity;
+
+    const [created] = await prisma.$transaction([
+      prisma.bookingOption.create({
+        data: {
+          bookingId: parseInt(bookingId, 10),
+          optionId: option.id,
+          quantity,
+          unitPrice: option.amount,
+          label: option.label,
+          description: option.description ?? "",
+        },
+      }),
+      prisma.booking.update({
+        where: { id: parseInt(bookingId, 10) },
+        data: {
+          totalAmount: option.payableOnline
+            ? { increment: subtotal }
+            : undefined,
+          payableOnBoard: !option.payableOnline
+            ? { increment: subtotal }
+            : undefined,
+        },
+      }),
+    ]);
+
+    return created;
+  } catch (error) {
+    console.error("❌ Erreur lors de l'ajout de l'option :", error);
+    throw new Error("Impossible d'ajouter l'option.");
+  }
+}
+/////////////////////////
+export async function deleteOption(bookingOptionId: string) {
+  try {
+    const bookingOption = await prisma.bookingOption.findUnique({
+      where: { id: bookingOptionId },
+      include: { option: true }, // Assure-toi que la relation est bien définie dans le schema Prisma
+    });
+
+    if (!bookingOption) throw new Error("❌ Option non trouvée.");
+
+    const amount = bookingOption.unitPrice * bookingOption.quantity;
+
+    const [, updatedBooking] = await prisma.$transaction([
+      prisma.bookingOption.delete({ where: { id: bookingOptionId } }),
+      prisma.booking.update({
+        where: { id: bookingOption.bookingId },
+        data: {
+          totalAmount: bookingOption.option?.payableOnline
+            ? { decrement: amount }
+            : undefined,
+          payableOnBoard: !bookingOption.option?.payableOnline
+            ? { decrement: amount }
+            : undefined,
+        },
+      }),
+    ]);
+
+    return {
+      success: true,
+      newTotal: updatedBooking.totalAmount,
+    };
+  } catch (error) {
+    console.error("❌ Erreur lors de la suppression :", error);
+    throw new Error("Impossible de supprimer l'option.");
+  }
+}

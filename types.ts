@@ -177,3 +177,14 @@ export interface DayInput {
 export interface CloseDayInput {
   date: Date;
 }
+
+export interface OptionWithAmount {
+  optionId: string;
+  label: string;
+  quantity: number;
+  unitPrice: number;
+  description: string | null;
+  amount: number;
+  createdAt: Date;
+  id: string;
+}

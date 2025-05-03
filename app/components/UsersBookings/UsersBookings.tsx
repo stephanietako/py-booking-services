@@ -229,3 +229,10 @@
 // };
 
 // export default UsersBookings;
+import React from "react";
+
+const UsersBookings = () => {
+  return <div>UsersBookings page en maintenance</div>;
+};
+
+export default UsersBookings;

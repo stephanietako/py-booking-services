@@ -53,6 +53,7 @@ const ServiceList = () => {
               key={service.id}
               service={service}
               remainingAmount={remainingAmount}
+              availableOptions={service.options || []}
             />
           ))}
       </div>

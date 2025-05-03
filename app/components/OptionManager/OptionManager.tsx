@@ -1,197 +1,101 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import {
-  addOptionToBooking,
-  deleteOption,
-  getOptionsByBookingId,
-  updateBookingTotal,
-} from "@/actions/bookings";
-import { Option } from "@/types";
-import { FaRegTrashAlt, FaWallet } from "react-icons/fa";
-import { BsCartX } from "react-icons/bs";
-// Styles
-import styles from "./styles.module.scss";
+import React, { useState, useEffect } from "react";
+import { OptionWithAmount, Option } from "@/types";
+import { addOptionToBooking } from "@/actions/bookings";
 
-interface OptionManagerProps {
+interface Props {
   bookingId: string;
+  availableOptions: Option[];
   serviceAmount: number;
-  onTotalUpdate?: (total: number, updatedOptions: Option[]) => void;
+  onTotalUpdate?: (total: number, options: OptionWithAmount[]) => void;
 }
 
-const OptionManager: React.FC<OptionManagerProps> = ({
+const OptionsSelector: React.FC<Props> = ({
   bookingId,
+  availableOptions,
   serviceAmount,
   onTotalUpdate,
 }) => {
-  const [options, setOptions] = useState<Option[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [totalAmount, setTotalAmount] = useState<number>(serviceAmount);
-  const [shouldUpdateTotal, setShouldUpdateTotal] = useState(false);
+  const [options, setOptions] = useState<OptionWithAmount[]>([]);
+  const [selectedOptionId, setSelectedOptionId] = useState<string>("");
+  const [quantity, setQuantity] = useState<number>(1);
 
-  const optionsPlus = [
-    { id: "capitaine", description: "Capitaine", amount: 350 },
-    { id: "hôtesse", description: "Hôtesse", amount: 200 },
-  ];
+  const total =
+    serviceAmount + options.reduce((sum, option) => sum + option.amount, 0);
 
-  // Charge les options existantes
   useEffect(() => {
-    const fetchOptions = async () => {
-      setLoading(true);
-      try {
-        const { options } = await getOptionsByBookingId(bookingId);
-        setOptions(options);
+    if (onTotalUpdate) {
+      onTotalUpdate(total, options);
+    }
+  }, [onTotalUpdate, options, total]);
 
-        // Calcul du total
-        const total =
-          serviceAmount +
-          options.reduce(
-            (sum: number, option: Option) => sum + option.amount,
-            0
-          );
+  const handleAddOption = async () => {
+    if (!selectedOptionId) return;
 
-        setTotalAmount(total);
-
-        if (onTotalUpdate) {
-          onTotalUpdate(total, options);
-        }
-      } catch (error) {
-        console.error("❌ Erreur lors du chargement des options :", error);
-        setError("Impossible de récupérer les options.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOptions();
-  }, [bookingId, serviceAmount, onTotalUpdate]);
-
-  // Met à jour le total après un changement
-  useEffect(() => {
-    if (!shouldUpdateTotal) return;
-
-    const updateTotal = async () => {
-      try {
-        const updatedTotalFromServer = await updateBookingTotal(bookingId);
-        setTotalAmount(updatedTotalFromServer);
-      } catch (error) {
-        console.error("Erreur mise à jour du total :", error);
-      } finally {
-        setShouldUpdateTotal(false);
-      }
-    };
-
-    const timeout = setTimeout(updateTotal, 3000);
-    return () => clearTimeout(timeout);
-  }, [shouldUpdateTotal, bookingId]);
-
-  // Ajoute une option à la réservation
-  const handleAddOption = async (optionId: string, optionAmount: number) => {
-    if (options.some((opt) => opt.id === optionId)) {
+    if (options.some((opt) => opt.optionId === selectedOptionId)) {
       alert("Cette option a déjà été ajoutée.");
       return;
     }
 
     try {
-      const newOption = await addOptionToBooking(
+      const added = await addOptionToBooking(
         bookingId,
-        optionAmount,
-        optionId
+        selectedOptionId,
+        quantity
       );
 
-      const updatedOptions = [
-        ...options,
-        { ...newOption, amount: optionAmount, description: optionId },
-      ];
-      setOptions(updatedOptions);
-      setShouldUpdateTotal(true);
+      const completedOption: OptionWithAmount = {
+        ...added,
+        amount: added.unitPrice * added.quantity,
+        createdAt: new Date(), // Ou `added.createdAt` s'il existe
+      };
+
+      setOptions((prev) => [...prev, completedOption]);
+      setSelectedOptionId("");
+      setQuantity(1);
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'option :", error);
-      alert("Une erreur s'est produite lors de l'ajout. Veuillez réessayer.");
-    }
-  };
-
-  // Supprime une option de la réservation
-  const handleDeleteOption = async (optionId: string) => {
-    if (!window.confirm("Voulez-vous vraiment supprimer cette option ?"))
-      return;
-
-    try {
-      await deleteOption(optionId);
-
-      setOptions((prevOptions) =>
-        prevOptions.filter((opt) => opt.id !== optionId)
-      );
-      setShouldUpdateTotal(true);
-    } catch (error) {
-      console.error("Erreur lors de la suppression de l'option :", error);
-      alert("Impossible de supprimer l'option.");
+      alert("Une erreur est survenue.");
     }
   };
 
   return (
-    <div className={styles.manage_service_container}>
-      <h3>Options supplémentaires</h3>
-      <div className={styles.form}>
-        <h4>Total à payer : {totalAmount}€</h4>
+    <div>
+      <h2>Ajouter des options</h2>
 
-        <div className={styles.optionCheckboxes}>
-          {optionsPlus.map((option) => (
-            <div key={option.id} className={styles.optionCard}>
-              <input
-                type="checkbox"
-                id={option.id}
-                name={option.id}
-                onChange={(e) =>
-                  e.target.checked
-                    ? handleAddOption(option.id, option.amount)
-                    : handleDeleteOption(option.id)
-                }
-              />
-              <label htmlFor={option.id}>
-                <h5>{option.description}</h5>
-                <p>{option.amount}€</p>
-              </label>
-            </div>
-          ))}
-        </div>
+      <select
+        value={selectedOptionId}
+        onChange={(e) => setSelectedOptionId(e.target.value)}
+      >
+        <option value="">-- Sélectionnez une option --</option>
+        {availableOptions.map((opt) => (
+          <option key={opt.id} value={opt.id}>
+            {opt.label} - {opt.amount} €
+          </option>
+        ))}
+      </select>
 
-        {loading ? (
-          <p>Chargement...</p>
-        ) : error ? (
-          <p className={styles.error}>{error}</p>
-        ) : options.length === 0 ? (
-          <div className={styles.noTransaction}>
-            <span className={styles.noTransactionText}>
-              <BsCartX />
-              <p>aucune option</p>
-            </span>
-          </div>
-        ) : (
-          <>
-            <h3>Options sélectionnées:</h3>
-            <div className={styles.selectedOptions}>
-              {options.map((option) => (
-                <div key={option.id} className={styles.selectedOptionCard}>
-                  <span>
-                    <FaWallet /> {option.description} (+ {option.amount}€)
-                  </span>
-                  <button
-                    onClick={() => handleDeleteOption(option.id)}
-                    className={styles.btnAction}
-                    aria-label={`Supprimer l'option ${option.description}`}
-                  >
-                    <FaRegTrashAlt />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+      <input
+        type="number"
+        value={quantity}
+        min={1}
+        onChange={(e) => setQuantity(Number(e.target.value))}
+      />
+
+      <button onClick={handleAddOption}>Ajouter</button>
+
+      <ul>
+        {options.map((opt) => (
+          <li key={opt.optionId}>
+            {opt.label} (x{opt.quantity}) — {opt.amount} €
+          </li>
+        ))}
+      </ul>
+
+      <p>Total : {total} €</p>
     </div>
   );
 };
 
-export default OptionManager;
+export default OptionsSelector;
