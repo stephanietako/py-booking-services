@@ -1,28 +1,18 @@
 import { create } from "zustand";
-import { Booking, Service } from "../types";
-
-interface Option {
-  id: string;
-  amount: number;
-  description: string;
-  createdAt?: Date;
-  serviceId?: string | null;
-  service?: Service | null;
-  bookings?: Booking[];
-}
+import { BookingOption } from "../types";
 
 interface BookingStore {
   updateTotalAmount(bookingId: string): Promise<void>;
   totalAmounts: Record<string, number>;
-  options: Record<string, Option[]>;
+  options: Record<string, BookingOption[]>;
   loading: Record<string, boolean>;
   error: Record<string, string | null>;
   setTotalAmount: (bookingId: string, total: number) => void;
-  setOptions: (bookingId: string, newOptions: Option[]) => void;
+  setOptions: (bookingId: string, newOptions: BookingOption[]) => void;
   setLoading: (bookingId: string, loading: boolean) => void;
   setError: (bookingId: string, error: string | null) => void;
   resetStore: () => void;
-  calculateTotal: (serviceAmount: number, options: Option[]) => number;
+  calculateTotal: (serviceAmount: number, options: BookingOption[]) => number;
 }
 
 export const useBookingStore = create<BookingStore>((set, get) => ({
@@ -73,9 +63,11 @@ export const useBookingStore = create<BookingStore>((set, get) => ({
     }),
 
   calculateTotal: (serviceAmount, options) =>
-    options.reduce((total, option) => total + option.amount, serviceAmount),
+    options.reduce(
+      (total, option) => total + option.unitPrice * option.quantity,
+      serviceAmount
+    ),
 
-  // 🆕 Mise à jour du montant total en appelant l'API
   updateTotalAmount: async (bookingId: string) => {
     const bookingOptions = get().options[bookingId] || [];
 

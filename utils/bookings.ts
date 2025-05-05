@@ -1,16 +1,16 @@
+// lib/actions/updateBookingStatus.ts
 import { prisma } from "@/lib/prisma";
 
 export const updateBookingStatus = async (
-  bookingId: string,
-  status: "APPROVED" | "REJECTED"
+  bookingId: number,
+  status: "APPROVED" | "REJECTED" | "PAID"
 ) => {
-  const booking = await prisma.booking.update({
-    where: { id: Number(bookingId) },
+  return await prisma.booking.update({
+    where: { id: bookingId },
     data: {
-      status: status,
+      status,
       approvedByAdmin: status === "APPROVED",
+      paymentStatus: status === "PAID" ? "PAID" : undefined,
     },
   });
-
-  return booking;
 };

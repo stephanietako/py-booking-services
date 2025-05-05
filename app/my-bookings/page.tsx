@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ReservationFormPage from "../components/ ReservationFormPage/ReservationFormPage";
+import ReservationForm from "../components/ReservationForm/ReservationForm";
 
 const Page = () => {
   const [booking, setBooking] = useState(null);
@@ -35,7 +35,7 @@ const Page = () => {
 
   return (
     <div>
-      <ReservationFormPage booking={booking} />
+      <ReservationForm booking={booking} />
     </div>
   );
 };

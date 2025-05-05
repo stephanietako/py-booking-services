@@ -92,7 +92,7 @@ export interface Transaction {
 }
 
 export interface Booking {
-  id: number; // Int => number
+  id: number;
   status: BookingStatus;
   approvedByAdmin: boolean;
   reservedAt: Date;
@@ -105,12 +105,12 @@ export interface Booking {
   expiresAt: Date;
   updatedAt: Date;
   createdAt: Date;
-  stripePaymentLink?: string | null;
-  clientId?: number | null;
+  stripePaymentLink: string | null;
+  clientId: number | null;
   client?: Client;
-  userId?: string;
+  userId: string | null;
   user?: User;
-  serviceId?: string;
+  serviceId: string | null;
   service?: Service;
   bookingOptions?: BookingOption[];
   transactions?: Transaction[];

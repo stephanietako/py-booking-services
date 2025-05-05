@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 
-interface FormUpdateProps {
+interface UserProfileUpdateFormProps {
   userId: string;
 }
 
-const FormUpdate: React.FC<FormUpdateProps> = ({ userId }) => {
+const UserProfileUpdateForm: React.FC<UserProfileUpdateFormProps> = ({
+  userId,
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -137,4 +139,4 @@ const FormUpdate: React.FC<FormUpdateProps> = ({ userId }) => {
   );
 };
 
-export default FormUpdate;
+export default UserProfileUpdateForm;

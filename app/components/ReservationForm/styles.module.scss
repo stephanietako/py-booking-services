@@ -1,0 +1,86 @@
+.reservationSection {
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-family: var(--font-montserrat);
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #003049;
+}
+
+.reservationForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #1d3557;
+  }
+
+  input {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: var(--roboto);
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: #457b9d;
+      outline: none;
+    }
+  }
+}
+
+.submitButton {
+  padding: 0.9rem;
+  background-color: #0077b6;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: var(--montserrat);
+
+  &:hover {
+    background-color: #023e8a;
+  }
+}
+
+.error {
+  margin-top: 1rem;
+  color: #e63946;
+  text-align: center;
+  font-weight: bold;
+}
+/* Animation de fondu et glissement du toast */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast {
+  animation: fadeInUp 0.5s ease-out;
+}

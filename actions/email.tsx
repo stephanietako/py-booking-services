@@ -1,40 +1,41 @@
 "use server";
 
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-interface SendEmailToAdminParams {
-  bookingId: string;
-  userEmail: string;
+interface Booking {
+  id: string;
+  reservationTime: string;
 }
 
-// Fonction pour envoyer un email à l'admin
-export async function sendEmailToAdmin({
-  bookingId,
-  userEmail,
-}: SendEmailToAdminParams) {
-  const adminEmail = process.env.ADMIN_EMAIL;
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+}
 
-  if (!adminEmail) {
-    console.error("❌ ADMIN_EMAIL n'est pas défini.");
-    throw new Error("Configuration invalide : ADMIN_EMAIL manquant.");
+export async function sendBookingToAdmin(booking: Booking, formData: FormData) {
+  const payload = {
+    bookingId: booking.id,
+    reservationTime: booking.reservationTime,
+    ...formData,
+  };
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/bookings/sendReservationDetails`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      errorData.message || "Erreur lors de l’envoi de la réservation."
+    );
   }
 
-  try {
-    const subject = `Nouvelle demande de confirmation #${bookingId}`;
-    const text = `Bonjour Pierre-Yves,l'utilisateur ${userEmail} a demandé une confirmation de réservation.`;
-
-    await resend.emails.send({
-      from: "https://py-booking-services.vercel.app/",
-      to: adminEmail,
-      subject,
-      text,
-    });
-
-    console.log("📩 Email envoyé à l'admin !");
-  } catch (error) {
-    console.error("❌ Erreur lors de l'envoi de l'email :", error);
-    throw new Error("Échec de l'envoi de l'email.");
-  }
+  return await response.json();
 }
