@@ -36,7 +36,7 @@ export const sendBookingToAdmin = async (
 
     // Envoi de l'email à l'administrateur
     await sendEmail({
-      to: "admin@domaine.com", // Remplacez par l'email de l'administrateur
+      to: "gabeshine@live.fr", //email de l'administrateur
       subject: "Nouvelle demande de réservation",
       body: emailContent,
     });

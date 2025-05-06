@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-
-import { Booking } from "@/types"; // ajuste si nécessaire
+import { Booking } from "@/types";
 import { updateBookingStatus } from "@/utils/bookings";
 
 interface Props {

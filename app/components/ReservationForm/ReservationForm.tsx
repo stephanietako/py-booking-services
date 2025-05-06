@@ -1,96 +1,16 @@
-// ReservationForm.tsx
-// import { useState } from "react";
-// import toast from "react-hot-toast";
-
-// interface ReservationFormProps {
-//   bookingId: string; // ID de la réservation passé par URL ou props
-// }
-
-// const ReservationForm: React.FC<ReservationFormProps> = ({ bookingId }) => {
-//   const [formData, setFormData] = useState({
-//     firstName: "",
-//     lastName: "",
-//     email: "",
-//     phoneNumber: "",
-//   });
-
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const { name, value } = e.target;
-//     setFormData((prev) => ({ ...prev, [name]: value }));
-//   };
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-
-//     try {
-//       const response = await fetch("/api/sendReservationDetails", {
-//         method: "POST",
-//         body: JSON.stringify({
-//           bookingId,
-//           ...formData,
-//         }),
-//       });
-
-//       if (response.ok) {
-//         toast.success("Votre réservation a été envoyée à l'administrateur.");
-//       } else {
-//         throw new Error("Erreur lors de l'envoi de la réservation.");
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Une erreur s'est produite.");
-//     }
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <input
-//         type="text"
-//         name="firstName"
-//         placeholder="Prénom"
-//         value={formData.firstName}
-//         onChange={handleChange}
-//         required
-//       />
-//       <input
-//         type="text"
-//         name="lastName"
-//         placeholder="Nom"
-//         value={formData.lastName}
-//         onChange={handleChange}
-//         required
-//       />
-//       <input
-//         type="email"
-//         name="email"
-//         placeholder="Email"
-//         value={formData.email}
-//         onChange={handleChange}
-//         required
-//       />
-//       <input
-//         type="tel"
-//         name="phoneNumber"
-//         placeholder="Numéro de téléphone"
-//         value={formData.phoneNumber}
-//         onChange={handleChange}
-//         required
-//       />
-//       <button type="submit">Envoyer</button>
-//     </form>
-//   );
-// };
-
-// export default ReservationForm;
 "use client";
 
 import { useState } from "react";
 import { Booking } from "@/types";
-import { sendBookingToAdmin } from "@/actions/admin";
+import { sendBookingToAdmin } from "@/lib/email";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 import Spinner from "../Spinner/Spinner";
 import { toast } from "react-hot-toast";
 import styles from "./styles.module.scss";
+
+// Regex pour valider un numéro de téléphone international (format de base)
+const phoneNumberRegex =
+  /^(?:\+?\d{1,3})?[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}$/;
 
 const ReservationFormPage = ({ booking }: { booking: Booking }) => {
   const [formData, setFormData] = useState({
@@ -101,16 +21,29 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null); // Erreur pour numéro de téléphone
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({ ...prevState, [name]: value }));
+
+    // Reset phone number error when user changes phone input
+    if (name === "phoneNumber") {
+      setPhoneError(null);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // Validation du numéro de téléphone
+    if (!phoneNumberRegex.test(formData.phoneNumber)) {
+      setPhoneError("Veuillez entrer un numéro de téléphone valide.");
+      setLoading(false);
+      return;
+    }
 
     try {
       await sendBookingToAdmin(booking, formData);
@@ -120,6 +53,12 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
         },
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phoneNumber: "",
+      });
     } catch (err) {
       console.error("Erreur lors de l'envoi :", err);
       setError("Impossible d'envoyer la réservation à l'administrateur.");
@@ -192,6 +131,7 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
               onChange={handleChange}
               required
             />
+            {phoneError && <p className={styles.error}>{phoneError}</p>}
           </div>
 
           <button type="submit" className={styles.submitButton}>
