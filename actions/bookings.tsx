@@ -113,6 +113,7 @@ export async function createBooking(
     const booking = await prisma.booking.create({
       data: {
         userId: user.id,
+        description: "",
         serviceId,
         reservedAt,
         startTime: start,
@@ -146,7 +147,7 @@ export async function createBooking(
       data: {
         stripePaymentLink: paymentIntent.client_secret ?? "", // pour respecter `string`
       },
-      include: { bookingOptions: true },
+      include: { bookingOptions: true, client: true },
     });
 
     return updatedBooking as Booking;
@@ -179,16 +180,13 @@ export async function updateBooking(
 
       const existingBookings = await prisma.booking.findMany({
         where: {
-          serviceId: serviceId,
+          serviceId,
           reservedAt: reservedAtDate,
+          id: { not: parseInt(bookingId, 10) },
           OR: [
             {
-              startTime: {
-                lte: endTimeDate,
-              },
-              endTime: {
-                gte: startTimeDate,
-              },
+              startTime: { lte: endTimeDate },
+              endTime: { gte: startTimeDate },
             },
           ],
         },
@@ -239,8 +237,8 @@ export async function deleteBooking(bookingId: string) {
     ) {
       await stripe.paymentIntents.retrieve(booking.stripePaymentLink);
 
-      // Optionnel : annuler le paiement si pas encore capturé
-      // await stripe.paymentIntents.cancel(paymentIntent.id);
+      // Annuler le paiement si pas encore capturé
+      await stripe.paymentIntents.cancel(booking.stripePaymentLink);
     }
 
     await prisma.bookingOption.deleteMany({ where: { bookingId: id } });
@@ -276,6 +274,7 @@ export async function getUserBookings(userId: string) {
       include: {
         Service: true,
         user: true,
+        client: true,
         bookingOptions: {
           include: { option: true },
         },
@@ -353,6 +352,7 @@ export const getAllBookings = async (userId: string): Promise<Booking[]> => {
 
   return transformedBookings;
 };
+
 ////////////////////
 // Récupérer toutes les réservations pour l'admin
 export const getAllBookingsAdmin = async () => {
@@ -375,6 +375,7 @@ export const getBookings = async (userId?: string): Promise<Booking[]> => {
     include: {
       Service: true,
       user: true,
+      client: true,
       bookingOptions: {
         include: { option: true },
       },
@@ -702,3 +703,4 @@ export async function updateOptionQuantity(
     throw new Error("Impossible de mettre à jour l'option.");
   }
 }
+////////////////////

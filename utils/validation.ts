@@ -1,3 +1,4 @@
+// utils/validation.ts
 import { CloseDayInput } from "@/types";
 
 export function validateCloseDayInput(input: CloseDayInput): { date: Date } {

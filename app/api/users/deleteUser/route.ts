@@ -1,55 +1,65 @@
+// /app/api/users/deleteUser/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuth } from "@clerk/nextjs/server";
 
 export async function DELETE(req: NextRequest) {
   const { id } = await req.json();
-
   if (!id) {
     return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
   }
 
-  const { userId: getAuthenticatedUserId } = getAuth(req);
-  if (!getAuthenticatedUserId) {
+  const { userId: authenticatedClerkId } = getAuth(req);
+  if (!authenticatedClerkId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Vérifier si l'utilisateur est un administrateur
   const adminUser = await prisma.user.findUnique({
-    where: { clerkUserId: getAuthenticatedUserId },
+    where: { clerkUserId: authenticatedClerkId },
     include: { role: true },
   });
 
-  if (!adminUser || (adminUser.role && adminUser.role.name !== "admin")) {
+  if (!adminUser || adminUser.role?.name !== "admin") {
     return NextResponse.json(
       { error: "Forbidden: Admin access required" },
       { status: 403 }
     );
   }
 
+  if (id === adminUser.id) {
+    return NextResponse.json(
+      { error: "You cannot delete your own account" },
+      { status: 403 }
+    );
+  }
+
   try {
-    // Assurez-vous que l'utilisateur existe avant d'essayer de le supprimer
     const userToDelete = await prisma.user.findUnique({
       where: { id },
+      include: { bookings: true },
     });
 
     if (!userToDelete) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Supprimer l'utilisateur
-    await prisma.user.delete({
-      where: { id },
-    });
+    if (userToDelete.bookings.length > 0) {
+      return NextResponse.json(
+        { error: "Cannot delete user with existing bookings" },
+        { status: 409 }
+      );
+    }
+
+    await prisma.user.delete({ where: { id } });
 
     return NextResponse.json(
-      { message: "User data deleted successfully" },
+      { message: "User deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Server error while deleting user:", error);
+    console.error("Error deleting user:", error);
     return NextResponse.json(
-      { error: "An error occurred while deleting user data" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

@@ -1,3 +1,4 @@
+//app/api/bookings/verify-token/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";

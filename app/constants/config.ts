@@ -1,7 +1,7 @@
 //app/constants/config.ts
-export const Service_opening_time = 8; // in hours
-export const Service_closing_time = 20; // in hours
-export const Interval = 30; // in minutes
+export const Service_opening_time = 9; // in hours
+export const Service_closing_time = 18; // in hours
+export const Interval = 60; // in minutes
 
 export const categories = ["Service"] as const;
 

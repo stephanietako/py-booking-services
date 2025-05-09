@@ -1,4 +1,4 @@
-// filepath: /Volumes/T7/PY_WEBSITE/py-booking-app/app/my-bookings/page.tsx
+//app/my-bookings / page.tsx;
 "use client";
 
 import React, { useEffect, useState } from "react";

@@ -1,3 +1,4 @@
+// app/api/opening/open/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { openDay } from "@/actions/openingActions";
 

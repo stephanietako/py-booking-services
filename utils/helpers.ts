@@ -1,3 +1,4 @@
+// utils/helpers.ts
 import { addMinutes, getMinutes, isBefore, isEqual, format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { DayInput } from "@/types";

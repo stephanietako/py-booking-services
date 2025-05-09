@@ -1,3 +1,4 @@
+//app/api/opening/closeDays/route.ts
 import { NextResponse } from "next/server";
 import { getClosedDays } from "@/actions/openingActions";
 

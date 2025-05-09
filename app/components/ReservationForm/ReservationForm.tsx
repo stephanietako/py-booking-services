@@ -11,6 +11,8 @@ import styles from "./styles.module.scss";
 // Regex pour valider un numéro de téléphone international (format de base)
 const phoneNumberRegex =
   /^(?:\+?\d{1,3})?[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}$/;
+// Regex simple pour valider une adresse email
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const ReservationFormPage = ({ booking }: { booking: Booking }) => {
   const [formData, setFormData] = useState({
@@ -26,6 +28,9 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({ ...prevState, [name]: value }));
+    if (name === "email") {
+      setError(null);
+    }
 
     // Reset phone number error when user changes phone input
     if (name === "phoneNumber") {
@@ -41,6 +46,11 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
     // Validation du numéro de téléphone
     if (!phoneNumberRegex.test(formData.phoneNumber)) {
       setPhoneError("Veuillez entrer un numéro de téléphone valide.");
+      setLoading(false);
+      return;
+    }
+    if (!emailRegex.test(formData.email)) {
+      setError("Veuillez entrer une adresse email valide.");
       setLoading(false);
       return;
     }
@@ -146,3 +156,26 @@ const ReservationFormPage = ({ booking }: { booking: Booking }) => {
 };
 
 export default ReservationFormPage;
+// 👤 L’utilisateur (invité ou non connecté) clique sur le lien
+// Il atterrit sur /my-bookings
+// Le composant dans page.tsx :
+// récupère le token (dans ton code actuel, il est hardcodé depuis .env, mais il devrait venir de l’URL avec searchParams.get("token"))
+// appelle l’API /api/bookings/verify-token
+// cette API vérifie que le token est valide et retourne les infos de réservation associées
+// si c’est bon, les données sont passées à ReservationFormPage
+// Les données de contact sont envoyées à l’administrateur (via email par sendBookingToAdmin)
+// L’utilisateur reçoit un message de confirmation via un toast de succès
+// Le formulaire est réinitialisé
+
+// ✅ Rôle exact du composant ReservationFormPage
+// C’est l’étape finale de validation pour :
+// Confirmer qu’un utilisateur (invité ou inscrit) accepte une réservation qu’on lui a préparée
+// Collecter ses informations de contact pour finaliser ou valider cette réservation
+// Notifier l’administrateur
+
+// 🧩 À quoi ça sert concrètement ?
+// Ce système te permet de :
+// Créer une réservation pré-remplie ou "réservée pour" quelqu’un
+// Lui envoyer un lien sécurisé qu’il pourra ouvrir sans avoir de compte
+// Laisser cette personne compléter la réservation via un formulaire simple
+// Être notifié quand la personne valide sa réservation

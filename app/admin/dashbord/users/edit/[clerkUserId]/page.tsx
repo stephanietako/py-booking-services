@@ -1,0 +1,26 @@
+// app/admin/dashboard/users/edit/[clerkUserId]/page.tsx
+import { prisma } from "@/lib/prisma";
+import EditUserForm from "@/app/components/EditUserForm/EditUserForm";
+
+export default async function EditUserPage({
+  params,
+}: {
+  params: { clerkUserId: string };
+}) {
+  const user = await prisma.user.findUnique({
+    where: { clerkUserId: params.clerkUserId },
+    select: {
+      clerkUserId: true,
+      name: true,
+      email: true,
+      phoneNumber: true,
+      description: true,
+    },
+  });
+
+  if (!user) {
+    return <p>Utilisateur introuvable</p>;
+  }
+
+  return <EditUserForm user={user} />;
+}

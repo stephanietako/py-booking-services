@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+//import { sendConfirmationEmails } from "@/lib/sendEmails";
 
 // ✅ Force le runtime Node.js (pas Edge)
 export const dynamic = "force-dynamic";
@@ -84,6 +85,7 @@ export async function POST(req: Request) {
               paymentStatus: "PAID",
             },
           });
+          //await sendConfirmationEmails(bookingId);
         }
 
         return NextResponse.json({ received: true });

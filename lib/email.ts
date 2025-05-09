@@ -1,3 +1,4 @@
+// lib/email.ts
 import { Booking } from "@/types";
 
 interface FormData {
@@ -5,6 +6,7 @@ interface FormData {
   lastName: string;
   email: string;
   phoneNumber: string;
+  message?: string;
 }
 
 export const sendBookingToAdmin = async (

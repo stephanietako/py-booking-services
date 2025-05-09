@@ -29,7 +29,7 @@ export const createStripeCheckoutSession = async (
 
   const line_items = [];
 
-  // 1. Ligne pour le bateau
+  // Bateau
   line_items.push({
     price_data: {
       currency: booking.Service.currency,
@@ -41,18 +41,19 @@ export const createStripeCheckoutSession = async (
     quantity: 1,
   });
 
-  // 2. Options à payer en ligne
+  // Options payables en ligne
   for (const bo of booking.bookingOptions) {
     if (bo.option.payableOnline) {
+      // Ne pas inclure les options dans le paiement Stripe
       line_items.push({
         price_data: {
           currency: booking.Service.currency,
           product_data: {
-            name: `Option : ${bo.label}`,
+            name: `Location bateau : ${booking.Service.name}`,
           },
-          unit_amount: Math.round(bo.unitPrice * 100),
+          unit_amount: Math.round(booking.boatAmount * 100),
         },
-        quantity: bo.quantity,
+        quantity: 1,
       });
     }
   }
@@ -66,8 +67,17 @@ export const createStripeCheckoutSession = async (
     metadata: {
       bookingId: String(bookingId),
     },
-    success_url: `${domainUrl}/dashboard/payment/success?booking=${bookingId}`,
-    cancel_url: `${domainUrl}/dashboard/payment/cancel?booking=${bookingId}`,
+    success_url: `${domainUrl}/payment/success?booking=${bookingId}`,
+    cancel_url: `${domainUrl}/payment/cancel?booking=${bookingId}`,
+  });
+
+  await prisma.booking.update({
+    where: { id: bookingId },
+    data: {
+      stripeSessionId: session.id,
+      stripePaymentLink: session.url,
+      paymentStatus: "PENDING",
+    },
   });
 
   return session.url!;

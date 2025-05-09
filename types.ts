@@ -107,13 +107,19 @@ export interface Booking {
   createdAt: Date;
   stripePaymentLink: string | null;
   clientId: number | null;
-  client?: Client;
+  client?: Client | null; // Rendre la propriété `client` optionnelle
   userId: string | null;
-  user?: User;
+  user?: User | null;
   serviceId: string | null;
   service?: Service;
   bookingOptions?: BookingOption[];
   transactions?: Transaction[];
+}
+
+export interface BookingWithDetails extends Booking {
+  service: Service;
+  bookingOptions: BookingOption[];
+  client: Client | null;
 }
 
 export interface Day {

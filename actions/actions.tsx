@@ -5,6 +5,7 @@ import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
 import { Option, Service } from "@/types";
+import { AppError } from "@/lib/errors";
 
 const priceCache = new Map<string, number>();
 
@@ -17,35 +18,76 @@ export async function getRole(clerkUserId: string) {
   return user;
 }
 
+// export async function addUserToDatabase(
+//   email: string,
+//   name: string,
+//   image: string,
+//   clerkUserId: string
+// ) {
+//   const existingUser = await prisma.user.findUnique({ where: { clerkUserId } });
+
+//   if (existingUser) {
+//     return await prisma.user.update({
+//       where: { clerkUserId },
+//       data: { email, name, image },
+//     });
+//   }
+
+//   const role = await prisma.role.findUnique({ where: { name: "member" } });
+//   if (!role) throw new Error("Le rôle spécifié n'existe pas.");
+
+//   return await prisma.user.create({
+//     data: {
+//       clerkUserId,
+//       email,
+//       name,
+//       image,
+//       roleId: role.id,
+//     },
+//   });
+// }
 export async function addUserToDatabase(
   email: string,
   name: string,
   image: string,
   clerkUserId: string
 ) {
-  const existingUser = await prisma.user.findUnique({ where: { clerkUserId } });
-
-  if (existingUser) {
-    return await prisma.user.update({
+  try {
+    const existingUser = await prisma.user.findUnique({
       where: { clerkUserId },
-      data: { email, name, image },
     });
+
+    if (existingUser) {
+      return await prisma.user.update({
+        where: { clerkUserId },
+        data: { email, name, image },
+      });
+    }
+
+    const role = await prisma.role.findUnique({ where: { name: "member" } });
+    if (!role) throw new AppError("Le rôle spécifié n'existe pas.", 400);
+
+    return await prisma.user.create({
+      data: {
+        clerkUserId,
+        email,
+        name,
+        image,
+        roleId: role.id,
+      },
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      console.error(`Erreur spécifique: ${error.message}`);
+      throw error; // on peut gérer ça dans un middleware global pour envoyer une réponse plus propre
+    }
+    console.error("Erreur lors de l'ajout de l'utilisateur:", error);
+    throw new AppError(
+      "Impossible de créer ou mettre à jour l'utilisateur.",
+      500
+    );
   }
-
-  const role = await prisma.role.findUnique({ where: { name: "member" } });
-  if (!role) throw new Error("Le rôle spécifié n'existe pas.");
-
-  return await prisma.user.create({
-    data: {
-      clerkUserId,
-      email,
-      name,
-      image,
-      roleId: role.id,
-    },
-  });
 }
-
 export async function createService(
   name: string,
   price: number,

@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
 
     const data = await resend.emails.send({
-      from: "booking@py-booking.com", // Email validé dans Resend
+      from: "contact@yachting-day.com", // Email validé dans Resend
       to,
       subject,
       text: body,
