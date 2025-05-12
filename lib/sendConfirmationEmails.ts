@@ -1,3 +1,4 @@
+// lib/sendConfirmationEmails.ts
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import { Booking, BookingOption, Client, Service } from "@/types";

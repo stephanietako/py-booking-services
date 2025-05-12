@@ -1,5 +1,6 @@
 "use client";
-
+// Sous-composant de BookingWithOptions, contrôle d’entrée numérique avec message de confirmation.
+// Permet à l’utilisateur de changer la quantité d’une option.
 import { useState } from "react";
 import styles from "./styles.module.scss";
 

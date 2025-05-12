@@ -11,20 +11,20 @@
 .field {
   display: flex;
   flex-direction: column;
-}
 
-input,
-textarea {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  transition: background-color 0.2s ease;
-}
+  input,
+  textarea {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+  }
 
-label {
-  margin-bottom: 0.25rem;
-  font-weight: 500;
+  label {
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+  }
 }
 
 .button {

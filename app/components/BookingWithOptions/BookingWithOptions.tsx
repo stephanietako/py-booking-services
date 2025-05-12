@@ -1,5 +1,6 @@
 "use client";
-
+// Affiche les options d’une réservation, permet de modifier la quantité via OptionQuantityUpdater,
+// et recalcule dynamiquement les totaux en s’appuyant sur le store.
 import React, { useEffect, useState } from "react";
 import { Booking, BookingOption } from "@/types";
 import { useBookingStore } from "@/store/store";

@@ -91,6 +91,7 @@
 //   }
 
 // }
+//app/api/bookings/[id]/payment-url/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
