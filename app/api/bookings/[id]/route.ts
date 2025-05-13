@@ -1,18 +1,24 @@
 // app/api/bookings/[id]/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
+//import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const bookingId = parseInt(params.id, 10);
+export const GET = async (
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) => {
+  const bookingId = parseInt((await context.params).id, 10);
 
   if (isNaN(bookingId)) {
     return NextResponse.json(
       { error: "ID de réservation invalide" },
       { status: 400 }
+    );
+  } else if (bookingId) {
+    return NextResponse.json(
+      { message: "ID de réservation valide" },
+      { status: 200 }
     );
   }
 
@@ -44,4 +50,4 @@ export async function GET(
     );
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
-}
+};

@@ -1,14 +1,18 @@
 // app/admin/dashboard/users/edit/[clerkUserId]/page.tsx
+
+// app/admin/dashboard/users/edit/[clerkUserId]/page.tsx
 import { prisma } from "@/lib/prisma";
 import EditUserForm from "@/app/components/EditUserForm/EditUserForm";
 
 export default async function EditUserPage({
   params,
 }: {
-  params: { clerkUserId: string };
+  params: Promise<{ clerkUserId: string }>;
 }) {
+  const { clerkUserId } = await params;
+
   const user = await prisma.user.findUnique({
-    where: { clerkUserId: params.clerkUserId },
+    where: { clerkUserId: clerkUserId },
     select: {
       clerkUserId: true,
       name: true,

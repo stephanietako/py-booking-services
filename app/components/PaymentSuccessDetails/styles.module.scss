@@ -1,0 +1,116 @@
+.succes_details {
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  &__title {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.75rem;
+  }
+
+  p {
+    color: #555;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+
+    .amount {
+      font-weight: 500;
+      color: #007bff;
+    }
+
+    .currency {
+      color: #777;
+      font-size: 0.9rem;
+      margin-left: 0.25rem;
+    }
+  }
+
+  &__options {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 6px;
+
+    &__title {
+      color: #444;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+
+    &__list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1rem;
+
+      &__item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px dashed #ddd;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        span {
+          color: #666;
+
+          .quantity {
+            font-weight: 400;
+            color: #888;
+            margin-left: 0.25rem;
+          }
+
+          .amount {
+            font-weight: 500;
+            color: #28a745;
+          }
+
+          .currency {
+            color: #777;
+            font-size: 0.9rem;
+            margin-left: 0.25rem;
+          }
+        }
+      }
+    }
+
+    &__total {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #eee;
+      font-weight: 500;
+      color: #333;
+      text-align: right;
+
+      .amount {
+        font-weight: 600;
+        color: #28a745;
+        margin-left: 0.25rem;
+      }
+
+      .currency {
+        color: #777;
+        font-size: 0.9rem;
+        margin-left: 0.25rem;
+      }
+    }
+
+    & > p {
+      color: #777;
+      font-style: italic;
+    }
+  }
+}

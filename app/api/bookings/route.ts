@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
       withCaptain = false,
       boatAmount = 0,
       options = [],
+      description = "", // ✅ Ajout du champ description avec une valeur par défaut
     }: {
       clerkUserId: string;
       serviceId: string;
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest) {
       withCaptain?: boolean;
       boatAmount?: number;
       options?: OptionInput[];
+      description?: string; // ✅ Ajout du type pour description
     } = await req.json();
 
     // 🧠 Validation de base
@@ -104,6 +106,7 @@ export async function POST(req: NextRequest) {
         totalAmount,
         expiresAt: new Date(end.getTime() + 24 * 60 * 60 * 1000),
         updatedAt: new Date(),
+        description, // ✅ Fournir la description ici
       },
     });
 

@@ -1,46 +1,42 @@
 .container {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 2rem;
+  background-color: #f8d7da; /* Couleur de fond rouge pâle pour indiquer l'annulation */
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   text-align: center;
-  border-radius: 12px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  animation: fadeInUp 0.6s ease-out;
 }
 
-.title::before {
-  content: "✅";
-  display: inline-block;
-  margin-right: 0.5rem;
-  animation: bounce 0.8s ease infinite alternate;
-}
-
-@keyframes bounce {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-5px);
-  }
+.title {
+  color: #721c24; /* Couleur de texte rouge foncé */
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
 }
 
 .message {
-  font-size: 1rem;
+  color: #721c24;
+  font-size: 1.1rem;
+  line-height: 1.6;
   margin-bottom: 2rem;
-  color: #333;
 }
 
 .button {
   display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background-color: #0070f3;
+  padding: 1rem 2rem;
+  background-color: #007bff; /* Couleur du bouton bleu */
   color: white;
-  border-radius: 8px;
   text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
   transition: background-color 0.2s ease-in-out;
 
   &:hover {
-    background-color: #0059c1;
+    background-color: #0056b3;
   }
 }

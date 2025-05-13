@@ -83,8 +83,8 @@ export default function BookingForm({ booking }: Props) {
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null);
-  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -105,7 +105,6 @@ export default function BookingForm({ booking }: Props) {
       if (!res.ok)
         throw new Error(data.error || "Erreur création lien paiement");
 
-      setPaymentUrl(data.url);
       setSuccess(true);
     } catch (err) {
       console.error("❌ Erreur formulaire :", err);
@@ -121,35 +120,64 @@ export default function BookingForm({ booking }: Props) {
   });
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <h2>Informations client</h2>
+    <form onSubmit={handleSubmit} className={styles.formWrapper}>
+      <div className={styles.formGroup}>
+        <label htmlFor="firstName" className={styles.label}>
+          Prénom
+        </label>
+        <input
+          id="firstName"
+          name="firstName"
+          placeholder="Prénom"
+          required
+          className={styles.input}
+          onChange={handleChange}
+        />
+      </div>
 
-      <input
-        name="firstName"
-        placeholder="Prénom"
-        required
-        onChange={handleChange}
-      />
-      <input
-        name="lastName"
-        placeholder="Nom"
-        required
-        onChange={handleChange}
-      />
-      <input
-        name="email"
-        placeholder="Email"
-        type="email"
-        required
-        onChange={handleChange}
-      />
-      <input
-        name="phoneNumber"
-        placeholder="Téléphone"
-        type="tel"
-        required
-        onChange={handleChange}
-      />
+      <div className={styles.formGroup}>
+        <label htmlFor="lastName" className={styles.label}>
+          Nom
+        </label>
+        <input
+          id="lastName"
+          name="lastName"
+          placeholder="Nom"
+          required
+          className={styles.input}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label htmlFor="email" className={styles.label}>
+          Email
+        </label>
+        <input
+          id="email"
+          className={styles.input}
+          name="email"
+          placeholder="Email"
+          type="email"
+          required
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label htmlFor="phoneNumber" className={styles.label}>
+          Téléphone
+        </label>
+        <input
+          id="phoneNumber"
+          className={styles.input}
+          name="phoneNumber"
+          placeholder="Téléphone"
+          type="tel"
+          required
+          onChange={handleChange}
+        />
+      </div>
 
       <hr />
 
@@ -161,20 +189,15 @@ export default function BookingForm({ booking }: Props) {
         <strong>Total :</strong> {formatter.format(booking.totalAmount)}
       </p>
 
-      <button type="submit" disabled={loading}>
+      <button type="submit" className={styles.submitButton} disabled={loading}>
         {loading ? "Envoi en cours..." : "Envoyer la réservation"}
       </button>
-
-      {success && paymentUrl && (
+      {success && (
         <p className={styles.success}>
           ✅ Réservation envoyée !<br />
-          <a href={paymentUrl} target="_blank" rel="noopener noreferrer">
-            👉 Payer maintenant via Stripe
-          </a>
+          Vous recevrez un email avec les instructions de paiement.
         </p>
       )}
-
-      {error && <p className={styles.error}>{error}</p>}
     </form>
   );
 }
