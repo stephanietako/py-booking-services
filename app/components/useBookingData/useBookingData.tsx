@@ -1,4 +1,4 @@
-// app/my-bookings/useBookingData.ts
+// app/components/useBookingData.ts
 "use client";
 
 import { useEffect, useState } from "react";

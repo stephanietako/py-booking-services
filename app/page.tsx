@@ -21,14 +21,68 @@
 
 // export default Home;
 //import { getClosedDays, getDays } from "@/actions/openingActions"; // Les actions que tu utilises pour récupérer les données
+// pages/index.tsx (ou app/page.tsx si vous utilisez l'App Router)
+"use client"; // Si vous avez des états dans ce composant
+
 import Wrapper from "./components/Wrapper/Wrapper";
 import Hero from "./components/Hero/Hero";
 import Location from "./components/Location/Location";
 import Head from "next/head";
+import { getOpeningAndClosedDays } from "@/actions/openingActions";
+import { DayInput } from "@/types";
+import { useState, useEffect } from "react";
 
-export const dynamic = "force-dynamic";
+interface OpeningAndClosedDays {
+  days: DayInput[];
+  closedDays: string[];
+}
 
 const Home = () => {
+  const [openingAndClosedDays, setOpeningAndClosedDays] =
+    useState<OpeningAndClosedDays | null>(null);
+  const [loadingDays, setLoadingDays] = useState(true);
+  const [errorDays, setErrorDays] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchOpeningAndClosedDays = async () => {
+      try {
+        const data = await getOpeningAndClosedDays();
+        setOpeningAndClosedDays(data);
+        setLoadingDays(false);
+      } catch (error) {
+        setErrorDays(
+          (error as Error).message ||
+            "Erreur lors de la récupération des jours et horaires."
+        );
+        setLoadingDays(false);
+      }
+    };
+
+    fetchOpeningAndClosedDays();
+  }, []);
+
+  if (loadingDays) {
+    return (
+      <Wrapper>
+        <main>
+          <Hero />
+          <p>Chargement des horaires...</p>
+        </main>
+      </Wrapper>
+    );
+  }
+
+  if (errorDays) {
+    return (
+      <Wrapper>
+        <main>
+          <Hero />
+          <p className="error">{errorDays}</p>
+        </main>
+      </Wrapper>
+    );
+  }
+
   return (
     <>
       <Head>
@@ -52,7 +106,12 @@ const Home = () => {
       <Wrapper>
         <main>
           <Hero />
-          <Location />
+          {openingAndClosedDays && (
+            <Location
+              days={openingAndClosedDays.days}
+              closedDays={openingAndClosedDays.closedDays}
+            />
+          )}
         </main>
       </Wrapper>
     </>

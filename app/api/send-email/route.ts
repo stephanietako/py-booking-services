@@ -3,7 +3,7 @@ import { Resend } from "resend";
 import { NextResponse } from "next/server";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-
+const fromEmail = process.env.RESEND_FROM_EMAIL || "yachtingday@gmail.com";
 export async function POST(req: Request) {
   try {
     const { to, subject, body } = await req.json();
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
 
     const data = await resend.emails.send({
-      from: "contact@yachting-day.com", // Email validé dans Resend
+      from: fromEmail,
       to,
       subject,
       text: body,

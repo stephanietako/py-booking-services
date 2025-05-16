@@ -39,11 +39,11 @@ const page = () => {
             d&apos;accès, de modification, de rectification et de suppression
             des données nominatives le concernant. Pour exercer ce droit, il
             revient à l’Utilisateur d’envoyer un message à l’adresse suivante :
-            contact@yachting-day.com. Une réclamation est aussi formulable
-            auprès de la Commission Nationale Informatique et Libertés
-            (CNIL).Yachting day utilise des cookies afin de proposer à ses
-            Utilisateurs un service web amélioré et davantage personnalisé. Dans
-            la page de son Site relative à l’utilisation des
+            yachtingday@gmail.com. Une réclamation est aussi formulable auprès
+            de la Commission Nationale Informatique et Libertés (CNIL).Yachting
+            day utilise des cookies afin de proposer à ses Utilisateurs un
+            service web amélioré et davantage personnalisé. Dans la page de son
+            Site relative à l’utilisation des
             cookies (https://www.yachting-day.com/cookies), Yachting day
             présente à ses Utilisateurs, en tout transparence, comment et
             pourquoi elle utilise des cookies.

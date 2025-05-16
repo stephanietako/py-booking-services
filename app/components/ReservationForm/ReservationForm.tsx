@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { Booking } from "@/types";
-import { sendBookingToAdmin } from "@/lib/email";
+
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 import Spinner from "../Spinner/Spinner";
 import { toast } from "react-hot-toast";
 import styles from "./styles.module.scss";
+import { sendBookingToAdmin } from "@/lib/emailService";
 
 // Regex pour valider un numéro de téléphone international (format de base)
 const phoneNumberRegex =

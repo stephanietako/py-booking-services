@@ -53,7 +53,6 @@ export interface Service {
   currency: string;
   stripeCustomerId?: string | null;
   pricingRules?: PricingRule[];
-  options?: Option[];
   bookings?: Booking[];
   amount: number;
   price: number;
@@ -66,9 +65,8 @@ export interface Option {
   amount: number;
   payableOnline: boolean;
   createdAt: Date;
-  serviceId?: string;
-  service?: Service;
-  description?: string;
+  description?: string | null;
+  unitPrice: number;
 }
 
 export interface BookingOption {
@@ -79,7 +77,7 @@ export interface BookingOption {
   unitPrice: number;
   label: string;
   option?: Option;
-  description?: string;
+  description?: string | null;
 }
 
 export interface Transaction {

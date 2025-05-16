@@ -1,3 +1,5 @@
+//actions/openingActions.tsx
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -165,13 +167,13 @@ export async function getOpeningAndClosedDays() {
 // Fonction pour convertir l'index du jour de la semaine en nom
 function weekdayIndexToName(dayOfWeek: number): string {
   const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+    "Dimanche",
+    "Lundi",
+    "Mardi",
+    "Mercredi",
+    "Jeudi",
+    "Vendredi",
+    "Samedi",
   ];
   if (dayOfWeek < 0 || dayOfWeek > 6) {
     throw new Error("Invalid day of the week index.");

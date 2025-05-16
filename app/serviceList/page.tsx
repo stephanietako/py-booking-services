@@ -1,10 +1,12 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ServiceList from "../components/ServiceList/ServiceList";
 
 const serviceList = () => {
   return (
     <div>
-      <ServiceList />
+      <Suspense fallback={<p>Chargement des services...</p>}>
+        <ServiceList />
+      </Suspense>
     </div>
   );
 };

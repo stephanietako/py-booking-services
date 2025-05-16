@@ -21,6 +21,11 @@ interface CalendarProps {
   closedDays: string[];
 }
 
+interface BookedTime {
+  start: Date;
+  end: Date;
+}
+
 const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
   const router = useRouter();
 
@@ -28,9 +33,7 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
   const [date, setDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
-  const [bookedTimes, setBookedTimes] = useState<{ start: Date; end: Date }[]>(
-    []
-  );
+  const [bookedTimes, setBookedTimes] = useState<BookedTime[]>([]); // Type correctement défini
 
   // 📡 Charger les créneaux réservés pour la date sélectionnée
   useEffect(() => {
@@ -58,10 +61,7 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
 
   // 📅 Obtenir les créneaux disponibles
   const availableTimes = date ? getOpeningTimes(date, days) : [];
-  const filteredTimes = filterAvailableTimes(
-    availableTimes,
-    bookedTimes.map((b) => b.start)
-  );
+  const filteredTimes = filterAvailableTimes(availableTimes, bookedTimes);
 
   const handleSelectTime = (time: Date) => {
     if (!startTime) {
@@ -77,14 +77,6 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
       }
     }
   };
-
-  // 🔄 Sauvegarde `startTime` et `endTime` dans localStorage + Redirection
-  useEffect(() => {
-    if (startTime && endTime) {
-      localStorage.setItem("selectedStartTime", startTime.toISOString());
-      localStorage.setItem("selectedEndTime", endTime.toISOString());
-    }
-  }, [startTime, endTime]);
 
   return (
     <div className="calendar_container">
@@ -154,7 +146,7 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
                   )
                 }
               >
-                Confirmer la réservation
+                Confirmer mes choix
               </button>
             </div>
           )}

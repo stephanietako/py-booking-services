@@ -6,11 +6,27 @@
   flex-wrap: wrap;
   padding: 0.5rem;
   margin-top: 20vh;
+  background: aliceblue;
 
   .service_list__container {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
+    background: aliceblue;
+  }
+  .clickableOption {
+    cursor: pointer;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+
+    &:hover {
+      background-color: #f9f9f9;
+    }
+  }
+
+  .subtotal {
+    margin-top: 10px;
+    font-weight: bold;
   }
 }

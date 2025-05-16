@@ -71,7 +71,7 @@ const page = () => {
             Droit d’accès, de rectification et de suppression - Droit
             d’opposition et de limitation du traitement - Droit au retrait du
             consentement à tout moment Pour exercer ces droits, vous pouvez nous
-            contacter à contact@yachting-day.com Conservation des données Les
+            contacter à yachtingday@gmail.com. Conservation des données Les
             données collectées par les cookies sont conservées pour une durée
             limitée en fonction de leur finalité : - Cookies de session :
             supprimés à la fermeture du navigateur - Cookies persistants :
@@ -85,7 +85,23 @@ const page = () => {
             mise à jour de cette politique date du 13 avril 2025 Contact Pour
             toute question ou préoccupation relative à cette politique ou à
             l’utilisation de Stripe, vous pouvez nous contacter à :
-            contact@yachting-day.com
+            yachtingday@gmail.com. Nous nous engageons à répondre à vos demandes
+            dans les plus brefs délais. En utilisant notre site, vous acceptez
+            l’utilisation de cookies conformément à cette politique. Nous vous
+            remercions de votre confiance et de votre compréhension. Nous nous
+            engageons à protéger vos données personnelles et à vous offrir une
+            expérience utilisateur sécurisée et agréable. Si vous avez des
+            questions ou des préoccupations concernant cette politique,
+            n’hésitez pas à nous contacter. Nous sommes là pour vous aider et
+            vous accompagner dans votre expérience de réservation. Merci de
+            choisir Yachting Day pour vos aventures en mer. Nous sommes
+            impatients de vous accueillir à bord de nos bateaux et de vous
+            offrir des moments inoubliables sur l’eau. Votre sécurité et votre
+            satisfaction sont notre priorité. Nous vous souhaitons une
+            excellente expérience de navigation avec nous. Si vous avez des
+            questions ou des préoccupations concernant cette politique,
+            n’hésitez pas à nous contacter. Nous sommes là pour vous aider et
+            vous accompagner dans votre expérience de réservation.
           </p>
         </div>
       </section>

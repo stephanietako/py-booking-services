@@ -7,16 +7,58 @@ import { PaymentStatus, Prisma } from "@prisma/client";
 import { Booking } from "@/types";
 //import { transformBookings } from "@/helpers/transformBookings";
 
-// Créer un service
+const secret = process.env.JWT_SECRET;
+if (!secret) {
+  console.error("❌ JWT_SECRET est manquant dans l'environnement.");
+}
+
+interface Payload {
+  bookingId: number;
+  clientId?: number;
+  userId?: string;
+}
+import { sendConfirmationEmails } from "@/lib/sendConfirmationEmails"; // Assurez-vous que cette importation est présente
+
+/// Fonction pour générer un token JWT
+export async function generateBookingToken(
+  bookingId: number,
+  clientId?: number,
+  userId?: string
+) {
+  try {
+    if (!secret) {
+      throw new Error("❌ JWT_SECRET est manquant dans l'environnement.");
+    }
+
+    const payload: Payload = {
+      bookingId: bookingId,
+      clientId: clientId,
+      userId: userId,
+    };
+
+    const token = jwt.sign(payload, secret, { expiresIn: "24h" }); // Ajustez l'expiration si nécessaire
+    return token;
+  } catch (error) {
+    console.error("Erreur lors de la génération du token :", error);
+    throw new Error(
+      "Il y a un problème au niveau de la génération du token de réservation."
+    );
+  }
+}
+
+// // Fonction pour créer une réservation
 export async function createBooking(
-  userId: string,
+  userId: string | null, // userId peut être null si l'utilisateur n'est pas connecté
   serviceId: string,
   selectedDate: string,
   startTime: string,
   endTime: string,
   options: { optionId: string; quantity: number }[],
-  withCaptain: boolean = false
-): Promise<Booking> {
+  withCaptain: boolean = false,
+  fullName?: string, // Informations du client si non connecté
+  email?: string,
+  phoneNumber?: string
+): Promise<{ booking: Booking; token?: string }> {
   try {
     const start = new Date(startTime);
     const end = new Date(endTime);
@@ -40,22 +82,67 @@ export async function createBooking(
       throw new Error("Le créneau horaire est déjà réservé.");
     }
 
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId: userId },
-      select: { id: true, email: true, stripeCustomerId: true },
-    });
-    if (!user) throw new Error("Utilisateur introuvable.");
+    let client: { id: number } | null = null;
+    let stripeCustomerId: string | undefined = undefined;
+    let actualUserId: string | undefined = undefined;
 
-    let stripeCustomerId = user.stripeCustomerId;
-    if (!stripeCustomerId) {
-      const customer = await stripe.customers.create({
-        email: user.email || undefined,
-      });
-      stripeCustomerId = customer.id;
-      await prisma.user.update({
+    if (userId) {
+      // Utilisateur connecté
+      const user = await prisma.user.findUnique({
         where: { clerkUserId: userId },
-        data: { stripeCustomerId },
+        select: { id: true, email: true, stripeCustomerId: true },
       });
+      if (user) {
+        stripeCustomerId = user.stripeCustomerId ?? undefined;
+        actualUserId = user.id;
+        if (!stripeCustomerId) {
+          const customer = await stripe.customers.create({
+            email: user.email || undefined,
+          });
+          stripeCustomerId = customer.id;
+          await prisma.user.update({
+            where: { clerkUserId: userId },
+            data: { stripeCustomerId },
+          });
+        }
+      } else {
+        throw new Error("Utilisateur introuvable.");
+      }
+    } else if (fullName && email && phoneNumber) {
+      // Utilisateur non connecté - Vérifier si le client existe déjà par email
+      const existingClient = await prisma.client.findUnique({
+        where: { email },
+      });
+
+      if (existingClient) {
+        client = { id: existingClient.id }; // Utiliser l'ID du client existant
+        // Optionnel : Mettre à jour les informations du client si elles sont différentes
+        if (
+          existingClient.fullName !== fullName ||
+          existingClient.phoneNumber !== phoneNumber
+        ) {
+          await prisma.client.update({
+            where: { id: existingClient.id },
+            data: {
+              fullName,
+              phoneNumber,
+            },
+          });
+        }
+      } else {
+        // Créer un nouveau client s'il n'existe pas
+        client = await prisma.client.create({
+          data: {
+            fullName,
+            email,
+            phoneNumber,
+          },
+        });
+      }
+    } else {
+      throw new Error(
+        "Informations d'utilisateur manquantes pour la réservation."
+      );
     }
 
     const service = await prisma.service.findUnique({
@@ -73,38 +160,24 @@ export async function createBooking(
       where: { id: { in: options.map((opt) => opt.optionId) } },
     });
 
-    let payableOnBoard = 0;
-    let payableOnline = 0;
+    const payableOnBoard = 0;
+    const payableOnline = 0;
 
-    const bookingOptions: Prisma.BookingOptionCreateWithoutBookingInput[] =
+    const bookingOptionsData: Prisma.BookingOptionCreateWithoutBookingInput[] =
       options.map((opt) => {
         const optionMeta = optionDetails.find((o) => o.id === opt.optionId);
         if (!optionMeta) throw new Error("Option invalide.");
 
-        const {
-          amount,
-          label,
-          description,
-          id,
-          payableOnline: isOnline,
-        } = optionMeta;
-        const subtotal = amount * opt.quantity;
-
-        if (isOnline) {
-          payableOnline += subtotal;
-        } else {
-          payableOnBoard += subtotal;
-        }
+        const subtotal = optionMeta.amount * opt.quantity;
 
         return {
-          optionId: id,
+          optionId: opt.optionId,
           quantity: opt.quantity,
-          unitPrice: amount,
-          label,
-          description: description ?? "",
-          option: {
-            connect: { id },
-          },
+          unitPrice: optionMeta.amount,
+          amount: subtotal,
+          label: optionMeta.label,
+          description: optionMeta.description ?? "",
+          option: { connect: { id: opt.optionId } },
         };
       });
 
@@ -112,7 +185,8 @@ export async function createBooking(
 
     const booking = await prisma.booking.create({
       data: {
-        userId: user.id,
+        clientId: client?.id,
+        userId: actualUserId,
         description: "",
         serviceId,
         reservedAt,
@@ -129,10 +203,10 @@ export async function createBooking(
         stripePaymentLink: "", // valeur par défaut acceptable
         updatedAt: new Date(),
         bookingOptions: {
-          create: bookingOptions,
+          create: bookingOptionsData,
         },
       },
-      include: { bookingOptions: true },
+      include: { bookingOptions: true, client: true, user: true },
     });
 
     const paymentIntent = await stripe.paymentIntents.create({
@@ -147,10 +221,22 @@ export async function createBooking(
       data: {
         stripePaymentLink: paymentIntent.client_secret ?? "", // pour respecter `string`
       },
-      include: { bookingOptions: true, client: true },
+      include: { bookingOptions: true, client: true, user: true },
     });
 
-    return updatedBooking as Booking;
+    let token: string | undefined;
+    if (updatedBooking?.id) {
+      token = await generateBookingToken(
+        updatedBooking.id,
+        updatedBooking.clientId !== null ? updatedBooking.clientId : undefined,
+        updatedBooking.userId !== null ? updatedBooking.userId : undefined
+      );
+      await sendConfirmationEmails(updatedBooking.id, token); // Envoyer l'email avec le token
+      return { booking: updatedBooking as Booking, token };
+    } else {
+      await sendConfirmationEmails(updatedBooking.id); // Envoyer l'email sans token si une erreur s'est produite lors de la génération du token
+      return { booking: updatedBooking as Booking };
+    }
   } catch (err) {
     console.error("Erreur createBooking:", err);
     throw new Error("Erreur lors de la création de la réservation.");
@@ -425,23 +511,7 @@ export async function getBookedTimes(
     endTime: new Date(booking.endTime),
   }));
 }
-//////////////////////////
-// Récupérer le token de réservation
-export async function generateBookingToken(bookingId: string, userId: string) {
-  try {
-    const secret = process.env.JWT_SECRET;
-    if (!secret)
-      throw new Error("❌ JWT_SECRET est manquant dans l'environnement.");
 
-    const token = jwt.sign({ bookingId, userId }, secret, { expiresIn: "1h" });
-
-    return token;
-  } catch {
-    throw new Error(
-      "Il y a un problème au niveau de la récupération de l'ID de la réservation."
-    );
-  }
-}
 /////////////////////////
 // Vérifier le token et récupérer l'ID de réservation
 export async function getBookingIdFromToken(
@@ -591,6 +661,7 @@ export async function addOptionToBooking(
           optionId: option.id,
           quantity,
           unitPrice: option.amount,
+          amount: option.amount * quantity, // Ajout de la propriété amount ici
           label: option.label,
           description: option.description ?? "",
         },
@@ -651,56 +722,3 @@ export async function deleteOption(bookingOptionId: string) {
     throw new Error("Impossible de supprimer l'option.");
   }
 }
-//////////////
-// Mettre à jour la quantité d'une option de réservation
-export async function updateOptionQuantity(
-  bookingOptionId: string,
-  newQuantity: number
-) {
-  try {
-    const bookingOption = await prisma.bookingOption.findUnique({
-      where: { id: bookingOptionId },
-      include: { option: true },
-    });
-
-    if (!bookingOption) throw new Error("❌ Option non trouvée.");
-
-    const oldQuantity = bookingOption.quantity;
-    const amountDifference =
-      (newQuantity - oldQuantity) * bookingOption.unitPrice;
-
-    const updateAmountField = bookingOption.option?.payableOnline
-      ? {
-          totalAmount:
-            amountDifference >= 0
-              ? { increment: amountDifference }
-              : { decrement: Math.abs(amountDifference) },
-        }
-      : {
-          payableOnBoard:
-            amountDifference >= 0
-              ? { increment: amountDifference }
-              : { decrement: Math.abs(amountDifference) },
-        };
-
-    const updatedBooking = await prisma.booking.update({
-      where: { id: bookingOption.bookingId },
-      data: updateAmountField,
-    });
-
-    const updatedBookingOption = await prisma.bookingOption.update({
-      where: { id: bookingOptionId },
-      data: { quantity: newQuantity },
-    });
-
-    return {
-      success: true,
-      newTotal: updatedBooking.totalAmount,
-      updatedBookingOption,
-    };
-  } catch (error) {
-    console.error("❌ Erreur lors de la mise à jour :", error);
-    throw new Error("Impossible de mettre à jour l'option.");
-  }
-}
-////////////////////

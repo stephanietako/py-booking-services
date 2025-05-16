@@ -18,34 +18,6 @@ export async function getRole(clerkUserId: string) {
   return user;
 }
 
-// export async function addUserToDatabase(
-//   email: string,
-//   name: string,
-//   image: string,
-//   clerkUserId: string
-// ) {
-//   const existingUser = await prisma.user.findUnique({ where: { clerkUserId } });
-
-//   if (existingUser) {
-//     return await prisma.user.update({
-//       where: { clerkUserId },
-//       data: { email, name, image },
-//     });
-//   }
-
-//   const role = await prisma.role.findUnique({ where: { name: "member" } });
-//   if (!role) throw new Error("Le rôle spécifié n'existe pas.");
-
-//   return await prisma.user.create({
-//     data: {
-//       clerkUserId,
-//       email,
-//       name,
-//       image,
-//       roleId: role.id,
-//     },
-//   });
-// }
 export async function addUserToDatabase(
   email: string,
   name: string,
@@ -79,7 +51,7 @@ export async function addUserToDatabase(
   } catch (error) {
     if (error instanceof AppError) {
       console.error(`Erreur spécifique: ${error.message}`);
-      throw error; // on peut gérer ça dans un middleware global pour envoyer une réponse plus propre
+      throw error;
     }
     console.error("Erreur lors de l'ajout de l'utilisateur:", error);
     throw new AppError(
@@ -88,6 +60,7 @@ export async function addUserToDatabase(
     );
   }
 }
+
 export async function createService(
   name: string,
   price: number,
@@ -97,15 +70,12 @@ export async function createService(
   defaultPrice: number
 ) {
   try {
-    // Vérification des paramètres
-    if (!name || !price || !defaultPrice || !file) {
+    if (!name || price == null || defaultPrice == null || !file) {
       throw new Error("Tous les champs obligatoires doivent être remplis.");
     }
 
-    // Téléchargement de l'image
     const imageUrl = await uploadImageToServer(file);
 
-    // Création du service dans la base de données
     const newService = await prisma.service.create({
       data: {
         name,
@@ -115,7 +85,7 @@ export async function createService(
         description,
         categories,
         imageUrl,
-        currency: "EUR", // Devise par défaut
+        currency: "EUR",
       },
     });
 
@@ -151,61 +121,61 @@ export async function getServicesByUser(
     .filter(Boolean);
 }
 
-export async function getOptionsByServiceId(serviceId: string) {
-  const service = await prisma.service.findUnique({
-    where: { id: serviceId },
-    include: { options: true },
-  });
-  if (!service) throw new Error("Service non trouvé");
-  return service.options;
+export async function getOptions() {
+  const options = await prisma.option.findMany();
+
+  if (!options.length) throw new Error("Aucune option trouvée");
+  return options;
 }
 
 export async function addOptionToService(
-  serviceId: string,
   amount: number,
+  unitPrice: number,
   description: string
 ): Promise<Option> {
   const createdOption = await prisma.option.create({
     data: {
       amount,
+      unitPrice,
       name: description,
       label: description,
-      serviceId,
     },
   });
 
   return {
     ...createdOption,
-    serviceId: createdOption.serviceId ?? undefined,
-    description: description,
+    description,
   };
 }
 
 export async function deleteService(serviceId: string) {
-  await prisma.bookingOption.deleteMany({ where: { option: { serviceId } } });
-  await prisma.option.deleteMany({ where: { serviceId } });
   await prisma.service.delete({ where: { id: serviceId } });
 }
 
-export async function deleteManyoption(optionId: string) {
+export async function deleteOptionWithDependencies(optionId: string) {
   const option = await prisma.option.findUnique({ where: { id: optionId } });
-  if (!option) return;
-  await prisma.bookingOption.deleteMany({ where: { optionId } });
+  if (!option) {
+    throw new Error("Option introuvable.");
+  }
+
+  const bookingCount = await prisma.bookingOption.count({
+    where: { optionId },
+  });
+
+  if (bookingCount > 0) {
+    throw new Error(
+      "Impossible de supprimer l’option : elle est utilisée dans une ou plusieurs réservations."
+    );
+  }
+
   await prisma.option.delete({ where: { id: optionId } });
 }
 
 export async function getAllServices(): Promise<Service[]> {
-  const services = await prisma.service.findMany({
-    include: { options: true },
-  });
+  const services = await prisma.service.findMany();
   return services.map((service) => ({
     ...service,
     description: service.description ?? undefined,
-    options: service.options.map((opt) => ({
-      ...opt,
-      description: opt.label, // 👈 ajout pour correspondre au type `Option`
-      serviceId: opt.serviceId ?? undefined, // Convert null to undefined
-    })),
   }));
 }
 
@@ -267,7 +237,80 @@ export async function getDynamicPrice(
       endDate: { gte: new Date(startDate) },
     },
   });
-  const price = rule ? rule.price : 1500; // Valeur par défaut si aucune règle n'est trouvée
+  const price = rule ? rule.price : 1500;
   priceCache.set(cacheKey, price);
   return price;
+}
+
+export async function getServiceForUser(
+  clerkUserId: string
+): Promise<Service | null> {
+  const user = await prisma.user.findUnique({
+    where: { clerkUserId },
+    include: {
+      bookings: {
+        where: { serviceId: { not: null } },
+        include: { Service: true },
+      },
+    },
+  });
+
+  if (!user || user.bookings.length === 0) return null;
+
+  // Comme il n'y a qu'un service, on retourne juste le service du premier booking
+  const service = user.bookings[0].Service!;
+  return {
+    ...service,
+    description: service.description ?? undefined,
+  };
+}
+
+export async function updateOptionQuantity(
+  bookingOptionId: string,
+  newQuantity: number
+) {
+  if (newQuantity < 0) throw new Error("La quantité doit être positive.");
+
+  return await prisma.$transaction(async (tx) => {
+    const bookingOption = await tx.bookingOption.findUnique({
+      where: { id: bookingOptionId },
+      include: { option: true },
+    });
+    if (!bookingOption) throw new Error("Option non trouvée.");
+
+    const oldQuantity = bookingOption.quantity;
+    const amountDifference =
+      (newQuantity - oldQuantity) * bookingOption.unitPrice;
+
+    const updateAmountField = bookingOption.option?.payableOnline
+      ? {
+          totalAmount:
+            amountDifference >= 0
+              ? { increment: amountDifference }
+              : { decrement: Math.abs(amountDifference) },
+        }
+      : {
+          payableOnBoard:
+            amountDifference >= 0
+              ? { increment: amountDifference }
+              : { decrement: Math.abs(amountDifference) },
+        };
+
+    const updatedBooking = await tx.booking.update({
+      where: { id: bookingOption.bookingId },
+      data: updateAmountField,
+    });
+
+    const updatedBookingOption = await tx.bookingOption.update({
+      where: { id: bookingOptionId },
+      data: { quantity: newQuantity },
+    });
+
+    return {
+      success: true,
+      amountDifference,
+      newTotal: updatedBooking.totalAmount,
+      updatedBookingOption,
+    };
+  });
 }

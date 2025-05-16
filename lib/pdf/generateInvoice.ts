@@ -2,7 +2,14 @@
 
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { Booking } from "@/types";
-
+//cette fonction génère un PDF de facture pour une réservation.
+// Elle prend un objet de réservation en entrée et retourne un Uint8Array contenant le PDF.
+// 📦 PDFDocument.create() : crée un nouveau document PDF.
+// Uint8Array : un flux binaire brut en mémoire.
+//Mais les services d’envoi d’emails (comme Resend, Sendgrid, etc.) n’acceptent que des chaînes texte en base64 comme pièce jointe.
+// Donc, pour envoyer un PDF en pièce jointe, il faut le convertir en base64.
+// 📦 Buffer.from(...) permet la conversion binaire → base64
+// 📩 Et resend ou un autre service lit cette chaîne base64 pour reconstruire le PDF.
 export async function generateInvoice(booking: Booking): Promise<Uint8Array> {
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([600, 750]);

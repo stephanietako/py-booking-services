@@ -133,7 +133,7 @@ const page = () => {
             lui disposant de ses identifiants et mots de passe. En cas d’oubli
             ou d’utilisation non conforme par un tiers de ses identifiants,
             l’Utilisateur s’engage à en informer Yachting Day dans les meilleurs
-            délais en utilisant le mail suivant contact@yachting-day.com.
+            délais en utilisant le mail suivant yachtingday@gmail.com.
             L’Utilisateur s’engage à mettre à jour ses coordonnées sur le Site
             en cas de modification de son adresse email et/ou de son numéro de
             téléphone mobile. 5.2. Assurance Le Propriétaire s’engage à ne
@@ -291,15 +291,15 @@ const page = () => {
             Service dans les meilleurs délais. Annulation de la réservation
             Toute annulation doit faire l’objet d’une information écrite
             préalable auprès de Yachting Day par les Utilisateurs via le mail
-            suivant : contact@yachting-day.com et la procédure d’annulation
-            décrite dans les présentes CGU. Une annulation ne devient effective
-            qu’après envoi par Yachting Day d’un courriel notifiant ladite
-            annulation. Toute modification d’une réservation sollicitée par un
-            Locataire après règlement de la Réservation est subordonnée à
-            l’accord de Yachting Day. Toute fin de location anticipée, ne pourra
-            donner droit à un quelconque remboursement. 7.1. Du fait d’un cas de
-            Force Majeure En cas de survenance de circonstances caractérisant un
-            cas de force majeure au sens de l’article 11, tout Utilisateur peut
+            suivant : yachtingday@gmail.com et la procédure d’annulation décrite
+            dans les présentes CGU. Une annulation ne devient effective qu’après
+            envoi par Yachting Day d’un courriel notifiant ladite annulation.
+            Toute modification d’une réservation sollicitée par un Locataire
+            après règlement de la Réservation est subordonnée à l’accord de
+            Yachting Day. Toute fin de location anticipée, ne pourra donner
+            droit à un quelconque remboursement. 7.1. Du fait d’un cas de Force
+            Majeure En cas de survenance de circonstances caractérisant un cas
+            de force majeure au sens de l’article 11, tout Utilisateur peut
             demander (i) le report de la réservation à une date ultérieure, ou
             (ii) l’annulation de la réservation, après avoir justifié desdites
             circonstances par écrit à Yachting Day dans un délai maximum de 12
@@ -494,50 +494,50 @@ const page = () => {
             conséquence à ne pas se créer un nouveau compte Utilisateur.
             L’Utilisateur peut résilier son compte Utilisateur à tout moment en
             effectuant une demande par mail à l’adresse suivante :
-            contact@yachting-day.com. Toutefois il s’engage à maintenir et
-            assurer les réservations en cours ou acceptées. Données personnelles
+            yachtingday@gmail.com. Toutefois il s’engage à maintenir et assurer
+            les réservations en cours ou acceptées. Données personnelles
             Conformément à la loi Informatique et Liberté n°78-17 du 6 janvier
             1978, ses décrets d&apos;application et en accord avec le Règlement
             Général sur la Protection des Données (RGPD), l’Utilisateur dispose
             d&apos;un droit d&apos;accès, de modification, de rectification et
             de suppression des données nominatives le concernant, exerçable
-            auprès de contact@yachintg-day.com. En fonction des choix émis lors
-            de la création du compte Utilisateur, l’Utilisateur sera susceptible
-            de recevoir des offres commerciales de Yachting Day. Si
-            l’Utilisateur ne le souhaite plus, il peut à tout moment s’y opposer
-            en utilisant notre mail contact@yachting-day.com. Yachting Day
-            collecte certaines de vos données personnelles conformément à la loi
-            en vigueur et aux informations stipulées dans sa Politique de
-            confidentialité. Vous acceptez ce traitement des données
-            personnelles et le reconnaissez en utilisant le Site et à la suite
-            de votre inscription comme membre. Propriété intellectuelle et droit
-            d&apos;auteur de Yachting Day « Yachting Day » et le logo figurant
-            sur le Site restent l&apos;entière propriété de Yachting Day. Aucune
-            licence n’est concédée à l&apos;Utilisateur. Yachting Day est
-            titulaire des droits de propriété intellectuelle afférents au
-            Service et au Site, et, notamment relatifs aux éléments logiciels, à
-            l’ergonomie, à l’agencement, aux éléments graphiques, au logo et au
-            design du Site. L’Utilisateur s&apos;interdit de porter atteinte de
-            quelque façon que ce soit aux droits de propriété intellectuelle
-            détenus par Yachting Day. Les Utilisateurs sont seuls responsables
-            des Contenus et garantissent Yachting Day de toute réclamation
-            relative aux Contenus relatifs à la violation des droits des tiers
-            et de la législation en vigueur et s’engagent à indemniser Yachting
-            Day de tout préjudice pouvant être subi par elle et à la rembourser
-            des dommages et intérêts, frais, notamment de conseil, qu’elle
-            pourrait avoir engagés à ce titre. Chaque Utilisateur concède à
-            titre gratuit un droit non exclusif de reproduire, représenter,
-            modifier, traduire, adapter et sous-licencier les contenus pour la
-            durée des droits d’auteur et pour le monde entier, sur tout autre
-            support numérique, analogique ou papier, à des fins commerciales ou
-            non. Propriété intellectuelle et droit d&apos;auteur des
-            Utilisateurs et tiers Yachting Day respecte les droits de la
-            propriété intellectuelle, et demande à ses Utilisateurs de prendre
-            les mêmes engagements. L&apos;Utilisateur s&apos;engage à respecter
-            les droits d&apos;auteur des autres Utilisateurs, ainsi que ceux des
-            tiers, comme définis dans le Code de la Propriété Intellectuelle.
-            Yachting Day se donne le droit de désactiver ou résilier le compte
-            ou l&apos;accès des Utilisateurs qui violent, ou sont accusés à
+            auprès de yachtingday@gmail.com. En fonction des choix émis lors de
+            la création du compte Utilisateur, l’Utilisateur sera susceptible de
+            recevoir des offres commerciales de Yachting Day. Si l’Utilisateur
+            ne le souhaite plus, il peut à tout moment s’y opposer en utilisant
+            notre mail yachtingday@gmail.com. Yachting Day collecte certaines de
+            vos données personnelles conformément à la loi en vigueur et aux
+            informations stipulées dans sa Politique de confidentialité. Vous
+            acceptez ce traitement des données personnelles et le reconnaissez
+            en utilisant le Site et à la suite de votre inscription comme
+            membre. Propriété intellectuelle et droit d&apos;auteur de Yachting
+            Day « Yachting Day » et le logo figurant sur le Site restent
+            l&apos;entière propriété de Yachting Day. Aucune licence n’est
+            concédée à l&apos;Utilisateur. Yachting Day est titulaire des droits
+            de propriété intellectuelle afférents au Service et au Site, et,
+            notamment relatifs aux éléments logiciels, à l’ergonomie, à
+            l’agencement, aux éléments graphiques, au logo et au design du Site.
+            L’Utilisateur s&apos;interdit de porter atteinte de quelque façon
+            que ce soit aux droits de propriété intellectuelle détenus par
+            Yachting Day. Les Utilisateurs sont seuls responsables des Contenus
+            et garantissent Yachting Day de toute réclamation relative aux
+            Contenus relatifs à la violation des droits des tiers et de la
+            législation en vigueur et s’engagent à indemniser Yachting Day de
+            tout préjudice pouvant être subi par elle et à la rembourser des
+            dommages et intérêts, frais, notamment de conseil, qu’elle pourrait
+            avoir engagés à ce titre. Chaque Utilisateur concède à titre gratuit
+            un droit non exclusif de reproduire, représenter, modifier,
+            traduire, adapter et sous-licencier les contenus pour la durée des
+            droits d’auteur et pour le monde entier, sur tout autre support
+            numérique, analogique ou papier, à des fins commerciales ou non.
+            Propriété intellectuelle et droit d&apos;auteur des Utilisateurs et
+            tiers Yachting Day respecte les droits de la propriété
+            intellectuelle, et demande à ses Utilisateurs de prendre les mêmes
+            engagements. L&apos;Utilisateur s&apos;engage à respecter les droits
+            d&apos;auteur des autres Utilisateurs, ainsi que ceux des tiers,
+            comme définis dans le Code de la Propriété Intellectuelle. Yachting
+            Day se donne le droit de désactiver ou résilier le compte ou
+            l&apos;accès des Utilisateurs qui violent, ou sont accusés à
             plusieurs reprises de violer, les droits d&apos;auteur ou autres
             droits de propriété intellectuelle d&apos;autrui. Autonomie des
             clauses et divisibilité Si une ou plusieurs stipulations des CGU

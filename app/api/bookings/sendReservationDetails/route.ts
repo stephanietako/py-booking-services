@@ -93,6 +93,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const adminEmail = process.env.ADMIN_EMAIL || "yachtingday@gmail.com";
 
 interface SendEmailToAdminParams {
   bookingId: string;
@@ -112,8 +113,6 @@ async function sendEmailToAdmin({
   phoneNumber,
   reservationTime,
 }: SendEmailToAdminParams) {
-  const adminEmail = process.env.ADMIN_EMAIL;
-
   if (!adminEmail) {
     console.error("❌ ADMIN_EMAIL n'est pas défini.");
     throw new Error("Configuration invalide : ADMIN_EMAIL manquant.");

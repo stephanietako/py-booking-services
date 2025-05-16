@@ -50,11 +50,10 @@ model Option {
   id             String          @id @default(uuid())
   label          String
   name           String
-  amount         Float
   payableOnline  Boolean         @default(false)
   payableAtBoard Boolean         @default(true)
-  serviceId      String?
-  Service        Service?        @relation(fields: [serviceId], references: [id])
+  unitPrice      Float
+  amount         Float
   createdAt      DateTime        @default(now())
   bookingOptions BookingOption[]
   description    String?
@@ -66,6 +65,7 @@ model BookingOption {
   optionId    String
   quantity    Int     @default(1)
   unitPrice   Float
+  amount      Float
   label       String
   booking     Booking @relation(fields: [bookingId], references: [id])
   option      Option  @relation(fields: [optionId], references: [id])
@@ -97,7 +97,6 @@ model Service {
   updatedAt        DateTime      @updatedAt
   currency         String
   stripeCustomerId String?
-  options          Option[]
   bookings         Booking[]
   pricingRules     PricingRule[]
   reservedAt       DateTime?
