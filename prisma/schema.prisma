@@ -44,6 +44,7 @@ model Booking {
   serviceId         String?
   paymentStatus     PaymentStatus   @default(PENDING)
   description       String
+  mealOption        Boolean         @default(false) // Ajout du champ
 }
 
 model Option {
@@ -102,6 +103,8 @@ model Service {
   reservedAt       DateTime?
   startTime        DateTime?
   endTime          DateTime?
+  cautionAmount    Float         @default(0)
+  requiresCaptain  Boolean       @default(true) // Ajout du champ
 }
 
 model PricingRule {

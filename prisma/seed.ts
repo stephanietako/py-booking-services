@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // ✅ Insertion des rôles
+  // ✅ Insertion des rôles (inchangé)
   await Promise.all([
     prisma.role.upsert({
       where: { name: "member" },
@@ -17,7 +17,7 @@ async function main() {
     }),
   ]);
 
-  // ✅ Insertion des jours de la semaine
+  // ✅ Insertion des jours de la semaine (inchangé)
   const daysOfWeek = [
     { dayOfWeek: 0, name: "sunday" },
     { dayOfWeek: 1, name: "monday" },
@@ -45,14 +45,19 @@ async function main() {
 
   console.log("✅ Roles and Days seeded");
 
-  // ✅ Création du service principal
+  // ✅ Création du service principal (mise à jour de la description, ajout de cautionAmount et requiresCaptain)
   await prisma.service.upsert({
     where: { name: "Service" },
-    update: {},
+    update: {
+      description:
+        "Seul, en couple ou jusqu’à 10 personnes, profitez simplement du bateau et d’un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix. Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwich, charcuterie, fromage, vins ou autres. **Inclus : 6 paires de masques et tubas adultes, 2 paires enfants, 1 paddle board, literie et serviettes de douche, eau plate.**\n\n**Caution de 4000 € à régler sur place.**",
+      cautionAmount: 4000,
+      requiresCaptain: true, // Ajout du capitaine obligatoire
+    },
     create: {
       name: "Service",
       description:
-        "Seul, en couple ou jusqu’à 10 personnes, profitez simplement du bateau et d’un capitaine à votre disposition pour aller ou bon vous semble et vous faire débarquer dans le restaurant de votre choix. Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwich, charcuterie, fromage, vins ou autres. ",
+        "Seul, en couple ou jusqu’à 10 personnes, profitez simplement du bateau et d’un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix. Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwich, charcuterie, fromage, vins ou autres. **Inclus : 6 paires de masques et tubas adultes, 2 paires enfants, 1 paddle board, literie et serviettes de douche, eau plate.**\n\n**Caution de 4000 € à régler sur place.**",
       defaultPrice: 1500,
       isFixed: true,
       amount: 1500,
@@ -60,12 +65,16 @@ async function main() {
       currency: "EUR",
       categories: ["Location bateau"],
       imageUrl: "/assets/logo/logo-full.png",
+      cautionAmount: 4000,
+      requiresCaptain: true, // Ajout du capitaine obligatoire
     },
   });
 
-  console.log("✅ Service principal inséré");
+  console.log(
+    "✅ Service principal inséré et description mise à jour, caution et capitaine obligatoire ajoutés"
+  );
 
-  // ✅ Insertion des règles de tarification dynamiques
+  // ✅ Insertion des règles de tarification dynamiques (inchangé)
   const service = await prisma.service.findUnique({
     where: { name: "Service" },
   });
@@ -121,48 +130,9 @@ async function main() {
   console.log("✅ Tarifs dynamiques insérés jusqu'à 2030");
   console.log("🎉 Seeding terminé avec succès");
 
+  // ✅ Insertion des options (basé sur le document, "Repas à bord" supprimé)
   await prisma.option.createMany({
     data: [
-      {
-        label: "6 Paires de masques et tubas adultes et 2 paires enfants",
-        name: "masques-tubas",
-        unitPrice: 0,
-        amount: 0,
-        payableOnline: false,
-        payableAtBoard: false,
-      },
-      {
-        label: "1 Paddle board inclus",
-        name: "paddle-inclus",
-        unitPrice: 0,
-        amount: 0,
-        payableOnline: false,
-        payableAtBoard: false,
-      },
-      {
-        label: "Literie et serviettes de douche",
-        name: "literie-serviettes",
-        unitPrice: 0,
-        amount: 0,
-        payableOnline: false,
-        payableAtBoard: false,
-      },
-      {
-        label: "Eau plate",
-        name: "eau-plate",
-        unitPrice: 0,
-        amount: 0,
-        payableOnline: false,
-        payableAtBoard: false,
-      },
-      {
-        label: "Repas à bord",
-        name: "repas-a-bord",
-        unitPrice: 0, // Prix variable, sera défini ailleurs
-        amount: 0,
-        payableOnline: false,
-        payableAtBoard: true,
-      },
       {
         label: "Boissons : Eau pétillante, Coca, Ice tea",
         name: "boissons",
@@ -199,14 +169,6 @@ async function main() {
         label: "Serviette de bain",
         name: "serviette-bain",
         unitPrice: 5,
-        amount: 0,
-        payableOnline: false,
-        payableAtBoard: true,
-      },
-      {
-        label: "Caution",
-        name: "caution",
-        unitPrice: 4000,
         amount: 0,
         payableOnline: false,
         payableAtBoard: true,

@@ -98,7 +98,7 @@
 //     );
 //   }
 // }
-
+// app/api/bookings/verify-token/route.ts
 import { NextResponse } from "next/server";
 import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
@@ -140,12 +140,28 @@ export async function POST(req: Request) {
       if (decoded.clientId) {
         booking = await prisma.booking.findUnique({
           where: { id: bookingId, clientId: decoded.clientId },
-          include: { Service: true, bookingOptions: true, client: true },
+          include: {
+            Service: true,
+            bookingOptions: {
+              include: {
+                option: true, // Inclure les détails de l'option
+              },
+            },
+            client: true,
+          },
         });
       } else if (decoded.userId) {
         booking = await prisma.booking.findUnique({
           where: { id: bookingId, userId: decoded.userId },
-          include: { Service: true, bookingOptions: true, user: true },
+          include: {
+            Service: true,
+            bookingOptions: {
+              include: {
+                option: true, // Inclure les détails de l'option
+              },
+            },
+            user: true,
+          },
         });
       }
 

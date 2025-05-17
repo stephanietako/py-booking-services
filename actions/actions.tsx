@@ -9,6 +9,7 @@ import { AppError } from "@/lib/errors";
 
 const priceCache = new Map<string, number>();
 
+// Fonction pour récupérer les jours
 export async function getRole(clerkUserId: string) {
   const user = await prisma.user.findUnique({
     where: { clerkUserId },
@@ -17,7 +18,8 @@ export async function getRole(clerkUserId: string) {
   if (!user) throw new Error("Utilisateur non trouvé");
   return user;
 }
-
+///////////////
+// Fonction pour récupérer les jours
 export async function addUserToDatabase(
   email: string,
   name: string,
@@ -60,7 +62,8 @@ export async function addUserToDatabase(
     );
   }
 }
-
+////////////////
+// Fonction pour créer un service
 export async function createService(
   name: string,
   price: number,
@@ -96,6 +99,22 @@ export async function createService(
   }
 }
 
+/////////////
+export async function getServiceById(
+  serviceId: string
+): Promise<Service | null> {
+  try {
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
+    });
+    return service;
+  } catch (error) {
+    console.error("Erreur lors de la récupération du service :", error);
+    return null;
+  }
+}
+//////////////
+// Fonction pour récupérer les services d'un utilisateur
 export async function getServicesByUser(
   clerkUserId: string
 ): Promise<Service[]> {
@@ -120,14 +139,16 @@ export async function getServicesByUser(
     })
     .filter(Boolean);
 }
-
+////////////////
+// Fonction pour récupérer les options
 export async function getOptions() {
   const options = await prisma.option.findMany();
 
   if (!options.length) throw new Error("Aucune option trouvée");
   return options;
 }
-
+//////////////
+// Fonction pour récupérer les options d'un service
 export async function addOptionToService(
   amount: number,
   unitPrice: number,
@@ -147,11 +168,13 @@ export async function addOptionToService(
     description,
   };
 }
-
+///////////////
+// Fonction pour récupérer les options d'un service
 export async function deleteService(serviceId: string) {
   await prisma.service.delete({ where: { id: serviceId } });
 }
-
+///////////////
+// Fonction pour supprimer une option
 export async function deleteOptionWithDependencies(optionId: string) {
   const option = await prisma.option.findUnique({ where: { id: optionId } });
   if (!option) {
@@ -170,7 +193,8 @@ export async function deleteOptionWithDependencies(optionId: string) {
 
   await prisma.option.delete({ where: { id: optionId } });
 }
-
+/////////////
+// Fonction pour récupérer un service par son ID
 export async function getAllServices(): Promise<Service[]> {
   const services = await prisma.service.findMany();
   return services.map((service) => ({
@@ -178,7 +202,8 @@ export async function getAllServices(): Promise<Service[]> {
     description: service.description ?? undefined,
   }));
 }
-
+////////////
+// Fonction pour récupérer un service par son ID
 export async function updateService(
   serviceId: string,
   name: string,
@@ -204,7 +229,8 @@ export async function updateService(
     },
   });
 }
-
+///////////////
+// Fonction pour uploader une image sur le serveur
 async function uploadImageToServer(file: File): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
   const relativeUploadDir = `/uploads/${new Date().toISOString().split("T")[0]}`;
@@ -221,7 +247,8 @@ async function uploadImageToServer(file: File): Promise<string> {
 
   return `${relativeUploadDir}/${fileName}`;
 }
-
+//////////////
+// Fonction pour récupérer le prix dynamique d'un service
 export async function getDynamicPrice(
   serviceId: string,
   startDate: string,
@@ -241,7 +268,8 @@ export async function getDynamicPrice(
   priceCache.set(cacheKey, price);
   return price;
 }
-
+/////////////
+// Fonction pour récupérer le service d'un utilisateur
 export async function getServiceForUser(
   clerkUserId: string
 ): Promise<Service | null> {
@@ -264,7 +292,8 @@ export async function getServiceForUser(
     description: service.description ?? undefined,
   };
 }
-
+///////////
+// Fonction pour récupérer les options d'un service
 export async function updateOptionQuantity(
   bookingOptionId: string,
   newQuantity: number
@@ -313,4 +342,42 @@ export async function updateOptionQuantity(
       updatedBookingOption,
     };
   });
+}
+
+/////////////////////////
+// Supprimer une option de réservation
+export async function deleteOption(bookingOptionId: string) {
+  try {
+    const bookingOption = await prisma.bookingOption.findUnique({
+      where: { id: bookingOptionId },
+      include: { option: true }, // Assure-toi que la relation est bien définie dans le schema Prisma
+    });
+
+    if (!bookingOption) throw new Error("❌ Option non trouvée.");
+
+    const amount = bookingOption.unitPrice * bookingOption.quantity;
+
+    const [, updatedBooking] = await prisma.$transaction([
+      prisma.bookingOption.delete({ where: { id: bookingOptionId } }),
+      prisma.booking.update({
+        where: { id: bookingOption.bookingId },
+        data: {
+          totalAmount: bookingOption.option?.payableOnline
+            ? { decrement: amount }
+            : undefined,
+          payableOnBoard: !bookingOption.option?.payableOnline
+            ? { decrement: amount }
+            : undefined,
+        },
+      }),
+    ]);
+
+    return {
+      success: true,
+      newTotal: updatedBooking.totalAmount,
+    };
+  } catch (error) {
+    console.error("❌ Erreur lors de la suppression :", error);
+    throw new Error("Impossible de supprimer l'option.");
+  }
 }

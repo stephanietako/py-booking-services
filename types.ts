@@ -42,7 +42,7 @@ export interface PricingRule {
 export interface Service {
   id: string;
   name: string;
-  description?: string;
+  description?: string | null;
   imageUrl: string;
   active: boolean;
   categories: string[];
@@ -50,12 +50,16 @@ export interface Service {
   isFixed: boolean;
   createdAt: Date;
   updatedAt: Date;
+  reservedAt: Date | null;
+  startTime: Date | null;
+  endTime: Date | null;
   currency: string;
   stripeCustomerId?: string | null;
   pricingRules?: PricingRule[];
   bookings?: Booking[];
   amount: number;
   price: number;
+  requiresCaptain: boolean;
 }
 
 export interface Option {
@@ -64,6 +68,7 @@ export interface Option {
   label: string;
   amount: number;
   payableOnline: boolean;
+  payableAtBoard: boolean; // Ajoute cette propriété
   createdAt: Date;
   description?: string | null;
   unitPrice: number;
