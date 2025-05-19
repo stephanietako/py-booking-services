@@ -117,6 +117,7 @@ export interface Booking {
   service?: Service;
   bookingOptions?: BookingOption[];
   transactions?: Transaction[];
+  mealOption: boolean;
 }
 
 export interface BookingWithDetails extends Booking {

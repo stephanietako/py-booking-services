@@ -56,15 +56,21 @@ async function main() {
     },
     create: {
       name: "Service",
-      description:
-        "Seul, en couple ou jusqu’à 10 personnes, profitez simplement du bateau et d’un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix. Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwich, charcuterie, fromage, vins ou autres. **Inclus : 6 paires de masques et tubas adultes, 2 paires enfants, 1 paddle board, literie et serviettes de douche, eau plate.**\n\n**Caution de 4000 € à régler sur place.**",
+      description: `Seul, en couple ou jusqu’à 10 personnes, profitez simplement du bateau et d’un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix.
+
+      Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwichs, charcuterie, fromage, vins ou autres.
+      
+      **Inclus : 6 paires de masques et tubas adultes, 2 paires enfants, 1 paddle board, literie et serviettes de douche, eau plate.**
+      
+      **Caution de 4000 € à régler sur place.**`,
+
       defaultPrice: 1500,
       isFixed: true,
       amount: 1500,
       price: 1500,
       currency: "EUR",
       categories: ["Location bateau"],
-      imageUrl: "/assets/logo/logo-full.png",
+      imageUrl: "/assets/logo/hippo-transp.png",
       cautionAmount: 4000,
       requiresCaptain: true, // Ajout du capitaine obligatoire
     },

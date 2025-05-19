@@ -5,13 +5,16 @@
 // import { createBooking, deleteUserBooking } from "@/actions/bookings";
 // import { Service, Booking, Option as OptionType } from "@/types";
 // import Wrapper from "../Wrapper/Wrapper";
-// import styles from "./styles.module.scss";
 // import { useUser } from "@clerk/nextjs";
 // import { format, formatISO, parseISO } from "date-fns";
 // import toast from "react-hot-toast";
-// import Image from "next/image";
+// //import Image from "next/image";
+// //import logo from "@/public/assets/logo/hippo-transp.png";
+// //import placeholder from "@/public/assets/images/placeholder.svg";
 // import { useRouter, useSearchParams } from "next/navigation";
-
+// // Styles
+// import styles from "./styles.module.scss";
+// import FormattedDescription from "../FormattedDescription/FormattedDescription";
 // const ServiceList = () => {
 //   const [service, setService] = useState<Service | null>(null);
 //   const [loading, setLoading] = useState(true);
@@ -36,6 +39,9 @@
 //   >({});
 //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 //   const [optionsSubtotal, setOptionsSubtotal] = useState(0);
+//   const [withCaptain, setWithCaptain] = useState(false);
+//   const [mealOption, setMealOption] = useState(false);
+//   const [requiresCaptain, setRequiresCaptain] = useState(true); // Par défaut à true
 
 //   useEffect(() => {
 //     const fetchData = async () => {
@@ -43,6 +49,7 @@
 //         const data = await getAllServices();
 //         if (data && data.length > 0) {
 //           setService(data[0]);
+//           setRequiresCaptain(data[0].requiresCaptain ?? true); // Récupérer requiresCaptain
 //           const startParam = searchParams.get("start");
 //           const endParam = searchParams.get("end");
 
@@ -160,7 +167,8 @@
 //           startTime,
 //           endTime,
 //           selectedBookingOptions,
-//           false,
+//           withCaptain,
+//           mealOption,
 //           hasClientInfo ? clientInfo.fullName : undefined,
 //           hasClientInfo ? clientInfo.email : undefined,
 //           hasClientInfo ? clientInfo.phoneNumber : undefined
@@ -203,6 +211,8 @@
 //     router,
 //     baseServicePrice,
 //     selectedOptions,
+//     withCaptain,
+//     mealOption,
 //   ]);
 
 //   const handleCancelBooking = useCallback(async () => {
@@ -224,6 +234,14 @@
 //     }
 //   }, [bookingId, user?.id, service?.id]);
 
+//   const handleWithCaptainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setWithCaptain(e.target.checked);
+//   };
+
+//   const handleMealOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setMealOption(e.target.checked);
+//   };
+
 //   if (loading) {
 //     return <p>Chargement du service...</p>;
 //   }
@@ -238,159 +256,217 @@
 
 //   return (
 //     <Wrapper>
-//       <div className={styles.service_list}>
-//         <li className={styles.service_item}>
-//           <div className={styles.service_item__content}>
-//             <div className={styles.__img_content}>
-//               <Image
-//                 src={service.imageUrl || "/assets/logo/logo-full.png"}
-//                 alt={`Excursion en mer : ${service.name}`}
-//                 width={200}
-//                 height={200}
-//                 className={styles.__img}
-//               />
-//             </div>
+//       <section>
+//         <div className={styles.service_list}>
+//           <li className={styles.service_item}>
+//             <div className={styles.service_item__content}>
+//               {/* COLONNE GAUCHE */}
+//               <div className={styles.left_column}>
+//                 {/* <div className={styles.__img_content}>
+//                   <Image
+//                     src={
+//                       service.imageUrl && service.imageUrl.trim() !== ""
+//                         ? service.imageUrl
+//                         : logo
+//                     }
+//                     alt={`Image du service ${service.name}`}
+//                     width={300}
+//                     height={250}
+//                     className={styles.logo}
+//                   />
+//                 </div> */}
 
-//             <div className={styles.service_item__details}>
-//               <div className={styles.service_item__infos}>
-//                 <span className={styles.service_item__title}>
-//                   {service.name}
-//                 </span>
-//                 <span className={styles.service_item__description}>
-//                   {service.description
-//                     ?.split("\n")
-//                     .map((line, index) => <span key={index}>{line}</span>)}
-//                 </span>
-//               </div>
+//                 <div className={styles.service_item__details}>
+//                   <div className={styles.service_item__infos}>
+//                     <h1 className={styles.service_item__title}>
+//                       {service.name}
+//                     </h1>
+//                     <br />
+//                     <FormattedDescription text={service.description || ""} />
+//                     {/* <span className={styles.service_item__description}>
+//                       {service.description
+//                         ?.split("\n")
+//                         .map((line, index) => <span key={index}>{line}</span>)}
+//                     </span> */}
+//                   </div>
 
-//               <div className={styles.service_item__stats}>
-//                 <span>
-//                   {baseServicePrice !== null
-//                     ? new Intl.NumberFormat("fr-FR", {
-//                         style: "currency",
-//                         currency: service.currency || "EUR",
-//                       }).format(baseServicePrice)
-//                     : "Chargement du prix..."}
-//                 </span>
-//               </div>
-
-//               <h3>Options supplémentaires (à régler sur place)</h3>
-//               <div className={styles.options_list}>
-//                 {availableOptions.map((option) => (
-//                   <div key={option.id} className={styles.option_item}>
+//                   <div className={styles.service_item__stats}>
 //                     <span>
-//                       {option.label} (
+//                       <p>Montant location bateau:</p>
+//                       {baseServicePrice !== null
+//                         ? new Intl.NumberFormat("fr-FR", {
+//                             style: "currency",
+//                             currency: service.currency || "EUR",
+//                           }).format(baseServicePrice)
+//                         : "Chargement du prix..."}
+//                     </span>
+//                   </div>
+
+//                   <h2>Options supplémentaires (à régler sur place)</h2>
+//                   <p className={styles.notice} style={{ color: "whitesmoke" }}>
+//                     Les options sélectionnées sont à régler à bord le jour de
+//                     votre reservation.
+//                   </p>
+//                   <div className={styles.options_list}>
+//                     {availableOptions.map((option) => (
+//                       <div key={option.id} className={styles.option_item}>
+//                         <span>
+//                           {option.label} (
+//                           {new Intl.NumberFormat("fr-FR", {
+//                             style: "currency",
+//                             currency: service?.currency || "EUR",
+//                           }).format(option.unitPrice)}
+//                           / unité)
+//                         </span>
+//                         {option.payableAtBoard && (
+//                           <div>
+//                             <label htmlFor={`quantity-${option.id}`}>
+//                               Quantité:
+//                             </label>
+//                             <input
+//                               type="number"
+//                               id={`quantity-${option.id}`}
+//                               min="0"
+//                               defaultValue={
+//                                 selectedOptions[option.id]?.quantity || 0
+//                               }
+//                               onChange={(e) =>
+//                                 handleOptionQuantityChange(
+//                                   option,
+//                                   parseInt(e.target.value)
+//                                 )
+//                               }
+//                             />
+//                           </div>
+//                         )}
+//                       </div>
+//                     ))}
+//                   </div>
+
+//                   <div className={styles.captain_option}>
+//                     <label>
+//                       J&apos;ai mon propre capitaine:
+//                       <input
+//                         type="checkbox"
+//                         checked={withCaptain}
+//                         onChange={handleWithCaptainChange}
+//                       />
+//                     </label>
+//                     {requiresCaptain && !withCaptain && (
+//                       <p className={styles.captain_required}>
+//                         (Capitaine obligatoire si non fourni)
+//                       </p>
+//                     )}
+//                   </div>
+
+//                   <div className={styles.meal_option}>
+//                     <label>
+//                       Repas à bord (Prix variable, nous contacter):
+//                       <input
+//                         type="checkbox"
+//                         checked={mealOption}
+//                         onChange={handleMealOptionChange}
+//                       />
+//                     </label>
+//                   </div>
+
+//                   {Object.values(selectedOptions).length > 0 && (
+//                     <div className={styles.options_subtotal}>
+//                       Sous-total des options :{" "}
 //                       {new Intl.NumberFormat("fr-FR", {
 //                         style: "currency",
 //                         currency: service?.currency || "EUR",
-//                       }).format(option.unitPrice)}
-//                       / unité)
-//                     </span>
-//                     {option.payableAtBoard && (
-//                       <div>
-//                         <label htmlFor={`quantity-${option.id}`}>
-//                           Quantité:
-//                         </label>
-//                         <input
-//                           type="number"
-//                           id={`quantity-${option.id}`}
-//                           min="0"
-//                           defaultValue={
-//                             selectedOptions[option.id]?.quantity || 0
-//                           }
-//                           onChange={(e) =>
-//                             handleOptionQuantityChange(
-//                               option,
-//                               parseInt(e.target.value)
-//                             )
-//                           }
-//                         />
-//                       </div>
-//                     )}
-//                   </div>
-//                 ))}
-//               </div>
-
-//               {Object.values(selectedOptions).length > 0 && (
-//                 <div className={styles.options_subtotal}>
-//                   Sous-total des options :{" "}
-//                   {new Intl.NumberFormat("fr-FR", {
-//                     style: "currency",
-//                     currency: service?.currency || "EUR",
-//                   }).format(
-//                     Object.values(selectedOptions).reduce(
-//                       (sum, option) => sum + option.quantity * option.unitPrice,
-//                       0
-//                     )
+//                       }).format(
+//                         Object.values(selectedOptions).reduce(
+//                           (sum, option) =>
+//                             sum + option.quantity * option.unitPrice,
+//                           0
+//                         )
+//                       )}
+//                     </div>
 //                   )}
 //                 </div>
-//               )}
+//               </div>
 
-//               {!user && (
-//                 <div className={styles.anonymous_booking_form}>
-//                   <h3>Informations de réservation</h3>
-//                   <label htmlFor="fullName">Nom complet:</label>
-//                   <input
-//                     type="text"
-//                     id="fullName"
-//                     value={clientInfo.fullName}
-//                     onChange={(e) =>
-//                       setClientInfo({ ...clientInfo, fullName: e.target.value })
-//                     }
-//                     required
-//                   />
-//                   <label htmlFor="email">Email:</label>
-//                   <input
-//                     type="email"
-//                     id="email"
-//                     value={clientInfo.email}
-//                     onChange={(e) =>
-//                       setClientInfo({ ...clientInfo, email: e.target.value })
-//                     }
-//                     required
-//                   />
-//                   <label htmlFor="phoneNumber">Téléphone:</label>
-//                   <input
-//                     type="tel"
-//                     id="phoneNumber"
-//                     value={clientInfo.phoneNumber}
-//                     onChange={(e) =>
-//                       setClientInfo({
-//                         ...clientInfo,
-//                         phoneNumber: e.target.value,
-//                       })
-//                     }
-//                     required
-//                   />
+//               {/* COLONNE DROITE */}
+//               <div className={styles.bloc__right_column}>
+//                 <div className={styles.right_column}>
+//                   {!user && (
+//                     <div className={styles.anonymous_booking_form}>
+//                       <h2>Informations de réservation</h2>
+//                       <label htmlFor="fullName">Nom complet:</label>
+//                       <input
+//                         type="text"
+//                         id="fullName"
+//                         value={clientInfo.fullName}
+//                         onChange={(e) =>
+//                           setClientInfo({
+//                             ...clientInfo,
+//                             fullName: e.target.value,
+//                           })
+//                         }
+//                         required
+//                       />
+//                       <label htmlFor="email">Email:</label>
+//                       <input
+//                         type="email"
+//                         id="email"
+//                         value={clientInfo.email}
+//                         onChange={(e) =>
+//                           setClientInfo({
+//                             ...clientInfo,
+//                             email: e.target.value,
+//                           })
+//                         }
+//                         required
+//                       />
+//                       <label htmlFor="phoneNumber">Téléphone:</label>
+//                       <input
+//                         type="tel"
+//                         id="phoneNumber"
+//                         value={clientInfo.phoneNumber}
+//                         onChange={(e) =>
+//                           setClientInfo({
+//                             ...clientInfo,
+//                             phoneNumber: e.target.value,
+//                           })
+//                         }
+//                         required
+//                       />
+//                     </div>
+//                   )}
+
+//                   <button
+//                     onClick={handleBooking}
+//                     disabled={isBooking || baseServicePrice === null}
+//                     className={isBooking ? styles.loading : ""}
+//                   >
+//                     {isBooking
+//                       ? "Réservation en cours..."
+//                       : "Réserver ce service"}
+//                   </button>
+
+//                   {bookingId && (
+//                     <button
+//                       onClick={handleCancelBooking}
+//                       className={styles.cancelButton}
+//                       aria-label="Annuler ma réservation"
+//                     >
+//                       Annuler ma réservation
+//                     </button>
+//                   )}
 //                 </div>
-//               )}
-
-//               <button
-//                 onClick={handleBooking}
-//                 disabled={isBooking || baseServicePrice === null}
-//                 className={isBooking ? styles.loading : ""}
-//               >
-//                 {isBooking ? "Réservation en cours..." : "Réserver ce service"}
-//               </button>
-
-//               {bookingId && (
-//                 <button
-//                   onClick={handleCancelBooking}
-//                   className={styles.cancelButton}
-//                   aria-label="Annuler ma réservation"
-//                 >
-//                   Annuler ma réservation
-//                 </button>
-//               )}
+//               </div>
 //             </div>
-//           </div>
-//           {bookingMessage && (
-//             <div className={styles.bookingConfirmationMessage}>
-//               <p>{bookingMessage}</p>
-//             </div>
-//           )}
-//         </li>
-//       </div>
+
+//             {bookingMessage && (
+//               <div className={styles.bookingConfirmationMessage}>
+//                 <p>{bookingMessage}</p>
+//               </div>
+//             )}
+//           </li>
+//         </div>
+//       </section>
 //     </Wrapper>
 //   );
 // };
@@ -403,12 +479,18 @@ import { getAllServices, getDynamicPrice } from "@/actions/actions";
 import { createBooking, deleteUserBooking } from "@/actions/bookings";
 import { Service, Booking, Option as OptionType } from "@/types";
 import Wrapper from "../Wrapper/Wrapper";
-import styles from "./styles.module.scss";
 import { useUser } from "@clerk/nextjs";
 import { format, formatISO, parseISO } from "date-fns";
 import toast from "react-hot-toast";
-import Image from "next/image";
+//import Image from "next/image";
+//import logo from "@/public/assets/logo/hippo-transp.png";
+//import placeholder from "@/public/assets/images/placeholder.svg";
 import { useRouter, useSearchParams } from "next/navigation";
+// Styles
+import styles from "./styles.module.scss";
+import FormattedDescription from "../FormattedDescription/FormattedDescription";
+
+const captainPrice = 350; // Prix fixe du capitaine
 
 const ServiceList = () => {
   const [service, setService] = useState<Service | null>(null);
@@ -432,8 +514,6 @@ const ServiceList = () => {
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, { quantity: number; unitPrice: number; label: string }>
   >({});
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [optionsSubtotal, setOptionsSubtotal] = useState(0);
   const [withCaptain, setWithCaptain] = useState(false);
   const [mealOption, setMealOption] = useState(false);
   const [requiresCaptain, setRequiresCaptain] = useState(true); // Par défaut à true
@@ -444,7 +524,7 @@ const ServiceList = () => {
         const data = await getAllServices();
         if (data && data.length > 0) {
           setService(data[0]);
-          setRequiresCaptain(data[0].requiresCaptain ?? true); // Récupérer requiresCaptain
+          setRequiresCaptain(data[0].requiresCaptain ?? true);
           const startParam = searchParams.get("start");
           const endParam = searchParams.get("end");
 
@@ -479,7 +559,7 @@ const ServiceList = () => {
           console.log(
             "Options récupérées de l'API :",
             data.map((opt: OptionType) => opt.id)
-          ); // Type explicite pour opt
+          );
         } else {
           console.error("Erreur lors de la récupération des options");
         }
@@ -492,7 +572,6 @@ const ServiceList = () => {
   }, []);
 
   const handleOptionQuantityChange = (option: OptionType, quantity: number) => {
-    console.log("handleOptionQuantityChange appelée pour l'option :", option);
     const newSelectedOptions = { ...selectedOptions };
     if (quantity > 0) {
       newSelectedOptions[option.id] = {
@@ -504,13 +583,6 @@ const ServiceList = () => {
       delete newSelectedOptions[option.id];
     }
     setSelectedOptions(newSelectedOptions);
-    console.log("État selectedOptions après changement :", newSelectedOptions);
-    // Mise à jour du sous-total
-    const newSubtotal = Object.values(newSelectedOptions).reduce(
-      (sum, details) => sum + details.quantity * details.unitPrice,
-      0
-    );
-    setOptionsSubtotal(newSubtotal);
   };
 
   const handleBooking = useCallback(async () => {
@@ -537,36 +609,32 @@ const ServiceList = () => {
     setIsBooking(true);
 
     try {
-      console.log(
-        "État selectedOptions au moment de la réservation :",
-        selectedOptions
-      );
       const selectedBookingOptions = Object.entries(selectedOptions).map(
         ([optionId, details]) => ({
           optionId,
           quantity: details.quantity,
-          unitPrice: details.unitPrice, // Inclure le unitPrice ici !
+          unitPrice: details.unitPrice,
           label: details.label,
         })
-      );
-      console.log(
-        "Tableau selectedBookingOptions construit :",
-        selectedBookingOptions
       );
 
       const bookingResult: { booking: Booking; token?: string } | null =
         await createBooking(
           userId,
           service.id,
-          formatISO(startISO), // Ceci devrait correspondre à selectedDate
+          formatISO(startISO),
           startTime,
           endTime,
-          selectedBookingOptions,
+          selectedBookingOptions.map((opt) => ({
+            optionId: opt.optionId,
+            quantity: opt.quantity,
+          })),
           withCaptain,
-          mealOption, // Déplace mealOption ici
+          mealOption,
           hasClientInfo ? clientInfo.fullName : undefined,
           hasClientInfo ? clientInfo.email : undefined,
-          hasClientInfo ? clientInfo.phoneNumber : undefined
+          hasClientInfo ? clientInfo.phoneNumber : undefined,
+          captainPrice
         );
 
       if (bookingResult?.booking?.id && bookingResult.token) {
@@ -637,6 +705,15 @@ const ServiceList = () => {
     setMealOption(e.target.checked);
   };
 
+  const currentOptionsSubtotal = Object.values(selectedOptions).reduce(
+    (sum, details) => sum + details.quantity * details.unitPrice,
+    0
+  );
+
+  const displayedSubtotal = withCaptain
+    ? currentOptionsSubtotal
+    : currentOptionsSubtotal + captainPrice;
+
   if (loading) {
     return <p>Chargement du service...</p>;
   }
@@ -651,186 +728,250 @@ const ServiceList = () => {
 
   return (
     <Wrapper>
-      <div className={styles.service_list}>
-        <li className={styles.service_item}>
-          <div className={styles.service_item__content}>
-            <div className={styles.__img_content}>
-              <Image
-                src={service.imageUrl || "/assets/logo/logo-full.png"}
-                alt={`Excursion en mer : ${service.name}`}
-                width={200}
-                height={200}
-                className={styles.__img}
-              />
-            </div>
+      <section>
+        <div className={styles.service_list}>
+          <li className={styles.service_item}>
+            <div className={styles.service_item__content}>
+              {/* COLONNE GAUCHE */}
+              <div className={styles.left_column}>
+                {/* <div className={styles.__img_content}>
+                  <Image
+                    src={
+                      service.imageUrl && service.imageUrl.trim() !== ""
+                        ? service.imageUrl
+                        : logo
+                    }
+                    alt={`Image du service ${service.name}`}
+                    width={300}
+                    height={250}
+                    className={styles.logo}
+                  />
+                </div> */}
 
-            <div className={styles.service_item__details}>
-              <div className={styles.service_item__infos}>
-                <span className={styles.service_item__title}>
-                  {service.name}
-                </span>
-                <span className={styles.service_item__description}>
-                  {service.description
-                    ?.split("\n")
-                    .map((line, index) => <span key={index}>{line}</span>)}
-                </span>
-              </div>
+                <div className={styles.service_item__details}>
+                  <div className={styles.service_item__infos}>
+                    <h1 className={styles.service_item__title}>
+                      {service.name}
+                    </h1>
+                    <br />
+                    <FormattedDescription text={service.description || ""} />
+                    {/* <span className={styles.service_item__description}>
+                      {service.description
+                        ?.split("\n")
+                        .map((line, index) => <span key={index}>{line}</span>)}
+                    </span> */}
+                  </div>
 
-              <div className={styles.service_item__stats}>
-                <span>
-                  {baseServicePrice !== null
-                    ? new Intl.NumberFormat("fr-FR", {
-                        style: "currency",
-                        currency: service.currency || "EUR",
-                      }).format(baseServicePrice)
-                    : "Chargement du prix..."}
-                </span>
-              </div>
-
-              <h3>Options supplémentaires (à régler sur place)</h3>
-              <div className={styles.options_list}>
-                {availableOptions.map((option) => (
-                  <div key={option.id} className={styles.option_item}>
+                  <div className={styles.service_item__stats}>
                     <span>
-                      {option.label} (
+                      <p>Montant location bateau:</p>
+                      {baseServicePrice !== null
+                        ? new Intl.NumberFormat("fr-FR", {
+                            style: "currency",
+                            currency: service.currency || "EUR",
+                          }).format(baseServicePrice)
+                        : "Chargement du prix..."}
+                    </span>
+                  </div>
+
+                  <h2>Options supplémentaires (à régler sur place)</h2>
+                  <p className={styles.notice} style={{ color: "whitesmoke" }}>
+                    Les options sélectionnées sont à régler à bord le jour de
+                    votre reservation.
+                  </p>
+                  <div className={styles.options_list}>
+                    {availableOptions.map((option) => (
+                      <div key={option.id} className={styles.option_item}>
+                        <span>
+                          {option.label} (
+                          {new Intl.NumberFormat("fr-FR", {
+                            style: "currency",
+                            currency: service?.currency || "EUR",
+                          }).format(option.unitPrice)}
+                          / unité)
+                        </span>
+                        {option.payableAtBoard && (
+                          <div>
+                            <label htmlFor={`quantity-${option.id}`}>
+                              Quantité:
+                            </label>
+                            <input
+                              type="number"
+                              id={`quantity-${option.id}`}
+                              min="0"
+                              defaultValue={
+                                selectedOptions[option.id]?.quantity || 0
+                              }
+                              onChange={(e) =>
+                                handleOptionQuantityChange(
+                                  option,
+                                  parseInt(e.target.value)
+                                )
+                              }
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className={styles.captain_option}>
+                    <label>
+                      J&apos;ai mon propre capitaine:
+                      <input
+                        type="checkbox"
+                        checked={withCaptain}
+                        onChange={handleWithCaptainChange}
+                      />
+                    </label>
+                    {requiresCaptain && !withCaptain && (
+                      <p className={styles.captain_required}>
+                        (Capitaine obligatoire si non fourni)
+                      </p>
+                    )}
+                    {requiresCaptain && !withCaptain && (
+                      <p className={styles.captain_required}>
+                        (Prix du capitaine :{" "}
+                        {new Intl.NumberFormat("fr-FR", {
+                          style: "currency",
+                          currency: service?.currency || "EUR",
+                        }).format(captainPrice)}{" "}
+                        payable à bord)
+                      </p>
+                    )}
+                  </div>
+
+                  {/* <div className={styles.meal_option}>
+                    <label>
+                      Repas à bord (Prix variable, nous contacter):
+                      <input
+                        type="checkbox"
+                        checked={mealOption}
+                        onChange={handleMealOptionChange}
+                      />
+                    </label>
+                  </div> */}
+                  <div className={styles.meal_option}>
+                    <label>
+                      Commander un repas traiteur:
+                      <input
+                        type="checkbox"
+                        checked={mealOption}
+                        onChange={handleMealOptionChange}
+                      />
+                    </label>
+                    <p className={styles.meal_option_description}>
+                      Cochez cette case si vous souhaitez commander un repas via
+                      notre traiteur partenaire. L&apos;administrateur vous
+                      contactera pour vous présenter le menu et les prix. Le
+                      paiement s&apos;effectuera à bord.
+                    </p>
+                  </div>
+                  {Object.values(selectedOptions).length > 0 || !withCaptain ? (
+                    <div className={styles.options_subtotal}>
+                      Sous-total (options{" "}
+                      {Object.values(selectedOptions).length > 0 &&
+                        "+ capitaine"}
+                      ):{" "}
                       {new Intl.NumberFormat("fr-FR", {
                         style: "currency",
                         currency: service?.currency || "EUR",
-                      }).format(option.unitPrice)}
-                      / unité)
-                    </span>
-                    {option.payableAtBoard && (
-                      <div>
-                        <label htmlFor={`quantity-${option.id}`}>
-                          Quantité:
-                        </label>
-                        <input
-                          type="number"
-                          id={`quantity-${option.id}`}
-                          min="0"
-                          defaultValue={
-                            selectedOptions[option.id]?.quantity || 0
-                          }
-                          onChange={(e) =>
-                            handleOptionQuantityChange(
-                              option,
-                              parseInt(e.target.value)
-                            )
-                          }
-                        />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className={styles.captain_option}>
-                <label>
-                  J&apos;ai mon propre capitaine:
-                  <input
-                    type="checkbox"
-                    checked={withCaptain}
-                    onChange={handleWithCaptainChange}
-                  />
-                </label>
-                {requiresCaptain && !withCaptain && (
-                  <p className={styles.captain_required}>
-                    (Capitaine obligatoire si non fourni)
-                  </p>
-                )}
-              </div>
-
-              <div className={styles.meal_option}>
-                <label>
-                  Repas à bord (Prix variable, nous contacter):
-                  <input
-                    type="checkbox"
-                    checked={mealOption}
-                    onChange={handleMealOptionChange}
-                  />
-                </label>
-              </div>
-
-              {Object.values(selectedOptions).length > 0 && (
-                <div className={styles.options_subtotal}>
-                  Sous-total des options :{" "}
-                  {new Intl.NumberFormat("fr-FR", {
-                    style: "currency",
-                    currency: service?.currency || "EUR",
-                  }).format(
-                    Object.values(selectedOptions).reduce(
-                      (sum, option) => sum + option.quantity * option.unitPrice,
-                      0
-                    )
+                      }).format(displayedSubtotal)}
+                      {!withCaptain &&
+                        Object.values(selectedOptions).length === 0 &&
+                        requiresCaptain && <span>(incluant le capitaine)</span>}
+                    </div>
+                  ) : (
+                    <div className={styles.options_subtotal}>
+                      Sous-total des options :{" "}
+                      {new Intl.NumberFormat("fr-FR", {
+                        style: "currency",
+                        currency: service?.currency || "EUR",
+                      }).format(currentOptionsSubtotal)}
+                    </div>
                   )}
                 </div>
-              )}
+              </div>
 
-              {!user && (
-                <div className={styles.anonymous_booking_form}>
-                  <h3>Informations de réservation</h3>
-                  <label htmlFor="fullName">Nom complet:</label>
-                  <input
-                    type="text"
-                    id="fullName"
-                    value={clientInfo.fullName}
-                    onChange={(e) =>
-                      setClientInfo({ ...clientInfo, fullName: e.target.value })
-                    }
-                    required
-                  />
-                  <label htmlFor="email">Email:</label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={clientInfo.email}
-                    onChange={(e) =>
-                      setClientInfo({ ...clientInfo, email: e.target.value })
-                    }
-                    required
-                  />
-                  <label htmlFor="phoneNumber">Téléphone:</label>
-                  <input
-                    type="tel"
-                    id="phoneNumber"
-                    value={clientInfo.phoneNumber}
-                    onChange={(e) =>
-                      setClientInfo({
-                        ...clientInfo,
-                        phoneNumber: e.target.value,
-                      })
-                    }
-                    required
-                  />
+              {/* COLONNE DROITE */}
+              <div className={styles.bloc__right_column}>
+                <div className={styles.right_column}>
+                  {!user && (
+                    <div className={styles.anonymous_booking_form}>
+                      <h2>Informations de réservation</h2>
+                      <label htmlFor="fullName">Nom complet:</label>
+                      <input
+                        type="text"
+                        id="fullName"
+                        value={clientInfo.fullName}
+                        onChange={(e) =>
+                          setClientInfo({
+                            ...clientInfo,
+                            fullName: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                      <label htmlFor="email">Email:</label>
+                      <input
+                        type="email"
+                        id="email"
+                        value={clientInfo.email}
+                        onChange={(e) =>
+                          setClientInfo({
+                            ...clientInfo,
+                            email: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                      <label htmlFor="phoneNumber">Téléphone:</label>
+                      <input
+                        type="tel"
+                        id="phoneNumber"
+                        value={clientInfo.phoneNumber}
+                        onChange={(e) =>
+                          setClientInfo({
+                            ...clientInfo,
+                            phoneNumber: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
+                  )}
+
+                  <button
+                    onClick={handleBooking}
+                    disabled={isBooking || baseServicePrice === null}
+                    className={isBooking ? styles.loading : ""}
+                  >
+                    {isBooking
+                      ? "Réservation en cours..."
+                      : "Réserver ce service"}
+                  </button>
+
+                  {bookingId && (
+                    <button
+                      onClick={handleCancelBooking}
+                      className={styles.cancelButton}
+                      aria-label="Annuler ma réservation"
+                    >
+                      Annuler ma réservation
+                    </button>
+                  )}
                 </div>
-              )}
-
-              <button
-                onClick={handleBooking}
-                disabled={isBooking || baseServicePrice === null}
-                className={isBooking ? styles.loading : ""}
-              >
-                {isBooking ? "Réservation en cours..." : "Réserver ce service"}
-              </button>
-
-              {bookingId && (
-                <button
-                  onClick={handleCancelBooking}
-                  className={styles.cancelButton}
-                  aria-label="Annuler ma réservation"
-                >
-                  Annuler ma réservation
-                </button>
-              )}
+              </div>
             </div>
-          </div>
-          {bookingMessage && (
-            <div className={styles.bookingConfirmationMessage}>
-              <p>{bookingMessage}</p>
-            </div>
-          )}
-        </li>
-      </div>
+
+            {bookingMessage && (
+              <div className={styles.bookingConfirmationMessage}>
+                <p>{bookingMessage}</p>
+              </div>
+            )}
+          </li>
+        </div>
+      </section>
     </Wrapper>
   );
 };

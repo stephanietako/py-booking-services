@@ -1,0 +1,44 @@
+.description {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  color: whitesmoke;
+
+  p {
+    line-height: 1.7;
+    color: whitesmoke;
+  }
+
+  .highlighted {
+    font-weight: bold;
+    background: #002244;
+    color: #00ffff;
+    padding: 1rem;
+    border-left: 5px solid #1e90ff;
+    border-radius: 0.5rem;
+  }
+
+  .included_title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1e90ff;
+  }
+
+  .included_list {
+    margin: 0;
+    padding-left: 1.2rem;
+
+    li {
+      margin-bottom: 0.4rem;
+      position: relative;
+      padding-left: 1rem;
+
+      &::before {
+        content: "✔";
+        position: absolute;
+        left: 0;
+        color: #00ffff;
+      }
+    }
+  }
+}

@@ -275,7 +275,8 @@ export async function createBooking(
   mealOption: boolean = false, // Ajoute le paramètre mealOption ici avec une valeur par défaut
   fullName?: string, // Informations du client si non connecté
   email?: string,
-  phoneNumber?: string
+  phoneNumber?: string,
+  captainPrice: number = 0
 ): Promise<{ booking: Booking; token?: string }> {
   try {
     const start = new Date(startTime);
@@ -378,7 +379,7 @@ export async function createBooking(
       where: { id: { in: options.map((opt) => opt.optionId) } },
     });
 
-    const payableOnBoard = 0;
+    let payableOnBoard = 0;
     const payableOnline = 0;
 
     const bookingOptionsData: Prisma.BookingOptionCreateWithoutBookingInput[] =
@@ -387,6 +388,7 @@ export async function createBooking(
         if (!optionMeta) throw new Error("Option invalide.");
 
         const subtotal = optionMeta.amount * opt.quantity;
+        payableOnBoard += optionMeta.payableAtBoard ? subtotal : 0;
 
         return {
           quantity: opt.quantity,
@@ -397,6 +399,10 @@ export async function createBooking(
           option: { connect: { id: opt.optionId } },
         };
       });
+
+    if (!withCaptain) {
+      payableOnBoard += captainPrice; // Utilisation de captainPrice ici !
+    }
 
     const totalAmount = boatAmount + payableOnline;
 
@@ -436,7 +442,7 @@ export async function createBooking(
         status: "PENDING",
         paymentStatus: "PENDING",
         approvedByAdmin: false,
-        withCaptain,
+        withCaptain: !withCaptain, // Inverse de l'état client
         boatAmount,
         payableOnBoard,
         totalAmount,
@@ -445,7 +451,7 @@ export async function createBooking(
         bookingOptions: {
           create: bookingOptionsData,
         },
-        mealOption: mealOption, // Utilise le paramètre mealOption ici
+        mealOption: mealOption,
       },
       include: { bookingOptions: true, client: true, user: true },
     });

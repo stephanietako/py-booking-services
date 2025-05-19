@@ -1,0 +1,167 @@
+// .bookingDetailsContainer {
+//   padding: 2rem;
+//   background: #1a1a1a;
+//   color: whitesmoke;
+//   border-radius: 1rem;
+//   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+//   margin: 2rem auto; /* Pour centrer la page */
+//   max-width: 800px; /* Ajuste la largeur maximale selon tes besoins */
+// }
+
+// .title {
+//   color: #00ffff;
+//   margin-bottom: 1.5rem;
+//   text-align: center;
+// }
+
+// .label {
+//   color: #1e90ff;
+//   font-weight: bold;
+//   margin-bottom: 0.5rem;
+//   display: block;
+// }
+
+// .value {
+//   margin-bottom: 1rem;
+// }
+
+// .sectionTitle {
+//   color: #00ffff;
+//   margin-top: 2rem;
+//   margin-bottom: 1rem;
+//   border-bottom: 2px solid #00ffff;
+//   padding-bottom: 0.5rem;
+// }
+
+// .optionsList {
+//   list-style: none;
+//   padding: 0;
+//   margin-bottom: 1rem;
+
+//   li {
+//     margin-bottom: 0.5rem;
+//   }
+// }
+
+// .totalAmount {
+//   font-size: 1.2rem;
+//   font-weight: bold;
+//   color: #00ffff;
+//   margin-top: 1.5rem;
+// }
+
+// .paymentNote {
+//   color: orange;
+//   margin-top: 1rem;
+//   font-style: italic;
+// }
+
+// .errorMessage {
+//   color: #ff4d4f;
+//   background-color: #332222;
+//   padding: 1rem;
+//   border-radius: 0.5rem;
+//   margin-top: 1rem;
+// }
+
+// .loadingMessage {
+//   color: #cccccc;
+// }
+.bookingDetailsContainer {
+  color: #f5f5f5;
+  background: #1a1a1a;
+  border-radius: 1rem;
+  max-width: 90%;
+  margin: 2rem auto;
+  padding: 2rem;
+  box-shadow: 0 0 1rem #00000085;
+  width: 70%;
+}
+
+.title {
+  color: #00ffff;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.twoColumns {
+  display: flex;
+  gap: 2rem; /* Espacement entre les colonnes */
+}
+
+.leftBlock {
+  flex: 1; /* Prend une part égale de l'espace */
+}
+
+.rightBlock {
+  flex: 1; /* Prend une part égale de l'espace */
+}
+
+.label {
+  color: #1e90ff;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.value {
+  margin-bottom: 1rem;
+  color: whitesmoke;
+}
+
+.sectionTitle {
+  color: #00ffff;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #00ffff;
+  padding-bottom: 0.5rem;
+}
+
+.optionsList {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1rem;
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.totalAmount {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00ffff;
+  margin-top: 1.5rem;
+}
+
+.paymentNote {
+  color: orange;
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+.errorMessage {
+  color: #ff4d4f;
+  background-color: #332222;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.loadingMessage {
+  color: #cccccc;
+}
+
+.clientInfo {
+  margin-bottom: 2rem; /* Ajoute un peu d'espace sous les infos client */
+}
+
+.userInfo {
+  margin-top: 1rem; /* Ajoute un peu d'espace au-dessus des infos utilisateur */
+}
+
+.bold {
+  font-weight: bold;
+  color: #00ffff;
+  margin-top: 1rem;
+}

@@ -1,32 +1,331 @@
+/* Global Layout */
 .service_list {
   display: flex;
-  gap: 20px;
-  width: 100%;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: #000000e3;
+  color: whitesmoke;
+  border-radius: 1rem;
+  //border: 4px solid rgb(30, 0, 255);
+}
+
+/* Card Container */
+.service_item {
+  display: flex;
+  flex-direction: column;
+  background: #111;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+/* Two Columns */
+.service_item__content {
+  //border: 4px solid red;
+  /* flex-direction: row; */
   justify-content: center;
-  flex-wrap: wrap;
-  padding: 0.5rem;
-  margin-top: 20vh;
-  background: aliceblue;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 2rem;
+  display: flex;
+}
 
-  .service_list__container {
+.left_column {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: #0f0f0f;
+  padding: 1.5rem;
+  border-radius: 1rem;
+}
+
+.bloc__right_column {
+  //border: 4px solid pink;
+  width: 50%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4rem;
+
+  .right_column {
+    flex: 1;
+    background: #1a1a1a;
+    padding: 1.5rem;
+    border-radius: 1rem;
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    background: aliceblue;
+    flex-direction: column;
+    gap: 1rem;
+    color: whitesmoke;
+    //border: 4px solid yellow;
   }
-  .clickableOption {
-    cursor: pointer;
-    padding: 8px;
-    border-bottom: 1px solid #eee;
+}
 
-    &:hover {
-      background-color: #f9f9f9;
+/* Image Block */
+.__img_content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+
+  .__img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    object-fit: cover;
+  }
+}
+
+/* Details Section */
+.service_item__details {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2rem;
+  gap: 1rem;
+}
+
+.service_item__title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #00ffff;
+}
+
+.service_item__stats {
+  font-size: 1.2rem;
+  color: #1e90ff;
+  p {
+    color: whitesmoke;
+  }
+}
+
+/* Options */
+.options_list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.option_item {
+  background: #1a1a1a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  input[type="number"] {
+    width: 80px;
+    padding: 0.3rem;
+    background: #222;
+    color: whitesmoke;
+    border: 1px solid #00ffff;
+    border-radius: 0.3rem;
+  }
+}
+
+/* Captain & Meal Checkboxes */
+.captain_option,
+.meal_option {
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Augmenter un peu l'espace */
+    margin-bottom: 0.5rem; /* Réduire un peu la marge */
+    cursor: pointer;
+  }
+
+  input[type="checkbox"] {
+    appearance: none;
+    background-color: #222; /* Fond plus sombre */
+    border: 1px solid #00ffff; /* Bordure cyan */
+    border-radius: 0.2rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition:
+      background-color 0.2s ease-in-out,
+      border-color 0.2s ease-in-out;
+
+    &:checked {
+      background-color: #00ffff; /* Fond cyan quand coché */
+      border-color: #00ffff;
+      .captain_option input[type="checkbox"]:checked::before,
+      .meal_option input[type="checkbox"]:checked::before {
+        content: ""; /* Important de laisser vide */
+        display: block;
+        width: 0.8rem; /* Ajuster la taille */
+        height: 0.8rem;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E"); /* Exemple d'URL Data SVG (noir) */
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.2rem rgba(0, 255, 255, 0.5); /* Effet de focus */
     }
   }
+}
 
-  .subtotal {
-    margin-top: 10px;
+.meal_option_description {
+  font-size: 0.8em;
+  color: #ccc;
+  margin-left: 2.5rem; /* Ajuster la marge pour l'alignement */
+  margin-top: 0.2rem;
+  p {
+    color: whitesmoke;
+  }
+}
+
+.captain_required {
+  color: #ff5555;
+  font-size: 0.9rem;
+  margin-left: 2.5rem; /* Ajuster la marge pour l'alignement */
+}
+
+/* Subtotal */
+.options_subtotal {
+  font-weight: bold;
+  color: #00ffff;
+  margin-top: 1rem;
+}
+
+/* Anonymous Booking */
+.anonymous_booking_form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    color: #1e90ff;
     font-weight: bold;
+  }
+
+  input {
+    padding: 0.5rem;
+    background: #222;
+    color: whitesmoke;
+    border: 1px solid #00ffff;
+    border-radius: 0.4rem;
+  }
+}
+
+/* Loading Button */
+.loading {
+  background-color: #444 !important;
+  color: #aaa;
+  cursor: wait;
+}
+
+/* Cancel Button */
+.cancelButton {
+  margin-top: 0.5rem;
+  background-color: transparent;
+  color: #ff5555;
+  border: 1px solid #ff5555;
+
+  &:hover {
+    background-color: #ff5555;
+    color: #000;
+  }
+}
+
+/* Confirmation Message */
+.bookingConfirmationMessage {
+  margin-top: 1rem;
+  background-color: #003;
+  color: #00ffff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+/* Notes / Info */
+.info_note {
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Title in right column */
+.right_column__title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #00ffff;
+  margin-bottom: 1rem;
+}
+
+//////////// RESPONSIVE //////////
+@media (max-width: 768px) {
+  .service_item__content {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .left_column,
+  .right_column {
+    padding: 1rem;
+  }
+
+  .__img_content {
+    padding: 0.5rem;
+  }
+
+  .__img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+  }
+
+  .service_item__details {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .options_list {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .option_item {
+    padding: 0.75rem;
+  }
+
+  .anonymous_booking_form {
+    gap: 0.5rem;
+  }
+
+  .anonymous_booking_form input,
+  .option_item input[type="number"] {
+    width: 100%;
+  }
+
+  .cancelButton {
+    width: 100%;
+  }
+
+  .bookingConfirmationMessage {
+    font-size: 0.95rem;
+    padding: 0.75rem;
   }
 }
