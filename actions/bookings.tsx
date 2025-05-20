@@ -478,7 +478,7 @@ export async function createBooking(
         updatedBooking.clientId !== null ? updatedBooking.clientId : undefined,
         updatedBooking.userId !== null ? updatedBooking.userId : undefined
       );
-      await sendConfirmationEmails(updatedBooking.id, token); // Envoyer l'email avec le token
+      await sendConfirmationEmails(updatedBooking.id); // Envoyer l'email avec le token
       return { booking: updatedBooking as Booking, token };
     } else {
       await sendConfirmationEmails(updatedBooking.id); // Envoyer l'email sans token si une erreur s'est produite lors de la génération du token

@@ -1,9 +1,12 @@
+//Ce fichier fournit une route API réutilisable pour envoyer des emails.  Au lieu d'intégrer la logique d'envoi d'email directement dans chaque partie de l'application qui en a besoin, ces parties peuvent simplement faire une requête POST à /api/send-email avec les détails de l'email.
+// Cela centralise la logique d'envoi d'email et facilite la maintenance du code.
+
 // app/api/send-email/route.ts
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.RESEND_FROM_EMAIL || "yachtingday@gmail.com";
+const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 export async function POST(req: Request) {
   try {
     const { to, subject, body } = await req.json();

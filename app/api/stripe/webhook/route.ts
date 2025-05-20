@@ -1,106 +1,4 @@
-// app/api/stripe/webhook/route.ts
-// import Stripe from "stripe";
-// import { stripe } from "@/lib/stripe";
-// import { prisma } from "@/lib/prisma";
-// import { NextResponse } from "next/server";
-// //import { sendConfirmationEmails } from "@/lib/sendEmails";
-
-// // ✅ Force le runtime Node.js (pas Edge)
-// export const dynamic = "force-dynamic";
-
-// const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
-// // 🔄 Utilitaire pour convertir ReadableStream -> Buffer
-// async function buffer(readable: ReadableStream<Uint8Array>): Promise<Buffer> {
-//   const reader = readable.getReader();
-//   const chunks: Uint8Array[] = [];
-
-//   while (true) {
-//     const { done, value } = await reader.read();
-//     if (done) break;
-//     if (value) chunks.push(value);
-//   }
-
-//   return Buffer.concat(chunks);
-// }
-
-// export async function POST(req: Request) {
-//   const sig = req.headers.get("stripe-signature");
-//   if (!sig)
-//     return NextResponse.json(
-//       { error: "Missing Stripe signature" },
-//       { status: 400 }
-//     );
-
-//   let event: Stripe.Event;
-
-//   try {
-//     const rawBody = await buffer(req.body as ReadableStream);
-//     event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
-//   } catch (err) {
-//     console.error("❌ Signature Stripe invalide:", err);
-//     return NextResponse.json(
-//       { error: "Invalid Stripe signature" },
-//       { status: 400 }
-//     );
-//   }
-
-//   // ✅ Traite les événements nécessaires
-//   switch (event.type) {
-//     case "checkout.session.completed": {
-//       const session = event.data.object as Stripe.Checkout.Session;
-//       const bookingId = Number(session.metadata?.bookingId);
-
-//       if (!bookingId)
-//         return NextResponse.json(
-//           { error: "bookingId missing" },
-//           { status: 400 }
-//         );
-
-//       try {
-//         const booking = await prisma.booking.findUnique({
-//           where: { id: bookingId },
-//         });
-//         if (!booking)
-//           return NextResponse.json(
-//             { error: "Booking not found" },
-//             { status: 404 }
-//           );
-
-//         if (booking.paymentStatus !== "PAID") {
-//           await prisma.booking.update({
-//             where: { id: bookingId },
-//             data: {
-//               status: "PAID",
-//               paymentStatus: "PAID",
-//               stripeSessionId: session.id,
-//             },
-//           });
-
-//           await prisma.transaction.create({
-//             data: {
-//               bookingId,
-//               amount: booking.totalAmount,
-//               description: `Paiement Stripe #${session.id}`,
-//               paymentStatus: "PAID",
-//             },
-//           });
-//           //await sendConfirmationEmails(bookingId);
-//         }
-
-//         return NextResponse.json({ received: true });
-//       } catch (err) {
-//         console.error("❌ Erreur Stripe:", err);
-//         return NextResponse.json({ error: "Server error" }, { status: 500 });
-//       }
-//     }
-
-//     default:
-//       console.log(`ℹ️ Ignored event type: ${event.type}`);
-//       return NextResponse.json({ message: "Event ignored" }, { status: 200 });
-//   }
-// }
-// app/api/stripe/webhook/route.ts
+// app/api/stripe/webhook
 import Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
@@ -125,6 +23,7 @@ async function buffer(readable: ReadableStream<Uint8Array>): Promise<Buffer> {
 }
 
 export async function POST(req: Request) {
+  console.log("Webhook Stripe reçu");
   const sig = req.headers.get("stripe-signature");
   if (!sig) {
     return NextResponse.json(
@@ -146,12 +45,15 @@ export async function POST(req: Request) {
     );
   }
 
-  switch (event.type) {
+  const eventType = event.type as Stripe.Event["type"]; // ✅ Typage strict
+
+  switch (eventType) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
       const bookingId = Number(session.metadata?.bookingId);
 
       if (!bookingId) {
+        console.warn("📭 bookingId manquant dans metadata", session.metadata);
         return NextResponse.json(
           { error: "bookingId missing" },
           { status: 400 }
@@ -161,12 +63,40 @@ export async function POST(req: Request) {
       try {
         const booking = await prisma.booking.findUnique({
           where: { id: bookingId },
+          include: {
+            Service: true,
+          },
         });
 
         if (!booking || booking.paymentStatus === "PAID") {
           return NextResponse.json(
             { message: "Booking already handled" },
             { status: 200 }
+          );
+        }
+
+        // ✅ Vérification du montant payé
+        const expectedAmount = Math.round(booking.totalAmount * 100); // en centimes
+        const actualAmount = session.amount_total;
+
+        if (actualAmount !== expectedAmount) {
+          console.error(
+            `❌ Montant Stripe incorrect : attendu ${expectedAmount}, reçu ${actualAmount}`
+          );
+          return NextResponse.json(
+            { error: "Montant payé non valide" },
+            { status: 400 }
+          );
+        }
+
+        // ✅ Vérification (optionnelle) de la devise (avec normalisation)
+        const expectedCurrency = booking.Service?.currency;
+        const expectedCurrencyNormalized = expectedCurrency?.toUpperCase();
+        const receivedCurrency = session.currency?.toUpperCase();
+
+        if (receivedCurrency !== expectedCurrencyNormalized) {
+          console.warn(
+            `⚠️ Devise différente : attendu ${expectedCurrencyNormalized}, reçu ${receivedCurrency}`
           );
         }
 
@@ -221,7 +151,9 @@ export async function POST(req: Request) {
     }
 
     default:
-      console.log(`ℹ️ Événement ignoré : ${event.type}`);
-      return NextResponse.json({ message: "Event ignored" }, { status: 200 });
+      console.log(`ℹ️ Événement ignoré : ${eventType}`);
+      break;
   }
+
+  return NextResponse.json({ received: true });
 }

@@ -1,4 +1,4 @@
-// app/api/bookings/send-invoice/route.ts
+// app/api/admin/bookings/send-invoice/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateInvoice } from "@/lib/pdf/generateInvoice";
@@ -6,7 +6,7 @@ import { Booking } from "@/types";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.RESEND_FROM_EMAIL || "yachtingday@gmail.com";
+const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 export async function POST(req: Request) {
   try {
     const { bookingId } = await req.json();
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
     // 3. Détails communs
     const clientEmail = booking.client.email;
-    const adminEmail = process.env.ADMIN_EMAIL || "yachtingday@gmail.com";
+    const adminEmail = process.env.ADMIN_EMAIL || "gabeshine@live.fr";
     const fileName = `facture-booking-${booking.id}.pdf`;
 
     // 4. Envoi au client
@@ -50,7 +50,13 @@ export async function POST(req: Request) {
         from: fromEmail,
         to: clientEmail,
         subject: `Votre facture de réservation #${booking.id}`,
-        html: `<p>Bonjour ${booking.client.fullName},</p><p>Voici votre facture en pièce jointe. Merci pour votre confiance !</p>`,
+        html: `
+      <div style="font-family: sans-serif;">
+   <img src="http://localhost:3000/assets/logo/logo-new.png" alt="Yachting Day" width="150" />
+        <p>Bonjour ${booking.client.fullName},</p>
+        <p>Voici votre facture en pièce jointe. Merci pour votre confiance !</p>
+      </div>
+    `,
         attachments: [
           {
             filename: fileName,
@@ -66,7 +72,12 @@ export async function POST(req: Request) {
       from: fromEmail,
       to: adminEmail,
       subject: `📄 Facture de réservation #${booking.id}`,
-      html: `<p>Facture de la réservation #${booking.id} jointe en PDF.</p>`,
+      html: `
+    <div style="font-family: sans-serif;">
+   <img src="http://localhost:3000/assets/logo/logo-new.png" alt="Yachting Day" width="150" />
+      <p>Facture de la réservation #${booking.id} jointe en PDF.</p>
+    </div>
+  `,
       attachments: [
         {
           filename: fileName,
