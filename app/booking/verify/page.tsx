@@ -1,10 +1,10 @@
-// app/booking/verify/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { Booking, Service, BookingOption, Client } from "@/types";
 import styles from "./styles.module.scss";
 import { toast } from "react-hot-toast";
+import Spinner from "@/app/components/Spinner/Spinner";
 
 export interface BookingWithDetails extends Booking {
   service: Service;
@@ -21,8 +21,7 @@ export default function VerifyBooking() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isRequesting, setIsRequesting] = useState(false);
-
-  console.log("Rendu de VerifyBooking avec bookingDetails :", bookingDetails);
+  const [requestSent, setRequestSent] = useState(false);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -39,7 +38,6 @@ export default function VerifyBooking() {
         .then(async (response) => {
           if (!response.ok) {
             const err = await response.json();
-            console.error("Erreur lors de la vérification du token :", err);
             throw new Error(
               err.error || "Erreur lors de la vérification du token."
             );
@@ -47,12 +45,10 @@ export default function VerifyBooking() {
           return response.json() as Promise<{ data: BookingWithDetails }>;
         })
         .then((data) => {
-          console.log("Données de la réservation reçues :", data);
           setBookingDetails(data.data);
           setLoading(false);
         })
         .catch((err) => {
-          console.error("Erreur lors du traitement de la réponse :", err);
           setError(err.message);
           setLoading(false);
         });
@@ -62,8 +58,90 @@ export default function VerifyBooking() {
     }
   }, []);
 
+  // const handleRequestBooking = async () => {
+  //   if (bookingDetails?.id && bookingDetails.client && !isRequesting) {
+  //     setIsRequesting(true);
+  //     try {
+  //       let stripeUrl: string | null = null;
+
+  //       // 1. Créer le lien de paiement Stripe
+  //       const createStripeLinkResponse = await fetch(
+  //         `/api/admin/bookings/${bookingDetails.id}/payment-url`
+  //       );
+
+  //       if (createStripeLinkResponse.ok) {
+  //         const { url } = await createStripeLinkResponse.json();
+  //         stripeUrl = url;
+  //       }
+
+  //       // 2. Envoyer les détails de la réservation à l'administrateur (avec stripeUrl)
+  //       const sendDetailsResponse = await fetch(
+  //         `/api/admin/bookings/sendReservationDetails`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             bookingId: String(bookingDetails.id),
+  //             firstName: bookingDetails.client.fullName.split(" ")[0],
+  //             lastName: bookingDetails.client.fullName
+  //               .split(" ")
+  //               .slice(1)
+  //               .join(" "),
+  //             email: bookingDetails.client.email,
+  //             phoneNumber: bookingDetails.client.phoneNumber,
+  //             reservationTime: new Date(
+  //               bookingDetails.startTime
+  //             ).toLocaleString("fr-FR"),
+  //             stripeUrl,
+  //           }),
+  //         }
+  //       );
+
+  //       // 3. Envoyer l'email de confirmation de réception au client
+  //       const sendConfirmationResponse = await fetch(
+  //         `/api/send-request-confirmation`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             bookingId: bookingDetails.id,
+  //             clientEmail: bookingDetails.client.email,
+  //             clientName: bookingDetails.client.fullName,
+  //           }),
+  //         }
+  //       );
+
+  //       if (sendDetailsResponse.ok && sendConfirmationResponse.ok) {
+  //         toast.success(
+  //           "Votre demande de réservation a été envoyée. Vous allez être redirigé vers le paiement.",
+  //           { position: "top-center" }
+  //         );
+  //       } else {
+  //         toast.error(
+  //           "Une erreur est survenue lors de l'envoi de votre demande.",
+  //           { position: "top-center" }
+  //         );
+  //       }
+  //     } catch (error) {
+  //       toast.error("Erreur inattendue : " + error, {
+  //         position: "top-center",
+  //       });
+  //     } finally {
+  //       setIsRequesting(false);
+  //     }
+  //   }
+  // };
   const handleRequestBooking = async () => {
-    if (bookingDetails?.id && bookingDetails.client && !isRequesting) {
+    if (
+      bookingDetails?.id &&
+      bookingDetails.client &&
+      !isRequesting &&
+      !requestSent
+    ) {
       setIsRequesting(true);
       try {
         let stripeUrl: string | null = null;
@@ -76,9 +154,6 @@ export default function VerifyBooking() {
         if (createStripeLinkResponse.ok) {
           const { url } = await createStripeLinkResponse.json();
           stripeUrl = url;
-          console.log("Lien Stripe généré :", stripeUrl);
-        } else {
-          console.warn("⚠️ Échec de la génération du lien Stripe.");
         }
 
         // 2. Envoyer les détails de la réservation à l'administrateur (avec stripeUrl)
@@ -101,7 +176,7 @@ export default function VerifyBooking() {
               reservationTime: new Date(
                 bookingDetails.startTime
               ).toLocaleString("fr-FR"),
-              stripeUrl, // ✅ Ajout ici
+              stripeUrl,
             }),
           }
         );
@@ -122,35 +197,37 @@ export default function VerifyBooking() {
           }
         );
 
-        // 4. Afficher les toasts et rediriger si besoin
         if (sendDetailsResponse.ok && sendConfirmationResponse.ok) {
           toast.success(
             "Votre demande de réservation a été envoyée. Vous allez être redirigé vers le paiement.",
             { position: "top-center" }
           );
 
-          // // ✅ Ouvrir Stripe dans un nouvel onglet si le lien existe
-          // if (stripeUrl) {
-          //   window.open(stripeUrl, "_blank");
-          // }
+          setRequestSent(true); // ← signaler que la demande est envoyée
+          setIsRequesting(false);
+
+          // Redirection après 3 secondes
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 3000);
         } else {
           toast.error(
             "Une erreur est survenue lors de l'envoi de votre demande.",
             { position: "top-center" }
           );
+          setIsRequesting(false);
         }
       } catch (error) {
         toast.error("Erreur inattendue : " + error, {
           position: "top-center",
         });
-      } finally {
         setIsRequesting(false);
       }
     }
   };
 
   if (loading) {
-    return <p className={styles.loadingMessage}>Vérification en cours...</p>;
+    return <Spinner />;
   }
 
   if (error) {
@@ -158,11 +235,6 @@ export default function VerifyBooking() {
   }
 
   if (bookingDetails) {
-    console.log(
-      "Structure complète de bookingDetails dans le rendu :",
-      bookingDetails
-    );
-
     const totalPayableOnBoard = bookingDetails.bookingOptions.reduce(
       (sum, bookingOption) =>
         bookingOption.option.payableAtBoard
@@ -172,7 +244,7 @@ export default function VerifyBooking() {
     );
 
     const captainPrice = 350;
-    const isWithCaptain = bookingDetails.withCaptain; // True si le capitaine EST inclus dans les détails de la réservation
+    const isWithCaptain = bookingDetails.withCaptain;
     let finalTotalAmount = bookingDetails.boatAmount + totalPayableOnBoard;
     let captainIncluded = false;
     const mealOptionSelected = bookingDetails.mealOption;
@@ -219,19 +291,6 @@ export default function VerifyBooking() {
                       timeStyle: "short",
                     })
                   : "Date de fin invalide"}
-              </span>
-            </p>
-            <p>
-              <span className={styles.label}>
-                Prix de la location du bateau :
-              </span>{" "}
-              <span className={styles.value}>
-                {typeof bookingDetails.boatAmount === "number"
-                  ? new Intl.NumberFormat("fr-FR", {
-                      style: "currency",
-                      currency: bookingDetails.service?.currency || "EUR",
-                    }).format(bookingDetails.boatAmount)
-                  : "Prix de location invalide"}
               </span>
             </p>
             <p>
@@ -307,7 +366,7 @@ export default function VerifyBooking() {
                   </ul>
                   <p>
                     <span className={styles.label}>
-                      Montant total des options à payer à bord :
+                      Montant total des options à régler à bord :
                     </span>{" "}
                     <span className={styles.value}>
                       {new Intl.NumberFormat("fr-FR", {
@@ -318,8 +377,29 @@ export default function VerifyBooking() {
                   </p>
                 </div>
               )}
+
+            {/* Détail intermédiaire avec prix bateau */}
+            <div className={styles.intermediatePrice}>
+              <p>
+                <span className={styles.label}>
+                  Prix de la location du bateau (à régler en ligne après
+                  soumission) :
+                </span>{" "}
+                <span className={styles.value}>
+                  {new Intl.NumberFormat("fr-FR", {
+                    style: "currency",
+                    currency: bookingDetails.service?.currency || "EUR",
+                  }).format(bookingDetails.boatAmount)}
+                </span>
+              </p>
+            </div>
+
+            {/* Ligne de séparation */}
+            <hr className={styles.separator} />
+
+            {/* Total final */}
             <p className={styles.totalAmount}>
-              <span className={styles.label}>Montant total à payer :</span>{" "}
+              <span className={styles.label}>Montant total à régler :</span>{" "}
               <span className={styles.value}>
                 {new Intl.NumberFormat("fr-FR", {
                   style: "currency",
@@ -347,13 +427,27 @@ export default function VerifyBooking() {
             )}
           </div>
         </div>
-        <button
-          className={styles.requestButton}
-          onClick={handleRequestBooking}
-          disabled={isRequesting}
-        >
-          {isRequesting ? "Demande en cours..." : "Demande de Réservation"}
-        </button>
+        <span className={styles.btn__requestButton}>
+          <button
+            className={styles.__requestButton}
+            onClick={handleRequestBooking}
+            disabled={isRequesting || requestSent}
+          >
+            {isRequesting
+              ? "Demande en cours..."
+              : requestSent
+                ? "Demande envoyée"
+                : "Soumettre ma demande"}
+          </button>
+        </span>
+
+        <br />
+        <span className={styles.infoText}>
+          <p>
+            Après validation, vous recevrez un email avec un lien pour effectuer
+            votre paiement.
+          </p>
+        </span>
       </div>
     );
   }

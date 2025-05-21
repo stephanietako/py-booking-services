@@ -72,7 +72,7 @@ export async function sendConfirmationToClient(booking: Booking) {
 
   const html = `
     <h2>Bonjour ${booking.client.fullName},</h2>
-    <p>Merci pour votre réservation avec <strong>${booking.service.name}</strong>.</p>
+    <p>Merci pour la réservation de votre <strong>${booking.service.name}</strong> avec Yaching Day .</p>
     <p><strong>Date :</strong> ${new Date(booking.startTime).toLocaleString("fr-FR", { dateStyle: "full", timeStyle: "short" })} - ${new Date(booking.endTime).toLocaleTimeString("fr-FR")}</p>
     <p><strong>Montant payé en ligne :</strong> ${formatter.format(booking.boatAmount)}</p>
     <p><strong>Total à régler à bord :</strong> ${formatter.format(onboardTotal)}</p>
