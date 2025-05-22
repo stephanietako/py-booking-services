@@ -17,14 +17,15 @@
 }
 
 .steps_bar {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  font-weight: 600;
-  font-size: 1rem;
   user-select: none;
-  color: #6b7280; /* muted-text */
+  color: #6b7280;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  font-size: 0.8rem;
+  font-weight: 1rem;
+  display: flex;
+  font-weight: 600;
 
   .step {
     display: flex;
@@ -128,7 +129,7 @@
       background-color: #14e9f7;
       border-radius: 12px;
       font-weight: 500;
-      font-size: 1.05em;
+      font-size: 0.9rem;
       color: #6b7280;
       padding: 0.25rem 1rem;
       display: flex;
@@ -365,7 +366,7 @@
   }
 
   .react-calendar {
-    width: 100%;
+    width: 70%;
     max-width: 100%;
     padding: 0.75rem;
   }
@@ -380,7 +381,6 @@
     }
 
     .react-calendar__navigation__label {
-      font-size: 0.9em;
       width: 140px;
       padding: 0.2rem 0.75rem;
     }
@@ -389,6 +389,7 @@
   .steps_bar {
     gap: 1rem;
     font-size: 0.9rem;
+    flex-direction: column;
 
     .step {
       gap: 0.4rem;
