@@ -1,14 +1,16 @@
 //app/components/BookingForm/BookingForm.tsx
+// app/components/BookingForm/BookingForm.tsx
 
 "use client";
 
-import { Booking } from "@/types";
+// Importez BookingWithDetails au lieu de Booking
+import { BookingWithDetails } from "@/types"; // <-- CHANGEMENT ICI
 import { useState } from "react";
 import { sendBookingToAdmin } from "@/lib/emailService";
 import styles from "./styles.module.scss";
 
 interface Props {
-  booking: Booking;
+  booking: BookingWithDetails; // <-- CHANGEMENT ICI : Le composant attend maintenant BookingWithDetails
 }
 
 export default function BookingForm({ booking }: Props) {
@@ -35,6 +37,7 @@ export default function BookingForm({ booking }: Props) {
     setError(null);
 
     try {
+      // sendBookingToAdmin reçoit maintenant un booking qui est garanti BookingWithDetails
       await sendBookingToAdmin(booking, formData);
 
       const res = await fetch(`/api/bookings/${booking.id}/payment-url`);
@@ -54,7 +57,7 @@ export default function BookingForm({ booking }: Props) {
 
   const formatter = new Intl.NumberFormat("fr-FR", {
     style: "currency",
-    currency: booking.service?.currency || "EUR",
+    currency: booking.Service.currency || "EUR", // <-- CHANGEMENT ICI : Utilisez `booking.Service.currency`
   });
 
   return (

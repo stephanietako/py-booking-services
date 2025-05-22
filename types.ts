@@ -120,10 +120,17 @@ export interface Booking {
   mealOption: boolean;
 }
 
+// export interface BookingWithDetails extends Booking {
+//   service: Service;
+//   bookingOptions: BookingOption[];
+//   client: Client;
+// }
+// Remplacez votre BookingWithDetails existant par celui-ci
 export interface BookingWithDetails extends Booking {
-  service: Service;
-  bookingOptions: BookingOption[];
-  client: Client | null;
+  Service: Service;
+  client: Client;
+  bookingOptions: (BookingOption & { option: Option })[];
+  user?: User | null;
 }
 
 export interface Day {
