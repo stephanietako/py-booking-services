@@ -1,4 +1,3 @@
-// lib/emailService.ts
 import { BookingWithDetails } from "@/types";
 import { generateInvoice } from "@/lib/pdf/generateInvoice";
 
@@ -16,7 +15,7 @@ export async function sendBookingToAdmin(
 ) {
   if (
     !booking ||
-    !booking.Service ||
+    !booking.service ||
     !booking.client ||
     !booking.bookingOptions ||
     booking.bookingOptions.some((opt) => !opt.option)
@@ -37,33 +36,36 @@ export async function sendBookingToAdmin(
     `${baseUrl}/api/admin/bookings/${booking.id}/payment-url`
   );
   const data = await res.json();
-  const stripeUrl = data?.url;
 
-  if (!res.ok || !stripeUrl) {
-    throw new Error(data.error || "Échec de génération du lien de paiement.");
+  if (!res.ok || typeof data?.url !== "string") {
+    throw new Error(data?.error || "Échec de génération du lien de paiement.");
   }
 
-  // Construire le contenu du mail - Accédez à booking.Service.name
+  const stripeUrl = data.url;
+
+  // Construire le contenu de l'email (texte brut)
   const emailContent = `
-    Nouvelle demande de réservation :
-    
-    Nom : ${formData.firstName} ${formData.lastName}
-    Email : ${formData.email}
-    Téléphone : ${formData.phoneNumber}
+Nouvelle demande de réservation :
 
-    Réservation :
-    Service : ${booking.Service.name}
-    Date : ${new Date(booking.startTime).toLocaleDateString("fr-FR")}
-    Heure : ${new Date(booking.startTime).toLocaleTimeString("fr-FR")} - ${new Date(booking.endTime).toLocaleTimeString("fr-FR")}
-    Montant : ${new Intl.NumberFormat("fr-FR", { style: "currency", currency: booking.Service.currency || "EUR" }).format(booking.totalAmount)}
+👤 Client : ${formData.firstName} ${formData.lastName}
+📧 Email : ${formData.email}
+📞 Téléphone : ${formData.phoneNumber}
 
-    👉 Lien de paiement Stripe : ${stripeUrl}
-  `;
+🛥️ Service : ${booking.service.name}
+📅 Date : ${new Date(booking.startTime).toLocaleDateString("fr-FR")}
+🕐 Heure : ${new Date(booking.startTime).toLocaleTimeString("fr-FR")} - ${new Date(booking.endTime).toLocaleTimeString("fr-FR")}
+💰 Montant : ${new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: booking.service.currency || "EUR",
+  }).format(booking.totalAmount)}
 
-  // Envoi mail à l'admin avec la facture PDF attachée
+🔗 Lien de paiement : ${stripeUrl}
+`;
+
+  // Envoi de l'email à l'administrateur avec la facture en pièce jointe
   await sendEmail({
     to: process.env.ADMIN_EMAIL || "gabeshine@live.fr",
-    subject: `Nouvelle demande de réservation`,
+    subject: "Nouvelle demande de réservation",
     body: emailContent,
     attachments: [
       {
@@ -74,7 +76,7 @@ export async function sendBookingToAdmin(
   });
 }
 
-// Fonction sendEmail inchangée
+// Fonction d'envoi d'email générique
 async function sendEmail({
   to,
   subject,
@@ -89,21 +91,27 @@ async function sendEmail({
   attachments?: { filename: string; content: string }[];
 }) {
   try {
-    const text = body ?? "";
-
     const response = await fetch("/api/send-email", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ to, subject, text, html, attachments }),
+      body: JSON.stringify({
+        to,
+        subject,
+        text: body ?? "",
+        html,
+        attachments,
+      }),
     });
 
     if (!response.ok) {
       throw new Error(`Échec de l'envoi de l'email : ${response.statusText}`);
     }
 
-    console.log("✅ Email envoyé à", to);
+    if (process.env.NODE_ENV !== "production") {
+      console.log("✅ Email envoyé à", to);
+    }
   } catch (error) {
     console.error("❌ Erreur d'envoi email:", error);
     throw new Error("Erreur lors de l'envoi de l'email.");

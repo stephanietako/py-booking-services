@@ -131,6 +131,7 @@ export interface BookingWithDetails extends Booking {
   client: Client;
   bookingOptions: (BookingOption & { option: Option })[];
   user?: User | null;
+  withCaptain: boolean;
 }
 
 export interface Day {

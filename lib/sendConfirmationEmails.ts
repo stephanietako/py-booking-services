@@ -494,20 +494,18 @@
 //     throw new Error("Échec de l'envoi des emails de confirmation.");
 //   }
 // }
+// lib/sendConfirmationEmails.ts
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
-// Importez tous vos types depuis votre fichier types/index.ts (ou le chemin approprié)
 import { Booking, BookingOption, Client, Service, Option } from "@/types";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const adminEmail = process.env.ADMIN_EMAIL || "gabeshine@live.fr";
 const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 
-// Définissez un type d'aide pour la réservation avec toutes les inclusions nécessaires
-// C'est la structure que Prisma va retourner avec les includes que nous allons faire.
 type BookingWithAllNeededDetails = Booking & {
   Service: Service;
-  bookingOptions: (BookingOption & { option: Option })[]; // <-- ici nous nous assurons que 'option' est bien là
+  bookingOptions: (BookingOption & { option: Option })[];
   client: Client | null;
 };
 
@@ -518,13 +516,9 @@ export async function sendConfirmationEmails(bookingId: number) {
       include: {
         Service: true,
         bookingOptions: {
-          include: {
-            option: true, // <-- LE CHANGEMENT CLÉ EST ICI : Inclure le modèle Option
-          },
+          include: { option: true },
         },
         client: true,
-        // Si aussi besoin de l'utilisateur pour l'e-mail admin, ajoutez :
-        // user: true,
       },
     });
 
@@ -532,15 +526,12 @@ export async function sendConfirmationEmails(bookingId: number) {
       throw new Error("❌ Réservation ou service manquant.");
     }
 
-    // Caster la réservation récupérée vers le type étendu.
-    //  ici car Prisma a inclus 'option' dans bookingOptions.
-    const booking: BookingWithAllNeededDetails =
-      rawBooking as BookingWithAllNeededDetails;
+    const booking = rawBooking as BookingWithAllNeededDetails;
 
     const {
       client,
       Service: service,
-      bookingOptions, // Ce bookingOptions contient maintenant les détails de 'option'
+      bookingOptions,
       totalAmount,
       startTime,
       endTime,
@@ -553,21 +544,18 @@ export async function sendConfirmationEmails(bookingId: number) {
     const phoneNumber = client?.phoneNumber ?? "Non renseigné";
     const currency = service.currency || "EUR";
 
-    // --- CALCUL CORRIGÉ DU ONBOARDTOTAL ---
-    // Maintenant, chaque 'opt' dans 'bookingOptions' aura 'opt.option.payableAtBoard'
-    const onboardTotal = bookingOptions.reduce((sum, opt) => {
-      // Condition pour inclure le montant de l'option SEULEMENT si elle est payableAtBoard
-      if (opt.option?.payableAtBoard) {
-        // Utilisez 'opt.option?' au cas où 'option' serait indéfini pour une raison quelconque
-        return sum + (opt.unitPrice ?? 0) * (opt.quantity ?? 0);
-      }
-      return sum;
-    }, 0);
-
     const formatter = new Intl.NumberFormat("fr-FR", {
       style: "currency",
       currency,
     });
+
+    // Calcul du total des options à régler à bord
+    const onboardTotal = bookingOptions.reduce((sum, opt) => {
+      if (opt.option?.payableAtBoard) {
+        return sum + (opt.option.unitPrice ?? 0) * (opt.quantity ?? 0);
+      }
+      return sum;
+    }, 0);
 
     const formattedStart = new Date(startTime).toLocaleString("fr-FR", {
       dateStyle: "full",
@@ -580,32 +568,50 @@ export async function sendConfirmationEmails(bookingId: number) {
     });
 
     const serviceName = service.name;
-    const bookingDate = new Date(startTime).toLocaleDateString("fr-FR");
-    // !!! Devrait arriver tout à la fin après le paiement par le lien envoyé par l'administrateur !!!
-    // 📧 Contenu email client (HTML)
+
+    // Détail des options sous forme de liste HTML
+    const optionsHtmlList = bookingOptions
+      .map((opt) => {
+        const qty = opt.quantity ?? 1;
+        const pricePerUnit = opt.option?.unitPrice ?? 0;
+        const totalPrice = pricePerUnit * qty;
+        const name = opt.option?.name ?? "Option inconnue";
+        if (totalPrice === 0) return null; // on exclut les options gratuites
+        return `<li>${qty} × ${name} — ${formatter.format(totalPrice)}</li>`;
+      })
+      .filter(Boolean)
+      .join("");
+
+    const optionsHtml = optionsHtmlList
+      ? `<ul style="padding-left: 20px; margin-bottom: 25px;">${optionsHtmlList}</ul>`
+      : "<p>Aucune option sélectionnée.</p>";
+
+    // Contenu HTML email client
     const clientEmailContent = `
-      <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
+      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <img src="http://localhost:3000/assets/logo/logo-new.png" alt="Yachting Day Logo" width="180" style="max-width: 100%; height: auto; display: inline-block;">
+          <img src="http://localhost:3000/assets/logo/logo-new.png" alt="Yachting Day Logo" width="180" style="max-width: 100%; height: auto;">
         </div>
         <h2 style="color: #005ea2; text-align: center; margin-bottom: 25px;">Bonjour ${fullName},</h2>
-        <p style="margin-bottom: 15px; font-size: 16px;">
+        <p style="font-size: 16px;">
           Merci pour votre réservation de <strong style="color: #007bff;">${serviceName}</strong> avec <strong style="color: #005ea2;">Yachting Day</strong>.
         </p>
-        <p style="margin-bottom: 15px; font-size: 16px;">
+        <p style="font-size: 16px;">
           Votre réservation a été confirmée ! Voici les détails :
         </p>
         <ul style="list-style-type: none; padding: 0; margin-bottom: 25px;">
-          <li style="margin-bottom: 8px;"><strong>Date et heure :</strong> ${formattedStart} - ${formattedEnd}</li>
-          <li style="margin-bottom: 8px;"><strong>Service réservé :</strong> ${serviceName}</li>
-          <li style="margin-bottom: 8px;"><strong>Montant réglé en ligne :</strong> <span style="color: #28a745; font-weight: bold;">${formatter.format(boatAmount)}</span></li>
+          <li><strong>Date et heure :</strong> ${formattedStart} - ${formattedEnd}</li>
+          <li><strong>Service réservé :</strong> ${serviceName}</li>
+          <li><strong>Montant réglé en ligne :</strong> <span style="color: #28a745; font-weight: bold;">${formatter.format(boatAmount)}</span></li>
           ${
             onboardTotal > 0
-              ? `<li style="margin-bottom: 8px;"><strong>Total à régler à bord :</strong> <span style="color: #ffc107; font-weight: bold;">${formatter.format(onboardTotal)}</span></li>`
+              ? `<li><strong>Total à régler à bord :</strong> <span style="color: #ffc107; font-weight: bold;">${formatter.format(onboardTotal)}</span></li>`
               : ""
           }
         </ul>
-        <p style="margin-bottom: 15px; font-size: 16px;">
+        <p style="font-size: 16px; font-weight: bold;">Options sélectionnées :</p>
+        ${optionsHtml}
+        <p style="font-size: 16px;">
           Nous avons hâte de vous accueillir à bord et vous souhaitons une excellente expérience !
         </p>
         <p style="font-style: italic; text-align: center; color: #666; margin-top: 30px;">
@@ -626,12 +632,22 @@ export async function sendConfirmationEmails(bookingId: number) {
       `Date et heure : ${formattedStart} - ${formattedEnd}\n` +
       `Service réservé : ${serviceName}\n` +
       `Montant réglé en ligne : ${formatter.format(boatAmount)}\n` +
-      `${
-        onboardTotal > 0
-          ? `Total à régler à bord : ${formatter.format(onboardTotal)}\n`
-          : ""
-      }` +
-      `Nous avons hâte de vous accueillir à bord et vous souhaitons une excellente expérience !\n\n` +
+      (onboardTotal > 0
+        ? `Total à régler à bord : ${formatter.format(onboardTotal)}\n`
+        : "") +
+      `Options sélectionnées:\n` +
+      bookingOptions
+        .map((opt) => {
+          const qty = opt.quantity ?? 1;
+          const pricePerUnit = opt.option?.unitPrice ?? 0;
+          const totalPrice = pricePerUnit * qty;
+          const name = opt.option?.name ?? "Option inconnue";
+          if (totalPrice === 0) return null;
+          return ` - ${qty} × ${name} — ${formatter.format(totalPrice)}`;
+        })
+        .filter(Boolean)
+        .join("\n") +
+      `\n\nNous avons hâte de vous accueillir à bord et vous souhaitons une excellente expérience !\n\n` +
       `Cordialement,\n` +
       `L’équipe Yachting Day`;
 
@@ -639,28 +655,28 @@ export async function sendConfirmationEmails(bookingId: number) {
       await resend.emails.send({
         from: fromEmail,
         to: email,
-        subject: `✅ Confirmation - ${serviceName} le ${bookingDate}`,
+        subject: `✅ Confirmation - ${serviceName} le ${new Date(startTime).toLocaleDateString("fr-FR")}`,
         html: clientEmailContent,
         text: clientTextContent,
       });
     }
 
-    // 📧 Contenu email admin (HTML)
+    // Email admin
     const adminEmailHtml = `
-      <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f0f8ff;">
+      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f0f8ff;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <img src="http://localhost:3000/assets/logo/logo-new.png" alt="Yachting Day Logo" width="180" style="max-width: 100%; height: auto; display: inline-block;">
+          <img src="http://localhost:3000/assets/logo/logo-new.png" alt="Yachting Day Logo" width="180" style="max-width: 100%; height: auto;">
         </div>
         <h3 style="color: #c0392b; text-align: center; margin-bottom: 25px;">📢 Nouvelle réservation confirmée !</h3>
         <ul style="list-style-type: none; padding: 0; margin-bottom: 25px;">
-          <li style="margin-bottom: 10px; padding: 8px; background-color: #e9ecef; border-radius: 4px;"><strong>Client :</strong> ${fullName}</li>
-          <li style="margin-bottom: 10px; padding: 8px; background-color: #e9ecef; border-radius: 4px;"><strong>Email :</strong> ${email ?? "Non fourni"}</li>
-          <li style="margin-bottom: 10px; padding: 8px; background-color: #e9ecef; border-radius: 4px;"><strong>Téléphone :</strong> ${phoneNumber}</li>
-          <li style="margin-bottom: 10px; padding: 8px; background-color: #e9ecef; border-radius: 4px;"><strong>Service :</strong> <span style="color: #005ea2; font-weight: bold;">${serviceName}</span></li>
-          <li style="margin-bottom: 10px; padding: 8px; background-color: #e9ecef; border-radius: 4px;"><strong>Date :</strong> ${formattedStart} - ${formattedEnd}</li>
-          <li style="margin-bottom: 10px; padding: 8px; background-color: #e9ecef; border-radius: 4px;"><strong>Total payé par le client :</strong> <span style="color: #28a745; font-weight: bold;">${formatter.format(totalAmount)}</span></li>
-          <li style="margin-bottom: 10px; padding: 8px; background-color: #e9ecef; border-radius: 4px;"><strong>Options à régler à bord :</strong> <span style="color: #ffc107; font-weight: bold;">${formatter.format(onboardTotal)}</span></li>
-          <li style="margin-bottom: 10px; padding: 8px; background-color: #e9ecef; border-radius: 4px;"><strong>Repas avec traiteur :</strong> <span style="color: ${mealOption ? "#28a745" : "#dc3545"}; font-weight: bold;">${mealOption ? "Oui" : "Non"}</span></li>
+          <li><strong>Client :</strong> ${fullName}</li>
+          <li><strong>Email :</strong> ${email ?? "Non fourni"}</li>
+          <li><strong>Téléphone :</strong> ${phoneNumber}</li>
+          <li><strong>Service :</strong> <span style="color: #005ea2; font-weight: bold;">${serviceName}</span></li>
+          <li><strong>Date :</strong> ${formattedStart} - ${formattedEnd}</li>
+          <li><strong>Total payé par le client :</strong> <span style="color: #28a745; font-weight: bold;">${formatter.format(totalAmount)}</span></li>
+          <li><strong>Options à régler à bord :</strong> <span style="color: #ffc107; font-weight: bold;">${formatter.format(onboardTotal)}</span></li>
+          <li><strong>Repas avec traiteur :</strong> <span style="color: ${mealOption ? "#28a745" : "#dc3545"}; font-weight: bold;">${mealOption ? "Oui" : "Non"}</span></li>
         </ul>
         <p style="font-size: 14px; color: #666; text-align: center; margin-top: 30px;">
           Veuillez consulter le panneau d'administration pour plus de détails.
@@ -683,7 +699,7 @@ export async function sendConfirmationEmails(bookingId: number) {
     await resend.emails.send({
       from: fromEmail,
       to: adminEmail,
-      subject: `📌 Réservation confirmée – ${serviceName} le ${bookingDate} (#${bookingId})`,
+      subject: `📌 Réservation confirmée – ${serviceName} le ${new Date(startTime).toLocaleDateString("fr-FR")} (#${bookingId})`,
       html: adminEmailHtml,
       text: adminText,
     });

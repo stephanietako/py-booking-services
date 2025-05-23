@@ -73,7 +73,24 @@ export async function POST(req: Request) {
         );
       }
 
-      return NextResponse.json({ data: booking });
+      return NextResponse.json({
+        data: {
+          id: booking.id,
+          startTime: booking.startTime,
+          endTime: booking.endTime,
+          status: booking.status,
+          withCaptain: booking.withCaptain,
+          mealOption: booking.mealOption,
+          boatAmount: booking.boatAmount,
+          service: booking.service,
+          bookingOptions: booking.bookingOptions,
+          client: booking.client || null,
+          userId: booking.userId ?? null,
+          stripePaymentLink: booking.stripePaymentLink ?? null,
+          createdAt: booking.createdAt,
+          updatedAt: booking.updatedAt,
+        },
+      });
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         return NextResponse.json({ error: "Token expiré" }, { status: 401 });
