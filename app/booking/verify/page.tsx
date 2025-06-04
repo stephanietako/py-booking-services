@@ -188,9 +188,12 @@ export default function VerifyBooking() {
     );
 
     // On ajoute toujours le prix capitaine dans le total options à régler à bord
+    // const totalPayableOnBoardWithCaptain =
+    //   totalOptionsPayableOnBoard + captainPrice;
     const totalPayableOnBoardWithCaptain =
-      totalOptionsPayableOnBoard + captainPrice;
-
+      bookingDetails.withCaptain === false
+        ? totalOptionsPayableOnBoard + captainPrice
+        : totalOptionsPayableOnBoard;
     // Montant total final (bateau + options + capitaine)
     const finalTotalAmount =
       bookingDetails.boatAmount + totalPayableOnBoardWithCaptain;
@@ -262,7 +265,8 @@ export default function VerifyBooking() {
                   style: "currency",
                   currency: bookingDetails.service?.currency || "EUR",
                 }).format(captainPrice)}{" "}
-                (inclus dans le total des options à régler à bord)
+                (inclus dans le total des options à régler à bord si capitaine
+                sollicité)
               </span>
             </p>
             <p>
@@ -314,13 +318,22 @@ export default function VerifyBooking() {
                         /unité )
                       </li>
                     ))}
-                    <li>
+                    {/* <li>
                       <strong>Capitaine :</strong>{" "}
                       {new Intl.NumberFormat("fr-FR", {
                         style: "currency",
                         currency: bookingDetails.service?.currency || "EUR",
                       }).format(captainPrice)}
-                    </li>
+                    </li> */}
+                    {bookingDetails.withCaptain === false && (
+                      <li>
+                        <strong>Capitaine :</strong>{" "}
+                        {new Intl.NumberFormat("fr-FR", {
+                          style: "currency",
+                          currency: bookingDetails.service?.currency || "EUR",
+                        }).format(captainPrice)}
+                      </li>
+                    )}
                   </ul>
                   <p>
                     <span className={styles.label}>

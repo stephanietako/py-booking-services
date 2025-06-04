@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { getStripeCustomerIdForBooking } from "@/utils/stripe";
 
+// Crée une session de paiement Stripe pour une réservation
 export const createStripeCheckoutSession = async (
   bookingId: number,
   domainUrl: string

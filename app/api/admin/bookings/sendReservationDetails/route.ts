@@ -34,7 +34,11 @@ export async function POST(request: Request) {
       include: {
         client: true,
         user: true,
-        Service: true,
+        Service: {
+          include: {
+            pricingRules: true,
+          },
+        },
         bookingOptions: {
           include: {
             option: true,
@@ -42,6 +46,16 @@ export async function POST(request: Request) {
         },
       },
     });
+
+    if (booking && booking.Service) {
+      console.log(
+        "booking.Service.pricingRules:",
+        booking.Service.pricingRules
+      );
+    }
+    if (!booking?.Service?.pricingRules) {
+      throw new Error("Aucune règle de prix trouvée pour ce service !");
+    }
 
     if (!booking) {
       return NextResponse.json(
@@ -56,6 +70,7 @@ export async function POST(request: Request) {
     const captainPrice = needsCaptain
       ? (booking.Service?.captainPrice ?? 350)
       : 0;
+
     const totalPayableOnBoardCalculated =
       booking.bookingOptions
         .filter((bo) => bo.option?.payableAtBoard)
@@ -63,6 +78,7 @@ export async function POST(request: Request) {
           (sum, bo) => sum + (bo.option?.unitPrice || 0) * (bo.quantity || 1),
           0
         ) + captainPrice;
+
     // Préparer les paramètres pour l'email client
     const clientEmailParams = {
       bookingId: booking.id.toString(),
@@ -98,10 +114,16 @@ export async function POST(request: Request) {
     }
 
     const dynamicBoatAmount = booking.Service
-      ? getBoatPriceForDate(booking.startTime, booking.Service)
+      ? getBoatPriceForDate(booking.startTime, {
+          ...booking.Service,
+          pricingRules: (booking.Service.pricingRules ?? []).map((rule) => ({
+            ...rule,
+            startDate: new Date(rule.startDate),
+            endDate: new Date(rule.endDate),
+          })),
+        })
       : 1500;
-    // Préparer les paramètres pour l'email admin
-    // ...après avoir récupéré booking et fait les calculs...
+
     const emailParams = {
       bookingId: booking.id.toString(),
       firstName: booking.client?.fullName.split(" ")[0] || "",

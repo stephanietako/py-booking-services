@@ -380,7 +380,7 @@ const ServiceList = () => {
                     <div className={styles.options_subtotal}>
                       Sous-total (options{" "}
                       {Object.values(selectedOptions).length > 0 &&
-                        "+ capitaine"}
+                        "+ capitaine si sollicité"}
                       ):{" "}
                       {new Intl.NumberFormat("fr-FR", {
                         style: "currency",
@@ -388,7 +388,9 @@ const ServiceList = () => {
                       }).format(displayedSubtotal)}
                       {!withCaptain &&
                         Object.values(selectedOptions).length === 0 &&
-                        requiresCaptain && <span>(incluant le capitaine)</span>}
+                        requiresCaptain && (
+                          <span>(incluant le capitaine si sollicité)</span>
+                        )}
                     </div>
                   ) : (
                     <div className={styles.options_subtotal}>

@@ -23,7 +23,7 @@ export interface RequestConfirmationEmailParams {
   withCaptain: boolean;
   captainPrice: number;
   totalPayableOnBoardCalculated: number;
-  cautionAmount: number; // Direct property
+  cautionAmount: number;
   bookingOptions: DetailedBookingOption[];
   comment?: string;
 }

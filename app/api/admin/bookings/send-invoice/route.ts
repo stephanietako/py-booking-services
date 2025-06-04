@@ -2,8 +2,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateInvoice } from "@/lib/pdf/generateInvoice";
-// Il faudra probablement étendre le type Booking si ce n'est pas déjà fait
-// ou créer un type local pour cette route si Booking from "@/types" ne suffit pas.
 import { Resend } from "resend";
 import { Booking, BookingOption, Option, Service, Client } from "@/types"; // Assurez-vous que tous les types sont importés
 import { escapeHtml } from "@/utils/escapeHtml";
@@ -11,11 +9,11 @@ import { escapeHtml } from "@/utils/escapeHtml";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 
-// Nouveau type pour la réservation telle qu'elle sera récupérée ici
 type BookingForInvoice = Booking & {
-  service: Service; // service is required, not optional
+  service: Service;
   client: Client;
   bookingOptions: (BookingOption & { option: Option })[];
+  totalPayableOnBoardCalculated: number;
 };
 
 export async function POST(req: Request) {
@@ -68,8 +66,7 @@ export async function POST(req: Request) {
       0
     );
 
-    // const needsCaptain = !booking.withCaptain;
-    // const captainPrice = needsCaptain ? 350 : 0;
+    // Vérification si le capitaine est requis
     const needsCaptain =
       !booking.withCaptain && booking.Service?.requiresCaptain;
     const captainPrice = needsCaptain
@@ -77,8 +74,7 @@ export async function POST(req: Request) {
       : 0;
     const totalPayableOnBoard = totalOptionsPayableAtBoard + captainPrice;
 
-    // ...puis continue avec la génération du PDF et l'envoi des emails...
-    // Cast vers notre type étendu pour une meilleure typage
+    // 3. Préparer les données pour la facture
     const bookingForInvoice: BookingForInvoice = {
       ...booking,
       service: booking.Service as Service, // Assure TypeScript that service is present
@@ -86,6 +82,7 @@ export async function POST(req: Request) {
       bookingOptions: booking.bookingOptions as (BookingOption & {
         option: Option;
       })[],
+      totalPayableOnBoardCalculated: totalPayableOnBoard,
     };
 
     // 4. Générer la facture (passer le booking avec les options détaillées)
@@ -97,7 +94,13 @@ export async function POST(req: Request) {
     const adminEmail = process.env.ADMIN_EMAIL || "gabeshine@live.fr";
     const fileName = `facture-booking-${booking.id}.pdf`;
 
-    // 5. Envoi à l’admin (toujours) (le reste du code reste inchangé)
+    // Définir le formateur pour la devise
+    const formatter = new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: booking.Service?.currency ?? "EUR",
+    });
+
+    // 5. Envoi à l’admin
     await resend.emails.send({
       from: fromEmail,
       to: adminEmail,
@@ -114,7 +117,7 @@ export async function POST(req: Request) {
   <li style="margin-bottom: 5px;"><strong>Service :</strong> ${booking.Service.name}</li>
   <li style="margin-bottom: 5px;"><strong>Date de début :</strong> ${new Date(booking.startTime).toLocaleString("fr-FR")}</li>
   <li style="margin-bottom: 5px;"><strong>Date de fin :</strong> ${new Date(booking.endTime).toLocaleString("fr-FR")}</li>
-  <li style="margin-bottom: 5px;"><strong>Montant location bateau :</strong> ${(booking.Service?.defaultPrice ?? 0).toLocaleString("fr-FR", { style: "currency", currency: booking.Service?.currency ?? "EUR" })}</li>
+  <li><strong>Prix de la location du bateau :</strong> ${formatter.format(booking.boatAmount)}</li>
   <li style="margin-bottom: 5px;"><strong>Capitaine :</strong> ${booking.withCaptain ? "Oui" : "Non"}</li>
   <li style="margin-bottom: 5px;"><strong>Repas traiteur :</strong> ${booking.mealOption ? "Oui" : "Non"}</li>
   <li style="margin-bottom: 5px;"><strong>Commentaire client :</strong> ${booking.description ? escapeHtml(booking.description) : "—"}</li>
@@ -136,6 +139,9 @@ export async function POST(req: Request) {
   <li style="margin-bottom: 5px;"><strong>Total à régler à bord (options + capitaine) :</strong> ${totalPayableOnBoard.toFixed(2)} €</li>
   <li style="margin-bottom: 5px; color: #dc3545;"><strong>Caution à prévoir à bord :</strong> ${booking.Service.cautionAmount.toLocaleString("fr-FR", { style: "currency", currency: booking.Service.currency })}</li>
 </ul>
+  <p style="font-size: 17px; font-weight: bold; color: #0056b3; margin-top: 25px;">
+            Montant total des options et capitaine à régler à bord : ${formatter.format(totalPayableOnBoard)}
+        </p>
         </div>
       `,
       attachments: [

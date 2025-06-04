@@ -98,8 +98,8 @@ export async function createService(
     throw new Error("Impossible de créer le service.");
   }
 }
-
 /////////////
+// Fonction pour récupérer un service par son ID
 export async function getServiceById(
   serviceId: string
 ): Promise<Service | null> {
@@ -343,7 +343,6 @@ export async function updateOptionQuantity(
     };
   });
 }
-
 /////////////////////////
 // Supprimer une option de réservation
 export async function deleteOption(bookingOptionId: string) {

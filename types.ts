@@ -34,8 +34,8 @@ export interface PricingRule {
   startDate: string | Date;
   endDate: string | Date;
   price: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   service?: Service;
 }
 
