@@ -52,7 +52,7 @@ model Booking {
 model Option {
   id             String          @id @default(uuid())
   label          String
-  name           String
+  name           String          @unique
   payableOnline  Boolean         @default(false)
   payableAtBoard Boolean         @default(true)
   unitPrice      Float
@@ -107,6 +107,7 @@ model Service {
   endTime          DateTime?
   cautionAmount    Float         @default(0)
   requiresCaptain  Boolean       @default(true)
+  captainPrice     Float         @default(350)
 }
 
 model PricingRule {

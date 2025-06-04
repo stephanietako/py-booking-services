@@ -2,18 +2,17 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { getAllServices, getDynamicPrice } from "@/actions/actions";
-import { createBooking, deleteUserBooking } from "@/actions/bookings";
+import { createBooking } from "@/actions/bookings";
 import { Service, Booking, Option as OptionType } from "@/types";
 import Wrapper from "../Wrapper/Wrapper";
 import { useUser } from "@clerk/nextjs";
 import { format, formatISO, parseISO } from "date-fns";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-// Styles
 import styles from "./styles.module.scss";
 import FormattedDescription from "../FormattedDescription/FormattedDescription";
-
-const captainPrice = 350; // Prix fixe du capitaine
+import "react-phone-number-input/style.css";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 
 const ServiceList = () => {
   const [service, setService] = useState<Service | null>(null);
@@ -22,7 +21,6 @@ const ServiceList = () => {
   const [baseServicePrice, setBaseServicePrice] = useState<number | null>(null);
   const [isBooking, setIsBooking] = useState(false);
   const [bookingMessage, setBookingMessage] = useState<string | null>(null);
-  const [bookingId, setBookingId] = useState<string | null>(null);
   const [startTime, setStartTime] = useState<string | null>(null);
   const [endTime, setEndTime] = useState<string | null>(null);
   const [clientInfo, setClientInfo] = useState({
@@ -37,9 +35,10 @@ const ServiceList = () => {
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, { quantity: number; unitPrice: number; label: string }>
   >({});
-  const [withCaptain, setWithCaptain] = useState(false);
   const [mealOption, setMealOption] = useState(false);
-  const [requiresCaptain, setRequiresCaptain] = useState(true); // Par défaut à true
+  const [requiresCaptain, setRequiresCaptain] = useState(true);
+  const [comment, setComment] = useState("");
+  const [withCaptain, setWithCaptain] = useState<boolean | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,10 +78,6 @@ const ServiceList = () => {
         if (response.ok) {
           const data = await response.json();
           setAvailableOptions(data);
-          console.log(
-            "Options récupérées de l'API :",
-            data.map((opt: OptionType) => opt.id)
-          );
         } else {
           console.error("Erreur lors de la récupération des options");
         }
@@ -109,6 +104,12 @@ const ServiceList = () => {
   };
 
   const handleBooking = useCallback(async () => {
+    if (withCaptain !== true && withCaptain !== false) {
+      return toast.error(
+        "Vous devez choisir si vous avez votre propre capitaine ou si vous sollicitez notre capitaine.",
+        { ariaProps: { role: "alert", "aria-live": "assertive" } }
+      );
+    }
     if (!service || baseServicePrice === null) return;
     const userId = user?.id || null;
     const hasClientInfo =
@@ -127,6 +128,26 @@ const ServiceList = () => {
       return toast.error("Les horaires sélectionnés sont invalides.", {
         ariaProps: { role: "alert", "aria-live": "assertive" },
       });
+    }
+
+    // Validation front supplémentaire pour les champs client
+    if (!user) {
+      if (!clientInfo.fullName.trim()) {
+        toast.error("Le nom complet est requis.");
+        return;
+      }
+      if (!/^[\w\sÀ-ÿ'-]+$/.test(clientInfo.fullName)) {
+        toast.error("Le nom contient des caractères invalides.");
+        return;
+      }
+      if (!/^[\w.-]+@[\w.-]+\.\w+$/.test(clientInfo.email)) {
+        toast.error("L'email n'est pas valide.");
+        return;
+      }
+      if (!isValidPhoneNumber(clientInfo.phoneNumber || "")) {
+        toast.error("Le numéro de téléphone n'est pas valide.");
+        return;
+      }
     }
 
     setIsBooking(true);
@@ -157,15 +178,14 @@ const ServiceList = () => {
           hasClientInfo ? clientInfo.fullName : undefined,
           hasClientInfo ? clientInfo.email : undefined,
           hasClientInfo ? clientInfo.phoneNumber : undefined,
-          captainPrice
+          comment
         );
 
       if (bookingResult?.booking?.id && bookingResult.token) {
-        setBookingId(String(bookingResult.booking.id));
         setBookingMessage(
           `✅ Réservé de ${format(startISO, "HH:mm")} à ${format(endISO, "HH:mm")}`
         );
-        toast.success("Réservation réussie ! Redirection...", {
+        toast.success("Opération réussie ... Redirection ", {
           ariaProps: { role: "status", "aria-live": "polite" },
         });
         router.push(`/booking/verify?token=${bookingResult.token}`);
@@ -189,40 +209,20 @@ const ServiceList = () => {
       setIsBooking(false);
     }
   }, [
-    user?.id,
     service,
+    baseServicePrice,
+    user,
+    clientInfo.fullName,
+    clientInfo.email,
+    clientInfo.phoneNumber,
     startTime,
     endTime,
-    clientInfo,
-    router,
-    baseServicePrice,
     selectedOptions,
     withCaptain,
     mealOption,
+    comment,
+    router,
   ]);
-
-  const handleCancelBooking = useCallback(async () => {
-    if (!bookingId || !service?.id) return;
-
-    const userIdToDelete = user?.id;
-    if (userIdToDelete) {
-      const result = await deleteUserBooking(bookingId, userIdToDelete);
-      toast.success(result.message, {
-        ariaProps: { role: "status", "aria-live": "assertive" },
-      });
-      setBookingId(null);
-      setBookingMessage(null);
-    } else {
-      toast.error(
-        "Impossible d'annuler la réservation pour un utilisateur non connecté via cette méthode.",
-        { ariaProps: { role: "alert", "aria-live": "assertive" } }
-      );
-    }
-  }, [bookingId, user?.id, service?.id]);
-
-  const handleWithCaptainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWithCaptain(e.target.checked);
-  };
 
   const handleMealOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMealOption(e.target.checked);
@@ -233,9 +233,10 @@ const ServiceList = () => {
     0
   );
 
-  const displayedSubtotal = withCaptain
-    ? currentOptionsSubtotal
-    : currentOptionsSubtotal + captainPrice;
+  const displayedSubtotal =
+    withCaptain === false
+      ? currentOptionsSubtotal + (service?.captainPrice ?? 350)
+      : currentOptionsSubtotal;
 
   if (loading) {
     return <p>Chargement du service...</p>;
@@ -248,7 +249,6 @@ const ServiceList = () => {
   if (!service) {
     return <p>Aucun service disponible.</p>;
   }
-
   return (
     <Wrapper>
       <section>
@@ -281,68 +281,83 @@ const ServiceList = () => {
                   <h2>Options supplémentaires (à régler sur place)</h2>
                   <p className={styles.notice} style={{ color: "whitesmoke" }}>
                     Les options sélectionnées sont à régler à bord le jour de
-                    votre reservation.
+                    votre réservation.
                   </p>
                   <div className={styles.options_list}>
-                    {availableOptions.map((option) => (
-                      <div key={option.id} className={styles.option_item}>
-                        <span>
-                          {option.label} (
-                          {new Intl.NumberFormat("fr-FR", {
-                            style: "currency",
-                            currency: service?.currency || "EUR",
-                          }).format(option.unitPrice)}
-                          / unité)
-                        </span>
-                        {option.payableAtBoard && (
-                          <div>
-                            <label htmlFor={`quantity-${option.id}`}>
-                              Quantité:
-                            </label>
-                            <input
-                              type="number"
-                              id={`quantity-${option.id}`}
-                              min="0"
-                              defaultValue={
-                                selectedOptions[option.id]?.quantity || 0
-                              }
-                              onChange={(e) =>
-                                handleOptionQuantityChange(
-                                  option,
-                                  parseInt(e.target.value)
-                                )
-                              }
-                            />
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                    {availableOptions
+                      .filter(
+                        (option) =>
+                          option.label.toLowerCase() !== "capitaine à bord"
+                      )
+                      .map((option) => (
+                        <div key={option.id} className={styles.option_item}>
+                          <span>
+                            {option.label} (
+                            {new Intl.NumberFormat("fr-FR", {
+                              style: "currency",
+                              currency: service?.currency || "EUR",
+                            }).format(option.unitPrice)}
+                            / unité)
+                          </span>
+                          {option.payableAtBoard && (
+                            <div>
+                              <label htmlFor={`quantity-${option.id}`}>
+                                Quantité:
+                              </label>
+                              <input
+                                type="number"
+                                id={`quantity-${option.id}`}
+                                min="0"
+                                defaultValue={
+                                  selectedOptions[option.id]?.quantity || 0
+                                }
+                                onChange={(e) =>
+                                  handleOptionQuantityChange(
+                                    option,
+                                    parseInt(e.target.value)
+                                  )
+                                }
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
                   </div>
-
-                  <div className={styles.captain_option}>
-                    <label>
-                      J&apos;ai mon propre capitaine:
+                  <div className={styles.captain_radio_group}>
+                    <label className={styles.captain_radio_label}>
                       <input
-                        type="checkbox"
-                        checked={withCaptain}
-                        onChange={handleWithCaptainChange}
+                        type="radio"
+                        name="captain"
+                        className={styles.captain_radio_input}
+                        checked={withCaptain === true}
+                        onChange={() => setWithCaptain(true)}
                       />
+                      J&apos;ai mon propre capitaine
+                      <span className={styles.tooltip}>
+                        <span className={styles.tooltip_icon}>?</span>
+                        <span className={styles.tooltip_text}>
+                          Vous devrez fournir un diplôme professionnel valide
+                          avant le départ.
+                        </span>
+                      </span>
                     </label>
-                    {requiresCaptain && !withCaptain && (
-                      <p className={styles.captain_required}>
-                        (Capitaine obligatoire si non fourni)
-                      </p>
-                    )}
-                    {requiresCaptain && !withCaptain && (
-                      <p className={styles.captain_required}>
-                        (Prix du capitaine :{" "}
-                        {new Intl.NumberFormat("fr-FR", {
-                          style: "currency",
-                          currency: service?.currency || "EUR",
-                        }).format(captainPrice)}{" "}
-                        payable à bord)
-                      </p>
-                    )}
+                    <label className={styles.captain_radio_label}>
+                      <input
+                        type="radio"
+                        name="captain"
+                        className={styles.captain_radio_input}
+                        checked={withCaptain === false}
+                        onChange={() => setWithCaptain(false)}
+                      />
+                      Je sollicite votre capitaine (350 € à régler à bord)
+                      <span className={styles.tooltip}>
+                        <span className={styles.tooltip_icon}>?</span>
+                        <span className={styles.tooltip_text}>
+                          Un capitaine professionnel vous sera attribué. Tarif :
+                          350 € à régler à bord.
+                        </span>
+                      </span>
+                    </label>
                   </div>
 
                   <div className={styles.meal_option}>
@@ -390,10 +405,49 @@ const ServiceList = () => {
               {/* COLONNE DROITE */}
               <div className={styles.bloc__right_column}>
                 <div className={styles.right_column}>
+                  <div className={styles.comment_section}>
+                    <label htmlFor="comment">
+                      Commentaire (ex : enfant à bord, personne à mobilité
+                      réduite, demande particulière) :
+                      <span
+                        style={{
+                          fontSize: "0.9em",
+                          color: "#888",
+                          marginLeft: 8,
+                        }}
+                      >
+                        (500 caractères maximum)
+                      </span>
+                    </label>
+                    <textarea
+                      id="comment"
+                      value={comment}
+                      onChange={(e) => {
+                        if (e.target.value.length <= 500)
+                          setComment(e.target.value);
+                      }}
+                      maxLength={500}
+                      placeholder="Votre message pour l'administrateur..."
+                      rows={3}
+                      style={{ width: "100%", marginBottom: "1rem" }}
+                    />
+                    <span style={{ fontSize: "0.9em", color: "#888" }}>
+                      {comment.length}/500 caractères saisis
+                    </span>
+                  </div>
                   {!user && (
                     <div className={styles.anonymous_booking_form}>
                       <h2>Informations de réservation</h2>
-                      <label htmlFor="fullName">Nom complet:</label>
+                      <label htmlFor="fullName">
+                        Nom complet :
+                        <span
+                          style={{
+                            fontSize: "0.9em",
+                            color: "#888",
+                            marginLeft: 8,
+                          }}
+                        ></span>
+                      </label>
                       <input
                         type="text"
                         id="fullName"
@@ -406,7 +460,16 @@ const ServiceList = () => {
                         }
                         required
                       />
-                      <label htmlFor="email">Email:</label>
+                      <label htmlFor="email">
+                        Email :
+                        <span
+                          style={{
+                            fontSize: "0.9em",
+                            color: "#888",
+                            marginLeft: 8,
+                          }}
+                        ></span>
+                      </label>
                       <input
                         type="email"
                         id="email"
@@ -419,17 +482,28 @@ const ServiceList = () => {
                         }
                         required
                       />
-                      <label htmlFor="phoneNumber">Téléphone:</label>
-                      <input
-                        type="tel"
-                        id="phoneNumber"
+                      <label htmlFor="phoneNumber">
+                        Téléphone :
+                        <span
+                          style={{
+                            fontSize: "0.9em",
+                            color: "#888",
+                            marginLeft: 8,
+                          }}
+                        ></span>
+                      </label>
+                      <PhoneInput
+                        international
+                        defaultCountry="FR"
                         value={clientInfo.phoneNumber}
-                        onChange={(e) =>
+                        onChange={(value) =>
                           setClientInfo({
                             ...clientInfo,
-                            phoneNumber: e.target.value,
+                            phoneNumber: value || "",
                           })
                         }
+                        id="phoneNumber"
+                        name="phoneNumber"
                         required
                       />
                     </div>
@@ -444,16 +518,6 @@ const ServiceList = () => {
                       ? "Réservation en cours..."
                       : "Réserver ce service"}
                   </button>
-
-                  {bookingId && (
-                    <button
-                      onClick={handleCancelBooking}
-                      className={styles.cancelButton}
-                      aria-label="Annuler ma réservation"
-                    >
-                      Annuler ma réservation
-                    </button>
-                  )}
                 </div>
               </div>
             </div>

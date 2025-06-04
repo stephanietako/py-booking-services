@@ -84,11 +84,11 @@
 }
 
 .clientInfo {
-  margin-bottom: 2rem; /* Ajoute un peu d'espace sous les infos client */
+  margin-bottom: 2rem;
 }
 
 .userInfo {
-  margin-top: 1rem; /* Ajoute un peu d'espace au-dessus des infos utilisateur */
+  margin-top: 1rem;
 }
 
 .bold {
@@ -150,4 +150,35 @@
   font-weight: 600;
   font-size: 1.1rem;
   color: #333;
+}
+
+.btn__deleteButton {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+
+  .__deleteButton {
+    background-color: #ff4d4f;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    transition: background-color 0.3s;
+    box-shadow: 0 2px 8px #00000030;
+
+    &:hover {
+      background-color: #d9363e;
+    }
+
+    &:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+  }
 }

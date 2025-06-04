@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { stripe } from "@/lib/stripe";
 import { PaymentStatus, Prisma } from "@prisma/client";
 import { Booking } from "@/types";
-//import { transformBookings } from "@/helpers/transformBookings";
+import { calculateBookingTotal } from "@/utils/calculateBookingTotal";
 
 const secret = process.env.JWT_SECRET;
 if (!secret) {
@@ -17,7 +17,6 @@ interface Payload {
   clientId?: number;
   userId?: string;
 }
-import { sendConfirmationEmails } from "@/lib/sendConfirmationEmails"; // Assurez-vous que cette importation est présente
 
 /// Fonction pour générer un token JWT
 export async function generateBookingToken(
@@ -45,20 +44,20 @@ export async function generateBookingToken(
     );
   }
 }
-
+// Fonction pour créer une réservation
 export async function createBooking(
-  userId: string | null, // userId peut être null si l'utilisateur n'est pas connecté
+  userId: string | null,
   serviceId: string,
   selectedDate: string,
   startTime: string,
   endTime: string,
   options: { optionId: string; quantity: number }[],
   withCaptain: boolean = false,
-  mealOption: boolean = false, // Ajoute le paramètre mealOption ici avec une valeur par défaut
-  fullName?: string, // Informations du client si non connecté
+  mealOption: boolean = false,
+  fullName?: string,
   email?: string,
   phoneNumber?: string,
-  captainPrice: number = 0
+  comment?: string
 ): Promise<{ booking: Booking; token?: string }> {
   try {
     const start = new Date(startTime);
@@ -71,8 +70,8 @@ export async function createBooking(
 
     const existingBookings = await prisma.booking.findMany({
       where: {
-        serviceId: serviceId,
-        reservedAt: reservedAt,
+        serviceId,
+        reservedAt,
         NOT: {
           OR: [{ endTime: { lte: start } }, { startTime: { gte: end } }],
         },
@@ -83,66 +82,60 @@ export async function createBooking(
       throw new Error("Le créneau horaire est déjà réservé.");
     }
 
-    let client: { id: number } | null = null;
-    let stripeCustomerId: string | undefined = undefined;
+    let clientData = null;
     let actualUserId: string | undefined = undefined;
+    let stripeCustomerId: string | undefined = undefined;
 
     if (userId) {
-      // Utilisateur connecté
       const user = await prisma.user.findUnique({
         where: { clerkUserId: userId },
-        select: { id: true, email: true, stripeCustomerId: true },
+        select: {
+          id: true,
+          email: true,
+          stripeCustomerId: true,
+          name: true,
+          phoneNumber: true,
+        },
       });
-      if (user) {
-        stripeCustomerId = user.stripeCustomerId ?? undefined;
-        actualUserId = user.id;
-        if (!stripeCustomerId) {
-          const customer = await stripe.customers.create({
-            email: user.email || undefined,
-          });
-          stripeCustomerId = customer.id;
-          await prisma.user.update({
-            where: { clerkUserId: userId },
-            data: { stripeCustomerId },
-          });
-        }
-      } else {
-        throw new Error("Utilisateur introuvable.");
+      if (!user) throw new Error("Utilisateur introuvable.");
+
+      stripeCustomerId = user.stripeCustomerId ?? undefined;
+      actualUserId = user.id;
+
+      if (!stripeCustomerId) {
+        const customer = await stripe.customers.create({
+          email: user.email || undefined,
+        });
+        stripeCustomerId = customer.id;
+        await prisma.user.update({
+          where: { clerkUserId: userId },
+          data: { stripeCustomerId },
+        });
       }
     } else if (fullName && email && phoneNumber) {
-      // Utilisateur non connecté - Vérifier si le client existe déjà par email
       const existingClient = await prisma.client.findUnique({
         where: { email },
       });
 
       if (existingClient) {
-        client = { id: existingClient.id }; // Utiliser l'ID du client existant
-        // Optionnel : Mettre à jour les informations du client si elles sont différentes
+        clientData = existingClient;
         if (
           existingClient.fullName !== fullName ||
           existingClient.phoneNumber !== phoneNumber
         ) {
-          await prisma.client.update({
+          clientData = await prisma.client.update({
             where: { id: existingClient.id },
-            data: {
-              fullName,
-              phoneNumber,
-            },
+            data: { fullName, phoneNumber },
           });
         }
       } else {
-        // Créer un nouveau client s'il n'existe pas
-        client = await prisma.client.create({
-          data: {
-            fullName,
-            email,
-            phoneNumber,
-          },
+        clientData = await prisma.client.create({
+          data: { fullName, email, phoneNumber },
         });
       }
     } else {
       throw new Error(
-        "Informations d'utilisateur manquantes pour la réservation."
+        "Informations d'utilisateur/client manquantes pour la réservation."
       );
     }
 
@@ -161,16 +154,12 @@ export async function createBooking(
       where: { id: { in: options.map((opt) => opt.optionId) } },
     });
 
-    let payableOnBoard = 0;
-    const payableOnline = 0;
-
     const bookingOptionsData: Prisma.BookingOptionCreateWithoutBookingInput[] =
       options.map((opt) => {
         const optionMeta = optionDetails.find((o) => o.id === opt.optionId);
         if (!optionMeta) throw new Error("Option invalide.");
 
         const subtotal = optionMeta.amount * opt.quantity;
-        payableOnBoard += optionMeta.payableAtBoard ? subtotal : 0;
 
         return {
           quantity: opt.quantity,
@@ -182,40 +171,28 @@ export async function createBooking(
         };
       });
 
-    if (!withCaptain) {
-      payableOnBoard += captainPrice; // Utilisation de captainPrice ici !
-    }
+    const selectedOptionsForCalc = options.map((opt) => {
+      const optionMeta = optionDetails.find((o) => o.id === opt.optionId);
+      if (!optionMeta) throw new Error("Option invalide.");
 
-    const totalAmount = boatAmount + payableOnline;
+      return {
+        unitPrice: optionMeta.amount,
+        quantity: opt.quantity,
+      };
+    });
 
-    console.log("Données envoyées à prisma.booking.create :", {
-      clientId: client?.id,
-      userId: actualUserId,
-      description: "",
-      serviceId,
-      reservedAt,
-      startTime: start,
-      endTime: end,
-      expiresAt: new Date(end.getTime() + 24 * 60 * 60 * 1000),
-      status: "PENDING",
-      paymentStatus: "PENDING",
-      approvedByAdmin: false,
+    const { totalAmount, payableOnBoard } = calculateBookingTotal({
+      basePrice: boatAmount,
       withCaptain,
-      boatAmount,
-      payableOnBoard,
-      totalAmount,
-      stripePaymentLink: "", // valeur par défaut acceptable
-      updatedAt: new Date(),
-      bookingOptions: {
-        create: bookingOptionsData, // Utilisation directe de bookingOptionsData
-      },
+      captainPrice: service.captainPrice ?? 350,
+      selectedOptions: selectedOptionsForCalc,
     });
 
     const booking = await prisma.booking.create({
       data: {
-        clientId: client?.id,
+        clientId: clientData?.id,
         userId: actualUserId,
-        description: "",
+        description: comment || "",
         serviceId,
         reservedAt,
         startTime: start,
@@ -224,7 +201,7 @@ export async function createBooking(
         status: "PENDING",
         paymentStatus: "PENDING",
         approvedByAdmin: false,
-        withCaptain: !withCaptain, // Inverse de l'état client
+        withCaptain,
         boatAmount,
         payableOnBoard,
         totalAmount,
@@ -233,9 +210,14 @@ export async function createBooking(
         bookingOptions: {
           create: bookingOptionsData,
         },
-        mealOption: mealOption,
+        mealOption,
       },
-      include: { bookingOptions: true, client: true, user: true },
+      include: {
+        bookingOptions: { include: { option: true } },
+        client: true,
+        user: true,
+        Service: true,
+      },
     });
 
     const paymentIntent = await stripe.paymentIntents.create({
@@ -248,30 +230,32 @@ export async function createBooking(
     const updatedBooking = await prisma.booking.update({
       where: { id: booking.id },
       data: {
-        stripePaymentLink: paymentIntent.client_secret ?? "", // pour respecter `string`
+        stripePaymentLink: paymentIntent.client_secret ?? "",
       },
-      include: { bookingOptions: true, client: true, user: true },
+      include: {
+        bookingOptions: { include: { option: true } },
+        client: true,
+        user: true,
+        Service: true,
+      },
     });
 
     let token: string | undefined;
     if (updatedBooking?.id) {
       token = await generateBookingToken(
         updatedBooking.id,
-        updatedBooking.clientId !== null ? updatedBooking.clientId : undefined,
-        updatedBooking.userId !== null ? updatedBooking.userId : undefined
+        updatedBooking.clientId ?? undefined,
+        updatedBooking.userId ?? undefined
       );
-      await sendConfirmationEmails(updatedBooking.id); // Envoyer l'email avec le token
-      return { booking: updatedBooking as Booking, token };
-    } else {
-      await sendConfirmationEmails(updatedBooking.id); // Envoyer l'email sans token si une erreur s'est produite lors de la génération du token
-      return { booking: updatedBooking as Booking };
     }
+
+    return { booking: updatedBooking as Booking, token };
   } catch (err) {
-    console.error("Erreur createBooking:", err);
+    console.error("❌ Erreur createBooking:", err);
     throw new Error("Erreur lors de la création de la réservation.");
   }
 }
-////////////////////////
+//////////
 // Mettre à jour une réservation
 export async function updateBooking(
   bookingId: string,
@@ -467,7 +451,6 @@ export const getAllBookings = async (userId: string): Promise<Booking[]> => {
 
   return transformedBookings;
 };
-
 ////////////////////
 // Récupérer toutes les réservations pour l'admin
 export const getAllBookingsAdmin = async () => {
@@ -540,7 +523,6 @@ export async function getBookedTimes(
     endTime: new Date(booking.endTime),
   }));
 }
-
 /////////////////////////
 // Vérifier le token et récupérer l'ID de réservation
 export async function getBookingIdFromToken(

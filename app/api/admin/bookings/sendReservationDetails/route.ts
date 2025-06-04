@@ -1,160 +1,156 @@
-//En résumé, cette route API sert d'intermédiaire entre le frontend et le backend
-// //pour déclencher l'envoi d'un email à l'administrateur avec les détails de la réservation.
-// Elle valide les données, construit le contenu de l'email et utilise Resend pour l'envoyer.
-
-// app/api/admin/bookings/sendReservationDetails/route.ts
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
+import { buildAdminReservationEmail } from "@/lib/emails/adminReservationDetails";
+import { requestConfirmationEmail } from "@/lib/emails/requestConfirmation";
+import { sendEmail } from "@/lib/email/send";
+import { PrismaClient } from "@prisma/client";
+import { Service, PricingRule } from "@/types";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const prisma = new PrismaClient();
 const adminEmail = process.env.ADMIN_EMAIL;
-const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
-
-interface SendEmailToAdminParams {
-  bookingId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  reservationTime: string;
-  stripeUrl?: string;
-  bookingOptions?: {
-    quantity: number;
-    option: {
-      unitPrice: number;
-      label: string;
-      payableAtBoard: boolean;
-    };
-  }[];
-  withCaptain?: boolean;
-  mealOption?: boolean;
-  boatAmount?: number;
-  service?: { name: string; currency?: string };
-}
-
-const safe = (val?: string | null, fallback = "—") => val ?? fallback;
-
-async function sendEmailToAdmin(params: SendEmailToAdminParams) {
-  if (!adminEmail) {
-    console.error("❌ ADMIN_EMAIL n'est pas défini.");
-    throw new Error("ADMIN_EMAIL manquant dans l'environnement.");
-  }
-
-  const fullName = `${safe(params.firstName)} ${safe(params.lastName)}`;
-  const subject = `🛥️ Réservation à confirmer par Yachting Day #${params.bookingId}`;
-
-  const html = `
-    <html>
-      <body style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">
-        <h2 style="color: #1a73e8;">Nouvelle demande de réservation</h2>
-        <p>Ci-joint le lien de paiement :</p>
-        <table cellpadding="8" cellspacing="0" style="width:100%; border-collapse: collapse;">
-          <tr><td><strong>ID Réservation :</strong></td><td>${params.bookingId}</td></tr>
-          <tr><td><strong>Nom :</strong></td><td>${fullName}</td></tr>
-          <tr><td><strong>Email :</strong></td><td>${safe(params.email)}</td></tr>
-          <tr><td><strong>Téléphone :</strong></td><td>${safe(params.phoneNumber)}</td></tr>
-          <tr><td><strong>Date & heure :</strong></td><td>${safe(params.reservationTime)}</td></tr>
-          ${
-            params.stripeUrl
-              ? `<tr><td><strong>Lien de paiement :</strong></td><td><a href="${params.stripeUrl}">${params.stripeUrl}</a></td></tr>`
-              : ""
-          }
-          ${
-            params.service?.name
-              ? `<tr><td><strong>Service :</strong></td><td>${params.service.name}</td></tr>`
-              : ""
-          }
-          ${
-            typeof params.boatAmount === "number"
-              ? `<tr><td><strong>Montant bateau :</strong></td><td>${params.boatAmount} €</td></tr>`
-              : ""
-          }
-          <tr><td><strong>Capitaine :</strong></td><td>${params.withCaptain ? "Oui" : "Non"}</td></tr>
-          <tr><td><strong>Option repas :</strong></td><td>${params.mealOption ? "Oui" : "Non"}</td></tr>
-          ${
-            params.bookingOptions?.length
-              ? `<tr><td colspan="2">
-                  <strong>Options sélectionnées :</strong>
-                  <ul>
-                    ${params.bookingOptions
-                      .map(
-                        (opt) =>
-                          `<li>${opt.option.label} x ${opt.quantity} - ${opt.option.unitPrice}€ (à bord: ${
-                            opt.option.payableAtBoard ? "oui" : "non"
-                          })</li>`
-                      )
-                      .join("")}
-                  </ul>
-                </td></tr>`
-              : ""
-          }
-        </table>
-        <p style="margin-top: 20px;">Merci de confirmer rapidement cette demande.</p>
-      </body>
-    </html>
-  `;
-
-  const text = `
-Nouvelle demande de réservation :
-
-- ID Réservation : ${params.bookingId}
-- Nom : ${fullName}
-- Email : ${safe(params.email)}
-- Téléphone : ${safe(params.phoneNumber)}
-- Date & heure : ${safe(params.reservationTime)}
-${params.stripeUrl ? `- Lien de paiement : ${params.stripeUrl}` : ""}
-${params.service?.name ? `- Service : ${params.service.name}` : ""}
-${typeof params.boatAmount === "number" ? `- Montant bateau : ${params.boatAmount} €` : ""}
-- Capitaine : ${params.withCaptain ? "Oui" : "Non"}
-- Option repas : ${params.mealOption ? "Oui" : "Non"}
-${
-  params.bookingOptions?.length
-    ? `- Options :\n${params.bookingOptions
-        .map(
-          (opt) =>
-            `  • ${opt.option.label} x ${opt.quantity} - ${opt.option.unitPrice}€ (à bord: ${
-              opt.option.payableAtBoard ? "oui" : "non"
-            })`
-        )
-        .join("\n")}`
-    : ""
-}
-  `;
-
-  const response = await resend.emails.send({
-    from: fromEmail,
-    to: adminEmail,
-    subject,
-    html,
-    text,
-  });
-
-  console.log("📩 Email envoyé à l'admin :", response.data?.id || "sans ID");
-}
 
 export async function POST(request: Request) {
   try {
-    const body: SendEmailToAdminParams = await request.json();
+    const body = await request.json();
+    const { bookingId, stripeUrl } = body;
 
-    const requiredFields = [
-      "bookingId",
-      "firstName",
-      "lastName",
-      "email",
-      "phoneNumber",
-      "reservationTime",
-    ];
-    for (const field of requiredFields) {
-      if (!body[field as keyof SendEmailToAdminParams]) {
-        return NextResponse.json(
-          { error: `Champ manquant : ${field}` },
-          { status: 400 }
-        );
-      }
+    if (!bookingId) {
+      return NextResponse.json(
+        { error: `Champ manquant : bookingId` },
+        { status: 400 }
+      );
     }
 
-    await sendEmailToAdmin(body);
+    if (!adminEmail) {
+      console.error("❌ ADMIN_EMAIL non défini");
+      return NextResponse.json(
+        { error: "ADMIN_EMAIL manquant dans l'environnement" },
+        { status: 500 }
+      );
+    }
 
+    // --- Récupération des détails de la réservation ---
+    const booking = await prisma.booking.findUnique({
+      where: { id: parseInt(bookingId, 10) },
+      include: {
+        client: true,
+        user: true,
+        Service: true,
+        bookingOptions: {
+          include: {
+            option: true,
+          },
+        },
+      },
+    });
+
+    if (!booking) {
+      return NextResponse.json(
+        { error: `Réservation avec l'ID ${bookingId} introuvable.` },
+        { status: 404 }
+      );
+    }
+
+    // Vérification des données de réservation
+    const needsCaptain =
+      !booking.withCaptain && booking.Service?.requiresCaptain;
+    const captainPrice = needsCaptain
+      ? (booking.Service?.captainPrice ?? 350)
+      : 0;
+    const totalPayableOnBoardCalculated =
+      booking.bookingOptions
+        .filter((bo) => bo.option?.payableAtBoard)
+        .reduce(
+          (sum, bo) => sum + (bo.option?.unitPrice || 0) * (bo.quantity || 1),
+          0
+        ) + captainPrice;
+    // Préparer les paramètres pour l'email client
+    const clientEmailParams = {
+      bookingId: booking.id.toString(),
+      clientName: booking.client?.fullName || "",
+      clientEmail: booking.client?.email || "",
+      serviceName: booking.Service?.name || "",
+      startTime: booking.startTime,
+      endTime: booking.endTime,
+      boatAmount: booking.boatAmount,
+      mealOption: booking.mealOption,
+      withCaptain: booking.withCaptain,
+      captainPrice: captainPrice,
+      totalPayableOnBoardCalculated,
+      cautionAmount: booking.Service?.cautionAmount || 0,
+      bookingOptions: booking.bookingOptions.map((bo) => ({
+        quantity: bo.quantity,
+        option: {
+          unitPrice: bo.option?.unitPrice || 0,
+          label: bo.option?.label || "Option inconnue",
+          payableAtBoard: bo.option?.payableAtBoard || false,
+        },
+      })),
+      comment: booking.description || "",
+    };
+
+    function getBoatPriceForDate(date: Date, service: Service): number {
+      const rules = service.pricingRules ?? [];
+      const rule = rules.find(
+        (r: PricingRule) =>
+          date >= new Date(r.startDate) && date <= new Date(r.endDate)
+      );
+      return rule?.price ?? service.defaultPrice ?? 1500;
+    }
+
+    const dynamicBoatAmount = booking.Service
+      ? getBoatPriceForDate(booking.startTime, booking.Service)
+      : 1500;
+    // Préparer les paramètres pour l'email admin
+    // ...après avoir récupéré booking et fait les calculs...
+    const emailParams = {
+      bookingId: booking.id.toString(),
+      firstName: booking.client?.fullName.split(" ")[0] || "",
+      lastName: booking.client?.fullName.split(" ").slice(1).join(" ") || "",
+      email: booking.client?.email || "",
+      phoneNumber: booking.client?.phoneNumber || "",
+      reservationTime: new Date(booking.startTime).toLocaleString("fr-FR"),
+      stripeUrl,
+      comment: booking.description || "",
+      bookingOptions: booking.bookingOptions.map((bo) => ({
+        quantity: bo.quantity,
+        option: {
+          unitPrice: bo.option?.unitPrice || 0,
+          label: bo.option?.label || "Option inconnue",
+          payableAtBoard: bo.option?.payableAtBoard || false,
+        },
+      })),
+      withCaptain: booking.withCaptain,
+      mealOption: booking.mealOption,
+      boatAmount: dynamicBoatAmount,
+      service: {
+        name: booking.Service?.name || "",
+        currency: booking.Service?.currency || "EUR",
+        cautionAmount: booking.Service?.cautionAmount || 0,
+        requiresCaptain: booking.Service?.requiresCaptain || false,
+      },
+      captainPrice,
+      totalPayableOnBoardCalculated,
+    };
+    console.log("EMAIL PARAMS ADMIN:", emailParams);
+    // Envoi de l'email à l'admin
+    const { subject, html, text } = buildAdminReservationEmail(emailParams);
+    await sendEmail({
+      to: adminEmail,
+      subject,
+      html,
+      text,
+    });
+
+    // Envoi de l'email de confirmation au client
+    const clientMail = requestConfirmationEmail(clientEmailParams);
+    await sendEmail({
+      to: clientMail.to,
+      subject: clientMail.subject,
+      html: clientMail.html,
+      text: clientMail.text,
+    });
+
+    // Envoi de la facture à l'admin
     const invoiceResponse = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/bookings/send-invoice`,
       {
@@ -178,14 +174,11 @@ export async function POST(request: Request) {
       { message: "Email et facture envoyés à l'admin avec succès !" },
       { status: 200 }
     );
-  } catch (error: unknown) {
+  } catch (error) {
     console.error("❌ Erreur dans sendReservationDetails:", error);
-
-    let message = "Erreur interne";
-    if (error instanceof Error) {
-      message = error.message;
-    }
-
+    const message = error instanceof Error ? error.message : "Erreur interne";
     return NextResponse.json({ error: message }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

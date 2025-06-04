@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // ✅ Insertion des rôles (inchangé)
+  // ✅ Insertion des rôles
   await Promise.all([
     prisma.role.upsert({
       where: { name: "member" },
@@ -17,7 +17,7 @@ async function main() {
     }),
   ]);
 
-  // ✅ Insertion des jours de la semaine (inchangé)
+  // ✅ Insertion des jours de la semaine
   const daysOfWeek = [
     { dayOfWeek: 0, name: "sunday" },
     { dayOfWeek: 1, name: "monday" },
@@ -45,24 +45,34 @@ async function main() {
 
   console.log("✅ Roles and Days seeded");
 
-  // ✅ Création du service principal (mise à jour de la description, ajout de cautionAmount et requiresCaptain)
-  await prisma.service.upsert({
+  // ✅ Création ou mise à jour du service principal
+  await prisma.pricingRule.deleteMany({
+    where: {
+      service: { name: "Service" },
+    },
+  });
+
+  await prisma.service.deleteMany({
     where: { name: "Service" },
+  });
+
+  await prisma.service.upsert({
+    where: { name: "Évasion en mer – Cap Camarat 12.5" },
     update: {
       description:
         "Seul, en couple ou jusqu’à 10 personnes, profitez simplement du bateau et d’un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix. Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwich, charcuterie, fromage, vins ou autres. **Inclus : 6 paires de masques et tubas adultes, 2 paires enfants, 1 paddle board, literie et serviettes de douche, eau plate.**\n\n**Caution de 4000 € à régler sur place.**",
       cautionAmount: 4000,
-      requiresCaptain: true, // Ajout du capitaine obligatoire
+      requiresCaptain: true,
     },
     create: {
-      name: "Service",
+      name: "Évasion en mer – Cap Camarat 12.5",
       description: `Seul, en couple ou jusqu’à 10 personnes, profitez simplement du bateau et d’un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix.
 
-      Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwichs, charcuterie, fromage, vins ou autres.
-      
-      **Inclus : 6 paires de masques et tubas adultes, 2 paires enfants, 1 paddle board, literie et serviettes de douche, eau plate.**
-      
-      **Caution de 4000 € à régler sur place.**`,
+Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwichs, charcuterie, fromage, vins ou autres.
+
+**Inclus : 6 paires de masques et tubas adultes, 2 paires enfants, 1 paddle board, literie et serviettes de douche, eau plate.**
+
+**Caution de 4000 € à régler sur place (CB ou espèce, montant non débité)**`,
 
       defaultPrice: 1500,
       isFixed: true,
@@ -72,17 +82,17 @@ async function main() {
       categories: ["Location bateau"],
       imageUrl: "/assets/logo/hippo-transp.png",
       cautionAmount: 4000,
-      requiresCaptain: true, // Ajout du capitaine obligatoire
+      requiresCaptain: true,
     },
   });
 
   console.log(
-    "✅ Service principal inséré et description mise à jour, caution et capitaine obligatoire ajoutés"
+    "✅ Service principal inséré et description mise à jour, caution "
   );
 
-  // ✅ Insertion des règles de tarification dynamiques (inchangé)
+  // ✅ Insertion des règles de tarification dynamiques
   const service = await prisma.service.findUnique({
-    where: { name: "Service" },
+    where: { name: "Évasion en mer – Cap Camarat 12.5" },
   });
   if (!service) throw new Error("❌ Service introuvable");
 
@@ -119,27 +129,30 @@ async function main() {
     },
   ]);
 
-  for (const rule of pricingRules) {
-    await prisma.pricingRule.upsert({
-      where: {
-        serviceId_startDate_endDate: {
-          serviceId: rule.serviceId,
-          startDate: rule.startDate,
-          endDate: rule.endDate,
+  await Promise.all(
+    pricingRules.map((rule) =>
+      prisma.pricingRule.upsert({
+        where: {
+          serviceId_startDate_endDate: {
+            serviceId: rule.serviceId,
+            startDate: rule.startDate,
+            endDate: rule.endDate,
+          },
         },
-      },
-      update: {},
-      create: rule,
-    });
-  }
+        update: {},
+        create: rule,
+      })
+    )
+  );
 
   console.log("✅ Tarifs dynamiques insérés jusqu'à 2030");
-  console.log("🎉 Seeding terminé avec succès");
 
-  // ✅ Insertion des options (basé sur le document, "Repas à bord" supprimé)
-  await prisma.option.createMany({
-    data: [
-      {
+  // ✅ Insertion des options avec upsert
+  await Promise.all([
+    prisma.option.upsert({
+      where: { name: "boissons" },
+      update: {},
+      create: {
         label: "Boissons : Eau pétillante, Coca, Ice tea",
         name: "boissons",
         unitPrice: 40,
@@ -147,7 +160,11 @@ async function main() {
         payableOnline: false,
         payableAtBoard: true,
       },
-      {
+    }),
+    prisma.option.upsert({
+      where: { name: "vin-blanc-rose" },
+      update: {},
+      create: {
         label: "Bouteille de vin Blanc ou Rosé",
         name: "vin-blanc-rose",
         unitPrice: 25,
@@ -155,7 +172,11 @@ async function main() {
         payableOnline: false,
         payableAtBoard: true,
       },
-      {
+    }),
+    prisma.option.upsert({
+      where: { name: "champagne" },
+      update: {},
+      create: {
         label: "Bouteille de champagne",
         name: "champagne",
         unitPrice: 50,
@@ -163,7 +184,11 @@ async function main() {
         payableOnline: false,
         payableAtBoard: true,
       },
-      {
+    }),
+    prisma.option.upsert({
+      where: { name: "paddle-supplementaire" },
+      update: {},
+      create: {
         label: "Paddle board supplémentaire",
         name: "paddle-supplementaire",
         unitPrice: 50,
@@ -171,7 +196,11 @@ async function main() {
         payableOnline: false,
         payableAtBoard: true,
       },
-      {
+    }),
+    prisma.option.upsert({
+      where: { name: "serviette-bain" },
+      update: {},
+      create: {
         label: "Serviette de bain",
         name: "serviette-bain",
         unitPrice: 5,
@@ -179,8 +208,11 @@ async function main() {
         payableOnline: false,
         payableAtBoard: true,
       },
-    ],
-  });
+    }),
+  ]);
+
+  console.log("✅ Options insérées ou mises à jour");
+  console.log("🎉 Seeding terminé avec succès");
 }
 
 main()

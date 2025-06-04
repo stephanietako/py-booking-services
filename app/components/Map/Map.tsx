@@ -72,7 +72,7 @@ const Map: React.FC = () => {
       const mapOptions: google.maps.MapOptions = {
         center: position,
         zoom: 10,
-        mapId: "MY_NEXTJS_APID",
+        mapId: "DEMO_MAP_ID",
       };
 
       // setup the map

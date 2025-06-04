@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { sendInvoiceEmails } from "@/lib/emailService";
+import { sendEmail } from "@/lib/email/send";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +51,8 @@ export async function POST(req: Request) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
       const bookingId = Number(session.metadata?.bookingId);
-
+      console.log("session.metadata", session.metadata);
+      console.log("bookingId reçu", session.metadata?.bookingId);
       if (!bookingId) {
         console.warn("📭 bookingId manquant dans metadata", session.metadata);
         return NextResponse.json(
@@ -76,9 +77,14 @@ export async function POST(req: Request) {
         }
 
         // ✅ Vérification du montant payé
-        const expectedAmount = Math.round(booking.totalAmount * 100); // en centimes
+        const expectedAmount = Math.round(booking.boatAmount * 100);
         const actualAmount = session.amount_total;
-
+        console.log(
+          "expectedAmount",
+          expectedAmount,
+          "actualAmount",
+          actualAmount
+        );
         if (actualAmount !== expectedAmount) {
           console.error(
             `❌ Montant Stripe incorrect : attendu ${expectedAmount}, reçu ${actualAmount}`
@@ -112,35 +118,40 @@ export async function POST(req: Request) {
         await prisma.transaction.create({
           data: {
             bookingId,
-            amount: booking.totalAmount,
+            amount: booking.boatAmount,
             description: `Paiement Stripe #${session.id}`,
             paymentStatus: "PAID",
           },
         });
 
-        const fullBooking = await prisma.booking.findUnique({
+        await prisma.transaction.updateMany({
+          where: { bookingId, paymentStatus: "PENDING" },
+          data: { paymentStatus: "PAID" },
+        });
+
+        // ➡️ Ajoute ceci pour envoyer l'email de confirmation au client :
+        const bookingWithClient = await prisma.booking.findUnique({
           where: { id: bookingId },
           include: {
-            Service: true,
             client: true,
-            bookingOptions: true,
+            Service: true,
           },
         });
 
-        if (fullBooking) {
-          const safeBooking = {
-            ...fullBooking,
-            service: {
-              ...fullBooking.Service!,
-              description: fullBooking.Service?.description ?? undefined,
-            },
-            bookingOptions: fullBooking.bookingOptions.map((opt) => ({
-              ...opt,
-              description: opt.description ?? undefined,
-            })),
-          };
-
-          await sendInvoiceEmails(safeBooking);
+        if (bookingWithClient?.client?.email) {
+          await sendEmail({
+            to: bookingWithClient.client.email,
+            subject: "Votre paiement a bien été reçu – Yachting Day",
+            html: `
+              <div style="font-family: Arial, sans-serif; color: #333;">
+                <h2 style="color: #0056b3;">Merci pour votre paiement !</h2>
+                <p>Bonjour <strong>${bookingWithClient.client.fullName}</strong>,</p>
+                <p>Nous confirmons la bonne réception de votre paiement pour la réservation <strong>#${bookingWithClient.id}</strong> du service <strong>${bookingWithClient.Service?.name}</strong>.</p>
+                <p>Votre réservation est désormais validée. Nous restons à votre disposition pour toute question.</p>
+                <p style="margin-top: 20px; color: #666;">Cordialement,<br/>L'équipe Yachting Day</p>
+              </div>
+            `,
+          });
         }
 
         return NextResponse.json({ received: true });

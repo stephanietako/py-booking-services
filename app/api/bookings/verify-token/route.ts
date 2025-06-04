@@ -89,6 +89,7 @@ export async function POST(req: Request) {
           stripePaymentLink: booking.stripePaymentLink ?? null,
           createdAt: booking.createdAt,
           updatedAt: booking.updatedAt,
+          description: booking.description,
         },
       });
     } catch (error) {

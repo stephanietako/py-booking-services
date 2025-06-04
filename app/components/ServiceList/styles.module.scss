@@ -237,17 +237,17 @@
 }
 
 /* Cancel Button */
-.cancelButton {
-  margin-top: 0.5rem;
-  background-color: transparent;
-  color: #ff5555;
-  border: 1px solid #ff5555;
+// .cancelButton {
+//   margin-top: 0.5rem;
+//   background-color: transparent;
+//   color: #ff5555;
+//   border: 1px solid #ff5555;
 
-  &:hover {
-    background-color: #ff5555;
-    color: #000;
-  }
-}
+//   &:hover {
+//     background-color: #ff5555;
+//     color: #000;
+//   }
+// }
 
 /* Confirmation Message */
 .bookingConfirmationMessage {
@@ -272,6 +272,144 @@
   font-weight: bold;
   color: #00ffff;
   margin-bottom: 1rem;
+}
+.comment_section {
+  background: #181818;
+  border: 1px solid #00ffff;
+  border-radius: 0.7rem;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.07);
+
+  label {
+    color: #00ffff;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 1.05rem;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 60px;
+    max-height: 180px;
+    padding: 0.7rem;
+    border-radius: 0.4rem;
+    border: 1px solid #1e90ff;
+    background: #222;
+    color: whitesmoke;
+    font-size: 1rem;
+    resize: vertical;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+
+    &:focus {
+      outline: none;
+      border-color: #00ffff;
+      box-shadow: 0 0 0 2px rgba(0, 255, 255, 0.15);
+    }
+  }
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip_icon {
+  background: #00ffff;
+  color: #222;
+  border-radius: 50%;
+  width: 1.1em;
+  height: 1.1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95em;
+  font-weight: bold;
+  margin-left: 0.3em;
+  transition: background 0.2s;
+}
+
+.tooltip_text {
+  visibility: hidden;
+  width: 220px;
+  background-color: #222;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 0.7em 1em;
+  position: absolute;
+  z-index: 10;
+  bottom: 125%; /* au-dessus de l'icône */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 0.95em;
+  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.07);
+}
+
+.tooltip:hover .tooltip_text,
+.tooltip:focus-within .tooltip_text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.captain_radio_group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.captain_radio_label {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1.05rem;
+  color: whitesmoke;
+  cursor: pointer;
+  position: relative;
+}
+
+.captain_radio_input {
+  appearance: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 2px solid #00ffff;
+  border-radius: 30%;
+  background: #222;
+  margin-right: 0.5rem;
+  position: relative;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.captain_radio_input:checked {
+  border-color: #00ffff;
+  background: #00ffff;
+}
+
+// .captain_radio_input:checked::after {
+//   content: "";
+//   display: block;
+//   width: 0.6rem;
+//   height: 0.6rem;
+//   background: #111;
+//   border-radius: 50%;
+//   position: absolute;
+//   top: 0.25rem;
+//   left: 0.25rem;
+// }
+
+.captain_radio_input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 255, 255, 0.3);
 }
 
 //////////// RESPONSIVE //////////
@@ -327,5 +465,84 @@
   .bookingConfirmationMessage {
     font-size: 0.95rem;
     padding: 0.75rem;
+  }
+
+  .comment_section {
+    padding: 0.7rem 0.5rem;
+  }
+}
+@media (max-width: 480px) {
+  .service_list {
+    padding: 1rem;
+  }
+
+  .service_item__content {
+    gap: 1rem;
+  }
+
+  .left_column,
+  .right_column {
+    flex: 1;
+    width: 100%;
+  }
+
+  .bloc__right_column {
+    width: 100%;
+    margin-top: 2rem;
+  }
+
+  .right_column {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .service_item__title {
+    font-size: 1.5rem;
+  }
+
+  .service_item__stats p {
+    font-size: 0.9rem;
+  }
+}
+@media (max-width: 360px) {
+  .service_item__title {
+    font-size: 1.3rem;
+  }
+
+  .service_item__stats p {
+    font-size: 0.85rem;
+  }
+
+  .right_column__title {
+    font-size: 1.1rem;
+  }
+
+  .comment_section label {
+    font-size: 0.95rem;
+  }
+
+  .comment_section textarea {
+    font-size: 0.9rem;
+  }
+}
+@media (max-width: 320px) {
+  .service_item__title {
+    font-size: 1.2rem;
+  }
+
+  .service_item__stats p {
+    font-size: 0.8rem;
+  }
+
+  .right_column__title {
+    font-size: 1rem;
+  }
+
+  .comment_section label {
+    font-size: 0.9rem;
+  }
+
+  .comment_section textarea {
+    font-size: 0.85rem;
   }
 }

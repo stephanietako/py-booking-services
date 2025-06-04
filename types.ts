@@ -31,8 +31,8 @@ export interface Client {
 export interface PricingRule {
   id: string;
   serviceId: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string | Date;
+  endDate: string | Date;
   price: number;
   createdAt: Date;
   updatedAt: Date;
@@ -60,6 +60,8 @@ export interface Service {
   amount: number;
   price: number;
   requiresCaptain: boolean;
+  deposit?: number;
+  captainPrice?: number;
 }
 
 export interface Option {
@@ -68,7 +70,7 @@ export interface Option {
   label: string;
   amount: number;
   payableOnline: boolean;
-  payableAtBoard: boolean; // Ajoute cette propriété
+  payableAtBoard: boolean;
   createdAt: Date;
   description?: string | null;
   unitPrice: number;
@@ -118,20 +120,21 @@ export interface Booking {
   bookingOptions?: BookingOption[];
   transactions?: Transaction[];
   mealOption: boolean;
+  description?: string | null;
 }
 
-// export interface BookingWithDetails extends Booking {
-//   service: Service;
-//   bookingOptions: BookingOption[];
-//   client: Client;
-// }
-// Remplacez votre BookingWithDetails existant par celui-ci
 export interface BookingWithDetails extends Booking {
-  Service: Service;
+  service: Service;
   client: Client;
   bookingOptions: (BookingOption & { option: Option })[];
   user?: User | null;
   withCaptain: boolean;
+  captainPrice?: number;
+  totalAmount: number;
+  boatAmount: number;
+  startTime: Date;
+  endTime: Date;
+  mealOption: boolean;
 }
 
 export interface Day {
@@ -205,4 +208,32 @@ export interface OptionWithAmount {
   amount: number;
   createdAt: Date;
   id: string;
+}
+
+export interface DetailedBookingOption {
+  id: string;
+  optionId: string;
+  label: string;
+  quantity: number;
+  unitPrice: number;
+  description?: string | null;
+  amount: number;
+  createdAt: Date;
+}
+
+export interface RequestConfirmationEmailParams {
+  bookingId: string;
+  clientName: string;
+  clientEmail: string;
+  serviceName: string;
+  startTime: Date;
+  endTime: Date;
+  boatAmount: number;
+  mealOption: boolean;
+  withCaptain: boolean;
+  captainPrice: number;
+  totalPayableOnBoardCalculated: number;
+  cautionAmount: number;
+  bookingOptions: DetailedBookingOption[];
+  comment?: string;
 }

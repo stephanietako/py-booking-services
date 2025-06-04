@@ -1,6 +1,4 @@
 // app/api/bookings/[id]/route.ts
-
-//import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -49,5 +47,41 @@ export const GET = async (
       error
     );
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+  }
+};
+
+export const DELETE = async (
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) => {
+  const bookingId = parseInt((await context.params).id, 10);
+
+  if (isNaN(bookingId)) {
+    return NextResponse.json(
+      { error: "ID de réservation invalide" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    // Supprimer d'abord les BookingOption associées
+    await prisma.bookingOption.deleteMany({
+      where: { bookingId },
+    });
+    // Ensuite, supprimer la réservation elle-même
+    const deleted = await prisma.booking.delete({
+      where: { id: bookingId },
+    });
+
+    return NextResponse.json(
+      { success: true, deletedBookingId: deleted.id },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la réservation:", error);
+    return NextResponse.json(
+      { error: "Erreur lors de la suppression de la réservation" },
+      { status: 500 }
+    );
   }
 };
