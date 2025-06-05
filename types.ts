@@ -179,8 +179,14 @@ export interface CustomUser {
   stripeCustomerId?: string | null;
 }
 
-export type BookingStatus = "PENDING" | "APPROVED" | "REJECTED" | "PAID";
-export type PaymentStatus = "PENDING" | "PAID" | "FAILED";
+export type BookingStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "PAID"
+  | "CANCELED";
+
+export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
 
 export type DateTime = {
   justDate: Date | null; // Stocke uniquement une date sans heure.

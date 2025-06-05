@@ -77,7 +77,8 @@ export async function POST(req: Request) {
     // 3. Préparer les données pour la facture
     const bookingForInvoice: BookingForInvoice = {
       ...booking,
-      service: booking.Service as Service, // Assure TypeScript that service is present
+      status: booking.status === "CANCELLED" ? "CANCELED" : booking.status,
+      service: booking.Service as Service,
       client: booking.client as Client,
       bookingOptions: booking.bookingOptions as (BookingOption & {
         option: Option;

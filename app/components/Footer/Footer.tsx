@@ -5,10 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Map from "../Map/Map";
 import logo from "@/public/assets/logo/logo-new.png";
-
-// Styles
+import { FaWhatsapp } from "react-icons/fa";
 import styles from "./styles.module.scss";
-import { FaEnvelope, FaPhone } from "react-icons/fa";
+import { FaEnvelope, FaPhone, FaInstagram } from "react-icons/fa";
 
 export const dynamic = "force-dynamic";
 
@@ -91,7 +90,25 @@ const Footer: React.FC = () => {
                     <Link href="/">Accueil</Link>
                   </li>
                   <li>
-                    <a href="tel:+33767210017">Nous contacter</a>
+                    <a
+                      href="https://wa.me/33767210017"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaWhatsapp size={20} />
+                      Nous contacter sur WhatsApp
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.instagram.com/yachting_day_cavalaire/?igsh=MXI5ODUxbmVqNnEybQ%3D%3D#"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                    >
+                      <FaInstagram size={20} />
+                      Suivez-nous sur Instagram
+                    </a>
                   </li>
                   <li>
                     <Link href="/mention">Mentions Légales</Link>

@@ -4,6 +4,7 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email/send";
+import { refundEmailTemplate } from "@/lib/emails/refundsEmail";
 
 export const dynamic = "force-dynamic";
 
@@ -160,7 +161,58 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Server error" }, { status: 500 });
       }
     }
+    case "charge.refunded": {
+      const charge = event.data.object as Stripe.Charge;
+      // On suppose que tu as mis le bookingId dans la metadata lors du paiement Stripe
+      const bookingId = Number(charge.metadata?.bookingId);
 
+      if (!bookingId) {
+        console.warn(
+          "📭 bookingId manquant dans metadata du remboursement",
+          charge.metadata
+        );
+        break;
+      }
+
+      // Met à jour le statut de la réservation
+      await prisma.booking.update({
+        where: { id: bookingId },
+        data: {
+          paymentStatus: "REFUNDED", // ou "CANCELLED" selon ta logique métier
+          status: "CANCELLED", // ou "CANCELLED" selon ta logique métier
+        },
+      });
+
+      // Crée une transaction négative pour garder une trace du remboursement
+      await prisma.transaction.create({
+        data: {
+          bookingId,
+          amount: -Math.abs(charge.amount / 100), // Stripe envoie le montant en centimes
+          description: `Remboursement Stripe #${charge.id}`,
+          paymentStatus: "REFUNDED",
+        },
+      });
+
+      // (Optionnel) Notifie le client par email
+      const bookingWithClient = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        include: { client: true, Service: true },
+      });
+
+      if (bookingWithClient?.client?.email) {
+        await sendEmail({
+          to: bookingWithClient.client.email,
+          subject: "Votre remboursement a été effectué – Yachting Day",
+          html: refundEmailTemplate(
+            bookingWithClient.client.fullName,
+            bookingWithClient.id,
+            bookingWithClient.Service?.name
+          ),
+        });
+      }
+
+      break;
+    }
     default:
       console.log(`ℹ️ Événement ignoré : ${eventType}`);
       break;

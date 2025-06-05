@@ -160,10 +160,12 @@ enum BookingStatus {
   APPROVED
   REJECTED
   PAID
+  CANCELLED
 }
 
 enum PaymentStatus {
   PENDING
   PAID
   FAILED
+  REFUNDED
 }
