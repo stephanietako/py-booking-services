@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Booking } from "@/types";
+import { Booking, BookingStatus } from "@/types";
 import { updateBookingStatus } from "@/utils/bookings";
 
 interface Props {
@@ -13,7 +13,7 @@ const BookingList: React.FC<Props> = ({ initialBookings }) => {
 
   const handleStatusChange = async (
     bookingId: number,
-    newStatus: "APPROVED" | "REJECTED" | "PAID"
+    newStatus: BookingStatus
   ) => {
     try {
       const updated = await updateBookingStatus(bookingId, newStatus);

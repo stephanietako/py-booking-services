@@ -4,14 +4,17 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 // Style
-import styles from "./styles.module.scss"; // Importez le fichier styles.module.scss
+import styles from "./styles.module.scss";
 
-interface BookingItemProps {
+interface UserBookingCardProps {
   booking: Booking;
   onCancel: (booking: Booking) => void;
 }
 
-const BookingItem: React.FC<BookingItemProps> = ({ booking, onCancel }) => {
+const UserBookingCard: React.FC<UserBookingCardProps> = ({
+  booking,
+  onCancel,
+}) => {
   return (
     <div className={styles.bookingItem}>
       <div className={styles.bookingItem__header}>
@@ -63,4 +66,4 @@ const BookingItem: React.FC<BookingItemProps> = ({ booking, onCancel }) => {
   );
 };
 
-export default BookingItem;
+export default UserBookingCard;

@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { formatISO } from "date-fns";
 
-// Type explicite pour les objets retournés par prisma.closedDay.findMany()
 type ClosedDayType = {
   date: Date;
 };

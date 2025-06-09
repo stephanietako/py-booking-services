@@ -34,16 +34,63 @@ export default function EditUserForm({ user }: EditUserFormProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   const toastId = toast.loading("Mise à jour de l'utilisateur...");
+
+  //   try {
+  //     const res = await fetch("/api/users/updateUser", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(formData),
+  //     });
+
+  //     const data = await res.json();
+  //     if (!res.ok)
+  //       throw new Error(data.error || "Erreur lors de la mise à jour.");
+
+  //     toast.success("Utilisateur mis à jour avec succès !", { id: toastId });
+
+  //     // ✅ Réinitialisation
+  //     setFormData({
+  //       userId: user.clerkUserId,
+  //       userName: "",
+  //       userEmail: "",
+  //       userPhone: "",
+  //       userDescription: "",
+  //     });
+
+  //     // ✅ Scroll top + Highlight
+  //     window.scrollTo({ top: 0, behavior: "smooth" });
+  //     setHighlight(true);
+  //     setShowCheck(true); // Afficher l'icône ✅
+  //     setTimeout(() => setShowCheck(false), 2000); // Cacher l'icône après 2 secondes
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       toast.error(error.message || "Erreur inconnue.", { id: toastId });
+  //     } else {
+  //       toast.error("Erreur inconnue.", { id: toastId });
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     const toastId = toast.loading("Mise à jour de l'utilisateur...");
 
     try {
-      const res = await fetch("/api/users/updateUser", {
-        method: "POST",
+      const res = await fetch(`/api/users/${formData.userId}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          userName: formData.userName,
+          userEmail: formData.userEmail,
+          userPhone: formData.userPhone,
+          userDescription: formData.userDescription,
+        }),
       });
 
       const data = await res.json();
@@ -52,7 +99,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
 
       toast.success("Utilisateur mis à jour avec succès !", { id: toastId });
 
-      // ✅ Réinitialisation
+      // Réinitialisation
       setFormData({
         userId: user.clerkUserId,
         userName: "",
@@ -61,11 +108,11 @@ export default function EditUserForm({ user }: EditUserFormProps) {
         userDescription: "",
       });
 
-      // ✅ Scroll top + Highlight
+      // Highlight + icône ✅
       window.scrollTo({ top: 0, behavior: "smooth" });
       setHighlight(true);
-      setShowCheck(true); // Afficher l'icône ✅
-      setTimeout(() => setShowCheck(false), 2000); // Cacher l'icône après 2 secondes
+      setShowCheck(true);
+      setTimeout(() => setShowCheck(false), 2000);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message || "Erreur inconnue.", { id: toastId });

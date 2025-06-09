@@ -1,0 +1,190 @@
+.bookingDetailsContainer {
+  color: #f5f5f5;
+  background: #1a1a1a;
+  border-radius: 1rem;
+  max-width: 90%;
+  margin: 2rem auto;
+  padding: 2rem;
+  box-shadow: 0 0 1rem #00000085;
+  width: 70%;
+}
+
+.title {
+  color: #00ffff;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.twoColumns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.leftBlock,
+.rightBlock {
+  flex: 1;
+  min-width: 280px;
+}
+
+.label {
+  color: #1e90ff;
+  font-weight: bold;
+  margin-top: 0.7rem;
+  display: block;
+}
+
+.value {
+  margin-bottom: 1rem;
+  color: whitesmoke;
+}
+
+.sectionTitle {
+  color: #00ffff;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #00ffff;
+  padding-bottom: 0.5rem;
+}
+
+.optionsList {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1rem;
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.totalAmount {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00ffff;
+  margin-top: 1.5rem;
+}
+
+.paymentNote {
+  color: orange;
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+.errorMessage {
+  color: #ff4d4f;
+  background-color: #332222;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.loadingMessage {
+  color: #cccccc;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.clientInfo {
+  margin-bottom: 2rem;
+}
+
+.userInfo {
+  margin-top: 2rem;
+}
+
+.bold {
+  font-weight: bold;
+  color: #00ffff;
+  margin-top: 1rem;
+}
+
+.btn__requestButton {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+
+  .__requestButton {
+    background-color: #1e90ff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 2rem;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #0119f3;
+    }
+
+    &:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.btn__deleteButton {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+
+  .__deleteButton {
+    background-color: #ff4d4f;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    transition: background-color 0.3s;
+    box-shadow: 0 2px 8px #00000030;
+
+    &:hover {
+      background-color: #d9363e;
+    }
+
+    &:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.infoText {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+
+  p {
+    color: #00ffff;
+    text-align: center;
+  }
+}
+
+.separator {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 1rem 0;
+}
+
+.intermediatePrice {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #cccccc;
+}

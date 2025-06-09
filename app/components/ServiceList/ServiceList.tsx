@@ -20,6 +20,7 @@ const ServiceList = () => {
   const [error, setError] = useState<string | null>(null);
   const [baseServicePrice, setBaseServicePrice] = useState<number | null>(null);
   const [isBooking, setIsBooking] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [bookingMessage, setBookingMessage] = useState<string | null>(null);
   const [startTime, setStartTime] = useState<string | null>(null);
   const [endTime, setEndTime] = useState<string | null>(null);
@@ -188,7 +189,7 @@ const ServiceList = () => {
         toast.success("Opération réussie ... Redirection ", {
           ariaProps: { role: "status", "aria-live": "polite" },
         });
-        router.push(`/booking/verify?token=${bookingResult.token}`);
+        router.push(`/booking/verify-booking?token=${bookingResult.token}`);
       } else {
         toast.error("Erreur lors de la création de la réservation.", {
           ariaProps: { role: "alert", "aria-live": "assertive" },
@@ -277,6 +278,18 @@ const ServiceList = () => {
                         : "Chargement du prix..."}
                     </span>
                   </div>
+                  {startTime && endTime && (
+                    <div className={styles.selected_times}>
+                      <p>
+                        🗓 Réservation prévue le{" "}
+                        <strong>
+                          {format(parseISO(startTime), "dd/MM/yyyy")} de{" "}
+                          {format(parseISO(startTime), "HH:mm")} à{" "}
+                          {format(parseISO(endTime), "HH:mm")}
+                        </strong>
+                      </p>
+                    </div>
+                  )}
 
                   <h2>Options supplémentaires (à régler sur place)</h2>
                   <p className={styles.notice} style={{ color: "whitesmoke" }}>
@@ -523,12 +536,12 @@ const ServiceList = () => {
                 </div>
               </div>
             </div>
-
+            {/* 
             {bookingMessage && (
               <div className={styles.bookingConfirmationMessage}>
                 <p>{bookingMessage}</p>
               </div>
-            )}
+            )} */}
           </li>
         </div>
       </section>

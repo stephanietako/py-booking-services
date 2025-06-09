@@ -184,7 +184,7 @@ export type BookingStatus =
   | "APPROVED"
   | "REJECTED"
   | "PAID"
-  | "CANCELED";
+  | "CANCELLED";
 
 export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
 

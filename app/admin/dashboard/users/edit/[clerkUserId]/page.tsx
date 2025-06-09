@@ -1,6 +1,6 @@
 // app/admin/dashboard/users/edit/[clerkUserId]/page.tsx
-
-// app/admin/dashboard/users/edit/[clerkUserId]/page.tsx
+// Cette page sert à afficher un formulaire pré-rempli avec les infos d’un utilisateur donné,
+// pour que l’admin puisse modifier ces infos.
 import { prisma } from "@/lib/prisma";
 import EditUserForm from "@/app/components/EditUserForm/EditUserForm";
 

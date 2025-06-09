@@ -1,4 +1,4 @@
-// app/admin/dashbord/central-pannel/page.tsx
+// app/admin/dashboard/AdminDashboardPage/page.tsx
 import React from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -10,13 +10,15 @@ import Wrapper from "@/app/components/Wrapper/Wrapper";
 import { SignOutButton } from "@clerk/nextjs";
 import BookingList from "@/app/components/BookingList/BookingList";
 
-export default async function AdminDashboard() {
+export default async function AdminDashboardPage() {
   const { userId } = await auth();
+  // Vérification de l'authentification
   if (!userId) redirect("/");
 
+  // Vérification du rôle admin
   const userRole = await getRole(userId);
-  if (userRole?.role?.name !== "admin") {
-    redirect("/profile");
+  if (userRole?.name !== "admin") {
+    redirect("/");
   }
 
   const initialBookings = await getBookings(undefined);

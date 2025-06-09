@@ -5,11 +5,13 @@ import { updateBooking } from "@/actions/bookings";
 import toast from "react-hot-toast";
 import { Booking, BookingStatus } from "@/types";
 
-interface AdminBookingsUserProps {
+interface AdminBookingsPanelProps {
   bookings: Booking[];
 }
 
-const AdminBookingsUser: React.FC<AdminBookingsUserProps> = ({ bookings }) => {
+const AdminBookingsPanel: React.FC<AdminBookingsPanelProps> = ({
+  bookings,
+}) => {
   const [loading, setLoading] = useState<string | null>(null);
 
   // Mettre à jour le statut de la réservation
@@ -102,4 +104,4 @@ const AdminBookingsUser: React.FC<AdminBookingsUserProps> = ({ bookings }) => {
   );
 };
 
-export default AdminBookingsUser;
+export default AdminBookingsPanel;

@@ -9,14 +9,14 @@ import { AppError } from "@/lib/errors";
 
 const priceCache = new Map<string, number>();
 
-// Fonction pour récupérer les jours
+// Fonction pour récupérer le rôle d'un utilisateur
 export async function getRole(clerkUserId: string) {
   const user = await prisma.user.findUnique({
     where: { clerkUserId },
     include: { role: true },
   });
   if (!user) throw new Error("Utilisateur non trouvé");
-  return user;
+  return user.role;
 }
 ///////////////
 // Fonction pour récupérer les jours

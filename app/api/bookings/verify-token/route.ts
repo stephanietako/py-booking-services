@@ -39,34 +39,39 @@ export async function POST(req: Request) {
 
       if (decoded.clientId) {
         booking = await prisma.booking.findUnique({
-          where: { id: bookingId, clientId: decoded.clientId },
+          where: { id: bookingId },
           include: {
             Service: true,
             bookingOptions: {
               include: {
-                option: true, // Inclure les détails de l'option
+                option: true,
               },
             },
             client: true,
           },
         });
+
+        if (booking?.clientId !== decoded.clientId) {
+          booking = null;
+        }
       } else if (decoded.userId) {
         booking = await prisma.booking.findUnique({
-          where: { id: bookingId, userId: decoded.userId },
+          where: { id: bookingId },
           include: {
             Service: true,
             bookingOptions: {
-              include: {
-                option: true, // Inclure les détails de l'option
-              },
+              include: { option: true },
             },
             user: true,
           },
         });
+
+        if (booking?.userId !== decoded.userId) {
+          booking = null;
+        }
       }
 
       if (!booking) {
-        // 403 Forbidden, car token valide mais accès refusé
         return NextResponse.json(
           { error: "Accès refusé à cette réservation" },
           { status: 403 }

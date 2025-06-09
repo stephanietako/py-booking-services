@@ -1,32 +1,35 @@
-// app/admin/dashboard/adminBookings/page.tsx
+// app/admin/dashboard/AdminBookings/page.tsx
 import { auth } from "@clerk/nextjs/server";
 import { getRole } from "@/actions/actions";
 import { getAllBookings } from "@/actions/bookings";
 import { redirect } from "next/navigation";
-import AdminBookingsUser from "@/app/components/AdminBookingsUser/AdminBookingsUser";
+import AdminBookingsPanel from "@/app/components/AdminBookingsPanel/AdminBookingsPanel";
+import Wrapper from "@/app/components/Wrapper/Wrapper";
 
-// On récupère les réservations de l'utilisateur
-
+// Page strictement réservée à l'admin
 const AdminBookingsPage = async () => {
   const { userId } = await auth();
-
-  // Vérification de l'authentification et du rôle de l'utilisateur
+  // Vérification de l'authentification
   if (!userId) {
     redirect("/");
     return null;
   }
 
+  // Vérification du rôle admin
   const userRole = await getRole(userId);
-
-  if (userRole?.role?.name !== "admin") {
+  if (userRole?.name !== "admin") {
     redirect("/");
     return null;
   }
 
-  // Récupérer les réservations valides
+  // L'admin voit toutes les réservations
   const bookings = await getAllBookings(userId);
 
-  return <AdminBookingsUser bookings={bookings} />;
+  return (
+    <Wrapper>
+      <AdminBookingsPanel bookings={bookings} />
+    </Wrapper>
+  );
 };
 
 export default AdminBookingsPage;

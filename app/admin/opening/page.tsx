@@ -14,7 +14,7 @@ const OpeningPage = async () => {
 
   const userRole = await getRole(userId);
 
-  if (userRole?.role?.name !== "admin") {
+  if (userRole?.name !== "admin") {
     redirect("/");
     return null; // Rediriger si l'utilisateur n'est pas un admin
   }

@@ -236,7 +236,7 @@ const Navbar: React.FC = () => {
     const fetchUserRole = async () => {
       if (user?.id) {
         const role = await getRole(user.id);
-        setUserRole(role?.role?.name || null);
+        setUserRole(role?.name || null);
       }
     };
     if (user?.id) fetchUserRole();

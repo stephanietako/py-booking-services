@@ -1,9 +1,10 @@
 // utils/bookings.ts
 import { prisma } from "@/lib/prisma";
+import { BookingStatus } from "@/types"; // <-- Ajoute cet import
 
 export const updateBookingStatus = async (
   bookingId: number,
-  status: "APPROVED" | "REJECTED" | "PAID"
+  status: BookingStatus // <-- Ici, accepte tous les statuts
 ) => {
   return await prisma.booking.update({
     where: { id: bookingId },
