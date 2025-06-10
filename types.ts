@@ -243,3 +243,9 @@ export interface RequestConfirmationEmailParams {
   bookingOptions: DetailedBookingOption[];
   comment?: string;
 }
+
+export interface PaginationInfo {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+}

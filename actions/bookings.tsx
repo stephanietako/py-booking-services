@@ -366,10 +366,62 @@ export async function updateBookingTotal(bookingId: string): Promise<number> {
 }
 ////////////////////////
 // Récupérer les réservations d'un utilisateur
+// export async function getUserBookings(userId: string) {
+//   try {
+//     const bookings = await prisma.booking.findMany({
+//       where: { user: { clerkUserId: userId } },
+//       include: {
+//         Service: true,
+//         user: true,
+//         client: true,
+//         bookingOptions: {
+//           include: { option: true },
+//         },
+//       },
+//       orderBy: { createdAt: "desc" },
+//     });
+
+//     return bookings.map((booking) => {
+//       const enrichedService = booking.Service
+//         ? {
+//             ...booking.Service,
+//             description: booking.Service.description ?? undefined,
+//             categories: booking.Service.categories ?? [],
+//             imageUrl: booking.Service.imageUrl ?? "",
+//             active: booking.Service.active ?? true,
+//           }
+//         : null;
+
+//       return {
+//         ...booking,
+//         startTime: new Date(booking.startTime),
+//         endTime: new Date(booking.endTime),
+//         clientId: booking.clientId ?? null,
+//         stripePaymentLink: booking.stripePaymentLink ?? undefined,
+//         service: enrichedService,
+//         options: booking.bookingOptions.map((o) => ({
+//           id: o.optionId,
+//           label: o.label,
+//           quantity: o.quantity,
+//           unitPrice: o.unitPrice,
+//           description: "",
+//           amount: o.unitPrice,
+//           createdAt: o.option?.createdAt ?? new Date(),
+//         })),
+//       } as Booking;
+//     });
+//   } catch (error) {
+//     console.error("Erreur lors de la récupération des réservations", error);
+//     throw new Error("Impossible de charger les réservations.");
+//   }
+// }
+// actions/bookings.ts
 export async function getUserBookings(userId: string) {
   try {
     const bookings = await prisma.booking.findMany({
-      where: { user: { clerkUserId: userId } },
+      where: {
+        userId: userId, // Modifié : utilise le userId directement sur le modèle Booking
+      },
       include: {
         Service: true,
         user: true,
@@ -382,6 +434,7 @@ export async function getUserBookings(userId: string) {
     });
 
     return bookings.map((booking) => {
+      // ... (le reste de ta logique de mapping est parfait)
       const enrichedService = booking.Service
         ? {
             ...booking.Service,
@@ -404,7 +457,7 @@ export async function getUserBookings(userId: string) {
           label: o.label,
           quantity: o.quantity,
           unitPrice: o.unitPrice,
-          description: "",
+          description: "", // Assuming description for Option is not directly on BookingOption
           amount: o.unitPrice,
           createdAt: o.option?.createdAt ?? new Date(),
         })),

@@ -1,3 +1,4 @@
+// ServiceList.tsx
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
@@ -536,12 +537,6 @@ const ServiceList = () => {
                 </div>
               </div>
             </div>
-            {/* 
-            {bookingMessage && (
-              <div className={styles.bookingConfirmationMessage}>
-                <p>{bookingMessage}</p>
-              </div>
-            )} */}
           </li>
         </div>
       </section>

@@ -3,7 +3,7 @@ import { addUserToDatabase, getRole } from "@/actions/actions";
 import AdminDashboard from "../../components/AdminDashboard/AdminDashboard";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { CustomUser } from "@/types";
+//import { CustomUser } from "@/types";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 
@@ -23,18 +23,26 @@ const AdminPage = async () => {
       return null;
     }
 
-    const user = (await currentUser()) as CustomUser | null;
+    // const user = (await currentUser()) as CustomUser | null;
+    // if (user) {
+    //   const fullName = [user.name].filter(Boolean).join(" ").trim();
+    //   const email = user.emailAddresses?.[0]?.emailAddress || "";
+    //   const image = user.imageUrl || "";
+
+    //   const existingUser = await getRole(userId);
+    //   if (!existingUser) {
+    //     await addUserToDatabase(userId, fullName, email, image);
+    //   }
+    // }
+    const user = await currentUser();
     if (user) {
-      const fullName = [user.name].filter(Boolean).join(" ").trim();
-      const email = user.emailAddresses?.[0]?.emailAddress || "";
+      const fullName = `${user.firstName} ${user.lastName}`.trim();
+      const email = user.emailAddresses[0]?.emailAddress || "";
       const image = user.imageUrl || "";
 
-      const existingUser = await getRole(userId);
-      if (!existingUser) {
-        await addUserToDatabase(userId, fullName, email, image);
-      }
+      // Appelle directement addUserToDatabase, la fonction gère la création/mise à jour
+      await addUserToDatabase(email, fullName, image, userId);
     }
-
     const userFromDb = await prisma.user.findUnique({
       where: { clerkUserId: userId },
     });

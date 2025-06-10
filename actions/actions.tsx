@@ -15,11 +15,55 @@ export async function getRole(clerkUserId: string) {
     where: { clerkUserId },
     include: { role: true },
   });
-  if (!user) throw new Error("Utilisateur non trouvé");
+  // if (!user) throw new Error("Utilisateur non trouvé");
+  if (!user) return null;
   return user.role;
 }
 ///////////////
-// Fonction pour récupérer les jours
+// Fonction pour ajouter un utilisateur à la base de données
+// export async function addUserToDatabase(
+//   email: string,
+//   name: string,
+//   image: string,
+//   clerkUserId: string
+// ) {
+//   try {
+//     const existingUser = await prisma.user.findUnique({
+//       where: { clerkUserId },
+//     });
+
+//     if (existingUser) {
+//       return await prisma.user.update({
+//         where: { clerkUserId },
+//         data: { email, name, image },
+//       });
+//     }
+
+//     const role = await prisma.role.findUnique({ where: { name: "member" } });
+//     if (!role) throw new AppError("Le rôle spécifié n'existe pas.", 400);
+
+//     return await prisma.user.create({
+//       data: {
+//         clerkUserId,
+//         email,
+//         name,
+//         image,
+//         roleId: role.id,
+//       },
+//     });
+//   } catch (error) {
+//     if (error instanceof AppError) {
+//       console.error(`Erreur spécifique: ${error.message}`);
+//       throw error;
+//     }
+//     console.error("Erreur lors de l'ajout de l'utilisateur:", error);
+//     throw new AppError(
+//       "Impossible de créer ou mettre à jour l'utilisateur.",
+//       500
+//     );
+//   }
+// }
+// Fonction pour ajouter un utilisateur à la base de données
 export async function addUserToDatabase(
   email: string,
   name: string,
@@ -27,29 +71,63 @@ export async function addUserToDatabase(
   clerkUserId: string
 ) {
   try {
+    let userRecord; // Va contenir l'utilisateur Prisma (créé ou mis à jour)
+
     const existingUser = await prisma.user.findUnique({
       where: { clerkUserId },
     });
 
     if (existingUser) {
-      return await prisma.user.update({
+      userRecord = await prisma.user.update({
         where: { clerkUserId },
         data: { email, name, image },
       });
+    } else {
+      const role = await prisma.role.findUnique({ where: { name: "member" } });
+      if (!role) throw new AppError("Le rôle spécifié n'existe pas.", 400);
+
+      userRecord = await prisma.user.create({
+        data: {
+          clerkUserId,
+          email,
+          name,
+          image,
+          roleId: role.id,
+        },
+      });
     }
 
-    const role = await prisma.role.findUnique({ where: { name: "member" } });
-    if (!role) throw new AppError("Le rôle spécifié n'existe pas.", 400);
+    if (userRecord) {
+      // 1. Cherche un client "guest" existant avec la même adresse e-mail
+      const guestClient = await prisma.client.findUnique({
+        where: { email: userRecord.email },
+      });
 
-    return await prisma.user.create({
-      data: {
-        clerkUserId,
-        email,
-        name,
-        image,
-        roleId: role.id,
-      },
-    });
+      if (guestClient) {
+        // 2. Si un client guest est trouvé, et qu'il n'est pas déjà lié à cet utilisateur
+        // Ou, plus simplement, met à jour les réservations de ce client guest pour les lier à l'utilisateur connecté
+
+        // Met à jour toutes les réservations associées à ce client guest
+        // qui n'ont PAS ENCORE de userId (c'est-à-dire celles faites en tant que guest pur)
+        const updatedBookingsCount = await prisma.booking.updateMany({
+          where: {
+            clientId: guestClient.id,
+            userId: null,
+          },
+          data: {
+            userId: userRecord.id, // Lie les réservations au nouvel utilisateur
+          },
+        });
+
+        if (updatedBookingsCount.count > 0) {
+          console.log(
+            `✅ ${updatedBookingsCount.count} réservations du client guest (Email: ${guestClient.email}) liées à l'utilisateur (ID: ${userRecord.id}).`
+          );
+        }
+      }
+    }
+
+    return userRecord;
   } catch (error) {
     if (error instanceof AppError) {
       console.error(`Erreur spécifique: ${error.message}`);
@@ -62,6 +140,7 @@ export async function addUserToDatabase(
     );
   }
 }
+
 ////////////////
 // Fonction pour créer un service
 export async function createService(

@@ -1,3 +1,4 @@
+// UserProfileUpdateForm.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -32,7 +33,7 @@ const UserProfileUpdateForm: React.FC<UserProfileUpdateFormProps> = ({
           setFormData({
             name: result.name,
             email: result.email,
-            description: result.description || "", // Assurez-vous que la description est récupérée
+            description: result.description || "",
           });
         } else {
           setMessage("error fetching user data");
@@ -45,7 +46,7 @@ const UserProfileUpdateForm: React.FC<UserProfileUpdateFormProps> = ({
     fetchUserData();
   }, [userId]);
 
-  // Handler pour mettre à jour l'état du formulaire lors de la saisie de l'utilisateur
+  // Mettre à jour l'état du formulaire lors de la saisie de l'utilisateur
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -56,7 +57,7 @@ const UserProfileUpdateForm: React.FC<UserProfileUpdateFormProps> = ({
     }));
   };
 
-  // Handler pour gérer la soumission du formulaire
+  // Gérer la soumission du formulaire
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -88,7 +89,7 @@ const UserProfileUpdateForm: React.FC<UserProfileUpdateFormProps> = ({
   return (
     <form className="form" onSubmit={handleSubmit}>
       {message && <p className="message">{message}</p>}
-      {/* Le champ caché pour l'ID de l'utilisateur */}
+      {/* Champ caché pour l'ID de l'utilisateur */}
       <input type="hidden" name="id" value={userId} />
       <div className="form_bloc">
         <label className="label" htmlFor="name">
@@ -119,7 +120,7 @@ const UserProfileUpdateForm: React.FC<UserProfileUpdateFormProps> = ({
           onChange={handleChange}
         />
       </div>
-      {/* Nouveau champ pour la description */}
+      {/* Champ pour la description */}
       <div className="form_bloc">
         <br />
         <label className="label" htmlFor="description">
