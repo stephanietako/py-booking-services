@@ -87,9 +87,6 @@ const Footer: React.FC = () => {
               <div className={styles.column}>
                 <ul>
                   <li>
-                    <Link href="/">Accueil</Link>
-                  </li>
-                  <li>
                     <a
                       href="https://wa.me/33767210017"
                       target="_blank"
@@ -109,6 +106,9 @@ const Footer: React.FC = () => {
                       <FaInstagram size={20} />
                       Suivez-nous sur Instagram
                     </a>
+                  </li>
+                  <li>
+                    <Link href="/">Accueil</Link>
                   </li>
                   <li>
                     <Link href="/mention">Mentions Légales</Link>

@@ -222,7 +222,8 @@
               position: relative;
               margin-bottom: 0.5rem;
               z-index: 999;
-              color: gray;
+              //color: rgb(196, 7, 243);
+              align-items: center;
 
               a {
                 text-decoration: none;
@@ -231,6 +232,10 @@
                 text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
                 transition: all 0.3s ease-in-out;
                 color: gray;
+                text-align: center;
+                justify-content: center;
+                align-items: center;
+                display: flex;
 
                 &:hover {
                   color: rgb(207, 208, 216);
