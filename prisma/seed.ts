@@ -11,6 +11,11 @@ async function main() {
       create: { name: "member" },
     }),
     prisma.role.upsert({
+      where: { name: "user" },
+      update: {},
+      create: { name: "user" },
+    }),
+    prisma.role.upsert({
       where: { name: "admin" },
       update: {},
       create: { name: "admin" },

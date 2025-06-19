@@ -1,3 +1,4 @@
+// BookingDetailsDisplay.tsx
 import { BookingWithDetails, BookingStatus } from "@/types";
 import styles from "./styles.module.scss";
 
@@ -121,7 +122,8 @@ export default function BookingDetailsDisplay({
           </p>
         </div>
         <div className={styles.rightBlock}>
-          {bookingDetails.client && (
+          {/* Section MODIFIÉE pour afficher les infos client ou utilisateur */}
+          {bookingDetails.client ? (
             <div className={styles.clientInfo}>
               <h3 className={styles.sectionTitle}>Informations Client</h3>
               <p>
@@ -143,7 +145,34 @@ export default function BookingDetailsDisplay({
                 </span>
               </p>
             </div>
+          ) : bookingDetails.user ? (
+            <div className={styles.clientInfo}>
+              {" "}
+              {/* Utilisation de clientInfo pour le style uniforme */}
+              <h3 className={styles.sectionTitle}>Informations Utilisateur</h3>
+              <p>
+                <span className={styles.label}>Nom :</span>{" "}
+                <span className={styles.value}>{bookingDetails.user.name}</span>
+              </p>
+              <p>
+                <span className={styles.label}>Email :</span>{" "}
+                <span className={styles.value}>
+                  {bookingDetails.user.email}
+                </span>
+              </p>
+              {bookingDetails.user.phoneNumber && ( // Le numéro de téléphone est optionnel pour l'utilisateur
+                <p>
+                  <span className={styles.label}>Téléphone :</span>{" "}
+                  <span className={styles.value}>
+                    {bookingDetails.user.phoneNumber}
+                  </span>
+                </p>
+              )}
+            </div>
+          ) : (
+            <p>Aucune information client/utilisateur disponible.</p> // Au cas où ni l'un ni l'autre ne serait lié
           )}
+
           {bookingDetails.bookingOptions &&
             bookingDetails.bookingOptions.length > 0 && (
               <div className={styles.optionsSelected}>
@@ -213,17 +242,6 @@ export default function BookingDetailsDisplay({
             </span>
           </p>
 
-          {bookingDetails.userId && (
-            <div className={styles.userInfo}>
-              <h3 className={styles.sectionTitle}>
-                Informations Utilisateur (si connecté)
-              </h3>
-              <p>
-                <span className={styles.label}>ID Utilisateur :</span>{" "}
-                <span className={styles.value}>{bookingDetails.userId}</span>
-              </p>
-            </div>
-          )}
           {!bookingDetails.stripePaymentLink && (
             <p className={styles.paymentNote}>
               Le lien de paiement en ligne vous sera envoyé prochainement par

@@ -5,7 +5,7 @@ import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
 import { Option, Service } from "@/types";
-import { AppError } from "@/lib/errors";
+//import { AppError } from "@/lib/errors";
 
 const priceCache = new Map<string, number>();
 
@@ -21,126 +21,102 @@ export async function getRole(clerkUserId: string) {
 }
 ///////////////
 // Fonction pour ajouter un utilisateur à la base de données
-// export async function addUserToDatabase(
-//   email: string,
-//   name: string,
-//   image: string,
-//   clerkUserId: string
-// ) {
-//   try {
-//     const existingUser = await prisma.user.findUnique({
-//       where: { clerkUserId },
-//     });
-
-//     if (existingUser) {
-//       return await prisma.user.update({
-//         where: { clerkUserId },
-//         data: { email, name, image },
-//       });
-//     }
-
-//     const role = await prisma.role.findUnique({ where: { name: "member" } });
-//     if (!role) throw new AppError("Le rôle spécifié n'existe pas.", 400);
-
-//     return await prisma.user.create({
-//       data: {
-//         clerkUserId,
-//         email,
-//         name,
-//         image,
-//         roleId: role.id,
-//       },
-//     });
-//   } catch (error) {
-//     if (error instanceof AppError) {
-//       console.error(`Erreur spécifique: ${error.message}`);
-//       throw error;
-//     }
-//     console.error("Erreur lors de l'ajout de l'utilisateur:", error);
-//     throw new AppError(
-//       "Impossible de créer ou mettre à jour l'utilisateur.",
-//       500
-//     );
-//   }
-// }
-// Fonction pour ajouter un utilisateur à la base de données
 export async function addUserToDatabase(
   email: string,
   name: string,
+  imageUrl: string,
+  clerkUserId: string,
+  phoneNumber: string
+) {
+  // 👇 Récupérer le rôle par défaut
+  const defaultRole = await prisma.role.findFirst({
+    where: { name: "user" },
+  });
+
+  if (!defaultRole) {
+    throw new Error("Rôle par défaut 'user' introuvable");
+  }
+
+  return await prisma.user.upsert({
+    where: { clerkUserId },
+    update: {
+      email,
+      name,
+      image: imageUrl,
+      phoneNumber,
+    },
+    create: {
+      email,
+      name,
+      image: imageUrl,
+      clerkUserId,
+      phoneNumber,
+      roleId: defaultRole.id, // ✅ requis dans ton schema
+    },
+  });
+}
+
+// ✅ ALTERNATIVE: Si tu as des contraintes uniques multiples
+export async function addUserToDatabaseAlternative(
+  email: string,
+  name: string,
   image: string,
-  clerkUserId: string
+  clerkUserId: string,
+  phoneNumber: string
 ) {
   try {
-    let userRecord; // Va contenir l'utilisateur Prisma (créé ou mis à jour)
+    console.log("[addUserToDatabase] Début:", { email, clerkUserId });
 
-    const existingUser = await prisma.user.findUnique({
-      where: { clerkUserId },
+    // Récupérer le rôle par défaut
+    const defaultRole = await prisma.role.findFirst({
+      where: { name: "user" },
     });
 
-    if (existingUser) {
-      userRecord = await prisma.user.update({
-        where: { clerkUserId },
-        data: { email, name, image },
-      });
-    } else {
-      const role = await prisma.role.findUnique({ where: { name: "member" } });
-      if (!role) throw new AppError("Le rôle spécifié n'existe pas.", 400);
+    if (!defaultRole) {
+      throw new Error("Rôle par défaut 'user' introuvable");
+    }
 
-      userRecord = await prisma.user.create({
+    // Transaction pour éviter les conditions de course
+    const result = await prisma.$transaction(async (tx) => {
+      // Vérifier si l'utilisateur existe
+      let user = await tx.user.findUnique({
+        where: { clerkUserId },
+      });
+
+      if (user) {
+        // Utilisateur existe - mettre à jour
+        user = await tx.user.update({
+          where: { clerkUserId },
+          data: { email, name, image, phoneNumber },
+        });
+        return { ...user, isNew: false };
+      }
+
+      // Utilisateur n'existe pas - créer
+      user = await tx.user.create({
         data: {
-          clerkUserId,
           email,
           name,
           image,
-          roleId: role.id,
+          clerkUserId,
+          phoneNumber,
+          roleId: defaultRole.id,
         },
       });
-    }
+      return { ...user, isNew: true };
+    });
 
-    if (userRecord) {
-      // 1. Cherche un client "guest" existant avec la même adresse e-mail
-      const guestClient = await prisma.client.findUnique({
-        where: { email: userRecord.email },
-      });
+    console.log("[addUserToDatabase] Résultat:", {
+      email: result.email,
+      isNew: result.isNew,
+    });
 
-      if (guestClient) {
-        // 2. Si un client guest est trouvé, et qu'il n'est pas déjà lié à cet utilisateur
-        // Ou, plus simplement, met à jour les réservations de ce client guest pour les lier à l'utilisateur connecté
-
-        // Met à jour toutes les réservations associées à ce client guest
-        // qui n'ont PAS ENCORE de userId (c'est-à-dire celles faites en tant que guest pur)
-        const updatedBookingsCount = await prisma.booking.updateMany({
-          where: {
-            clientId: guestClient.id,
-            userId: null,
-          },
-          data: {
-            userId: userRecord.id, // Lie les réservations au nouvel utilisateur
-          },
-        });
-
-        if (updatedBookingsCount.count > 0) {
-          console.log(
-            `✅ ${updatedBookingsCount.count} réservations du client guest (Email: ${guestClient.email}) liées à l'utilisateur (ID: ${userRecord.id}).`
-          );
-        }
-      }
-    }
-
-    return userRecord;
+    return result;
   } catch (error) {
-    if (error instanceof AppError) {
-      console.error(`Erreur spécifique: ${error.message}`);
-      throw error;
-    }
-    console.error("Erreur lors de l'ajout de l'utilisateur:", error);
-    throw new AppError(
-      "Impossible de créer ou mettre à jour l'utilisateur.",
-      500
-    );
+    console.error("[addUserToDatabase] Erreur :", error);
+    throw error;
   }
 }
-
 ////////////////
 // Fonction pour créer un service
 export async function createService(
@@ -202,7 +178,7 @@ export async function getServicesByUser(
     include: {
       bookings: {
         include: {
-          Service: true,
+          service: true,
         },
       },
     },
@@ -210,7 +186,7 @@ export async function getServicesByUser(
   if (!user) throw new Error("Utilisateur non trouvé");
   return user.bookings
     .map((booking) => {
-      const service = booking.Service!;
+      const service = booking.service!;
       return {
         ...service,
         description: service.description ?? undefined,
@@ -357,7 +333,7 @@ export async function getServiceForUser(
     include: {
       bookings: {
         where: { serviceId: { not: null } },
-        include: { Service: true },
+        include: { service: true },
       },
     },
   });
@@ -365,7 +341,7 @@ export async function getServiceForUser(
   if (!user || user.bookings.length === 0) return null;
 
   // Comme il n'y a qu'un service, on retourne juste le service du premier booking
-  const service = user.bookings[0].Service!;
+  const service = user.bookings[0].service!;
   return {
     ...service,
     description: service.description ?? undefined,

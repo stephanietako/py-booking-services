@@ -13,13 +13,13 @@ export const createStripeCheckoutSession = async (
     include: {
       user: true,
       client: true,
-      Service: true,
+      service: true,
     },
   });
 
   if (!booking) throw new Error("Réservation introuvable.");
-  if (!booking.Service) throw new Error("Service introuvable.");
-  if (!booking.Service.currency) throw new Error("Devise manquante.");
+  if (!booking.service) throw new Error("Service introuvable.");
+  if (!booking.service.currency) throw new Error("Devise manquante.");
 
   // ✅ nouvelle logique : récupère ou crée un Stripe Customer ID
   const stripeCustomerId = await getStripeCustomerIdForBooking(booking);
@@ -31,9 +31,9 @@ export const createStripeCheckoutSession = async (
     line_items: [
       {
         price_data: {
-          currency: booking.Service.currency,
+          currency: booking.service.currency,
           product_data: {
-            name: `Location bateau : ${booking.Service.name}`,
+            name: `Location bateau : ${booking.service.name}`,
           },
           unit_amount: Math.round(booking.boatAmount * 100),
         },

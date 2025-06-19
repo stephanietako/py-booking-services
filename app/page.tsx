@@ -22,7 +22,7 @@
 // export default Home;
 //import { getClosedDays, getDays } from "@/actions/openingActions"; // Les actions que tu utilises pour récupérer les données
 // pages/index.tsx (ou app/page.tsx si vous utilisez l'App Router)
-"use client"; // Si vous avez des états dans ce composant
+"use client";
 
 import Wrapper from "./components/Wrapper/Wrapper";
 import Hero from "./components/Hero/Hero";

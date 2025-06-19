@@ -1,84 +1,46 @@
 // app/admin/dashboard/page.tsx
-import { addUserToDatabase, getRole } from "@/actions/actions";
-import AdminDashboard from "../../components/AdminDashboard/AdminDashboard";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import React from "react";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-//import { CustomUser } from "@/types";
-import { stripe } from "@/lib/stripe";
-import { prisma } from "@/lib/prisma";
+import { getRole } from "@/actions/actions";
+import { getBookings } from "@/actions/bookings";
 
-export const dynamic = "force-dynamic";
+import ListUser from "@/app/components/ListUser/ListUser";
+import Wrapper from "@/app/components/Wrapper/Wrapper";
+import { SignOutButton } from "@clerk/nextjs";
+import BookingList from "@/app/components/BookingList/BookingList";
+import AdminUserList from "@/app/components/AdminUserList/AdminUserList";
 
-const AdminPage = async () => {
-  try {
-    const { userId } = await auth();
-    if (!userId) {
-      redirect("/");
-      return null;
-    }
+export default async function AdminDashboardPage() {
+  const { userId } = await auth();
 
-    const userRole = await getRole(userId);
-    if (userRole?.name !== "admin") {
-      redirect("/");
-      return null;
-    }
+  if (!userId) redirect("/");
 
-    // const user = (await currentUser()) as CustomUser | null;
-    // if (user) {
-    //   const fullName = [user.name].filter(Boolean).join(" ").trim();
-    //   const email = user.emailAddresses?.[0]?.emailAddress || "";
-    //   const image = user.imageUrl || "";
+  const userRole = await getRole(userId);
 
-    //   const existingUser = await getRole(userId);
-    //   if (!existingUser) {
-    //     await addUserToDatabase(userId, fullName, email, image);
-    //   }
-    // }
-    const user = await currentUser();
-    if (user) {
-      const fullName = `${user.firstName} ${user.lastName}`.trim();
-      const email = user.emailAddresses[0]?.emailAddress || "";
-      const image = user.imageUrl || "";
-
-      // Appelle directement addUserToDatabase, la fonction gère la création/mise à jour
-      await addUserToDatabase(email, fullName, image, userId);
-    }
-    const userFromDb = await prisma.user.findUnique({
-      where: { clerkUserId: userId },
-    });
-
-    if (userFromDb && !userFromDb.stripeCustomerId) {
-      try {
-        const stripeCustomer = await stripe.customers.create({
-          email: user?.emailAddresses?.[0]?.emailAddress,
-        });
-
-        await prisma.user.update({
-          where: { clerkUserId: userId },
-          data: { stripeCustomerId: stripeCustomer.id },
-        });
-
-        console.log("stripeCustomerId mis à jour dans la base de données");
-      } catch (error) {
-        console.error("Erreur lors de la création du client Stripe:", error);
-        // Ne pas bloquer la page, gestion soft
-      }
-    } else {
-      console.log(
-        "Utilisateur déjà présent avec un stripeCustomerId:",
-        userFromDb?.stripeCustomerId
-      );
-    }
-
-    return (
-      <div>
-        <AdminDashboard userId={userId} />
-      </div>
-    );
-  } catch (error) {
-    console.error("Erreur page admin:", error);
-    return <p>Erreur serveur. Veuillez réessayer plus tard.</p>;
+  if (userRole?.name !== "admin") {
+    redirect("/");
   }
-};
 
-export default AdminPage;
+  const initialBookings = await getBookings(undefined);
+
+  return (
+    <Wrapper>
+      <section>
+        <div className="dashboard_user_container__section">
+          <div className="dashboard_user_container__bloc">
+            <SignOutButton />
+          </div>
+          <div className="dashboard_user_container__content">
+            <ListUser />
+            <AdminUserList />
+          </div>
+          <br />
+          <div>
+            <BookingList initialBookings={initialBookings} />
+          </div>
+        </div>
+      </section>
+    </Wrapper>
+  );
+}

@@ -22,10 +22,11 @@ const properties: Property[] = [
   {
     title: "Yachting Day ",
     description: `Port de Cavalaire <br />
+    Quai Marc Pajot <br />
                   83240 Cavalaire-sur-Mer`,
     position: {
-      lat: 43.17278473616548,
-      lng: 6.536504524006781,
+      lat: 43.172191,
+      lng: 6.536577,
     },
   },
 ];

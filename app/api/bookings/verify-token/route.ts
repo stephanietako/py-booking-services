@@ -1,10 +1,12 @@
 // app/api/bookings/verify-token/route.ts
 import { NextResponse } from "next/server";
-import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { TokenExpiredError } from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
-import { Booking } from "@/types";
+import { BookingWithDetails, BookingTokenPayload } from "@/types";
 
 const secret = process.env.JWT_SECRET;
+
 if (!secret) {
   console.error("❌ JWT_SECRET est manquant dans l'environnement.");
 }
@@ -25,7 +27,7 @@ export async function POST(req: Request) {
     }
 
     try {
-      const decoded = jwt.verify(token, secret) as JwtPayload;
+      const decoded = jwt.verify(token, secret) as BookingTokenPayload;
 
       if (!decoded.bookingId) {
         return NextResponse.json(
@@ -35,48 +37,46 @@ export async function POST(req: Request) {
       }
 
       const bookingId = decoded.bookingId;
-      let booking: Booking | null = null;
 
-      if (decoded.clientId) {
-        booking = await prisma.booking.findUnique({
+      const booking: BookingWithDetails | null =
+        await prisma.booking.findUnique({
           where: { id: bookingId },
           include: {
-            Service: true,
-            bookingOptions: {
-              include: {
-                option: true,
-              },
-            },
-            client: true,
-          },
-        });
-
-        if (booking?.clientId !== decoded.clientId) {
-          booking = null;
-        }
-      } else if (decoded.userId) {
-        booking = await prisma.booking.findUnique({
-          where: { id: bookingId },
-          include: {
-            Service: true,
+            service: true,
             bookingOptions: {
               include: { option: true },
             },
+            client: true,
             user: true,
           },
         });
 
-        if (booking?.userId !== decoded.userId) {
-          booking = null;
-        }
-      }
-
-      if (!booking) {
+      if (
+        !booking ||
+        !(
+          (decoded.clientId && booking.clientId === decoded.clientId) ||
+          (decoded.userId && booking.userId === decoded.userId)
+        )
+      ) {
         return NextResponse.json(
           { error: "Accès refusé à cette réservation" },
           { status: 403 }
         );
       }
+
+      console.log("Booking récupérée:", booking);
+      console.log("📞 USER DATA:", booking?.user);
+
+      // ✅ CORRECTION ICI : Sélection du numéro de téléphone
+      const resolvedPhoneNumber =
+        // Si l'utilisateur est présent ET son numéro n'est pas vide, on le prend
+        booking.user?.phoneNumber && booking.user.phoneNumber !== ""
+          ? booking.user.phoneNumber
+          : // Sinon, si le client est présent ET son numéro n'est pas vide, on le prend
+            booking.client?.phoneNumber && booking.client.phoneNumber !== ""
+            ? booking.client.phoneNumber
+            : // Sinon, aucun numéro n'est disponible
+              null;
 
       return NextResponse.json({
         data: {
@@ -90,6 +90,8 @@ export async function POST(req: Request) {
           service: booking.service,
           bookingOptions: booking.bookingOptions,
           client: booking.client || null,
+          user: booking.user || null,
+          phoneNumber: resolvedPhoneNumber, // Utilisation du numéro résolu
           userId: booking.userId ?? null,
           stripePaymentLink: booking.stripePaymentLink ?? null,
           createdAt: booking.createdAt,
@@ -101,10 +103,11 @@ export async function POST(req: Request) {
       if (error instanceof TokenExpiredError) {
         return NextResponse.json({ error: "Token expiré" }, { status: 401 });
       }
+      console.error("Erreur de vérification du token :", error);
       return NextResponse.json({ error: "Token invalide" }, { status: 401 });
     }
   } catch (error) {
-    console.error("Erreur interne dans /verify-token :", error);
+    console.error("Erreur interne dans /verify-token (global) :", error);
     return NextResponse.json(
       { error: "Erreur interne du serveur" },
       { status: 500 }

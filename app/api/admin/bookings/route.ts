@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
       boatAmount = 0,
       options = [],
       description = "",
+      clientInfo, // { fullName, email, phoneNumber? }
     }: {
       clerkUserId: string;
       serviceId: string;
@@ -29,9 +30,14 @@ export async function POST(req: NextRequest) {
       boatAmount?: number;
       options?: OptionInput[];
       description?: string;
+      clientInfo?: {
+        fullName: string;
+        email: string;
+        phoneNumber?: string;
+      };
     } = await req.json();
 
-    // 🧠 Validation de base
+    // Validation de base
     if (!clerkUserId || !serviceId || !reservedAt || !startTime || !endTime) {
       return NextResponse.json(
         { error: "Champs requis manquants" },
@@ -39,6 +45,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Récupérer user
     const user = await prisma.user.findUnique({
       where: { clerkUserId },
     });
@@ -50,9 +57,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Récupérer ou créer client (par email)
+    let client = null;
+    if (clientInfo?.email) {
+      client = await prisma.client.findUnique({
+        where: { email: clientInfo.email },
+      });
+      if (!client) {
+        client = await prisma.client.create({
+          data: {
+            fullName: clientInfo.fullName,
+            email: clientInfo.email,
+            phoneNumber: clientInfo.phoneNumber ?? "",
+            userId: user.id,
+          },
+        });
+      }
+    }
+
+    // Récupérer service avec règles de prix
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
-      include: { pricingRules: true }, // Inclure les règles de prix
+      include: { pricingRules: true },
     });
 
     if (!service) {
@@ -62,41 +88,38 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 🗓️ Gestion des dates
+    // Dates
     const reserved = new Date(reservedAt);
     const start = new Date(startTime);
     const end = new Date(endTime);
 
-    // 🧮 Calcul du tarif dynamique si applicable
-    let basePrice = service.defaultPrice; // Prix par défaut du service
-
+    // Calcul tarif dynamique
+    let basePrice = service.defaultPrice;
     if (service.pricingRules && service.pricingRules.length > 0) {
       const rule = service.pricingRules.find(
         (rule) => reserved >= rule.startDate && reserved <= rule.endDate
       );
-      if (rule) {
-        basePrice = rule.price; // Utiliser le prix de la règle si elle existe
-      }
+      if (rule) basePrice = rule.price;
     }
-    // Si aucune règle de prix n'est trouvée, on utilise service.defaultPrice
 
-    // 💸 Options payables sur place uniquement
+    // Options payables sur place
     const payableOnBoard = await Promise.all(
       options.map(async ({ optionId, quantity }) => {
         const opt = await prisma.option.findUnique({ where: { id: optionId } });
-        return opt?.payableOnline === false ? (opt?.amount ?? 0) * quantity : 0; // Ajout de la vérification opt?.amount
+        return opt?.payableOnline === false ? (opt?.amount ?? 0) * quantity : 0;
       })
     );
+    const optionsTotal = payableOnBoard.reduce((sum, val) => sum + val, 0);
 
-    const optionsTotal = payableOnBoard.reduce((sum, value) => sum + value, 0);
+    // Total
     const totalAmount = basePrice + optionsTotal + boatAmount;
-    // Calcul du prix dynamique AVANT la création de la réservation
     const dynamicBoatAmount = basePrice;
 
-    // 🛥️ Création de la réservation
+    // Création réservation
     const booking = await prisma.booking.create({
       data: {
         userId: user.id,
+        clientId: client?.id ?? null,
         serviceId,
         reservedAt: reserved,
         startTime: start,
@@ -108,10 +131,11 @@ export async function POST(req: NextRequest) {
         expiresAt: new Date(end.getTime() + 24 * 60 * 60 * 1000),
         updatedAt: new Date(),
         description,
+        email: clientInfo?.email ?? "",
       },
     });
 
-    // 🔁 Lier les options à la réservation
+    // Lier options à la réservation
     for (const { optionId, quantity } of options) {
       const option = await prisma.option.findUnique({
         where: { id: optionId },

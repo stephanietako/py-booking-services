@@ -1,3 +1,5 @@
+import type { JwtPayload } from "jsonwebtoken";
+
 export interface Role {
   id: string;
   name: string;
@@ -8,7 +10,9 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  fullName?: string | null;
   image?: string | null;
+  phoneNumber?: string | null;
   description?: string | null;
   clerkUserId: string;
   roleId: string;
@@ -16,6 +20,8 @@ export interface User {
   stripeCustomerId?: string | null;
   createdAt: Date;
   bookings?: Booking[];
+  client?: Client | null;
+  updatedAt?: Date;
 }
 
 export interface Client {
@@ -26,6 +32,8 @@ export interface Client {
   createdAt: Date;
   updatedAt: Date;
   bookings?: Booking[];
+  userId?: string | null;
+  user?: User | null;
 }
 
 export interface PricingRule {
@@ -36,7 +44,7 @@ export interface PricingRule {
   price: number;
   createdAt?: Date;
   updatedAt?: Date;
-  service?: Service;
+  service?: Service | null;
 }
 
 export interface Service {
@@ -112,29 +120,23 @@ export interface Booking {
   createdAt: Date;
   stripePaymentLink: string | null;
   clientId: number | null;
-  client?: Client | null; // Rendre la propriété `client` optionnelle
+  client?: Client | null;
   userId: string | null;
   user?: User | null;
   serviceId: string | null;
-  service?: Service;
-  bookingOptions?: BookingOption[];
-  transactions?: Transaction[];
+  service?: Service | null;
+  bookingOptions?: BookingOption[] | null;
+  transactions?: Transaction[] | null;
   mealOption: boolean;
   description?: string | null;
 }
 
-export interface BookingWithDetails extends Booking {
-  service: Service;
-  client: Client;
-  bookingOptions: (BookingOption & { option: Option })[];
+export interface BookingWithDetails extends Omit<Booking, "bookingOptions"> {
+  service?: Service | null;
+  client?: Client | null;
   user?: User | null;
-  withCaptain: boolean;
-  captainPrice?: number;
-  totalAmount: number;
-  boatAmount: number;
-  startTime: Date;
-  endTime: Date;
-  mealOption: boolean;
+  phoneNumber?: string | null;
+  bookingOptions: (BookingOption & { option: Option })[];
 }
 
 export interface Day {
@@ -248,4 +250,47 @@ export interface PaginationInfo {
   currentPage: number;
   totalPages: number;
   totalCount: number;
+}
+
+export interface FormState {
+  name: string;
+  email: string;
+  description: string;
+  phoneNumber: string;
+}
+
+export interface BookingTokenPayload extends JwtPayload {
+  bookingId: number;
+  clientId?: number;
+  userId?: string;
+}
+
+export type BookingForInvoice = Booking & {
+  service: Service;
+  client?: Client | null;
+  user?: User | null;
+  bookingOptions: (BookingOption & { option: Option })[];
+  totalPayableOnBoardCalculated: number;
+  clientFullName: string;
+  clientEmail: string;
+  clientPhoneNumber: string;
+};
+
+export interface ClerkEmailAddress {
+  email_address: string;
+}
+
+export interface ClerkUserPayload {
+  id: string;
+  object: "user";
+  first_name: string;
+  last_name: string;
+  email_addresses: ClerkEmailAddress[];
+  image_url?: string;
+}
+
+export interface ClerkWebhookEvent {
+  object: "event";
+  type: "user.created" | "user.updated" | "user.deleted";
+  data: ClerkUserPayload;
 }

@@ -325,7 +325,7 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     }
   }
 
-  .authLinks {
+  .publicLinks {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -333,7 +333,7 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     width: 100%;
     height: auto;
   }
-  .authLinks a {
+  .publicLinks a {
     display: inline-block;
     padding: 0.8rem 1.4rem;
     margin-top: 1rem;
@@ -369,6 +369,57 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
       transform: translateX(0);
     }
   }
+  .adminMenu {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: transparent;
+    color: #333;
+    width: 100%;
+    margin-bottom: 3rem;
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      list-style: none;
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: color 0.2s ease;
+
+      &::marker {
+        display: none; // enlève le triangle par défaut
+      }
+
+      &::after {
+        content: "▼";
+        font-size: 0.75rem;
+        margin-left: 0.5rem;
+        transition: transform 0.3s ease;
+      }
+    }
+
+    &[open] summary::after {
+      transform: rotate(-180deg);
+    }
+
+    a {
+      display: block;
+      padding: 0.4rem 0.2rem;
+      margin-left: 1rem;
+      text-decoration: none;
+      color: #333;
+      border-left: 2px solid transparent;
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: #0070f3;
+        border-left: 2px solid #0070f3;
+        background-color: transparent;
+      }
+    }
+  }
 }
 
 //////////////////// RESPONSIVE ////////////////////
@@ -402,7 +453,7 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     }
 
     .heroButtons {
-      display: none; // Cache les boutons sur mobile
+      display: none;
     }
     .primaryLinks {
       display: none !important;
@@ -411,7 +462,7 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
       display: flex;
       flex-direction: column;
       width: 100%;
-      margin-bottom: 2rem;
+      //margin-bottom: 2rem;
 
       a {
         color: $blanc;

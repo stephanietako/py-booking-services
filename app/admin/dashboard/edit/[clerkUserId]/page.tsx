@@ -1,4 +1,4 @@
-// app/admin/dashboard/users/edit/[clerkUserId]/page.tsx
+// app/admin/dashboard/edit/[clerkUserId]/page.tsx
 import EditUserForm from "@/app/components/EditUserForm/EditUserForm";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";

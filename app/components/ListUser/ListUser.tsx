@@ -12,15 +12,14 @@ const ListUser = () => {
 
   const fetchAllUsers = async () => {
     try {
-      const response = await fetch(`/api/getAllUsers`, { method: "GET" });
+      const response = await fetch(`/api/users`, { method: "GET" });
 
       if (!response.ok) {
         throw new Error("error fetching user data");
       }
 
-      const data: User[] = await response.json();
-
-      setUsers(data);
+      const json = await response.json();
+      setUsers(json.users);
     } catch (error) {
       console.error("Erreur lors de la récupération des utilisateurs", error);
       setMessage("Erreur lors de la récupération des utilisateurs");
@@ -64,7 +63,7 @@ const ListUser = () => {
               <td className="actions">
                 <Link
                   className="modif_users_link"
-                  href={`/dashboardAdmin/edit/${user.clerkUserId}`}
+                  href={`/dashboard/edit/${user.clerkUserId}`}
                 >
                   Modifier
                 </Link>

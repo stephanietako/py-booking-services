@@ -12,11 +12,13 @@ model Client {
   id               Int       @id @default(autoincrement())
   fullName         String
   email            String    @unique
-  phoneNumber      String
+  phoneNumber      String    @default("")
   bookings         Booking[] @relation("ClientBookings")
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   stripeCustomerId String?
+  userId           String?   @unique
+  user             User?     @relation(fields: [userId], references: [id]) // ← relation vers User
 }
 
 model Booking {
@@ -25,6 +27,7 @@ model Booking {
   client            Client?         @relation("ClientBookings", fields: [clientId], references: [id])
   userId            String?
   user              User?           @relation("UserBookings", fields: [userId], references: [id])
+  email             String          @unique
   status            BookingStatus   @default(PENDING)
   approvedByAdmin   Boolean         @default(false)
   reservedAt        DateTime
@@ -37,11 +40,11 @@ model Booking {
   stripePaymentLink String?
   stripeSessionId   String?
   createdAt         DateTime        @default(now())
-  updatedAt         DateTime
+  updatedAt         DateTime        @updatedAt
   expiresAt         DateTime
   bookingOptions    BookingOption[]
   transactions      Transaction[]
-  Service           Service?        @relation(fields: [serviceId], references: [id])
+  service           Service?        @relation(fields: [serviceId], references: [id])
   serviceId         String?
   paymentStatus     PaymentStatus   @default(PENDING)
   description       String
@@ -138,7 +141,7 @@ model User {
   id               String    @id @default(uuid())
   email            String    @unique
   name             String
-  phoneNumber      String?
+  phoneNumber      String    @default("")
   image            String?
   description      String?
   clerkUserId      String    @unique
@@ -147,6 +150,8 @@ model User {
   bookings         Booking[] @relation("UserBookings")
   createdAt        DateTime  @default(now())
   stripeCustomerId String?   @unique
+  client           Client?
+  updatedAt        DateTime  @updatedAt
 }
 
 model Role {

@@ -13,18 +13,13 @@ export const GET = async (
       { error: "ID de réservation invalide" },
       { status: 400 }
     );
-  } else if (bookingId) {
-    return NextResponse.json(
-      { message: "ID de réservation valide" },
-      { status: 200 }
-    );
   }
 
   try {
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: {
-        Service: true,
+        service: true,
         bookingOptions: {
           include: {
             option: true,

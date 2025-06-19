@@ -3,156 +3,10 @@
 // import React, { useEffect, useState, useRef } from "react";
 // import Link from "next/link";
 // import Image from "next/image";
-// // Styles
-// import styles from "./styles.module.scss";
-// import logo from "@/public/assets/logo/logo-new.png";
-
-// const Navbar: React.FC = () => {
-//   const [menuOpen, setMenuOpen] = useState(false);
-//   const [isScrolled, setIsScrolled] = useState(false);
-//   const [isClient, setIsClient] = useState(false);
-//   const navbarElement = useRef<HTMLDivElement>(null);
-//   const navigationHeight = useRef(0);
-
-//   useEffect(() => {
-//     if (navbarElement.current) {
-//       navigationHeight.current = navbarElement.current.offsetHeight;
-//       console.info("Navbar height:", navbarElement.current.offsetHeight);
-//       navbarElement.current.style.setProperty(
-//         "--scroll-padding",
-//         navigationHeight.current.toString()
-//       );
-//     }
-//   }, []);
-
-//   // Écoute du scroll pour changer l'état de la navbar
-//   useEffect(() => {
-//     const handleScroll = () => {
-//       if (window.scrollY > 400) {
-//         setIsScrolled(true);
-//       } else {
-//         setIsScrolled(false);
-//       }
-//     };
-
-//     window.addEventListener("scroll", handleScroll);
-//     return () => {
-//       window.removeEventListener("scroll", handleScroll);
-//     };
-//   }, []);
-
-//   useEffect(() => {
-//     setIsClient(true);
-//   }, []);
-
-//   const toggleMenu = () => setMenuOpen(!menuOpen);
-
-//   if (!isClient) return null;
-
-//   return (
-//     <nav
-//       ref={navbarElement}
-//       className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}
-//     >
-//       <div className={styles.logo_image}>
-//         <Link href="/">
-//           <Image
-//             src={logo}
-//             alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
-//             className={styles.logo}
-//             width={200}
-//             height={150}
-//             priority
-//             style={{
-//               objectFit: "cover",
-//               width: "100%",
-//               height: "100%",
-//               cursor: "pointer",
-//             }}
-//           />
-//         </Link>
-//       </div>
-
-//       <div className={styles.primaryLinks}>
-//         <Link href="/location" className={styles.navButton}>
-//           Location
-//           <span className="shimmer"></span>
-//         </Link>
-//         <Link href="/entretien" className={styles.navButton}>
-//           Entretien
-//           <span className="shimmer"></span>
-//         </Link>
-//         <Link href="#footer" className={styles.navButton}>
-//           Contact
-//           <span className="shimmer"></span>
-//         </Link>
-//       </div>
-
-//       {/* Burger */}
-//       <div className={styles.menuToggle} onClick={toggleMenu}>
-//         {menuOpen ? "✕" : "☰"}
-//       </div>
-
-//       {/* Overlay */}
-//       {menuOpen && <div className={styles.overlay} onClick={toggleMenu} />}
-
-//       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
-//         <div className={styles.mobileOnlyLinks}>
-//           <details className={styles.mobileDropdown}>
-//             <summary>
-//               <Link href="/location" onClick={toggleMenu}>
-//                 Location
-//               </Link>
-//             </summary>
-//             <div className={styles.dropdownLinks}>
-//               <Link href="/boat" onClick={toggleMenu}>
-//                 Le bateau
-//               </Link>
-//               <Link href="/environs" onClick={toggleMenu}>
-//                 Les environs
-//               </Link>
-//               <Link href="/excursions" onClick={toggleMenu}>
-//                 Nos excursions
-//               </Link>
-//             </div>
-//           </details>
-//           <Link href="/entretien" onClick={toggleMenu}>
-//             Entretien
-//           </Link>
-//           <Link href="#footer" onClick={toggleMenu}>
-//             Contact
-//           </Link>
-//         </div>
-
-//         {/* Pas besoin de connexion pour réserver */}
-//         <div className={styles.authLinks}>
-//           <Link href="/">Accueil</Link>
-//           <Link href="/about" className={styles.buttonHero}>
-//             Qui sommes-nous
-//           </Link>
-//           <Link href="/galerie" className={styles.buttonHero}>
-//             Galerie
-//           </Link>
-//           <Link href="#footer">Contact</Link>
-//         </div>
-
-//         {/* Optionnel : Ajouter un lien pour la réservation */}
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-// "use client";
-
-// import React, { useEffect, useState, useRef } from "react";
-// import Link from "next/link";
-// import Image from "next/image";
-// // Styles
 // import styles from "./styles.module.scss";
 // import { UserButton, useUser } from "@clerk/nextjs";
-// import { addUserToDatabase, getRole } from "@/actions/actions";
-// //import { getUserBookings, generateBookingToken } from "@/actions/bookings";
+// import { getRole } from "@/actions/actions";
+// import { getUserBookings } from "@/actions/bookings";
 // import logo from "@/public/assets/logo/logo-new.png";
 
 // const Navbar: React.FC = () => {
@@ -161,15 +15,14 @@
 //   const [isScrolled, setIsScrolled] = useState(false);
 //   const [userRole, setUserRole] = useState<string | null>(null);
 //   const [isClient, setIsClient] = useState(false);
-//   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//   const [bookingToken, setBookingToken] = useState<string | null>(null);
+//   const [hasBooking, setHasBooking] = useState(false);
 //   const navbarElement = useRef<HTMLDivElement>(null);
 //   const navigationHeight = useRef(0);
+//   const hasSyncedUserRef = useRef(false);
 
 //   useEffect(() => {
 //     if (navbarElement.current) {
 //       navigationHeight.current = navbarElement.current.offsetHeight;
-//       console.info("Navbar height:", navbarElement.current.offsetHeight);
 //       navbarElement.current.style.setProperty(
 //         "--scroll-padding",
 //         navigationHeight.current.toString()
@@ -177,61 +30,71 @@
 //     }
 //   }, []);
 
-//   // Écoute du scroll pour changer l'état de la navbar
 //   useEffect(() => {
 //     const handleScroll = () => {
-//       if (window.scrollY > 400) {
-//         setIsScrolled(true);
-//       } else {
-//         setIsScrolled(false);
+//       setIsScrolled(window.scrollY > 400);
+//     };
+//     window.addEventListener("scroll", handleScroll);
+//     return () => window.removeEventListener("scroll", handleScroll);
+//   }, []);
+
+//   useEffect(() => {
+//     if (!user || !isSignedIn || hasSyncedUserRef.current) return;
+
+//     const syncUser = async () => {
+//       try {
+//         const res = await fetch("/api/add-user", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({
+//             email: user.emailAddresses[0]?.emailAddress || "",
+//             name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+//             image: user.imageUrl || "",
+//             clerkUserId: user.id,
+//             phoneNumber: user.phoneNumbers?.[0]?.phoneNumber || "",
+//           }),
+//         });
+
+//         if (res.status === 409) {
+//           console.log("L'utilisateur existe déjà.");
+//           hasSyncedUserRef.current = true; // on considère que le user est déjà syncé, donc stop les appels répétés
+//           return;
+//         }
+
+//         const data = await res.json();
+
+//         if (res.ok) {
+//           console.log("Utilisateur ajouté côté serveur:", data.user);
+//           hasSyncedUserRef.current = true;
+//         } else {
+//           console.error("Erreur API:", data.error);
+//         }
+//       } catch (err) {
+//         console.error("Erreur fetch API:", err);
 //       }
 //     };
 
-//     window.addEventListener("scroll", handleScroll);
-//     return () => {
-//       window.removeEventListener("scroll", handleScroll);
+//     syncUser();
+//   }, [user, isSignedIn]);
+
+//   useEffect(() => {
+//     const fetchBookings = async () => {
+//       if (!user || !isSignedIn) return setHasBooking(false);
+//       try {
+//         const bookings = await getUserBookings(user.id);
+//         setHasBooking(bookings && bookings.length > 0);
+//       } catch (err) {
+//         console.error("Erreur de récupération des réservations :", err);
+//         setHasBooking(false);
+//       }
 //     };
-//   }, []);
-
-//   // Récupérer le token de réservation de l'utilisateur
-//   // useEffect(() => {
-//   //   const fetchBooking = async () => {
-//   //     if (!user || !isSignedIn) return;
-
-//   //     try {
-//   //       const bookings = await getUserBookings(user.id);
-//   //       if (bookings.length > 0) {
-//   //         const latestBooking = bookings[0];
-//   //         const token = await generateBookingToken(latestBooking.id, user.id);
-//   //         setBookingToken(token);
-//   //       }
-//   //     } catch (error) {
-//   //       console.error(
-//   //         "Erreur lors de la récupération de la réservation :",
-//   //         error
-//   //       );
-//   //     }
-//   //   };
-
-//   //   fetchBooking();
-//   // }, [user, isSignedIn]);
+//     fetchBookings();
+//   }, [user, isSignedIn]);
 
 //   useEffect(() => {
 //     setIsClient(true);
 //   }, []);
 
-//   useEffect(() => {
-//     if (user?.id && user.primaryEmailAddress?.emailAddress && user.firstName) {
-//       addUserToDatabase(
-//         user.primaryEmailAddress.emailAddress,
-//         user.firstName,
-//         user.imageUrl || "",
-//         user.id
-//       );
-//     }
-//   }, [user]);
-
-//   // Fonction pour récupérer le rôle de l'utilisateur
 //   useEffect(() => {
 //     const fetchUserRole = async () => {
 //       if (user?.id) {
@@ -245,7 +108,6 @@
 //   const toggleMenu = () => setMenuOpen(!menuOpen);
 
 //   if (!isClient || !isLoaded) return null;
-//   //////////////////
 
 //   return (
 //     <nav
@@ -256,7 +118,7 @@
 //         <Link href="/">
 //           <Image
 //             src={logo}
-//             alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
+//             alt="Yachting Day location de bateau Cap Camarat 12.5 WA"
 //             className={styles.logo}
 //             width={200}
 //             height={150}
@@ -271,42 +133,28 @@
 //         </Link>
 //       </div>
 
+//       {/* Liens desktop haut de page */}
 //       <div className={styles.primaryLinks}>
 //         <Link href="/location" className={styles.navButton}>
-//           Location
-//           <span className="shimmer"></span>
+//           Location <span className="shimmer" />
 //         </Link>
 //         <Link href="/entretien" className={styles.navButton}>
-//           Entretien
-//           <span className="shimmer"></span>
+//           Entretien <span className="shimmer" />
 //         </Link>
 //         <Link href="#footer" className={styles.navButton}>
-//           Contact
-//           <span className="shimmer"></span>
+//           Contact <span className="shimmer" />
 //         </Link>
 //       </div>
 
-//       {/* Burger */}
+//       {/* Toggle burger menu */}
 //       <div className={styles.menuToggle} onClick={toggleMenu}>
 //         {menuOpen ? "✕" : "☰"}
 //       </div>
 
-//       {/* Overlay */}
 //       {menuOpen && <div className={styles.overlay} onClick={toggleMenu} />}
 
 //       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
-//         {/* --- Mobile-only links visible dans le burger --- */}
-//         {/* <div className={styles.mobileOnlyLinks}>
-//           <Link href="/location" onClick={toggleMenu}>
-//             Location
-//           </Link>
-//           <Link href="/entretien" onClick={toggleMenu}>
-//             Entretien
-//           </Link>
-//           <Link href="#footer" onClick={toggleMenu}>
-//             Contact
-//           </Link>
-//         </div> */}
+//         {/* Mobile dropdown: Location avec sous-menu */}
 //         <div className={styles.mobileOnlyLinks}>
 //           <details className={styles.mobileDropdown}>
 //             <summary>
@@ -328,32 +176,70 @@
 //           </details>
 //         </div>
 
+//         {/* Liens publics visibles tout le temps */}
+//         <div className={styles.publicLinks}>
+//           <Link href="/" onClick={toggleMenu}>
+//             Accueil
+//           </Link>
+//           <Link
+//             href="/about"
+//             onClick={toggleMenu}
+//             className={styles.buttonHero}
+//           >
+//             Qui sommes-nous
+//           </Link>
+//           <Link
+//             href="/galerie"
+//             onClick={toggleMenu}
+//             className={styles.buttonHero}
+//           >
+//             Galerie
+//           </Link>
+//           <Link href="#footer" onClick={toggleMenu}>
+//             Contact
+//           </Link>
+//         </div>
+
+//         {/* Liens selon connexion */}
 //         {isSignedIn ? (
 //           <>
-//             <Link href="/dashboard">Tableau de bord</Link>
-//             {bookingToken && (
-//               <Link href={`/manage-booking?token=${bookingToken}`}>
-//                 Ma réservation
+//             <Link href="/users/dashboard/profile" onClick={toggleMenu}>
+//               Tableau de bord
+//             </Link>
+//             {hasBooking && (
+//               <Link href="/dashboard/my-bookings" onClick={toggleMenu}>
+//                 Mes réservations
 //               </Link>
 //             )}
+
+//             {/* MENU ADMIN */}
 //             {userRole === "admin" && (
-//               <Link href="/admin/services">Mes Services</Link>
+//               <details className={styles.mobileDropdown}>
+//                 <summary>Admin</summary>
+//                 <div className={styles.dropdownLinks}>
+//                   <Link href="/admin/dashboard" onClick={toggleMenu}>
+//                     Dashboard
+//                   </Link>
+//                   <Link href="/admin/dashboard/bookings" onClick={toggleMenu}>
+//                     Réservations
+//                   </Link>
+//                   <Link href="/admin/dashboard/opening" onClick={toggleMenu}>
+//                     Ouverture
+//                   </Link>
+//                 </div>
+//               </details>
 //             )}
-//             {userRole === "admin" && <Link href="/admin">ADMIN</Link>}
+
 //             <UserButton />
 //           </>
 //         ) : (
 //           <div className={styles.authLinks}>
-//             <Link href="/">Accueil</Link>
-//             <Link href="/about" className={styles.buttonHero}>
-//               Qui sommes-nous
+//             <Link href="/sign-in" onClick={toggleMenu}>
+//               Se connecter
 //             </Link>
-//             <Link href="/galerie" className={styles.buttonHero}>
-//               Galerie
+//             <Link href="/sign-up" onClick={toggleMenu}>
+//               S’inscrire
 //             </Link>
-//             {/* <Link href="/sign-in">Se connecter</Link>
-//             <Link href="/sign-up">S&apos;inscrire</Link> */}
-//             <Link href="#footer">Contact</Link>
 //           </div>
 //         )}
 //       </div>
@@ -362,16 +248,277 @@
 // };
 
 // export default Navbar;
-// app/components/Navbar/Navbar.tsx
+// "use client";
+
+// import React, { useEffect, useState, useRef } from "react";
+// import Link from "next/link";
+// import Image from "next/image";
+// import styles from "./styles.module.scss";
+// import { UserButton, useUser } from "@clerk/nextjs";
+// import { getRole } from "@/actions/actions";
+// import { getUserBookings } from "@/actions/bookings";
+// import logo from "@/public/assets/logo/logo-new.png";
+
+// const Navbar: React.FC = () => {
+//   const { isLoaded, isSignedIn, user } = useUser();
+//   const [menuOpen, setMenuOpen] = useState(false);
+//   const [isScrolled, setIsScrolled] = useState(false);
+//   const [userRole, setUserRole] = useState<string | null>(null);
+//   const [isClient, setIsClient] = useState(false);
+//   const [hasBooking, setHasBooking] = useState(false);
+//   const navbarElement = useRef<HTMLDivElement>(null);
+//   const navigationHeight = useRef(0);
+//   //const hasSyncedUserRef = useRef(false);
+//   //const syncInProgressRef = useRef(false); // ✅ Nouveau: éviter les requêtes simultanées
+
+//   useEffect(() => {
+//     if (navbarElement.current) {
+//       navigationHeight.current = navbarElement.current.offsetHeight;
+//       navbarElement.current.style.setProperty(
+//         "--scroll-padding",
+//         navigationHeight.current.toString()
+//       );
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     const handleScroll = () => {
+//       setIsScrolled(window.scrollY > 400);
+//     };
+//     window.addEventListener("scroll", handleScroll);
+//     return () => window.removeEventListener("scroll", handleScroll);
+//   }, []);
+
+//   const hasSyncedUserSession = new Set<string>(); // mémoire RAM (non-persistée)
+
+//   useEffect(() => {
+//     if (!isLoaded || !user || !isSignedIn) return;
+
+//     const syncUser = async () => {
+//       const userId = user.id;
+//       const syncKey = `user-synced-${userId}`;
+
+//       // 🔐 Attente pour laisser le temps à localStorage de se stabiliser (utile après sign-in)
+//       await new Promise((r) => setTimeout(r, 100));
+
+//       if (localStorage.getItem(syncKey) === "true") {
+//         console.log("🛑 localStorage dit déjà synchronisé");
+//         return;
+//       }
+
+//       if (hasSyncedUserSession.has(userId)) {
+//         console.log("🧠 utilisateur déjà synchronisé en RAM");
+//         return;
+//       }
+
+//       try {
+//         console.log("🔄 Lancement de la synchronisation utilisateur...");
+//         const res = await fetch("/api/add-user", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({
+//             email: user.emailAddresses[0]?.emailAddress || "",
+//             name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+//             image: user.imageUrl || "",
+//             clerkUserId: user.id,
+//             phoneNumber: user.phoneNumbers?.[0]?.phoneNumber || "",
+//           }),
+//         });
+
+//         if (res.ok) {
+//           console.log("✅ Utilisateur synchronisé !");
+//           localStorage.setItem(syncKey, "true");
+//           hasSyncedUserSession.add(userId); // 🔐 verrou en mémoire
+//         } else {
+//           console.warn("⚠️ Erreur API:", res.status);
+//         }
+//       } catch (err) {
+//         console.error("❌ Échec de synchronisation:", err);
+//       }
+//     };
+
+//     syncUser();
+//   }, [isLoaded, user, isSignedIn]);
+
+//   useEffect(() => {
+//     const fetchBookings = async () => {
+//       if (!user || !isSignedIn) return setHasBooking(false);
+//       try {
+//         const bookings = await getUserBookings(user.id);
+//         setHasBooking(bookings && bookings.length > 0);
+//       } catch (err) {
+//         console.error("Erreur de récupération des réservations :", err);
+//         setHasBooking(false);
+//       }
+//     };
+//     fetchBookings();
+//   }, [user, isSignedIn]);
+
+//   useEffect(() => {
+//     setIsClient(true);
+//   }, []);
+
+//   useEffect(() => {
+//     const fetchUserRole = async () => {
+//       if (user?.id) {
+//         const role = await getRole(user.id);
+//         setUserRole(role?.name || null);
+//       }
+//     };
+//     if (user?.id) fetchUserRole();
+//   }, [user]);
+
+//   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+//   if (!isClient || !isLoaded) return null;
+
+//   return (
+//     <nav
+//       ref={navbarElement}
+//       className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}
+//     >
+//       <div className={styles.logo_image}>
+//         <Link href="/">
+//           <Image
+//             src={logo}
+//             alt="Yachting Day location de bateau Cap Camarat 12.5 WA"
+//             className={styles.logo}
+//             width={200}
+//             height={150}
+//             priority
+//             style={{
+//               objectFit: "cover",
+//               width: "100%",
+//               height: "100%",
+//               cursor: "pointer",
+//             }}
+//           />
+//         </Link>
+//       </div>
+
+//       {/* Liens desktop haut de page */}
+//       <div className={styles.primaryLinks}>
+//         <Link href="/location" className={styles.navButton}>
+//           Location <span className="shimmer" />
+//         </Link>
+//         <Link href="/entretien" className={styles.navButton}>
+//           Entretien <span className="shimmer" />
+//         </Link>
+//         <Link href="#footer" className={styles.navButton}>
+//           Contact <span className="shimmer" />
+//         </Link>
+//       </div>
+
+//       {/* Toggle burger menu */}
+//       <div className={styles.menuToggle} onClick={toggleMenu}>
+//         {menuOpen ? "✕" : "☰"}
+//       </div>
+
+//       {menuOpen && <div className={styles.overlay} onClick={toggleMenu} />}
+
+//       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
+//         {/* Mobile dropdown: Location avec sous-menu */}
+//         <div className={styles.mobileOnlyLinks}>
+//           <details className={styles.mobileDropdown}>
+//             <summary>
+//               <Link href="/location" onClick={toggleMenu}>
+//                 Location
+//               </Link>
+//             </summary>
+//             <div className={styles.dropdownLinks}>
+//               <Link href="/boat" onClick={toggleMenu}>
+//                 Le bateau
+//               </Link>
+//               <Link href="/environs" onClick={toggleMenu}>
+//                 Les environs
+//               </Link>
+//               <Link href="/excursions" onClick={toggleMenu}>
+//                 Nos excursions
+//               </Link>
+//             </div>
+//           </details>
+//         </div>
+
+//         {/* Liens publics visibles tout le temps */}
+//         <div className={styles.publicLinks}>
+//           <Link href="/" onClick={toggleMenu}>
+//             Accueil
+//           </Link>
+//           <Link
+//             href="/about"
+//             onClick={toggleMenu}
+//             className={styles.buttonHero}
+//           >
+//             Qui sommes-nous
+//           </Link>
+//           <Link
+//             href="/galerie"
+//             onClick={toggleMenu}
+//             className={styles.buttonHero}
+//           >
+//             Galerie
+//           </Link>
+//           <Link href="#footer" onClick={toggleMenu}>
+//             Contact
+//           </Link>
+//         </div>
+
+//         {/* Liens selon connexion */}
+//         {isSignedIn ? (
+//           <>
+//             <Link href="/users/dashboard/profile" onClick={toggleMenu}>
+//               Tableau de bord
+//             </Link>
+//             {hasBooking && (
+//               <Link href="/dashboard/my-bookings" onClick={toggleMenu}>
+//                 Mes réservations
+//               </Link>
+//             )}
+
+//             {/* MENU ADMIN */}
+//             {userRole === "admin" && (
+//               <details className={styles.mobileDropdown}>
+//                 <summary>Admin</summary>
+//                 <div className={styles.dropdownLinks}>
+//                   <Link href="/admin/dashboard" onClick={toggleMenu}>
+//                     Dashboard
+//                   </Link>
+//                   <Link href="/admin/dashboard/bookings" onClick={toggleMenu}>
+//                     Réservations
+//                   </Link>
+//                   <Link href="/admin/dashboard/opening" onClick={toggleMenu}>
+//                     Ouverture
+//                   </Link>
+//                 </div>
+//               </details>
+//             )}
+
+//             <UserButton />
+//           </>
+//         ) : (
+//           <div className={styles.authLinks}>
+//             <Link href="/sign-in" onClick={toggleMenu}>
+//               Se connecter
+//             </Link>
+//             <Link href="/sign-up" onClick={toggleMenu}>
+//               S&apos;inscrire
+//             </Link>
+//           </div>
+//         )}
+//       </div>
+//     </nav>
+//   );
+// };
+
+// export default Navbar;
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-// Styles
 import styles from "./styles.module.scss";
 import { UserButton, useUser } from "@clerk/nextjs";
-import { addUserToDatabase, getRole } from "@/actions/actions";
+import { getRole } from "@/actions/actions";
 import { getUserBookings } from "@/actions/bookings";
 import logo from "@/public/assets/logo/logo-new.png";
 
@@ -388,7 +535,6 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (navbarElement.current) {
       navigationHeight.current = navbarElement.current.offsetHeight;
-      console.info("Navbar height:", navbarElement.current.offsetHeight);
       navbarElement.current.style.setProperty(
         "--scroll-padding",
         navigationHeight.current.toString()
@@ -396,60 +542,31 @@ const Navbar: React.FC = () => {
     }
   }, []);
 
-  // Écoute du scroll pour changer l'état de la navbar
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 400) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 400);
     };
-
     window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Récupérer les réservations de l'utilisateur connecté
   useEffect(() => {
     const fetchBookings = async () => {
-      if (!user || !isSignedIn) {
-        setHasBooking(false);
-        return;
-      }
-
+      if (!user || !isSignedIn) return setHasBooking(false);
       try {
         const bookings = await getUserBookings(user.id);
         setHasBooking(bookings && bookings.length > 0);
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des réservations :",
-          error
-        );
+      } catch (err) {
+        console.error("Erreur de récupération des réservations :", err);
         setHasBooking(false);
       }
     };
-
     fetchBookings();
   }, [user, isSignedIn]);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  // Synchronise les informations de l'utilisateur Clerk avec la base de données
-  useEffect(() => {
-    if (user?.id && user.primaryEmailAddress?.emailAddress && user.firstName) {
-      addUserToDatabase(
-        user.primaryEmailAddress.emailAddress,
-        user.firstName,
-        user.imageUrl || "",
-        user.id
-      );
-    }
-  }, [user]);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -474,7 +591,7 @@ const Navbar: React.FC = () => {
         <Link href="/">
           <Image
             src={logo}
-            alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
+            alt="Yachting Day location de bateau Cap Camarat 12.5 WA"
             className={styles.logo}
             width={200}
             height={150}
@@ -489,31 +606,28 @@ const Navbar: React.FC = () => {
         </Link>
       </div>
 
+      {/* Liens desktop haut de page */}
       <div className={styles.primaryLinks}>
         <Link href="/location" className={styles.navButton}>
-          Location
-          <span className="shimmer"></span>
+          Location <span className="shimmer" />
         </Link>
         <Link href="/entretien" className={styles.navButton}>
-          Entretien
-          <span className="shimmer"></span>
+          Entretien <span className="shimmer" />
         </Link>
         <Link href="#footer" className={styles.navButton}>
-          Contact
-          <span className="shimmer"></span>
+          Contact <span className="shimmer" />
         </Link>
       </div>
 
-      {/* Burger Menu Toggle */}
+      {/* Toggle burger menu */}
       <div className={styles.menuToggle} onClick={toggleMenu}>
         {menuOpen ? "✕" : "☰"}
       </div>
 
-      {/* Overlay pour le menu ouvert */}
       {menuOpen && <div className={styles.overlay} onClick={toggleMenu} />}
 
       <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
-        {/* Liens spécifiques au mobile dans le burger */}
+        {/* Mobile dropdown: Location avec sous-menu */}
         <div className={styles.mobileOnlyLinks}>
           <details className={styles.mobileDropdown}>
             <summary>
@@ -535,9 +649,34 @@ const Navbar: React.FC = () => {
           </details>
         </div>
 
+        {/* Liens publics visibles tout le temps */}
+        <div className={styles.publicLinks}>
+          <Link href="/" onClick={toggleMenu}>
+            Accueil
+          </Link>
+          <Link
+            href="/about"
+            onClick={toggleMenu}
+            className={styles.buttonHero}
+          >
+            Qui sommes-nous
+          </Link>
+          <Link
+            href="/galerie"
+            onClick={toggleMenu}
+            className={styles.buttonHero}
+          >
+            Galerie
+          </Link>
+          <Link href="#footer" onClick={toggleMenu}>
+            Contact
+          </Link>
+        </div>
+
+        {/* Liens selon connexion */}
         {isSignedIn ? (
           <>
-            <Link href="/dashboard" onClick={toggleMenu}>
+            <Link href="/users/dashboard/profile" onClick={toggleMenu}>
               Tableau de bord
             </Link>
             {hasBooking && (
@@ -545,47 +684,34 @@ const Navbar: React.FC = () => {
                 Mes réservations
               </Link>
             )}
+
+            {/* MENU ADMIN */}
             {userRole === "admin" && (
-              <>
-                <Link href="/admin/services" onClick={toggleMenu}>
-                  Mes Services
-                </Link>
-                <Link href="/admin" onClick={toggleMenu}>
-                  ADMIN
-                </Link>
-              </>
+              <details className={styles.mobileDropdown}>
+                <summary>Admin</summary>
+                <div className={styles.dropdownLinks}>
+                  <Link href="/admin/dashboard" onClick={toggleMenu}>
+                    Dashboard
+                  </Link>
+                  <Link href="/admin/dashboard/bookings" onClick={toggleMenu}>
+                    Réservations
+                  </Link>
+                  <Link href="/admin/dashboard/opening" onClick={toggleMenu}>
+                    Ouverture
+                  </Link>
+                </div>
+              </details>
             )}
-            {/* UserButton de Clerk qui inclut la déconnexion */}
+
             <UserButton />
           </>
         ) : (
           <div className={styles.authLinks}>
-            <Link href="/" onClick={toggleMenu}>
-              Accueil
-            </Link>
-            <Link
-              href="/about"
-              className={styles.buttonHero}
-              onClick={toggleMenu}
-            >
-              Qui sommes-nous
-            </Link>
-            <Link
-              href="/galerie"
-              className={styles.buttonHero}
-              onClick={toggleMenu}
-            >
-              Galerie
-            </Link>
-
             <Link href="/sign-in" onClick={toggleMenu}>
               Se connecter
             </Link>
             <Link href="/sign-up" onClick={toggleMenu}>
               S&apos;inscrire
-            </Link>
-            <Link href="#footer" onClick={toggleMenu}>
-              Contact
             </Link>
           </div>
         )}
