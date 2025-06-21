@@ -22,34 +22,35 @@ model Client {
 }
 
 model Booking {
-  id                Int             @id @default(autoincrement())
-  clientId          Int?
-  client            Client?         @relation("ClientBookings", fields: [clientId], references: [id])
-  userId            String?
-  user              User?           @relation("UserBookings", fields: [userId], references: [id])
-  email             String          @unique
-  status            BookingStatus   @default(PENDING)
-  approvedByAdmin   Boolean         @default(false)
-  reservedAt        DateTime
-  startTime         DateTime
-  endTime           DateTime
-  withCaptain       Boolean         @default(false)
-  boatAmount        Float
-  payableOnBoard    Float           @default(0)
-  totalAmount       Float           @default(0)
-  stripePaymentLink String?
-  stripeSessionId   String?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  expiresAt         DateTime
-  bookingOptions    BookingOption[]
-  transactions      Transaction[]
-  service           Service?        @relation(fields: [serviceId], references: [id])
-  serviceId         String?
-  paymentStatus     PaymentStatus   @default(PENDING)
-  description       String
-  mealOption        Boolean         @default(false)
-  invoiceSent       Boolean?        @default(false)
+  id                    Int             @id @default(autoincrement())
+  clientId              Int?
+  client                Client?         @relation("ClientBookings", fields: [clientId], references: [id])
+  userId                String?
+  user                  User?           @relation("UserBookings", fields: [userId], references: [id])
+  email                 String
+  status                BookingStatus   @default(PENDING)
+  approvedByAdmin       Boolean         @default(false)
+  reservedAt            DateTime
+  startTime             DateTime
+  endTime               DateTime
+  withCaptain           Boolean         @default(false)
+  boatAmount            Float
+  payableOnBoard        Float           @default(0)
+  totalAmount           Float           @default(0)
+  stripePaymentLink     String?
+  stripeSessionId       String?
+  stripePaymentIntentId String?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  expiresAt             DateTime
+  bookingOptions        BookingOption[]
+  transactions          Transaction[]
+  service               Service?        @relation(fields: [serviceId], references: [id])
+  serviceId             String?
+  paymentStatus         PaymentStatus   @default(PENDING)
+  description           String
+  mealOption            Boolean         @default(false)
+  invoiceSent           Boolean?        @default(false)
 }
 
 model Option {

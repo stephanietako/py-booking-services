@@ -1,213 +1,278 @@
-// Description: Composant pour afficher les détails de la réservation après un paiement réussi
-// "use client";
-
-// import { useSearchParams } from "next/navigation";
-// import { useEffect, useState } from "react";
-// import Wrapper from "../Wrapper/Wrapper";
+// import Link from "next/link";
 // import styles from "./styles.module.scss";
-// import { Booking, BookingOption } from "@/types";
 
-// function PaymentSuccessDetails() {
-//   const params = useSearchParams();
-//   const bookingId = params.get("booking");
-//   const [booking, setBooking] = useState<Booking | null>(null);
+// export default function PaymentSuccess() {
+//   return (
+//     <div className={styles.container}>
+//       <h1 className={styles.success__title}>🎉 Paiement confirmé !</h1>
+//       <p className={styles.success__message}>
+//         Merci infiniment pour votre réservation ! Nous sommes ravis de vous
+//         accueillir bientôt. Un e-mail de confirmation vous a été envoyé.
+//       </p>
 
-//   useEffect(() => {
-//     if (!bookingId) return;
-//     fetch(`/api/bookings/${bookingId}`)
-//       .then((res) => res.json())
-//       .then(setBooking);
-//   }, [bookingId]);
+//       <Link href="/" className={styles.success__button}>
+//         Retour à l&apos;accueil
+//       </Link>
+//     </div>
+//   );
+// }
+// app/components/PaymentSuccessDetails/PaymentSuccessDetails.tsx
+// interface PaymentSuccessDetailsProps {
+//   sessionId: string;
+//   bookingId: string;
+// }
 
-//   if (!booking) return <p>Chargement des détails de la réservation...</p>;
-
-//   // Mapping correct des options
-//   const options = (booking.bookingOptions || []).map((bo: BookingOption) => ({
-//     id: bo.id,
-//     label: bo.option?.label || bo.label || "Option",
-//     unitPrice: bo.option?.unitPrice ?? bo.unitPrice ?? 0,
-//     quantity: bo.quantity ?? 1,
-//   }));
-
-//   // Prix du capitaine si applicable
-//   const needsCaptain =
-//     booking.withCaptain === false && booking.service?.requiresCaptain;
-//   const captainPrice = needsCaptain
-//     ? (booking.service?.captainPrice ?? 350)
-//     : 0;
-
-//   const totalOnBoard =
-//     options.reduce((sum, opt) => sum + opt.unitPrice * opt.quantity, 0) +
-//     captainPrice;
+// export default function PaymentSuccessDetails({
+//   sessionId,
+//   bookingId,
+// }: PaymentSuccessDetailsProps) {
+//   // Maintenant vous avez accès aux paramètres !
+//   // Récupérer les détails de la réservation avec bookingId
+//   // Valider le paiement avec sessionId si nécessaire
 
 //   return (
-//     <Wrapper>
-//       <section className={styles.succes_details}>
-//         <h2 className={styles.succes_details__title}>
-//           Détails de la réservation
-//         </h2>
-//         <p>
-//           Montant payé en ligne :{" "}
-//           <span className="amount">{booking.boatAmount}</span>{" "}
-//           <span className="currency">{booking.service?.currency}</span>
-//         </p>
-
-//         <div className={styles.succes_details__options}>
-//           <h3 className={styles.succes_details__options__title}>
-//             Options à payer à bord :
-//           </h3>
-//           {options.length > 0 || needsCaptain ? (
-//             <ul className={styles.succes_details__options__list}>
-//               {options.map((opt) => (
-//                 <li
-//                   key={opt.id}
-//                   className={styles.succes_details__options__item}
-//                 >
-//                   <span>
-//                     {opt.label} ×{" "}
-//                     <span className={styles.quantity}>{opt.quantity}</span>
-//                   </span>
-//                   <span>
-//                     <span className={styles.amount}>
-//                       {opt.unitPrice * opt.quantity}
-//                     </span>{" "}
-//                     <span className={styles.currency}>
-//                       {booking.service?.currency}
-//                     </span>
-//                   </span>
-//                 </li>
-//               ))}
-//               {needsCaptain && (
-//                 <li className={styles.succes_details__options__item}>
-//                   <span>Capitaine à bord</span>
-//                   <span>
-//                     <span className={styles.amount}>{captainPrice}</span>{" "}
-//                     <span className={styles.currency}>
-//                       {booking.service?.currency}
-//                     </span>
-//                   </span>
-//                 </li>
-//               )}
-//             </ul>
-//           ) : (
-//             <p>Aucune option à payer à bord.</p>
-//           )}
-//           <p className={styles.succes_details__options__total}>
-//             Total à payer à bord :{" "}
-//             <span className={styles.amount}>{totalOnBoard}</span>{" "}
-//             <span className={styles.currency}>{booking.service?.currency}</span>
-//           </p>
-//         </div>
-//       </section>
-//     </Wrapper>
+//     <div>
+//       <h2>Détails de votre réservation #{bookingId}</h2>
+//       {/* Votre logique d'affichage */}
+//     </div>
 //   );
 // }
 
-// export default PaymentSuccessDetails;
+// app/components/PaymentSuccessDetails/PaymentSuccessDetails.tsx
+// app/components/PaymentSuccessDetails/PaymentSuccessDetails.tsx
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Wrapper from "../Wrapper/Wrapper";
-import styles from "./styles.module.scss";
-import { Booking, BookingOption } from "@/types";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
-function formatCurrency(value: number, currency: string, locale = "fr-FR") {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-  }).format(value);
+interface PaymentSuccessDetailsProps {
+  sessionId: string;
+  bookingId: string;
 }
 
-function PaymentSuccessDetails() {
-  const params = useSearchParams();
-  const bookingId = params.get("booking");
-  const [booking, setBooking] = useState<Booking | null>(null);
+interface BookingDetails {
+  id: number;
+  reservedAt: string;
+  startTime: string;
+  endTime: string;
+  totalAmount: number;
+  payableOnBoard: number;
+  boatAmount: number;
+  withCaptain: boolean;
+  service?: {
+    name: string;
+    description: string;
+  };
+  bookingOptions: Array<{
+    label: string;
+    quantity: number;
+    unitPrice: number;
+    amount: number;
+  }>;
+  client?: {
+    fullName: string;
+    email: string;
+  };
+  user?: {
+    name: string;
+    email: string;
+  };
+}
+
+export default function PaymentSuccessDetails({
+  sessionId,
+  bookingId,
+}: PaymentSuccessDetailsProps) {
+  const [booking, setBooking] = useState<BookingDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!bookingId) return;
-    fetch(`/api/bookings/${bookingId}`)
-      .then((res) => res.json())
-      .then(setBooking);
-  }, [bookingId]);
+    const fetchBookingDetails = async () => {
+      try {
+        // Récupérer les détails de la réservation
+        const response = await fetch(
+          `/api/bookings/${bookingId}?session_id=${sessionId}`
+        );
 
-  if (!booking) return <p>Chargement des détails de la réservation...</p>;
+        if (!response.ok) {
+          throw new Error(
+            "Impossible de récupérer les détails de la réservation"
+          );
+        }
 
-  const currency = booking.service?.currency ?? "EUR";
+        const data = await response.json();
+        setBooking(data);
+      } catch (err) {
+        console.error("Erreur lors de la récupération:", err);
+        setError("Erreur lors du chargement des détails");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const options = (booking.bookingOptions || []).map((bo: BookingOption) => ({
-    id: bo.id,
-    label: bo.option?.label || bo.label || "Option",
-    unitPrice: bo.option?.unitPrice ?? bo.unitPrice ?? 0,
-    quantity: bo.quantity ?? 1,
-  }));
+    fetchBookingDetails();
+  }, [bookingId, sessionId]);
 
-  const needsCaptain =
-    booking.withCaptain === false && booking.service?.requiresCaptain;
-  const displayWithCaptain = booking.withCaptain || needsCaptain;
-  const captainPrice = displayWithCaptain
-    ? (booking.service?.captainPrice ?? 350)
-    : 0;
+  if (loading) {
+    return (
+      <div className="loading">
+        <p>🔄 Chargement des détails de votre réservation...</p>
+      </div>
+    );
+  }
 
-  const totalOnBoard =
-    options.reduce((sum, opt) => sum + opt.unitPrice * opt.quantity, 0) +
-    captainPrice;
+  if (error || !booking) {
+    return (
+      <div className="error">
+        <p>❌ {error || "Réservation introuvable"}</p>
+        <p>ID de réservation: {bookingId}</p>
+        <p>ID de session: {sessionId}</p>
+      </div>
+    );
+  }
+
+  const customerName =
+    booking.client?.fullName || booking.user?.name || "Client";
+  const customerEmail = booking.client?.email || booking.user?.email || "";
+
+  // Calculer le montant payé en ligne
+  const paidOnline = booking.totalAmount - booking.payableOnBoard;
 
   return (
-    <Wrapper>
-      <section className={styles.succes_details}>
-        <h2 className={styles.succes_details__title}>
-          Détails de la réservation
-        </h2>
-        <p>
-          Montant payé en ligne :{" "}
-          <span className="amount">
-            {formatCurrency(booking.boatAmount, currency)}
-          </span>
-        </p>
+    <div className="booking-details">
+      <div className="booking-summary">
+        <h2>📧 Récapitulatif de votre réservation</h2>
 
-        <div className={styles.succes_details__options}>
-          <h3 className={styles.succes_details__options__title}>
-            Options à payer à bord :
-          </h3>
-          {options.length > 0 || displayWithCaptain ? (
-            <ul className={styles.succes_details__options__list}>
-              {options.map((opt) => (
-                <li
-                  key={opt.id}
-                  className={styles.succes_details__options__item}
-                >
-                  <span>
-                    {opt.label} ×{" "}
-                    <span className={styles.quantity}>{opt.quantity}</span>
-                  </span>
-                  <span className={styles.amount}>
-                    {formatCurrency(opt.unitPrice * opt.quantity, currency)}
-                  </span>
-                </li>
-              ))}
-              {displayWithCaptain && (
-                <li className={styles.succes_details__options__item}>
-                  <span>Capitaine à bord</span>
-                  <span className={styles.amount}>
-                    {formatCurrency(captainPrice, currency)}
-                  </span>
-                </li>
-              )}
-            </ul>
-          ) : (
-            <p>Aucune option à payer à bord.</p>
-          )}
-          <p className={styles.succes_details__options__total}>
-            Total à payer à bord :{" "}
-            <span className={styles.amount}>
-              {formatCurrency(totalOnBoard, currency)}
-            </span>
+        <div className="customer-info">
+          <h3>👤 Informations client</h3>
+          <p>
+            <strong>Nom:</strong> {customerName}
+          </p>
+          <p>
+            <strong>Email:</strong> {customerEmail}
           </p>
         </div>
-      </section>
-    </Wrapper>
+
+        <div className="service-info">
+          <h3>🚤 Service réservé</h3>
+          <p>
+            <strong>{booking.service?.name}</strong>
+          </p>
+          <p>
+            <strong>Date:</strong>{" "}
+            {format(new Date(booking.reservedAt), "dd MMMM yyyy", {
+              locale: fr,
+            })}
+          </p>
+          <p>
+            <strong>Horaire:</strong>{" "}
+            {format(new Date(booking.startTime), "HH:mm")} -{" "}
+            {format(new Date(booking.endTime), "HH:mm")}
+          </p>
+          {booking.withCaptain && (
+            <p>
+              👨‍✈️ <strong>Avec capitaine</strong>
+            </p>
+          )}
+        </div>
+
+        {booking.bookingOptions.length > 0 && (
+          <div className="options-info">
+            <h3>🎯 Options sélectionnées</h3>
+            {booking.bookingOptions.map((option, index) => (
+              <div key={index} className="option-item">
+                <p>
+                  • {option.label} x{option.quantity} - {option.amount}€
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="payment-info">
+          <h3>💳 Détails du paiement</h3>
+          <p>
+            <strong>Montant du bateau:</strong> {booking.boatAmount}€
+          </p>
+          <p>
+            <strong>💰 Payé en ligne:</strong> {paidOnline}€
+          </p>
+          {booking.payableOnBoard > 0 && (
+            <p>
+              <strong>🏪 À payer sur place:</strong> {booking.payableOnBoard}€
+            </p>
+          )}
+          <p>
+            <strong>Total:</strong> {booking.totalAmount}€
+          </p>
+        </div>
+
+        <div className="next-steps">
+          <h3>📝 Prochaines étapes</h3>
+          <ul>
+            <li>✅ Votre paiement a été confirmé</li>
+            <li>📧 Un email de confirmation va vous être envoyé</li>
+            <li>📞 Nous vous contacterons pour finaliser les détails</li>
+            {booking.payableOnBoard > 0 && (
+              <li>💰 {booking.payableOnBoard}€ à régler sur place le jour J</li>
+            )}
+          </ul>
+        </div>
+
+        <div
+          className="session-info"
+          style={{ fontSize: "0.8em", color: "#666", marginTop: "20px" }}
+        >
+          <p>ID réservation: {booking.id}</p>
+          <p>ID session: {sessionId}</p>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .booking-details {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        .booking-summary {
+          background: #f9f9f9;
+          padding: 20px;
+          border-radius: 8px;
+          border-left: 4px solid #4caf50;
+        }
+        .customer-info,
+        .service-info,
+        .options-info,
+        .payment-info,
+        .next-steps {
+          margin-bottom: 20px;
+          padding-bottom: 15px;
+          border-bottom: 1px solid #eee;
+        }
+        .next-steps:last-child {
+          border-bottom: none;
+        }
+        .option-item {
+          margin: 5px 0;
+        }
+        .loading,
+        .error {
+          text-align: center;
+          padding: 20px;
+        }
+        h3 {
+          color: #333;
+          margin-bottom: 10px;
+        }
+        ul {
+          padding-left: 20px;
+        }
+        li {
+          margin: 8px 0;
+        }
+      `}</style>
+    </div>
   );
 }
-
-export default PaymentSuccessDetails;

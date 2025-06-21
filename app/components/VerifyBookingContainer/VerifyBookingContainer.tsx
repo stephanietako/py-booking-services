@@ -49,26 +49,26 @@ export default function VerifyBookingContainer() {
   }, []);
 
   // ✅ Synchroniser automatiquement client <-> user
-  useEffect(() => {
-    if (
-      bookingDetails?.client?.email &&
-      bookingDetails?.user?.id &&
-      !bookingDetails.userId // déjà lié sinon
-    ) {
-      fetch("/api/users/sync-client", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: bookingDetails.client.email }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("🔗 Sync client->user ok:", data);
-        })
-        .catch((err) => {
-          console.error("❌ Sync client->user failed:", err);
-        });
-    }
-  }, [bookingDetails]);
+  // useEffect(() => {
+  //   if (
+  //     bookingDetails?.client?.email &&
+  //     bookingDetails?.user?.id &&
+  //     !bookingDetails.userId // déjà lié sinon
+  //   ) {
+  //     fetch("/api/users/sync-client", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email: bookingDetails.client.email }),
+  //     })
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         console.log("🔗 Sync client->user ok:", data);
+  //       })
+  //       .catch((err) => {
+  //         console.error("❌ Sync client->user failed:", err);
+  //       });
+  //   }
+  // }, [bookingDetails]);
 
   const handleRequestBooking = async () => {
     if (
