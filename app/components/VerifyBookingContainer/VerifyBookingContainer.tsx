@@ -102,13 +102,16 @@ export default function VerifyBookingContainer() {
       const lastName = fullName.split(" ").slice(1).join(" ") || "";
 
       const stripeRes = await fetch(
-        `/api/admin/bookings/${bookingDetails.id}/payment-url`
+        `/api/bookings/${bookingDetails.id}/payment-url`
       );
       if (stripeRes.ok) {
         const { url } = await stripeRes.json();
         stripeUrl = url;
       }
-
+      console.log(
+        "LOG 5 (VerifyBookingContainer): stripeUrl après appel payment-url =",
+        stripeUrl
+      ); // <--- AJOUTEZ CETTE LIGNE
       const sendDetailsRes = await fetch(
         `/api/admin/bookings/sendReservationDetails`,
         {
@@ -132,7 +135,10 @@ export default function VerifyBookingContainer() {
           }),
         }
       );
-
+      console.log(
+        "LOG 6 (VerifyBookingContainer): stripeUrl envoyé à /api/admin/bookings/sendReservationDetails =",
+        stripeUrl
+      ); // <--- AJOUTEZ CETTE LIGNE
       if (sendDetailsRes.ok) {
         toast.success("Demande envoyée. Redirection en cours...", {
           position: "top-center",

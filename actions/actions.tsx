@@ -21,6 +21,100 @@ export async function getRole(clerkUserId: string) {
 }
 ///////////////
 // Fonction pour ajouter un utilisateur à la base de données
+// export async function addUserToDatabase(
+//   email: string,
+//   name: string,
+//   imageUrl: string,
+//   clerkUserId: string,
+//   phoneNumber: string
+// ) {
+//   // 👇 Récupérer le rôle par défaut
+//   const defaultRole = await prisma.role.findFirst({
+//     where: { name: "user" },
+//   });
+
+//   if (!defaultRole) {
+//     throw new Error("Rôle par défaut 'user' introuvable");
+//   }
+
+//   return await prisma.user.upsert({
+//     where: { clerkUserId },
+//     update: {
+//       email,
+//       name,
+//       image: imageUrl,
+//       phoneNumber,
+//     },
+//     create: {
+//       email,
+//       name,
+//       image: imageUrl,
+//       clerkUserId,
+//       phoneNumber,
+//       roleId: defaultRole.id, // ✅ requis dans ton schema
+//     },
+//   });
+// }
+
+// export async function addUserToDatabase(
+//   email: string,
+//   name: string,
+//   imageUrl: string,
+//   clerkUserId: string,
+//   phoneNumber: string
+// ) {
+//   console.log("🎯 addUserToDatabase appelée avec:", {
+//     email,
+//     name,
+//     imageUrl,
+//     clerkUserId,
+//     phoneNumber,
+//   });
+
+//   try {
+//     // 👇 Récupérer le rôle par défaut
+//     const defaultRole = await prisma.role.findFirst({
+//       where: { name: "user" },
+//     });
+
+//     console.log("👤 Rôle par défaut trouvé:", defaultRole);
+
+//     if (!defaultRole) {
+//       console.error("❌ Rôle par défaut 'user' introuvable");
+//       throw new Error("Rôle par défaut 'user' introuvable");
+//     }
+
+//     console.log("🔄 Tentative d'upsert...");
+
+//     const result = await prisma.user.upsert({
+//       where: { clerkUserId },
+//       update: {
+//         email,
+//         name,
+//         image: imageUrl,
+//         phoneNumber,
+//       },
+//       create: {
+//         email,
+//         name,
+//         image: imageUrl,
+//         clerkUserId,
+//         phoneNumber,
+//         roleId: defaultRole.id,
+//       },
+//     });
+
+//     console.log("✅ Upsert réussi:", result);
+//     return result;
+//   } catch (error) {
+//     console.error("❌ Erreur dans addUserToDatabase:", error);
+//     console.error(
+//       "❌ Stack trace:",
+//       error instanceof Error ? error.stack : "No stack"
+//     );
+//     throw error;
+//   }
+// }
 export async function addUserToDatabase(
   email: string,
   name: string,
@@ -28,34 +122,58 @@ export async function addUserToDatabase(
   clerkUserId: string,
   phoneNumber: string
 ) {
-  // 👇 Récupérer le rôle par défaut
-  const defaultRole = await prisma.role.findFirst({
-    where: { name: "user" },
+  console.log("🎯 addUserToDatabase appelée avec:", {
+    email,
+    name,
+    imageUrl,
+    clerkUserId,
+    phoneNumber,
   });
 
-  if (!defaultRole) {
-    throw new Error("Rôle par défaut 'user' introuvable");
+  try {
+    // 👇 Récupérer le rôle par défaut
+    const defaultRole = await prisma.role.findFirst({
+      where: { name: "user" },
+    });
+
+    console.log("👤 Rôle par défaut trouvé:", defaultRole);
+
+    if (!defaultRole) {
+      console.error("❌ Rôle par défaut 'user' introuvable");
+      throw new Error("Rôle par défaut 'user' introuvable");
+    }
+
+    console.log("🔄 Tentative d'upsert...");
+
+    const result = await prisma.user.upsert({
+      where: { clerkUserId },
+      update: {
+        email,
+        name,
+        image: imageUrl,
+        phoneNumber,
+      },
+      create: {
+        email,
+        name,
+        image: imageUrl,
+        clerkUserId,
+        phoneNumber,
+        roleId: defaultRole.id,
+      },
+    });
+
+    console.log("✅ Upsert réussi:", result);
+    return result;
+  } catch (error) {
+    console.error("❌ Erreur dans addUserToDatabase:", error);
+    console.error(
+      "❌ Stack trace:",
+      error instanceof Error ? error.stack : "No stack"
+    );
+    throw error;
   }
-
-  return await prisma.user.upsert({
-    where: { clerkUserId },
-    update: {
-      email,
-      name,
-      image: imageUrl,
-      phoneNumber,
-    },
-    create: {
-      email,
-      name,
-      image: imageUrl,
-      clerkUserId,
-      phoneNumber,
-      roleId: defaultRole.id, // ✅ requis dans ton schema
-    },
-  });
 }
-
 // ✅ ALTERNATIVE: Si tu as des contraintes uniques multiples
 export async function addUserToDatabaseAlternative(
   email: string,

@@ -8,15 +8,6 @@ import type { Service, PricingRule } from "@/types";
 const prisma = new PrismaClient();
 const adminEmail = process.env.ADMIN_EMAIL;
 
-// type BookingWithContact = {
-//   client: {
-//     fullName: string;
-//     email: string;
-//     phoneNumber?: string | null;
-//   } | null;
-//   user: { name: string; email: string; phoneNumber?: string | null } | null;
-// };
-
 function getContactInfo(booking: {
   client?: {
     fullName?: string;

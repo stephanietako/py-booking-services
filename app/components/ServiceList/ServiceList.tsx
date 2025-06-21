@@ -182,7 +182,10 @@ const ServiceList = () => {
           hasClientInfo ? clientInfo.phoneNumber : undefined,
           comment
         );
-
+      console.log(
+        "LOG 4 (ServiceList): bookingResult.booking.stripePaymentLink =",
+        bookingResult?.booking?.stripePaymentLink
+      ); // <--- AJOUTEZ CETTE LIGNE
       if (bookingResult?.booking?.id && bookingResult.token) {
         setBookingMessage(
           `✅ Réservé de ${format(startISO, "HH:mm")} à ${format(endISO, "HH:mm")}`

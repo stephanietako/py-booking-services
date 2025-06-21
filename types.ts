@@ -261,8 +261,8 @@ export interface FormState {
 
 export interface BookingTokenPayload extends JwtPayload {
   bookingId: number;
-  clientId?: number;
-  userId?: string;
+  clientId?: number | null; // Accepte null ET undefined
+  userId?: string | null; // Accepte null ET undefined
 }
 
 export type BookingForInvoice = Booking & {
