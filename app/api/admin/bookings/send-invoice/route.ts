@@ -2,20 +2,20 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateInvoice } from "@/lib/pdf/generateInvoice";
 import { Resend } from "resend";
-import { Booking, BookingOption, Option, Service, Client, User } from "@/types";
+import { BookingOption, Option, BookingWithDetails } from "@/types";
 import { escapeHtml } from "@/utils/escapeHtml";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 const domainUrl = process.env.DOMAIN_URL || "https://votre-domaine.com";
 
-type BookingForInvoice = Booking & {
-  service: Service;
-  client?: Client | null;
-  user?: User | null;
-  bookingOptions: (BookingOption & { option: Option })[];
-  totalPayableOnBoardCalculated: number;
-};
+// type BookingForInvoice = Booking & {
+//   service: Service;
+//   client?: Client | null;
+//   user?: User | null;
+//   bookingOptions: (BookingOption & { option: Option })[];
+//   totalPayableOnBoardCalculated: number;
+// };
 
 export async function POST(req: Request) {
   try {
@@ -76,19 +76,41 @@ export async function POST(req: Request) {
 
     const totalPayableOnBoard = totalOptionsPayableAtBoard + captainPrice;
 
-    const bookingForInvoice: BookingForInvoice = {
+    // ... ton code avant ...
+
+    // const bookingForInvoice: BookingForInvoice = {
+    //   ...booking,
+    //   status: booking.status,
+    //   service: booking.service,
+    //   client: booking.client ?? null,
+    //   user: booking.user ?? null,
+    //   bookingOptions: booking.bookingOptions as (BookingOption & {
+    //     option: Option;
+    //   })[],
+    //   totalPayableOnBoardCalculated: totalPayableOnBoard,
+    // };
+
+    // Création de l'objet conforme à BookingWithDetails
+    const bookingWithDetails: BookingWithDetails = {
       ...booking,
-      status: booking.status,
       service: booking.service,
       client: booking.client ?? null,
       user: booking.user ?? null,
       bookingOptions: booking.bookingOptions as (BookingOption & {
         option: Option;
       })[],
+      phoneNumber:
+        booking.client?.phoneNumber || booking.user?.phoneNumber || "—",
+      transactions: [], // à remplir si tu les charges
       totalPayableOnBoardCalculated: totalPayableOnBoard,
+      clientFullName:
+        booking.client?.fullName || booking.user?.name || "Client",
+      clientEmail: booking.client?.email || booking.user?.email || "",
+      clientPhoneNumber:
+        booking.client?.phoneNumber || booking.user?.phoneNumber || "—",
     };
 
-    const pdfBuffer = await generateInvoice(bookingForInvoice);
+    const pdfBuffer = await generateInvoice(bookingWithDetails);
     const pdfBase64 = Buffer.from(pdfBuffer).toString("base64");
 
     const adminEmail = process.env.ADMIN_EMAIL || "gabeshine@live.fr";

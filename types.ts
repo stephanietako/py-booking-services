@@ -1,8 +1,11 @@
 import type { JwtPayload } from "jsonwebtoken";
+import type { BookingStatus, PaymentStatus } from "@prisma/client";
+
+export type RoleName = "admin" | "user" | "member";
 
 export interface Role {
   id: string;
-  name: string;
+  name: RoleName;
   users: User[];
 }
 
@@ -12,16 +15,16 @@ export interface User {
   name: string;
   fullName?: string | null;
   image?: string | null;
-  phoneNumber?: string | null;
+  phoneNumber: string;
   description?: string | null;
   clerkUserId: string;
   roleId: string;
   role?: Role;
   stripeCustomerId?: string | null;
   createdAt: Date;
+  updatedAt: Date;
   bookings?: Booking[];
   client?: Client | null;
-  updatedAt?: Date;
 }
 
 export interface Client {
@@ -34,16 +37,15 @@ export interface Client {
   bookings?: Booking[];
   userId?: string | null;
   user?: User | null;
+  stripeCustomerId?: string | null;
 }
 
 export interface PricingRule {
   id: string;
   serviceId: string;
-  startDate: string | Date;
-  endDate: string | Date;
+  startDate: Date;
+  endDate: Date;
   price: number;
-  createdAt?: Date;
-  updatedAt?: Date;
   service?: Service | null;
 }
 
@@ -68,8 +70,8 @@ export interface Service {
   amount: number;
   price: number;
   requiresCaptain: boolean;
-  deposit?: number;
-  captainPrice?: number;
+  captainPrice: number;
+  cautionAmount: number;
 }
 
 export interface Option {
@@ -90,6 +92,7 @@ export interface BookingOption {
   bookingId: number;
   quantity: number;
   unitPrice: number;
+  amount: number;
   label: string;
   option?: Option;
   description?: string | null;
@@ -125,18 +128,28 @@ export interface Booking {
   user?: User | null;
   serviceId: string | null;
   service?: Service | null;
-  bookingOptions?: BookingOption[] | null;
-  transactions?: Transaction[] | null;
+  bookingOptions?: BookingOption[];
+  transactions?: Transaction[];
   mealOption: boolean;
-  description?: string | null;
+  description: string;
+  email: string;
+  stripeSessionId?: string | null;
+  stripePaymentIntentId?: string | null;
+  paymentStatus: PaymentStatus;
+  invoiceSent?: boolean | null;
 }
 
 export interface BookingWithDetails extends Omit<Booking, "bookingOptions"> {
   service?: Service | null;
   client?: Client | null;
   user?: User | null;
-  phoneNumber?: string | null;
+  phoneNumber: string;
   bookingOptions: (BookingOption & { option: Option })[];
+  transactions: Transaction[];
+  clientFullName?: string;
+  clientEmail?: string;
+  clientPhoneNumber?: string;
+  totalPayableOnBoardCalculated?: number;
 }
 
 export interface Day {
@@ -150,7 +163,6 @@ export interface Day {
 export interface ClosedDay {
   id: string;
   date: Date;
-  createdAt: Date;
 }
 
 export type CreateBookingPayload = {
@@ -177,22 +189,13 @@ export interface CustomUser {
   image?: string;
   name?: string;
   description?: string | null;
-  role?: { name: string };
+  role?: { name: RoleName };
   stripeCustomerId?: string | null;
 }
 
-export type BookingStatus =
-  | "PENDING"
-  | "APPROVED"
-  | "REJECTED"
-  | "PAID"
-  | "CANCELLED";
-
-export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
-
 export type DateTime = {
-  justDate: Date | null; // Stocke uniquement une date sans heure.
-  dateTime?: Date | null; // Stocke une date avec l'heure.
+  justDate: Date | null;
+  dateTime?: Date | null;
 };
 
 export interface DayInput {
@@ -261,8 +264,8 @@ export interface FormState {
 
 export interface BookingTokenPayload extends JwtPayload {
   bookingId: number;
-  clientId?: number | null; // Accepte null ET undefined
-  userId?: string | null; // Accepte null ET undefined
+  clientId?: number | null;
+  userId?: string | null;
 }
 
 export type BookingForInvoice = Booking & {
@@ -294,3 +297,10 @@ export interface ClerkWebhookEvent {
   type: "user.created" | "user.updated" | "user.deleted";
   data: ClerkUserPayload;
 }
+
+export interface VerifyTokenResponse {
+  data: BookingWithDetails;
+}
+
+// ✅ Réexportation des types Prisma pour éviter l'erreur :
+export type { BookingStatus, PaymentStatus } from "@prisma/client";

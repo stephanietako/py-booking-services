@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 import { stripe } from "@/lib/stripe";
 import { PaymentStatus, Prisma } from "@prisma/client";
-import { Booking, Client } from "@/types";
-import { createStripeCheckoutSession } from "./actionsStripe";
+import { Booking } from "@/types";
 import { calculateBookingTotal } from "@/utils/calculateBookingTotal";
+import { createStripeCheckoutSession } from "./actionsStripe";
 
 const secret = process.env.JWT_SECRET;
 if (!secret) {
@@ -45,8 +45,8 @@ export async function generateBookingToken(
     );
   }
 }
-///
 
+// Fonction pour créer une réservation
 export async function createBooking(
   userId: string | null,
   serviceId: string,
@@ -62,24 +62,21 @@ export async function createBooking(
   comment?: string
 ): Promise<{ booking: Booking; token?: string }> {
   try {
-    // Validation dates
-    const reservedAt = new Date(selectedDate);
-    if (isNaN(reservedAt.getTime()))
-      throw new Error("Date de réservation invalide.");
-    reservedAt.setHours(0, 0, 0, 0);
-
     const start = new Date(startTime);
     const end = new Date(endTime);
+    const reservedAt = new Date(selectedDate);
+
     if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
       throw new Error("Heures de début/fin invalides.");
     }
 
-    // Vérification disponibilité
     const existingBookings = await prisma.booking.findMany({
       where: {
         serviceId,
         reservedAt,
-        NOT: { OR: [{ endTime: { lte: start } }, { startTime: { gte: end } }] },
+        NOT: {
+          OR: [{ endTime: { lte: start } }, { startTime: { gte: end } }],
+        },
       },
     });
 
@@ -87,57 +84,25 @@ export async function createBooking(
       throw new Error("Le créneau horaire est déjà réservé.");
     }
 
-    // Gestion client/utilisateur
-    let clientData: (Client & { email: string }) | null = null;
-    let actualUserId: string | null = null;
-    let bookingEmail = email ?? "";
-    let stripeCustomerId: string | null = null;
+    let clientData = null;
+    let actualUserId: string | undefined = undefined;
 
     if (userId) {
-      // Utilisateur connecté
       const user = await prisma.user.findUnique({
         where: { clerkUserId: userId },
-        select: { id: true, email: true, name: true, stripeCustomerId: true },
+        select: {
+          id: true,
+        },
       });
       if (!user) throw new Error("Utilisateur introuvable.");
-
       actualUserId = user.id;
-      bookingEmail = user.email ?? bookingEmail;
-
-      // ✅ CORRECTION : Créer le stripeCustomerId si il n'existe pas
-      if (!user.stripeCustomerId) {
-        try {
-          // Créer le customer Stripe
-          const stripeCustomer = await stripe.customers.create({
-            email: user.email,
-            name: user.name,
-            metadata: {
-              userId: user.id,
-              clerkUserId: userId,
-            },
-          });
-
-          stripeCustomerId = stripeCustomer.id;
-
-          // Mettre à jour l'utilisateur avec le stripeCustomerId
-          await prisma.user.update({
-            where: { id: user.id },
-            data: { stripeCustomerId: stripeCustomer.id },
-          });
-        } catch (stripeError) {
-          console.error("Erreur création customer Stripe:", stripeError);
-          throw new Error("Erreur lors de la création du profil de paiement.");
-        }
-      } else {
-        stripeCustomerId = user.stripeCustomerId;
-      }
     } else if (fullName && email && phoneNumber) {
-      // Client anonyme avec infos
       const existingClient = await prisma.client.findUnique({
         where: { email },
       });
 
       if (existingClient) {
+        clientData = existingClient;
         if (
           existingClient.fullName !== fullName ||
           existingClient.phoneNumber !== phoneNumber
@@ -146,61 +111,11 @@ export async function createBooking(
             where: { id: existingClient.id },
             data: { fullName, phoneNumber },
           });
-        } else {
-          clientData = existingClient;
         }
-        stripeCustomerId = existingClient.stripeCustomerId;
       } else {
-        // ✅ Créer le stripeCustomerId pour le nouveau client
-        try {
-          const stripeCustomer = await stripe.customers.create({
-            email: email,
-            name: fullName,
-            phone: phoneNumber,
-            metadata: {
-              type: "anonymous_client",
-            },
-          });
-
-          stripeCustomerId = stripeCustomer.id;
-
-          clientData = await prisma.client.create({
-            data: {
-              fullName,
-              email,
-              phoneNumber,
-              stripeCustomerId: stripeCustomer.id,
-            },
-          });
-        } catch (stripeError) {
-          console.error("Erreur création customer Stripe:", stripeError);
-          throw new Error("Erreur lors de la création du profil de paiement.");
-        }
-      }
-
-      // Si le client existait mais n'avait pas de stripeCustomerId
-      if (!stripeCustomerId && clientData) {
-        try {
-          const stripeCustomer = await stripe.customers.create({
-            email: clientData.email,
-            name: clientData.fullName,
-            phone: clientData.phoneNumber,
-            metadata: {
-              clientId: clientData.id.toString(),
-              type: "anonymous_client",
-            },
-          });
-
-          stripeCustomerId = stripeCustomer.id;
-
-          await prisma.client.update({
-            where: { id: clientData.id },
-            data: { stripeCustomerId: stripeCustomer.id },
-          });
-        } catch (stripeError) {
-          console.error("Erreur création customer Stripe:", stripeError);
-          throw new Error("Erreur lors de la création du profil de paiement.");
-        }
+        clientData = await prisma.client.create({
+          data: { fullName, email, phoneNumber },
+        });
       }
     } else {
       throw new Error(
@@ -208,20 +123,17 @@ export async function createBooking(
       );
     }
 
-    // Récupération service + règle tarifaire
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
       include: { pricingRules: true },
     });
     if (!service) throw new Error("Service introuvable.");
 
-    const rule = service.pricingRules?.find(
-      (r) =>
-        reservedAt >= new Date(r.startDate) && reservedAt <= new Date(r.endDate)
+    const rule = service.pricingRules.find(
+      (r) => reservedAt >= r.startDate && reservedAt <= r.endDate
     );
     const boatAmount = rule?.price ?? service.defaultPrice;
 
-    // Options sélectionnées
     const optionDetails = await prisma.option.findMany({
       where: { id: { in: options.map((opt) => opt.optionId) } },
     });
@@ -229,6 +141,8 @@ export async function createBooking(
     const bookingOptionsData = options.map((opt) => {
       const optionMeta = optionDetails.find((o) => o.id === opt.optionId);
       if (!optionMeta) throw new Error("Option invalide.");
+
+      //const subtotal = optionMeta.amount * opt.quantity;
       const subtotal = optionMeta.unitPrice * opt.quantity;
 
       return {
@@ -244,24 +158,15 @@ export async function createBooking(
     const selectedOptionsForCalc = options.map((opt) => {
       const optionMeta = optionDetails.find((o) => o.id === opt.optionId);
       if (!optionMeta) throw new Error("Option invalide.");
+
       return {
-        label: optionMeta.label,
         unitPrice: optionMeta.unitPrice,
         quantity: opt.quantity,
+        label: optionMeta.label,
         payableAtBoard: optionMeta.payableAtBoard ?? false,
       };
     });
 
-    if (withCaptain) {
-      selectedOptionsForCalc.push({
-        label: "Capitaine",
-        unitPrice: service.captainPrice ?? 350,
-        quantity: 1,
-        payableAtBoard: true,
-      });
-    }
-
-    // Calcul total
     const { totalAmount, payableOnBoard } = calculateBookingTotal({
       basePrice: boatAmount,
       withCaptain,
@@ -269,12 +174,11 @@ export async function createBooking(
       selectedOptions: selectedOptionsForCalc,
     });
 
-    // Création réservation
     const booking = await prisma.booking.create({
       data: {
-        clientId: clientData?.id ?? null,
+        clientId: clientData?.id,
         userId: actualUserId,
-        description: comment ?? "",
+        description: comment || "",
         serviceId,
         reservedAt,
         startTime: start,
@@ -288,11 +192,12 @@ export async function createBooking(
         totalAmount,
         payableOnBoard,
         stripePaymentLink: "",
-        stripeSessionId: "",
-        email: bookingEmail,
+        email: clientData?.email ?? email ?? "",
         mealOption,
         updatedAt: new Date(),
-        bookingOptions: { create: bookingOptionsData },
+        bookingOptions: {
+          create: bookingOptionsData,
+        },
       },
       include: {
         bookingOptions: { include: { option: true } },
@@ -301,35 +206,35 @@ export async function createBooking(
         service: true,
       },
     });
+    const stripeCustomerId =
+      clientData?.stripeCustomerId ??
+      (actualUserId
+        ? (
+            await prisma.user.findUnique({
+              where: { id: actualUserId },
+              select: { stripeCustomerId: true },
+            })
+          )?.stripeCustomerId
+        : undefined);
 
-    // ✅ CORRECTION : Passer le stripeCustomerId à la fonction Stripe
-    const domainUrl =
-      process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-    let checkoutUrl = "";
-
-    try {
-      if (!stripeCustomerId) {
-        throw new Error("Aucun ID client Stripe disponible");
-      }
-
-      checkoutUrl = await createStripeCheckoutSession(
-        booking.id,
-        domainUrl,
-        stripeCustomerId // ✅ Passer le stripeCustomerId
-      );
-      console.log(
-        "LOG 1 (actions/bookings): checkoutUrl générée =",
-        checkoutUrl
-      ); // <--- AJOUTEZ CETTE LIGNE
-    } catch (e) {
-      console.error("Erreur création session Stripe:", e);
-      throw new Error("Erreur lors de la création de la session de paiement.");
+    if (!stripeCustomerId) {
+      throw new Error("Impossible de trouver un stripeCustomerId.");
     }
 
-    // Mise à jour avec le lien Stripe
+    const domainUrl =
+      process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+    const checkoutUrl = await createStripeCheckoutSession(
+      booking.id,
+      domainUrl,
+      stripeCustomerId
+    );
+
     const updatedBooking = await prisma.booking.update({
       where: { id: booking.id },
-      data: { stripePaymentLink: checkoutUrl },
+      data: {
+        stripePaymentLink: checkoutUrl,
+      },
       include: {
         bookingOptions: { include: { option: true } },
         client: true,
@@ -338,7 +243,6 @@ export async function createBooking(
       },
     });
 
-    // Génération token
     let token: string | undefined;
     if (updatedBooking?.id) {
       token = await generateBookingToken(
@@ -347,20 +251,14 @@ export async function createBooking(
         updatedBooking.userId ?? undefined
       );
     }
-    console.log(
-      "LOG 2 (actions/bookings): updatedBooking.stripePaymentLink avant retour =",
-      updatedBooking.stripePaymentLink
-    ); // <--- AJOUTEZ CETTE LIGNE
+
     return { booking: updatedBooking, token };
   } catch (err) {
     console.error("❌ Erreur createBooking:", err);
-    throw new Error(
-      err instanceof Error
-        ? err.message
-        : "Erreur lors de la création de la réservation."
-    );
+    throw new Error("Erreur lors de la création de la réservation.");
   }
 }
+//////////
 // Mettre à jour une réservation
 export async function updateBooking(
   bookingId: string,
@@ -575,6 +473,7 @@ export const getAllBookingsAdmin = async () => {
 };
 /////////////////////
 // Récupérer toutes les réservations
+
 export const getBookings = async (userId?: string): Promise<Booking[]> => {
   const bookings = await prisma.booking.findMany({
     where: userId ? { user: { clerkUserId: userId } } : {},

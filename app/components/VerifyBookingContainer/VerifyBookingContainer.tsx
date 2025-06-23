@@ -48,28 +48,6 @@ export default function VerifyBookingContainer() {
     verifyToken();
   }, []);
 
-  // ✅ Synchroniser automatiquement client <-> user
-  // useEffect(() => {
-  //   if (
-  //     bookingDetails?.client?.email &&
-  //     bookingDetails?.user?.id &&
-  //     !bookingDetails.userId // déjà lié sinon
-  //   ) {
-  //     fetch("/api/users/sync-client", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ email: bookingDetails.client.email }),
-  //     })
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         console.log("🔗 Sync client->user ok:", data);
-  //       })
-  //       .catch((err) => {
-  //         console.error("❌ Sync client->user failed:", err);
-  //       });
-  //   }
-  // }, [bookingDetails]);
-
   const handleRequestBooking = async () => {
     if (
       !bookingDetails?.id ||
@@ -135,10 +113,7 @@ export default function VerifyBookingContainer() {
           }),
         }
       );
-      console.log(
-        "LOG 6 (VerifyBookingContainer): stripeUrl envoyé à /api/admin/bookings/sendReservationDetails =",
-        stripeUrl
-      ); // <--- AJOUTEZ CETTE LIGNE
+
       if (sendDetailsRes.ok) {
         toast.success("Demande envoyée. Redirection en cours...", {
           position: "top-center",

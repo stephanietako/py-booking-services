@@ -38,18 +38,19 @@ export async function POST(req: Request) {
 
       const bookingId = decoded.bookingId;
 
-      const booking: BookingWithDetails | null =
-        await prisma.booking.findUnique({
-          where: { id: bookingId },
-          include: {
-            service: true,
-            bookingOptions: {
-              include: { option: true },
-            },
-            client: true,
-            user: true,
+      // ✅ CORRECTION : Ajout de l'include pour transactions
+      const booking = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        include: {
+          service: true,
+          bookingOptions: {
+            include: { option: true },
           },
-        });
+          client: true,
+          user: true,
+          transactions: true, // ✅ Ajouté pour correspondre au type BookingWithDetails
+        },
+      });
 
       if (
         !booking ||
@@ -67,37 +68,50 @@ export async function POST(req: Request) {
       console.log("Booking récupérée:", booking);
       console.log("📞 USER DATA:", booking?.user);
 
-      // ✅ CORRECTION ICI : Sélection du numéro de téléphone
+      // ✅ Sélection du numéro de téléphone
       const resolvedPhoneNumber =
-        // Si l'utilisateur est présent ET son numéro n'est pas vide, on le prend
-        booking.user?.phoneNumber && booking.user.phoneNumber !== ""
-          ? booking.user.phoneNumber
-          : // Sinon, si le client est présent ET son numéro n'est pas vide, on le prend
-            booking.client?.phoneNumber && booking.client.phoneNumber !== ""
-            ? booking.client.phoneNumber
-            : // Sinon, aucun numéro n'est disponible
-              null;
+        booking.user?.phoneNumber?.trim() ||
+        booking.client?.phoneNumber?.trim() ||
+        "";
+
+      // ✅ Construction de la réponse qui correspond exactement au type BookingWithDetails
+      const bookingWithDetails: BookingWithDetails = {
+        id: booking.id,
+        status: booking.status,
+        approvedByAdmin: booking.approvedByAdmin,
+        reservedAt: booking.reservedAt,
+        startTime: booking.startTime,
+        endTime: booking.endTime,
+        withCaptain: booking.withCaptain,
+        boatAmount: booking.boatAmount,
+        payableOnBoard: booking.payableOnBoard,
+        totalAmount: booking.totalAmount,
+        expiresAt: booking.expiresAt,
+        updatedAt: booking.updatedAt,
+        createdAt: booking.createdAt,
+        stripePaymentLink: booking.stripePaymentLink,
+        clientId: booking.clientId,
+        userId: booking.userId,
+        serviceId: booking.serviceId,
+        mealOption: booking.mealOption,
+        description: booking.description,
+        email: booking.email,
+        stripeSessionId: booking.stripeSessionId,
+        stripePaymentIntentId: booking.stripePaymentIntentId,
+        paymentStatus: booking.paymentStatus,
+        invoiceSent: booking.invoiceSent,
+        // Relations
+        service: booking.service,
+        client: booking.client,
+        user: booking.user,
+        bookingOptions: booking.bookingOptions, // Déjà typé correctement grâce à l'include
+        transactions: booking.transactions, // ✅ Maintenant inclus
+        // Propriété calculée
+        phoneNumber: resolvedPhoneNumber,
+      };
 
       return NextResponse.json({
-        data: {
-          id: booking.id,
-          startTime: booking.startTime,
-          endTime: booking.endTime,
-          status: booking.status,
-          withCaptain: booking.withCaptain,
-          mealOption: booking.mealOption,
-          boatAmount: booking.boatAmount,
-          service: booking.service,
-          bookingOptions: booking.bookingOptions,
-          client: booking.client || null,
-          user: booking.user || null,
-          phoneNumber: resolvedPhoneNumber, // Utilisation du numéro résolu
-          userId: booking.userId ?? null,
-          stripePaymentLink: booking.stripePaymentLink ?? null,
-          createdAt: booking.createdAt,
-          updatedAt: booking.updatedAt,
-          description: booking.description,
-        },
+        data: bookingWithDetails,
       });
     } catch (error) {
       if (error instanceof TokenExpiredError) {

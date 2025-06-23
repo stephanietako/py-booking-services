@@ -43,7 +43,6 @@ export default function BookingDetailsDisplay({
     bookingDetails.withCaptain === false
       ? totalOptionsPayableOnBoard + captainPrice
       : totalOptionsPayableOnBoard;
-
   const finalTotalAmount =
     bookingDetails.boatAmount + totalPayableOnBoardWithCaptain;
 
