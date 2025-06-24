@@ -1,4 +1,3 @@
-/* Global Layout */
 .service_list {
   display: flex;
   flex-direction: column;
@@ -7,10 +6,8 @@
   background-color: #000000e3;
   color: whitesmoke;
   border-radius: 1rem;
-  //border: 4px solid rgb(30, 0, 255);
 }
 
-/* Card Container */
 .service_item {
   display: flex;
   flex-direction: column;
@@ -20,10 +17,7 @@
   overflow: hidden;
 }
 
-/* Two Columns */
 .service_item__content {
-  //border: 4px solid red;
-  /* flex-direction: row; */
   justify-content: center;
   align-items: flex-start;
   gap: 2rem;
@@ -42,7 +36,6 @@
 }
 
 .bloc__right_column {
-  //border: 4px solid pink;
   width: 50%;
   height: auto;
   display: flex;
@@ -61,11 +54,9 @@
     flex-direction: column;
     gap: 1rem;
     color: whitesmoke;
-    //border: 4px solid yellow;
   }
 }
 
-/* Image Block */
 .__img_content {
   display: flex;
   justify-content: center;
@@ -80,7 +71,6 @@
   }
 }
 
-/* Details Section */
 .service_item__details {
   display: flex;
   flex-direction: column;
@@ -102,7 +92,6 @@
   }
 }
 
-/* Options */
 .options_list {
   display: flex;
   flex-direction: column;
@@ -128,7 +117,6 @@
   }
 }
 
-/* Captain & Meal Checkboxes */
 .captain_option,
 .meal_option {
   padding: 1rem;
@@ -141,15 +129,15 @@
   label {
     display: flex;
     align-items: center;
-    gap: 0.75rem; /* Augmenter un peu l'espace */
-    margin-bottom: 0.5rem; /* Réduire un peu la marge */
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
     cursor: pointer;
   }
 
   input[type="checkbox"] {
     appearance: none;
-    background-color: #222; /* Fond plus sombre */
-    border: 1px solid #00ffff; /* Bordure cyan */
+    background-color: #222;
+    border: 1px solid #00ffff;
     border-radius: 0.2rem;
     width: 1.1rem;
     height: 1.1rem;
@@ -164,15 +152,14 @@
       border-color 0.2s ease-in-out;
 
     &:checked {
-      background-color: #00ffff; /* Fond cyan quand coché */
+      background-color: #00ffff;
       border-color: #00ffff;
       .captain_option input[type="checkbox"]:checked::before,
       .meal_option input[type="checkbox"]:checked::before {
-        content: ""; /* Important de laisser vide */
+        content: "";
         display: block;
-        width: 0.8rem; /* Ajuster la taille */
-        height: 0.8rem;
-        //background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+        width: 0.8rem;
+
         background-size: contain;
         background-repeat: no-repeat;
       }
@@ -208,7 +195,6 @@
   margin-top: 1rem;
 }
 
-/* Anonymous Booking */
 .anonymous_booking_form {
   margin-top: 1rem;
   display: flex;
@@ -229,7 +215,6 @@
   }
 }
 
-/* Loading Button */
 .loading {
   position: relative;
   background-color: #444 !important;
@@ -237,30 +222,6 @@
   cursor: wait;
 }
 
-/* Cancel Button */
-// .cancelButton {
-//   margin-top: 0.5rem;
-//   background-color: transparent;
-//   color: #ff5555;
-//   border: 1px solid #ff5555;
-
-//   &:hover {
-//     background-color: #ff5555;
-//     color: #000;
-//   }
-// }
-
-/* Confirmation Message */
-// .bookingConfirmationMessage {
-//   margin-top: 1rem;
-//   background-color: #003;
-//   padding: 1rem;
-//   border-radius: 0.5rem;
-//   text-align: center;
-//   p {
-//     color: whitesmoke;
-//   }
-// }
 .selected_times {
   background: #024;
   border-left: 5px solid #1e90ff;
@@ -272,14 +233,12 @@
   }
 }
 
-/* Notes / Info */
 .info_note {
   color: #888;
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
 }
 
-/* Title in right column */
 .right_column__title {
   font-size: 1.3rem;
   font-weight: bold;
@@ -355,7 +314,7 @@
   padding: 0.7em 1em;
   position: absolute;
   z-index: 10;
-  bottom: 125%; /* au-dessus de l'icône */
+  bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
@@ -407,18 +366,6 @@
   border-color: #00ffff;
   background: #00ffff;
 }
-
-// .captain_radio_input:checked::after {
-//   content: "";
-//   display: block;
-//   width: 0.6rem;
-//   height: 0.6rem;
-//   background: #111;
-//   border-radius: 50%;
-//   position: absolute;
-//   top: 0.25rem;
-//   left: 0.25rem;
-// }
 
 .captain_radio_input:focus {
   outline: none;

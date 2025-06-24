@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
       const bookingId = decoded.bookingId;
 
-      // ✅ CORRECTION : Ajout de l'include pour transactions
+      // ✅  Ajout de l'include pour transactions
       const booking = await prisma.booking.findUnique({
         where: { id: bookingId },
         include: {
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
           },
           client: true,
           user: true,
-          transactions: true, // ✅ Ajouté pour correspondre au type BookingWithDetails
+          transactions: true,
         },
       });
 
@@ -64,9 +64,6 @@ export async function POST(req: Request) {
           { status: 403 }
         );
       }
-
-      console.log("Booking récupérée:", booking);
-      console.log("📞 USER DATA:", booking?.user);
 
       // ✅ Sélection du numéro de téléphone
       const resolvedPhoneNumber =
@@ -104,9 +101,9 @@ export async function POST(req: Request) {
         service: booking.service,
         client: booking.client,
         user: booking.user,
-        bookingOptions: booking.bookingOptions, // Déjà typé correctement grâce à l'include
-        transactions: booking.transactions, // ✅ Maintenant inclus
-        // Propriété calculée
+        bookingOptions: booking.bookingOptions,
+        transactions: booking.transactions,
+
         phoneNumber: resolvedPhoneNumber,
       };
 

@@ -3,7 +3,7 @@ $bleu-turquoise: #25fde9;
 $bleu-clair: #14e9f7;
 $blanc: #fff;
 $transparent-white: rgba(255, 255, 255, 0.85);  */
-
+/*globals.css*/
 :root {
   --primary-color: #14e9f7;
   --primary-hover: #25fde9;

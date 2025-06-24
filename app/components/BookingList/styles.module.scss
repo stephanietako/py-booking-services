@@ -1,146 +1,35 @@
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: #6da9e4;
-
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.card {
-  border: 1px solid #e0e0e0;
-  padding: 1.5rem 2rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-  background-color: #ffffff;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-  }
-
-  p {
-    margin: 0.3rem 0;
-    color: #4b5563;
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-
-  .title {
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #111827;
-    h3 {
-      font-size: 1.4rem;
-      color: #111827;
-    }
-  }
-}
-
-.statusBadge {
-  display: inline-block;
-  padding: 0.3rem 1rem;
-  border-radius: 9999px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  user-select: none;
-
-  &.approved {
-    background-color: #d1fae5;
-    color: blue;
-  }
-
-  &.rejected {
-    background-color: #fee2e2;
-    color: #b91c1c;
-  }
-
-  &.paid {
-    background-color: #dbeafe;
-    color: turquoise;
-  }
-
-  &.pending {
-    background-color: #fef3c7;
-    color: gray;
-  }
-
-  &.cancelled {
-    background-color: #f3f4f6;
-    color: red;
-  }
-}
-
-.buttons {
+.title {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-
-  button {
-    flex: 1;
-    padding: 0.65rem 1.25rem;
-    border-radius: 24px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition:
-      background-color 0.25s ease,
-      box-shadow 0.25s ease;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    color: white;
-
-    &.approve {
-      background-color: #22c55e;
-
-      &:hover:not(:disabled) {
-        background-color: #168ea3;
-        box-shadow: 0 6px 12px rgba(22, 163, 74, 0.6);
-      }
-    }
-
-    &.reject {
-      background-color: #ef4444;
-
-      &:hover:not(:disabled) {
-        background-color: #b91c1c;
-        box-shadow: 0 6px 12px rgba(185, 28, 28, 0.6);
-      }
-    }
-
-    &.paid {
-      background-color: #3b82f6;
-
-      &:hover:not(:disabled) {
-        background-color: #1e40af;
-        box-shadow: 0 6px 12px rgba(30, 64, 175, 0.6);
-      }
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-  }
+  width: 100%;
+  height: auto;
+  justify-content: center;
+  align-content: center;
 }
 
-.optionsList {
-  margin-top: 0.5rem;
-  padding-left: 1.2rem;
-  color: #374151;
-  font-size: 0.95rem;
-  font-weight: 400;
-  line-height: 1.4;
+.bookings {
+  margin-top: 4rem;
+  padding: 2rem;
+  background: aliceblue;
+  border-radius: 8px;
+}
+
+.bookingList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: center;
+  align-content: center;
+}
+
+.bookingItem {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 6px;
+  width: 300px;
+}
+
+.error {
+  color: red;
 }

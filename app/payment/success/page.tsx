@@ -5,7 +5,6 @@ import { Suspense } from "react";
 import styles from "./styles.module.scss";
 
 interface PaymentSuccessProps {
-  // 💡 Correction ici : searchParams est une Promise qui résout en un objet
   searchParams: Promise<{
     token?: string;
     session_id?: string;
@@ -15,7 +14,6 @@ interface PaymentSuccessProps {
 export default async function PaymentSuccess({
   searchParams,
 }: PaymentSuccessProps) {
-  // ✅ C'est correct de faire un await ici pour résoudre la Promise
   const resolvedSearchParams = await searchParams;
   const token = resolvedSearchParams.token;
   const sessionId = resolvedSearchParams.session_id;
@@ -39,7 +37,7 @@ export default async function PaymentSuccess({
     return (
       <div className={styles.container}>
         <p>Un instant, nous finalisons votre paiement...</p>
-        {/* TokenGeneratorRedirect est le NOUVEAU Client Component */}
+
         <TokenGeneratorRedirect sessionId={sessionId} />
       </div>
     );
@@ -53,7 +51,7 @@ export default async function PaymentSuccess({
         <p>Le lien de confirmation est invalide ou a expiré.</p>
         <p>
           Veuillez contacter{" "}
-          <a href="mailto:support@votre-site.com">le support</a> si le problème
+          <a href="mailto:yachtingday@gmail.com">le support</a> si le problème
           persiste.
         </p>
       </div>

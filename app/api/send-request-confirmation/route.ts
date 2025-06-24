@@ -1,3 +1,4 @@
+// app/send-request-confirmation/route.ts
 import { NextResponse } from "next/server";
 import { buildAdminReservationEmail } from "@/lib/emails/adminReservationDetails";
 import { requestConfirmationEmail } from "@/lib/emails/requestConfirmation";
@@ -147,7 +148,6 @@ export async function POST(request: Request) {
       })),
     });
 
-    // Préparer params email client
     const clientEmailParams = {
       bookingId: booking.id.toString(),
       clientName: contactInfo.fullName,
@@ -173,7 +173,6 @@ export async function POST(request: Request) {
       comment: booking.description || "",
     };
 
-    // Préparer params email admin
     const emailParams = {
       bookingId: booking.id.toString(),
       firstName: contactInfo.fullName.split(" ")[0] || "",

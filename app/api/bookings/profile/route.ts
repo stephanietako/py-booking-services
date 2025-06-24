@@ -1,5 +1,4 @@
 // app/api/bookings/profile/route.ts
-// app/api/bookings/profile/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
@@ -90,8 +89,6 @@ export async function GET() {
               roleId: defaultRole.id,
             },
           });
-
-          console.log("✅ Utilisateur créé:", user.id);
         } catch (createError) {
           // Si l'erreur est une contrainte unique sur l'email
           if (
@@ -113,9 +110,6 @@ export async function GET() {
                 where: { id: existingUserByEmail.id },
                 data: { clerkUserId },
               });
-              console.log(
-                "✅ ClerkUserId mis à jour pour l'utilisateur existant"
-              );
             } else {
               throw createError;
             }
@@ -133,7 +127,7 @@ export async function GET() {
       );
     }
 
-    console.log("✅ Utilisateur trouvé:", user.id);
+    console.log("✅ Utilisateur trouvé");
 
     const bookings = await prisma.booking.findMany({
       where: {
@@ -147,7 +141,7 @@ export async function GET() {
       },
     });
 
-    console.log("✅ Bookings trouvés:", bookings.length);
+    console.log("✅ Bookings trouvés:");
     return NextResponse.json(bookings);
   } catch (error) {
     console.error("❌ Erreur dans GET bookings/profile:", error);

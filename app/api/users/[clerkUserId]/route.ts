@@ -9,10 +9,7 @@ export async function GET(
   { params }: { params: Promise<{ clerkUserId: string }> }
 ) {
   const { userId: requesterClerkId } = await auth();
-  const { clerkUserId: targetUserId } = await params; // ✅ Await params
-
-  console.log("🔍 Requester:", requesterClerkId);
-  console.log("🔍 Target:", targetUserId);
+  const { clerkUserId: targetUserId } = await params;
 
   if (!requesterClerkId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -52,7 +49,7 @@ export async function PUT(
   { params }: { params: Promise<{ clerkUserId: string }> }
 ) {
   const { userId: requesterClerkId } = await auth();
-  const { clerkUserId: targetUserId } = await params; // ✅ Await params
+  const { clerkUserId: targetUserId } = await params;
 
   if (!requesterClerkId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -96,7 +93,7 @@ export async function DELETE(
   { params }: { params: Promise<{ clerkUserId: string }> }
 ) {
   const { userId: requesterClerkId } = await auth();
-  const { clerkUserId: targetUserId } = await params; // ✅ Await params
+  const { clerkUserId: targetUserId } = await params;
 
   if (!requesterClerkId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

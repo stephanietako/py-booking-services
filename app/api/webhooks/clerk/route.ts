@@ -9,10 +9,6 @@ const prisma = new PrismaClient();
 const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET!;
 
 export async function POST(req: NextRequest) {
-  console.log("🚀 Webhook Clerk appelé");
-  console.log("🔑 CLERK_WEBHOOK_SECRET exists:", !!CLERK_WEBHOOK_SECRET);
-  console.log("🔗 DATABASE_URL exists:", !!process.env.DATABASE_URL);
-
   try {
     // Test de connexion Prisma
     console.log("🔌 Test connexion Prisma...");
@@ -22,9 +18,6 @@ export async function POST(req: NextRequest) {
     const { event } = await verifyClerkWebhook(req, CLERK_WEBHOOK_SECRET);
     const { type, data } = event as ClerkWebhookEvent;
 
-    console.log("📨 Clerk event type:", type);
-    console.log("📨 Clerk event data keys:", Object.keys(data));
-
     switch (type) {
       case "user.created":
       case "user.updated":
@@ -32,7 +25,6 @@ export async function POST(req: NextRequest) {
 
         // Vérification des données reçues
         const emailData = data.email_addresses?.[0];
-        console.log("📧 Email data:", emailData);
 
         if (!emailData?.email_address) {
           throw new Error(
@@ -47,22 +39,11 @@ export async function POST(req: NextRequest) {
         const imageUrl = data.image_url ?? "";
         const clerkUserId = data.id;
 
-        console.log("📋 Données extraites:", {
-          email,
-          name,
-          imageUrl,
-          clerkUserId,
-          hasEmailAddresses: !!data.email_addresses,
-          emailAddressesLength: data.email_addresses?.length || 0,
-        });
-
         // Vérifier que le rôle existe
         console.log("🔍 Recherche du rôle 'user'...");
         const defaultRole = await prisma.role.findFirst({
           where: { name: "user" },
         });
-
-        console.log("👤 Rôle trouvé:", defaultRole);
 
         if (!defaultRole) {
           console.error("❌ Rôle 'user' introuvable !");
@@ -104,14 +85,12 @@ export async function POST(req: NextRequest) {
           include: { role: true },
         });
 
-        console.log("🔍 User final en base:", userInDb);
-
         if (!userInDb) {
           console.error("❌ PROBLÈME: User non trouvé en base après création!");
 
           // Essayer de créer directement
           console.log("🔧 Tentative de création directe...");
-          const directCreate = await prisma.user.create({
+          await prisma.user.create({
             data: {
               email,
               name,
@@ -124,17 +103,16 @@ export async function POST(req: NextRequest) {
             },
             include: { role: true },
           });
-          console.log("✅ Création directe réussie:", directCreate);
         }
 
         break;
 
       case "user.deleted":
-        console.log("🗑️ Suppression user:", data.id);
-        const deleted = await prisma.user.deleteMany({
+        console.log("🗑️ Suppression user");
+        await prisma.user.deleteMany({
           where: { clerkUserId: data.id },
         });
-        console.log("🗑️ Users supprimés:", deleted.count);
+        console.log("🗑️ Users supprimés");
         break;
 
       default:

@@ -1,0 +1,89 @@
+.profileContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 3rem;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 4rem auto;
+  padding: 2rem;
+}
+
+.onboarding {
+  background: aliceblue;
+  border: 1px solid #0dd9ef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.onboarding h2 {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  color: #000;
+}
+
+.onboarding p {
+  margin: 0.5rem 0;
+  color: #222;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.formSide {
+  flex: 1 1 40%;
+  background: #f9f9f9;
+  padding: 2rem;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+.contextSide {
+  flex: 1 1 50%;
+  background-color: #eef4ff;
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid #cce;
+  color: #222;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.contextSide p + p {
+  margin-top: 1rem;
+}
+
+//////////////RESPONSIVE///////////////////
+@media (max-width: 768px) {
+  .profileContainer {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .formSide,
+  .contextSide {
+    width: 100%;
+  }
+}

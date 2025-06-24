@@ -9,14 +9,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 const domainUrl = process.env.DOMAIN_URL || "https://votre-domaine.com";
 
-// type BookingForInvoice = Booking & {
-//   service: Service;
-//   client?: Client | null;
-//   user?: User | null;
-//   bookingOptions: (BookingOption & { option: Option })[];
-//   totalPayableOnBoardCalculated: number;
-// };
-
 export async function POST(req: Request) {
   try {
     const { bookingId, sendToClient = true } = await req.json();
@@ -76,21 +68,6 @@ export async function POST(req: Request) {
 
     const totalPayableOnBoard = totalOptionsPayableAtBoard + captainPrice;
 
-    // ... ton code avant ...
-
-    // const bookingForInvoice: BookingForInvoice = {
-    //   ...booking,
-    //   status: booking.status,
-    //   service: booking.service,
-    //   client: booking.client ?? null,
-    //   user: booking.user ?? null,
-    //   bookingOptions: booking.bookingOptions as (BookingOption & {
-    //     option: Option;
-    //   })[],
-    //   totalPayableOnBoardCalculated: totalPayableOnBoard,
-    // };
-
-    // Création de l'objet conforme à BookingWithDetails
     const bookingWithDetails: BookingWithDetails = {
       ...booking,
       service: booking.service,

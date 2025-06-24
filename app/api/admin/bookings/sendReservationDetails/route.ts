@@ -1,5 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-
 import { requestConfirmationEmail } from "@/lib/emails/requestConfirmation";
 import { sendEmail } from "@/lib/email/send";
 import { PrismaClient } from "@prisma/client";
@@ -52,10 +51,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { bookingId, stripeUrl } = body;
-    console.log(
-      "LOG 7 (/api/admin/bookings/sendReservationDetails): stripeUrl reçu =",
-      stripeUrl
-    ); // <--- AJOUTEZ CETTE LIGNE
+
     if (!bookingId) {
       return NextResponse.json(
         { error: `Champ manquant : bookingId` },
@@ -130,10 +126,8 @@ export async function POST(request: NextRequest) {
           0
         ) + captainPrice;
 
-    // Utiliser directement booking.boatAmount (plus fiable)
     const boatAmount = booking.boatAmount ?? 0;
 
-    // Préparer params email client
     const clientEmailParams = {
       bookingId: booking.id.toString(),
       clientName: contactInfo.fullName,
@@ -159,7 +153,6 @@ export async function POST(request: NextRequest) {
       comment: booking.description || "",
     };
 
-    // Préparer params email admin
     const emailParams = {
       bookingId: booking.id.toString(),
       firstName: contactInfo.fullName.split(" ")[0] || "",

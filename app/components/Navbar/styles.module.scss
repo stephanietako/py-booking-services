@@ -80,26 +80,6 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     padding: 2rem;
     z-index: 3;
 
-    // .navButton {
-    //   font-size: 1.3rem;
-    //   text-transform: uppercase;
-    //   border: 2px solid $bleu-fonce;
-    //   color: $blanc;
-    //   padding: 0.6rem 1.6rem;
-    //   background: rgba(255, 255, 255, 0.05);
-    //   backdrop-filter: blur(6px);
-    //   -webkit-backdrop-filter: blur(6px);
-    //   border-radius: 50px;
-    //   box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); // halo léger
-    //   transition: all 0.3s ease;
-
-    //   &:hover {
-    //     background: rgba(2, 19, 80, 0.3); // un peu plus de contraste au survol
-    //     border-color: $blanc;
-    //     box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); // halo plus fort
-    //     transform: scale(1.05);
-    //   }
-    // }
     .navButton {
       font-size: 1.3rem;
       text-transform: uppercase;
@@ -189,7 +169,6 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
       }
     }
 
-    // shimmer animation
     @keyframes shimmer {
       0% {
         transform: translateX(-100%) rotate(25deg);
@@ -208,25 +187,6 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     width: 100%;
     margin-bottom: 1rem;
 
-    // summary {
-    //   font-size: 1rem;
-    //   padding: 0.6rem 1rem;
-    //   color: $blanc;
-    //   cursor: pointer;
-    //   list-style: none;
-    //   position: relative;
-    //   text-align: center;
-
-    //   &::after {
-    //     content: "▾";
-    //     position: absolute;
-    //     right: 1rem;
-    //   }
-
-    //   &:hover {
-    //     color: $bleu-clair;
-    //   }
-    // }
     summary {
       font-size: 1rem;
       padding: 0.6rem 1rem;
@@ -300,7 +260,7 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     top: 0;
     right: 0;
     width: 80%;
-    max-width: 350px;
+    max-width: 400px;
     height: 100vh;
     padding: 6rem 2rem 2rem;
     background-color: #1c1c1d29;
@@ -333,6 +293,7 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     width: 100%;
     height: auto;
   }
+
   .publicLinks a {
     display: inline-block;
     padding: 0.8rem 1.4rem;
@@ -349,7 +310,15 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
       transform: translateY(-2px);
     }
   }
-
+  .authLinks {
+    display: flex;
+    flex-direction: column;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    justify-content: center;
+    align-items: center;
+  }
   .showMenu {
     display: flex;
     animation: slideIn 0.3s ease-in-out;

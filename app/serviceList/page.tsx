@@ -1,3 +1,4 @@
+// app/serviceList/page.tsx
 import React, { Suspense } from "react";
 import ServiceList from "../components/ServiceList/ServiceList";
 
