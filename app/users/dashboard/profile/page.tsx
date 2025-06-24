@@ -1,4 +1,3 @@
-// app/users/dashboard/profile/page.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -6,21 +5,48 @@ import { useUser } from "@clerk/nextjs";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 import BookingList from "@/app/components/BookingList/BookingList";
 import ProfileForm from "@/app/components/ProfileForm/ProfileForm";
+import type { Booking } from "@/types";
 
 export default function ProfileFormPage() {
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [bookings, setBookings] = useState([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loadingBookings, setLoadingBookings] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  useEffect(() => {
     // Récupérer les bookings de l'utilisateur
-    if (user?.id) {
-      // Appel à votre API pour récupérer les bookings
-      // setBookings(result);
+    const fetchUserBookings = async () => {
+      if (!user?.id) return;
+
+      setLoadingBookings(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`/api/bookings/user/${user.id}`);
+
+        if (!response.ok) {
+          throw new Error("Erreur lors de la récupération des réservations");
+        }
+
+        const userBookings = await response.json();
+        setBookings(userBookings);
+      } catch (err) {
+        console.error("Erreur lors de la récupération des bookings:", err);
+        setError("Impossible de charger vos réservations");
+      } finally {
+        setLoadingBookings(false);
+      }
+    };
+
+    if (isClient && user?.id) {
+      fetchUserBookings();
     }
-  }, [user?.id]);
+  }, [user?.id, isClient]);
 
   if (!isClient) {
     return (
@@ -45,7 +71,19 @@ export default function ProfileFormPage() {
       <div style={{ margin: "10rem 2rem" }}>
         <h1>Mon profil</h1>
         <ProfileForm />
-        <BookingList initialBookings={bookings} />
+
+        <div style={{ marginTop: "2rem" }}>
+          <h2>Mes réservations</h2>
+          {loadingBookings ? (
+            <p>Chargement des réservations...</p>
+          ) : error ? (
+            <p style={{ color: "red" }}>{error}</p>
+          ) : bookings.length === 0 ? (
+            <p>Aucune réservation trouvée.</p>
+          ) : (
+            <BookingList />
+          )}
+        </div>
       </div>
     </Wrapper>
   );

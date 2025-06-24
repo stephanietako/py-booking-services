@@ -3,12 +3,12 @@ import React from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getRole } from "@/actions/actions";
-import { getBookings } from "@/actions/bookings";
+//import { getBookings } from "@/actions/bookings";
 
 import ListUser from "@/app/components/ListUser/ListUser";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 import { SignOutButton } from "@clerk/nextjs";
-import BookingList from "@/app/components/BookingList/BookingList";
+//import BookingList from "@/app/components/BookingList/BookingList";
 import AdminUserList from "@/app/components/AdminUserList/AdminUserList";
 
 export default async function AdminDashboardPage() {
@@ -22,7 +22,7 @@ export default async function AdminDashboardPage() {
     redirect("/");
   }
 
-  const initialBookings = await getBookings(undefined);
+  //const initialBookings = await getBookings(undefined);
 
   return (
     <Wrapper>
@@ -36,9 +36,9 @@ export default async function AdminDashboardPage() {
             <AdminUserList />
           </div>
           <br />
-          <div>
+          {/* <div>
             <BookingList initialBookings={initialBookings} />
-          </div>
+          </div> */}
         </div>
       </section>
     </Wrapper>
