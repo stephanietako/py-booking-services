@@ -2,6 +2,7 @@ import React from "react";
 
 type DeleteButtonProps = {
   id: string;
+  className?: string;
 };
 
 const DeleteButton: React.FC<DeleteButtonProps> = ({ id }) => {

@@ -1,4 +1,4 @@
-// app/api/webhooks/clerk/route.ts - Version debug
+// app/api/webhooks/clerk/route.ts - Version corrigée
 import { NextRequest, NextResponse } from "next/server";
 import { verifyClerkWebhook } from "@/lib/clerk";
 import { PrismaClient } from "@prisma/client";
@@ -47,8 +47,6 @@ export async function POST(req: NextRequest) {
 
         if (!defaultRole) {
           console.error("❌ Rôle 'user' introuvable !");
-
-          // Créer le rôle si il n'existe pas
           console.log("🔧 Création du rôle 'user'...");
           const newRole = await prisma.role.create({
             data: { name: "user" },
@@ -56,19 +54,57 @@ export async function POST(req: NextRequest) {
           console.log("✅ Rôle créé:", newRole);
         }
 
-        // Vérifier si l'utilisateur existe déjà
-        console.log("🔍 Vérification utilisateur existant...");
+        // Vérifier si l'utilisateur existe déjà par clerkUserId
+        console.log("🔍 Vérification utilisateur existant par clerkUserId...");
         const existingUser = await prisma.user.findUnique({
           where: { clerkUserId },
         });
-        console.log("👤 Utilisateur existant:", existingUser ? "OUI" : "NON");
+        console.log(
+          "👤 Utilisateur existant (clerkUserId):",
+          existingUser ? "OUI" : "NON"
+        );
 
         // Vérifier si l'email existe déjà
+        console.log("🔍 Vérification email existant...");
         const existingEmailUser = await prisma.user.findUnique({
           where: { email },
         });
         console.log("📧 Email existant:", existingEmailUser ? "OUI" : "NON");
 
+        // NOUVEAU: Gérer le conflit d'email
+        if (
+          existingEmailUser &&
+          existingEmailUser.clerkUserId !== clerkUserId
+        ) {
+          console.log("⚠️ CONFLIT: Email existe avec un autre clerkUserId");
+          console.log(
+            "📧 Email existant avec clerkUserId:",
+            existingEmailUser.clerkUserId
+          );
+          console.log("🆕 Nouveau clerkUserId:", clerkUserId);
+
+          // Option 1: Mettre à jour l'utilisateur existant avec le nouveau clerkUserId
+          console.log(
+            "🔄 Mise à jour de l'utilisateur existant avec le nouveau clerkUserId..."
+          );
+          const updatedUser = await prisma.user.update({
+            where: { email },
+            data: {
+              clerkUserId, // Mettre à jour avec le nouveau clerkUserId
+              name,
+              image: imageUrl,
+            },
+            include: { role: true },
+          });
+
+          console.log("✅ Utilisateur mis à jour:", updatedUser);
+          return NextResponse.json(
+            { success: true, action: "updated_existing" },
+            { status: 200 }
+          );
+        }
+
+        // Si pas de conflit, procéder normalement
         const result = await addUserToDatabase(
           email,
           name,
@@ -78,32 +114,6 @@ export async function POST(req: NextRequest) {
         );
 
         console.log("✅ addUserToDatabase result:", result);
-
-        // Double vérification en base
-        const userInDb = await prisma.user.findUnique({
-          where: { clerkUserId },
-          include: { role: true },
-        });
-
-        if (!userInDb) {
-          console.error("❌ PROBLÈME: User non trouvé en base après création!");
-
-          // Essayer de créer directement
-          console.log("🔧 Tentative de création directe...");
-          await prisma.user.create({
-            data: {
-              email,
-              name,
-              image: imageUrl,
-              clerkUserId,
-              phoneNumber: "",
-              roleId:
-                defaultRole?.id ||
-                (await prisma.role.findFirst({ where: { name: "user" } }))!.id,
-            },
-            include: { role: true },
-          });
-        }
 
         break;
 

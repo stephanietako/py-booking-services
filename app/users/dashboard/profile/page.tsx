@@ -27,7 +27,7 @@ export default function ProfileFormPage() {
       setError(null);
 
       try {
-        const response = await fetch(`/api/bookings/user/${user.id}`);
+        const response = await fetch(`/api/bookings/profile`);
 
         if (!response.ok) {
           throw new Error("Erreur lors de la récupération des réservations");
@@ -73,7 +73,6 @@ export default function ProfileFormPage() {
         <ProfileForm />
 
         <div style={{ marginTop: "2rem" }}>
-          <h2>Mes réservations</h2>
           {loadingBookings ? (
             <p>Chargement des réservations...</p>
           ) : error ? (

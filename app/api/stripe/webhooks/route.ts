@@ -247,7 +247,7 @@ async function sendConfirmationEmail(
               <h4 style="color: #27ae60; margin-top: 0;">🎯 Prochaines étapes</h4>
               <ul style="margin: 0; padding-left: 20px;">
                 <li>✅ Votre paiement est confirmé</li>
-                <li>📞 Nous vous contacterons pour finaliser les détails</li>
+                <li> Nous vous contacterons pour finaliser les détails</li>
                 <li>🚤 Préparez-vous pour une expérience inoubliable !</li>
                 ${booking.payableOnBoard > 0 ? `<li>💰 N'oubliez pas : ${booking.payableOnBoard}€ à régler sur place</li>` : ""}
               </ul>

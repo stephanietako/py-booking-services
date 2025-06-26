@@ -6,11 +6,6 @@ async function main() {
   // ✅ Insertion des rôles
   await Promise.all([
     prisma.role.upsert({
-      where: { name: "member" },
-      update: {},
-      create: { name: "member" },
-    }),
-    prisma.role.upsert({
       where: { name: "user" },
       update: {},
       create: { name: "user" },
@@ -65,15 +60,15 @@ async function main() {
     where: { name: "Évasion en mer – Cap Camarat 12.5" },
     update: {
       description:
-        "Seul, en couple ou jusqu’à 10 personnes, profitez simplement du bateau et d’un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix. Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwich, charcuterie, fromage, vins ou autres. **Inclus : 6 paires de masques et tubas adultes, 2 paires enfants, 1 paddle board, literie et serviettes de douche, eau plate.**\n\n**Caution de 4000 € à régler sur place.**",
+        "Seul, en couple ou jusqu'à 10 personnes, profitez simplement du bateau et d'un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix. Vous préférez chiller à bord en dégustant votre panier-repas, n'hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwich, charcuterie, fromage, vins ou autres. **Inclus : 6 paires de masques et tubas adultes, 2 paires enfants, 1 paddle board, literie et serviettes de douche, eau plate.**\n\n**Caution de 4000 € à régler sur place.**",
       cautionAmount: 4000,
       requiresCaptain: true,
     },
     create: {
       name: "Évasion en mer – Cap Camarat 12.5",
-      description: `Seul, en couple ou jusqu’à 10 personnes, profitez simplement du bateau et d’un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix.
+      description: `Seul, en couple ou jusqu'à 10 personnes, profitez simplement du bateau et d'un capitaine à votre disposition pour aller où bon vous semble et vous faire débarquer dans le restaurant de votre choix.
 
-Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwichs, charcuterie, fromage, vins ou autres.
+Vous préférez chiller à bord en dégustant votre panier-repas, n'hésitez pas à ramener ce que bon vous semble. Un frigidaire sera à votre disposition pour conserver vos sandwichs, charcuterie, fromage, vins ou autres.
 
 **Inclus : 6 paires de masques et tubas adultes, 2 paires enfants, 1 paddle board, literie et serviettes de douche, eau plate.**
 
@@ -95,44 +90,50 @@ Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez p
     "✅ Service principal inséré et description mise à jour, caution "
   );
 
-  // ✅ Insertion des règles de tarification dynamiques
+  // ✅ Insertion des règles de tarification dynamiques (2025-2030)
   const service = await prisma.service.findUnique({
     where: { name: "Évasion en mer – Cap Camarat 12.5" },
   });
   if (!service) throw new Error("❌ Service introuvable");
 
-  const startYear = 2024;
+  // 🔧 CORRECTION : Années 2025 à 2030
+  const startYear = 2025;
   const endYear = 2030;
 
-  const pricingRules = Array.from(
-    { length: endYear - startYear + 1 },
-    (_, i) => startYear + i
-  ).flatMap((year) => [
-    {
+  const pricingRules = [];
+  for (let year = startYear; year <= endYear; year++) {
+    // BASSE SAISON : 16 Octobre N au 31 Mai N+1 = 1500€
+    pricingRules.push({
       serviceId: service.id,
       startDate: new Date(`${year}-10-16`),
       endDate: new Date(`${year + 1}-05-31`),
       price: 1500,
-    },
-    {
+    });
+
+    // MOYENNE SAISON : 1er Juin au 7 Juillet N = 1700€
+    pricingRules.push({
       serviceId: service.id,
-      startDate: new Date(`${year + 1}-06-01`),
-      endDate: new Date(`${year + 1}-07-07`),
+      startDate: new Date(`${year}-06-01`),
+      endDate: new Date(`${year}-07-07`),
       price: 1700,
-    },
-    {
+    });
+
+    // HAUTE SAISON : 8 Juillet au 31 Août N = 1900€
+    pricingRules.push({
       serviceId: service.id,
-      startDate: new Date(`${year + 1}-07-08`),
-      endDate: new Date(`${year + 1}-08-31`),
+      startDate: new Date(`${year}-07-08`),
+      endDate: new Date(`${year}-08-31`),
       price: 1900,
-    },
-    {
+    });
+
+    // MOYENNE SAISON : 1er Septembre au 15 Octobre N = 1700€
+    pricingRules.push({
       serviceId: service.id,
-      startDate: new Date(`${year + 1}-09-01`),
-      endDate: new Date(`${year + 1}-10-15`),
+      startDate: new Date(`${year}-09-01`),
+      endDate: new Date(`${year}-10-15`),
       price: 1700,
-    },
-  ]);
+    });
+  }
 
   await Promise.all(
     pricingRules.map((rule) =>
@@ -150,7 +151,7 @@ Vous préférez chiller à bord en dégustant votre panier-repas, n’hésitez p
     )
   );
 
-  console.log("✅ Tarifs dynamiques insérés jusqu'à 2030");
+  console.log("✅ Tarifs dynamiques insérés de 2025 à 2030");
 
   // ✅ Insertion des options avec upsert
   await Promise.all([

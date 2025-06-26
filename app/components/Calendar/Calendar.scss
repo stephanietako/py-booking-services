@@ -11,7 +11,7 @@
   --ombre-moyenne: rgb(0 0 0 / 0.08);
   --ombre-active: #25fde9aa;
   --ombre-active-forte: #25fde9ff;
-  --couleur-succes: #2e656e;
+  --couleur-succes: #335776;
   --couleur-erreur: #db0202;
   --couleur-now-background: #e0f7fa;
   --couleur-now-border: #12c3de;
@@ -375,7 +375,7 @@
 
   .highlight {
     font-size: 1.15rem;
-    color: var(--bleu-clair);
+    color: var(--texte-principal);
     font-weight: 700;
     line-height: 1.6;
   }

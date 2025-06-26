@@ -7,7 +7,7 @@ import { PrismaClient } from "@prisma/client";
 import type { Service, PricingRule } from "@/types";
 
 const prisma = new PrismaClient();
-const adminEmail = process.env.ADMIN_EMAIL;
+const adminEmail = process.env.ADMIN_EMAILS;
 
 function getContactInfo(booking: {
   client?: {
@@ -70,9 +70,9 @@ export async function POST(request: Request) {
     }
 
     if (!adminEmail) {
-      console.error("❌ ADMIN_EMAIL non défini");
+      console.error("❌ ADMIN_EMAILS non défini");
       return NextResponse.json(
-        { error: "ADMIN_EMAIL manquant dans l'environnement" },
+        { error: "ADMIN_EMAILS manquant dans l'environnement" },
         { status: 500 }
       );
     }

@@ -5,17 +5,20 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import DeleteButton from "../DeleteButton/DeleteButton";
 import { User } from "@/types";
+import styles from "./styles.module.scss";
 
 const ListUser = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchAllUsers = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`/api/users`, { method: "GET" });
 
       if (!response.ok) {
-        throw new Error("error fetching user data");
+        throw new Error("Erreur lors de la récupération des utilisateurs");
       }
 
       const json = await response.json();
@@ -23,6 +26,8 @@ const ListUser = () => {
     } catch (error) {
       console.error("Erreur lors de la récupération des utilisateurs", error);
       setMessage("Erreur lors de la récupération des utilisateurs");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -31,49 +36,62 @@ const ListUser = () => {
   }, []);
 
   return (
-    <>
-      {message && <p className="message">{message}</p>}
-      <table>
-        <thead>
-          <tr>
-            <td className="table_all_users">Nom</td>
-            <td className="table_all_users">Email</td>
-            <td className="table_all_users">Image</td>
-            <td className="table_all_users">Role</td>
-            <td className="table_all_users">Actions</td>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id} className="users_infos">
-              <td className="name">{user.name}</td>
-              <td className="email">{user.email}</td>
-              <td className="image">
-                {user.image && (
-                  <Image
-                    src={user.image || "/default-avatar.png"}
-                    alt={user.name ?? "Profil"}
-                    width={50}
-                    height={50}
-                    unoptimized
-                  />
-                )}
-              </td>
-              <td className="role">{user.role?.name || "Non défini"}</td>
-              <td className="actions">
-                <Link
-                  className="modif_users_link"
-                  href={`/dashboard/edit/${user.clerkUserId}`}
-                >
-                  Modifier
-                </Link>
-                <DeleteButton id={user.id as string} />
-              </td>
+    <div className={styles.tableContainer}>
+      <h2 className={styles.title}>Liste des utilisateurs</h2>
+      {message && <div className={styles.message}>{message}</div>}
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "2rem" }}>
+          <span>Chargement...</span>
+        </div>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Image</th>
+              <th>Rôle</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id} className={styles.users_infos}>
+                <td className={styles.name}>{user.name}</td>
+                <td className={styles.email}>{user.email}</td>
+                <td className={styles.image}>
+                  <div className={styles.image}>
+                    <Image
+                      src={user.image || "/default-avatar.png"}
+                      alt={user.name ?? "Profil"}
+                      width={44}
+                      height={44}
+                      unoptimized
+                    />
+                  </div>
+                </td>
+                <td className={styles.role}>
+                  {user.role?.name || "Non défini"}
+                </td>
+                <td className={styles.actions}>
+                  <Link
+                    className={styles.btn}
+                    href={`/dashboard/edit/${user.clerkUserId}`}
+                  >
+                    Modifier
+                  </Link>
+
+                  <DeleteButton
+                    id={user.id as string}
+                    className={`${styles.btn} ${styles["btn--danger"]}`}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
   );
 };
 

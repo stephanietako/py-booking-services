@@ -102,12 +102,8 @@ export const GET = async (
     }
 
     // ✅ Appeler la fonction avec les 3 paramètres requis
-    const url = await createStripeCheckoutSession(
-      bookingId,
-      domainUrl,
-      stripeCustomerId // 🎯 Le paramètre manquant !
-    );
-    console.log("LOG 3 (/api/bookings/[id]/payment-url): URL retournée =", url); // <--- AJOUTEZ CETTE LIGNE
+    const url = await createStripeCheckoutSession(bookingId, stripeCustomerId);
+
     return NextResponse.json({ url });
   } catch (error) {
     console.error("❌ Erreur Stripe:", error);

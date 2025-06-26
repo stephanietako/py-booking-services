@@ -90,7 +90,7 @@ export async function POST(req: Request) {
     const pdfBuffer = await generateInvoice(bookingWithDetails);
     const pdfBase64 = Buffer.from(pdfBuffer).toString("base64");
 
-    const adminEmail = process.env.ADMIN_EMAIL || "gabeshine@live.fr";
+    const adminEmail = process.env.ADMIN_EMAILS || "gabeshine@live.fr";
     const fileName = `facture-booking-${booking.id}.pdf`;
 
     const formatter = new Intl.NumberFormat("fr-FR", {

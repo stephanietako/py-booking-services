@@ -4,6 +4,7 @@ import { useState } from "react";
 import { updateBooking } from "@/actions/bookings";
 import toast from "react-hot-toast";
 import { Booking, BookingStatus } from "@/types";
+import styles from "./styles.module.scss";
 
 interface AdminBookingsPanelProps {
   bookings: Booking[];
@@ -31,7 +32,6 @@ const AdminBookingsPanel: React.FC<AdminBookingsPanelProps> = ({
         throw new Error("Statut de réservation invalide");
       }
 
-      // Passez un objet contenant le champ à mettre à jour
       await updateBooking(bookingId, { status: newStatus });
 
       toast.success(
@@ -52,55 +52,133 @@ const AdminBookingsPanel: React.FC<AdminBookingsPanelProps> = ({
   };
 
   return (
-    <div>
-      <h1>Réservations en attente</h1>
-      <ul>
-        {bookings.map((booking) => (
-          <li key={booking.id}>
-            <div>
+    <section>
+      <div className={styles.panel}>
+        <div className={styles.panelContainer}>
+          <h1 className={styles.title}>Réservations en attente</h1>
+          {bookings.length === 0 ? (
+            <div className={styles.empty}>
+              <p style={{ fontSize: "2.5rem" }}>🛳️</p>
+              <p>Aucune réservation à afficher pour le moment.</p>
               <p>
-                <strong>Service :</strong>{" "}
-                {booking.service ? booking.service.name : "Non spécifié"}
-              </p>
-              <p>
-                <strong>Date :</strong>{" "}
-                {new Intl.DateTimeFormat("fr-FR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                }).format(new Date(booking.createdAt))}
-              </p>
-              <p>
-                <strong>Statut :</strong> {booking.status}
+                Les nouvelles réservations apparaîtront ici dès qu&apos;elles
+                seront créées.
               </p>
             </div>
-            <div>
-              {/* Boutons pour valider ou annuler la réservation */}
-              <button
-                onClick={() =>
-                  handleUpdateStatus(booking.id.toString(), "APPROVED")
-                }
-                disabled={loading === booking.id.toString()}
-                aria-label={`Valider la réservation ${booking.id}`}
-                aria-disabled={loading === booking.id.toString()}
-              >
-                Valider
-              </button>
-              <button
-                onClick={() =>
-                  handleUpdateStatus(booking.id.toString(), "REJECTED")
-                }
-                disabled={loading === booking.id.toString()}
-                aria-label={`Annuler la réservation ${booking.id}`}
-                aria-disabled={loading === booking.id.toString()}
-              >
-                Annuler
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+          ) : (
+            <ul className={styles.list}>
+              {bookings.map((booking) => {
+                // Récupération des infos client/utilisateur
+                const customerName =
+                  booking.client?.fullName || booking.user?.name || "Client";
+                const customerEmail =
+                  booking.email ||
+                  booking.client?.email ||
+                  booking.user?.email ||
+                  "";
+                const customerPhone =
+                  booking.client?.phoneNumber ||
+                  booking.user?.phoneNumber ||
+                  "";
+                const isPaid =
+                  booking.status === "PAID" ||
+                  booking.paymentStatus === "PAID" ||
+                  false;
+
+                return (
+                  <li key={booking.id} className={styles.item}>
+                    <div className={styles.details}>
+                      <p>
+                        <strong>Nom :</strong> {customerName}
+                      </p>
+                      <p>
+                        <strong>Email :</strong> {customerEmail}
+                      </p>
+                      {customerPhone && (
+                        <p>
+                          <strong>Téléphone :</strong> {customerPhone}
+                        </p>
+                      )}
+                      <p>
+                        <strong>Service :</strong>{" "}
+                        {booking.service
+                          ? booking.service.name
+                          : "Non spécifié"}
+                      </p>
+                      <p>
+                        <strong>Jour :</strong>{" "}
+                        {booking.startTime
+                          ? new Date(booking.startTime).toLocaleDateString(
+                              "fr-FR",
+                              {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )
+                          : "Date inconnue"}
+                      </p>
+                      <p>
+                        <strong>Horaires :</strong>{" "}
+                        {booking.startTime
+                          ? new Date(booking.startTime).toLocaleTimeString(
+                              "fr-FR",
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )
+                          : "?"}
+                        {" - "}
+                        {booking.endTime
+                          ? new Date(booking.endTime).toLocaleTimeString(
+                              "fr-FR",
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )
+                          : "?"}
+                      </p>
+                      <p>
+                        <strong>Statut :</strong> {booking.status}
+                      </p>
+                      <p>
+                        <strong>Paiement :</strong>{" "}
+                        {isPaid ? "✅ Payé" : "❌ Non payé"}
+                      </p>
+                    </div>
+                    <div className={styles.actions}>
+                      <button
+                        onClick={() =>
+                          handleUpdateStatus(booking.id.toString(), "APPROVED")
+                        }
+                        disabled={loading === booking.id.toString()}
+                        aria-label={`Valider la réservation ${booking.id}`}
+                        aria-disabled={loading === booking.id.toString()}
+                      >
+                        Valider
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleUpdateStatus(booking.id.toString(), "REJECTED")
+                        }
+                        disabled={loading === booking.id.toString()}
+                        aria-label={`Annuler la réservation ${booking.id}`}
+                        aria-disabled={loading === booking.id.toString()}
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+    </section>
   );
 };
 

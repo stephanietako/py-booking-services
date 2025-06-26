@@ -31,8 +31,6 @@ export default async function PaymentSuccess({
     );
   }
 
-  // Si on a un session_id (mais pas encore de token),
-  // on délègue la tâche de génération de token et de redirection au Client Component.
   if (sessionId) {
     return (
       <div className={styles.container}>

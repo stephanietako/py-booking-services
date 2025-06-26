@@ -1,0 +1,197 @@
+// Palette
+$bleu-fonce: #003080;
+$bleu-turquoise: #25fde9;
+$bleu-clair: #14e9f7;
+$blanc: #fff;
+$gris: #f5f6fa;
+$gris-fonce: #e5e7eb;
+$danger: #dc2626;
+
+// Font
+$font-main: "Montserrat", "Roboto", Arial, sans-serif;
+
+:root {
+  --primary: #14e9f7;
+  --primary-hover: #25fde9;
+  --secondary: #003080;
+  --danger: #dc2626;
+  --bg: #fff;
+  --text: #111;
+  --muted: #6b7280;
+  --border-radius: 10px;
+}
+
+// Container principal
+.tableContainer {
+  background: $blanc;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1100px;
+  font-family: $font-main;
+
+  // Tableau
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: $blanc;
+    font-size: 1.1rem;
+    color: #111;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+
+  thead {
+    background: $bleu-fonce;
+    color: $blanc;
+  }
+
+  th,
+  td {
+    padding: 1rem 0.7rem;
+    text-align: left;
+  }
+
+  th {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    background: $bleu-fonce;
+    color: $blanc;
+  }
+
+  tbody tr {
+    background: $gris;
+    transition: background 0.2s;
+  }
+
+  tbody tr:nth-child(even) {
+    background: $gris-fonce;
+  }
+
+  tbody tr:hover {
+    background: $bleu-clair;
+    color: $bleu-fonce;
+  }
+
+  td {
+    border-bottom: 1px solid $gris-fonce;
+    vertical-align: middle;
+  }
+}
+
+// Titre
+.title {
+  color: $bleu-fonce;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+// Image
+.image {
+  display: flex;
+  align-items: center;
+  img {
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border: 2px solid $bleu-turquoise;
+    background: $gris-fonce;
+  }
+}
+
+// Boutons
+.actions {
+  display: flex;
+  gap: 0.7rem;
+}
+
+.btn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    box-shadow 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  outline: none;
+  background: $bleu-turquoise;
+  color: $bleu-fonce;
+
+  &:hover {
+    background: $bleu-fonce;
+    color: $blanc;
+  }
+}
+
+.btn--danger {
+  background: $danger;
+  color: $blanc;
+
+  &:hover {
+    background: darken($danger, 10%);
+  }
+}
+
+.btn--secondary {
+  background: $bleu-clair;
+  color: $bleu-fonce;
+
+  &:hover {
+    background: $bleu-turquoise;
+    color: $bleu-fonce;
+  }
+}
+
+// Message d'erreur
+.message {
+  background: #ffeaea;
+  color: $danger;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+// Responsive
+@media (max-width: 900px) {
+  .tableContainer {
+    padding: 1rem;
+
+    table,
+    th,
+    td {
+      font-size: 0.98rem;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .tableContainer {
+    padding: 0.5rem;
+
+    table,
+    th,
+    td {
+      font-size: 0.93rem;
+      padding: 0.5rem;
+    }
+  }
+  .title {
+    font-size: 1.3rem;
+  }
+  .actions {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+}

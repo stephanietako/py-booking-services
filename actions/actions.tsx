@@ -5,273 +5,325 @@ import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
 import { Option, Service } from "@/types";
+import { auth } from "@clerk/nextjs/server";
 //import { AppError } from "@/lib/errors";
-
+import { revalidatePath } from "next/cache";
 const priceCache = new Map<string, number>();
+
+////////ADMIN//////////
+const ADMIN_EMAILS =
+  process.env.ADMIN_EMAILS?.split(",").map((email) =>
+    email.trim().toLowerCase()
+  ) || [];
+
+// Fonction pour vérifier si un email est admin
+export async function isAdminEmail(email: string): Promise<boolean> {
+  return ADMIN_EMAILS.includes(email.toLowerCase());
+}
 
 // Fonction pour récupérer le rôle d'un utilisateur
 export async function getRole(clerkUserId: string) {
-  const user = await prisma.user.findUnique({
-    where: { clerkUserId },
-    include: { role: true },
-  });
-  // if (!user) throw new Error("Utilisateur non trouvé");
-  if (!user) return null;
-  return user.role;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId },
+      include: { role: true },
+    });
+    return user?.role || null;
+  } catch (error) {
+    console.error("❌ Erreur lors de la récupération du rôle:", error);
+    return null;
+  }
 }
-///////////////
-// Fonction pour ajouter un utilisateur à la base de données
-// export async function addUserToDatabase(
-//   email: string,
-//   name: string,
-//   imageUrl: string,
-//   clerkUserId: string,
-//   phoneNumber: string
-// ) {
-//   // 👇 Récupérer le rôle par défaut
-//   const defaultRole = await prisma.role.findFirst({
-//     where: { name: "user" },
-//   });
 
-//   if (!defaultRole) {
-//     throw new Error("Rôle par défaut 'user' introuvable");
-//   }
+// Fonction pour vérifier si l'utilisateur actuel est admin
+export async function isCurrentUserAdmin(): Promise<boolean> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return false;
 
-//   return await prisma.user.upsert({
-//     where: { clerkUserId },
-//     update: {
-//       email,
-//       name,
-//       image: imageUrl,
-//       phoneNumber,
-//     },
-//     create: {
-//       email,
-//       name,
-//       image: imageUrl,
-//       clerkUserId,
-//       phoneNumber,
-//       roleId: defaultRole.id, // ✅ requis dans ton schema
-//     },
-//   });
-// }
+    const role = await getRole(userId);
+    return role?.name === "admin";
+  } catch (error) {
+    console.error("❌ Erreur lors de la vérification admin:", error);
+    return false;
+  }
+}
 
-// export async function addUserToDatabase(
-//   email: string,
-//   name: string,
-//   imageUrl: string,
-//   clerkUserId: string,
-//   phoneNumber: string
-// ) {
-//   console.log("🎯 addUserToDatabase appelée avec:", {
-//     email,
-//     name,
-//     imageUrl,
-//     clerkUserId,
-//     phoneNumber,
-//   });
-
-//   try {
-//     // 👇 Récupérer le rôle par défaut
-//     const defaultRole = await prisma.role.findFirst({
-//       where: { name: "user" },
-//     });
-
-//     console.log("👤 Rôle par défaut trouvé:", defaultRole);
-
-//     if (!defaultRole) {
-//       console.error("❌ Rôle par défaut 'user' introuvable");
-//       throw new Error("Rôle par défaut 'user' introuvable");
-//     }
-
-//     console.log("🔄 Tentative d'upsert...");
-
-//     const result = await prisma.user.upsert({
-//       where: { clerkUserId },
-//       update: {
-//         email,
-//         name,
-//         image: imageUrl,
-//         phoneNumber,
-//       },
-//       create: {
-//         email,
-//         name,
-//         image: imageUrl,
-//         clerkUserId,
-//         phoneNumber,
-//         roleId: defaultRole.id,
-//       },
-//     });
-
-//     console.log("✅ Upsert réussi:", result);
-//     return result;
-//   } catch (error) {
-//     console.error("❌ Erreur dans addUserToDatabase:", error);
-//     console.error(
-//       "❌ Stack trace:",
-//       error instanceof Error ? error.stack : "No stack"
-//     );
-//     throw error;
-//   }
-// }
+// Fonction améliorée pour ajouter un utilisateur à la base de données
 export async function addUserToDatabase(
   email: string,
   name: string,
   imageUrl: string,
   clerkUserId: string,
-  phoneNumber: string
+  phoneNumber: string = ""
 ) {
+  const normalizedEmail = email.toLowerCase().trim();
+
+  // ✅ Correction: Attendre la promesse
+  const isAdmin = await isAdminEmail(normalizedEmail);
+
   console.log("🎯 addUserToDatabase appelée avec:", {
-    email,
+    email: normalizedEmail,
     name,
-    imageUrl,
     clerkUserId,
     phoneNumber,
+    isAdmin, // ✅ Maintenant c'est un boolean
   });
 
   try {
-    // 👇 Récupérer le rôle par défaut
-    const defaultRole = await prisma.role.findFirst({
-      where: { name: "user" },
+    // Récupérer ou créer les rôles
+    const [userRole, adminRole] = await Promise.all([
+      prisma.role.upsert({
+        where: { name: "user" },
+        update: {},
+        create: { name: "user" },
+      }),
+      prisma.role.upsert({
+        where: { name: "admin" },
+        update: {},
+        create: { name: "admin" },
+      }),
+    ]);
+
+    // Déterminer le rôle
+    const roleId = isAdmin ? adminRole.id : userRole.id;
+    const roleName = isAdmin ? "admin" : "user";
+
+    console.log(`🔧 Attribution du rôle: ${roleName} pour ${normalizedEmail}`);
+
+    // ✅ Vérifier les conflits d'email (cohérence avec webhook)
+    const existingEmailUser = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
     });
 
-    console.log("👤 Rôle par défaut trouvé:", defaultRole);
+    if (existingEmailUser && existingEmailUser.clerkUserId !== clerkUserId) {
+      console.log("⚠️ CONFLIT: Email existe avec un autre clerkUserId");
+      console.log("🔄 Mise à jour avec le nouveau clerkUserId...");
 
-    if (!defaultRole) {
-      console.error("❌ Rôle par défaut 'user' introuvable");
-      throw new Error("Rôle par défaut 'user' introuvable");
+      const updatedUser = await prisma.user.update({
+        where: { email: normalizedEmail },
+        data: {
+          clerkUserId,
+          name,
+          image: imageUrl,
+          phoneNumber,
+          roleId,
+          updatedAt: new Date(),
+        },
+        include: { role: true },
+      });
+
+      console.log("✅ Utilisateur mis à jour (conflit résolu):", {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        role: updatedUser.role.name,
+      });
+
+      return updatedUser;
     }
 
-    console.log("🔄 Tentative d'upsert...");
-
+    // Upsert normal si pas de conflit
     const result = await prisma.user.upsert({
       where: { clerkUserId },
       update: {
-        email,
+        email: normalizedEmail,
         name,
         image: imageUrl,
         phoneNumber,
+        roleId,
+        updatedAt: new Date(),
       },
       create: {
-        email,
+        email: normalizedEmail,
         name,
         image: imageUrl,
         clerkUserId,
         phoneNumber,
-        roleId: defaultRole.id,
+        roleId,
+      },
+      include: {
+        role: true,
       },
     });
 
-    console.log("✅ Upsert réussi:", result);
+    console.log("✅ Utilisateur créé/mis à jour:", {
+      id: result.id,
+      email: result.email,
+      role: result.role.name,
+      isAdmin: result.role.name === "admin",
+    });
+
     return result;
   } catch (error) {
     console.error("❌ Erreur dans addUserToDatabase:", error);
-    console.error(
-      "❌ Stack trace:",
-      error instanceof Error ? error.stack : "No stack"
-    );
     throw error;
   }
 }
-// ✅ ALTERNATIVE: Si tu as des contraintes uniques multiples
-export async function addUserToDatabaseAlternative(
-  email: string,
-  name: string,
-  image: string,
-  clerkUserId: string,
-  phoneNumber: string
-) {
+// Fonction pour promouvoir un utilisateur en admin
+export async function promoteUserToAdmin(userId: string) {
   try {
-    console.log("[addUserToDatabase] Début:", { email, clerkUserId });
+    // Vérifier que l'utilisateur actuel est admin
+    const isAdmin = await isCurrentUserAdmin();
+    if (!isAdmin) {
+      throw new Error(
+        "❌ Accès refusé: seuls les administrateurs peuvent promouvoir des utilisateurs"
+      );
+    }
 
-    // Récupérer le rôle par défaut
-    const defaultRole = await prisma.role.findFirst({
+    // Récupérer le rôle admin
+    const adminRole = await prisma.role.findUnique({
+      where: { name: "admin" },
+    });
+
+    if (!adminRole) {
+      throw new Error("❌ Rôle administrateur introuvable");
+    }
+
+    // Mettre à jour l'utilisateur
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { roleId: adminRole.id },
+      include: { role: true },
+    });
+
+    console.log("✅ Utilisateur promu administrateur:", updatedUser.email);
+    revalidatePath("/admin");
+
+    return updatedUser;
+  } catch (error) {
+    console.error("❌ Erreur lors de la promotion:", error);
+    throw error;
+  }
+}
+
+// Fonction pour rétrograder un admin en utilisateur
+export async function demoteAdminToUser(userId: string) {
+  try {
+    // Vérifier que l'utilisateur actuel est admin
+    const isAdmin = await isCurrentUserAdmin();
+    if (!isAdmin) {
+      throw new Error(
+        "❌ Accès refusé: seuls les administrateurs peuvent rétrograder des utilisateurs"
+      );
+    }
+
+    // Récupérer le rôle user
+    const userRole = await prisma.role.findUnique({
       where: { name: "user" },
     });
 
-    if (!defaultRole) {
-      throw new Error("Rôle par défaut 'user' introuvable");
+    if (!userRole) {
+      throw new Error("❌ Rôle utilisateur introuvable");
     }
 
-    // Transaction pour éviter les conditions de course
-    const result = await prisma.$transaction(async (tx) => {
-      // Vérifier si l'utilisateur existe
-      let user = await tx.user.findUnique({
-        where: { clerkUserId },
-      });
-
-      if (user) {
-        // Utilisateur existe - mettre à jour
-        user = await tx.user.update({
-          where: { clerkUserId },
-          data: { email, name, image, phoneNumber },
-        });
-        return { ...user, isNew: false };
-      }
-
-      // Utilisateur n'existe pas - créer
-      user = await tx.user.create({
-        data: {
-          email,
-          name,
-          image,
-          clerkUserId,
-          phoneNumber,
-          roleId: defaultRole.id,
-        },
-      });
-      return { ...user, isNew: true };
+    // Mettre à jour l'utilisateur
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { roleId: userRole.id },
+      include: { role: true },
     });
 
-    console.log("[addUserToDatabase] Résultat:", {
-      email: result.email,
-      isNew: result.isNew,
-    });
+    console.log(
+      "✅ Administrateur rétrogradé en utilisateur:",
+      updatedUser.email
+    );
+    revalidatePath("/admin");
 
-    return result;
+    return updatedUser;
   } catch (error) {
-    console.error("[addUserToDatabase] Erreur :", error);
+    console.error("❌ Erreur lors de la rétrogradation:", error);
     throw error;
   }
 }
-////////////////
-// Fonction pour créer un service
-export async function createService(
-  name: string,
-  price: number,
-  description: string,
-  file: File,
-  categories: string[],
-  defaultPrice: number
-) {
+
+// Fonction pour lister tous les utilisateurs (admin seulement)
+export async function getAllUsers() {
   try {
-    if (!name || price == null || defaultPrice == null || !file) {
-      throw new Error("Tous les champs obligatoires doivent être remplis.");
+    const isAdmin = await isCurrentUserAdmin();
+    if (!isAdmin) {
+      throw new Error(
+        "❌ Accès refusé: seuls les administrateurs peuvent voir la liste des utilisateurs"
+      );
     }
 
-    const imageUrl = await uploadImageToServer(file);
-
-    const newService = await prisma.service.create({
-      data: {
-        name,
-        amount: price,
-        price,
-        defaultPrice,
-        description,
-        categories,
-        imageUrl,
-        currency: "EUR",
+    const users = await prisma.user.findMany({
+      include: {
+        role: true,
+        bookings: {
+          select: {
+            id: true,
+            createdAt: true,
+            status: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 
-    return newService;
+    return users.map((user) => ({
+      ...user,
+      bookingsCount: user.bookings.length,
+      lastBooking: user.bookings[0]?.createdAt || null,
+    }));
   } catch (error) {
-    console.error("Erreur lors de la création du service :", error);
-    throw new Error("Impossible de créer le service.");
+    console.error("❌ Erreur lors de la récupération des utilisateurs:", error);
+    throw error;
   }
 }
-/////////////
+
+// Fonction pour vérifier et synchroniser les rôles administrateurs
+export async function syncAdminRoles() {
+  try {
+    console.log("🔄 Synchronisation des rôles administrateurs...");
+
+    // Récupérer le rôle admin
+    const adminRole = await prisma.role.upsert({
+      where: { name: "admin" },
+      update: {},
+      create: { name: "admin" },
+    });
+
+    // Récupérer tous les utilisateurs avec des emails admin
+    const usersToPromote = await prisma.user.findMany({
+      where: {
+        email: {
+          in: ADMIN_EMAILS.map((email) => email.toLowerCase()),
+        },
+        roleId: {
+          not: adminRole.id,
+        },
+      },
+    });
+
+    if (usersToPromote.length > 0) {
+      await prisma.user.updateMany({
+        where: {
+          id: {
+            in: usersToPromote.map((user) => user.id),
+          },
+        },
+        data: {
+          roleId: adminRole.id,
+        },
+      });
+
+      console.log(
+        `✅ ${usersToPromote.length} utilisateur(s) promu(s) administrateur(s)`
+      );
+    }
+
+    return {
+      success: true,
+      promotedCount: usersToPromote.length,
+      adminEmails: ADMIN_EMAILS,
+    };
+  } catch (error) {
+    console.error("❌ Erreur lors de la synchronisation:", error);
+    throw error;
+  }
+}
 // Fonction pour récupérer un service par son ID
 export async function getServiceById(
   serviceId: string
@@ -286,7 +338,7 @@ export async function getServiceById(
     return null;
   }
 }
-//////////////
+
 // Fonction pour récupérer les services d'un utilisateur
 export async function getServicesByUser(
   clerkUserId: string
@@ -312,7 +364,7 @@ export async function getServicesByUser(
     })
     .filter(Boolean);
 }
-////////////////
+
 // Fonction pour récupérer les options
 export async function getOptions() {
   const options = await prisma.option.findMany();
@@ -320,7 +372,7 @@ export async function getOptions() {
   if (!options.length) throw new Error("Aucune option trouvée");
   return options;
 }
-//////////////
+
 // Fonction pour récupérer les options d'un service
 export async function addOptionToService(
   amount: number,
@@ -341,12 +393,12 @@ export async function addOptionToService(
     description,
   };
 }
-///////////////
+
 // Fonction pour récupérer les options d'un service
 export async function deleteService(serviceId: string) {
   await prisma.service.delete({ where: { id: serviceId } });
 }
-///////////////
+
 // Fonction pour supprimer une option
 export async function deleteOptionWithDependencies(optionId: string) {
   const option = await prisma.option.findUnique({ where: { id: optionId } });
@@ -366,7 +418,7 @@ export async function deleteOptionWithDependencies(optionId: string) {
 
   await prisma.option.delete({ where: { id: optionId } });
 }
-/////////////
+
 // Fonction pour récupérer un service par son ID
 export async function getAllServices(): Promise<Service[]> {
   const services = await prisma.service.findMany();
@@ -375,7 +427,7 @@ export async function getAllServices(): Promise<Service[]> {
     description: service.description ?? undefined,
   }));
 }
-////////////
+
 // Fonction pour récupérer un service par son ID
 export async function updateService(
   serviceId: string,
@@ -402,7 +454,7 @@ export async function updateService(
     },
   });
 }
-///////////////
+
 // Fonction pour uploader une image sur le serveur
 async function uploadImageToServer(file: File): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -420,7 +472,7 @@ async function uploadImageToServer(file: File): Promise<string> {
 
   return `${relativeUploadDir}/${fileName}`;
 }
-//////////////
+
 // Fonction pour récupérer le prix dynamique d'un service
 export async function getDynamicPrice(
   serviceId: string,
@@ -441,7 +493,7 @@ export async function getDynamicPrice(
   priceCache.set(cacheKey, price);
   return price;
 }
-/////////////
+
 // Fonction pour récupérer le service d'un utilisateur
 export async function getServiceForUser(
   clerkUserId: string
@@ -465,7 +517,7 @@ export async function getServiceForUser(
     description: service.description ?? undefined,
   };
 }
-///////////
+
 // Fonction pour récupérer les options d'un service
 export async function updateOptionQuantity(
   bookingOptionId: string,
@@ -516,7 +568,7 @@ export async function updateOptionQuantity(
     };
   });
 }
-/////////////////////////
+
 // Supprimer une option de réservation
 export async function deleteOption(bookingOptionId: string) {
   try {
@@ -552,4 +604,30 @@ export async function deleteOption(bookingOptionId: string) {
     console.error("❌ Erreur lors de la suppression :", error);
     throw new Error("Impossible de supprimer l'option.");
   }
+}
+// creer un service avec l'image etc ...
+export async function createService(
+  name: string,
+  price: number,
+  description: string,
+  imageUrl: string,
+  categories: string[],
+  defaultPrice: number
+) {
+  if (!name || price == null || defaultPrice == null || !imageUrl) {
+    throw new Error("Tous les champs obligatoires doivent être remplis.");
+  }
+
+  return await prisma.service.create({
+    data: {
+      name,
+      amount: price,
+      price,
+      defaultPrice,
+      description,
+      categories,
+      imageUrl,
+      currency: "EUR",
+    },
+  });
 }
