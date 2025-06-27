@@ -110,7 +110,7 @@
   margin: 0;
   border: 0;
   outline: none;
-  background-color: transparent;
+  background-color: #2196f336;
   border-radius: 10px;
   transition:
     background-color 0.2s ease,
@@ -187,6 +187,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0.4rem;
+  justify-content: center;
 }
 
 .react-calendar__tile {
@@ -217,7 +218,7 @@
 
 .react-calendar__tile--active {
   background-color: var(--bleu-clair);
-  color: var(--blanc);
+  color: var(--texte-principal);
   font-weight: 700;
   box-shadow: 0 0 8px var(--ombre-active);
 }
@@ -376,7 +377,7 @@
   .highlight {
     font-size: 1.15rem;
     color: var(--texte-principal);
-    font-weight: 700;
+    font-weight: lighter;
     line-height: 1.6;
   }
 

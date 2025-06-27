@@ -4,45 +4,39 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import styles from "./styles.module.scss";
 
-interface EditUserFormProps {
-  user: {
-    clerkUserId: string;
-    name: string;
+interface EditClientFormProps {
+  client: {
+    id: number;
+    fullName: string;
     email: string;
     phoneNumber?: string | null;
-    description?: string | null;
   };
   onSuccess?: () => void;
 }
 
-export default function EditUserForm({ user }: EditUserFormProps) {
-  // État initial vide pour éviter les problèmes d'hydratation
+export default function EditClientForm({
+  client,
+  onSuccess,
+}: EditClientFormProps) {
   const [formData, setFormData] = useState({
-    userId: "",
-    userName: "",
-    userEmail: "",
-    userPhone: "",
-    userDescription: "",
+    fullName: "",
+    email: "",
+    phoneNumber: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [highlight, setHighlight] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
 
-  // Initialisation des données après l'hydratation
   useEffect(() => {
     setFormData({
-      userId: user.clerkUserId,
-      userName: user.name || "",
-      userEmail: user.email || "",
-      userPhone: user.phoneNumber || "",
-      userDescription: user.description || "",
+      fullName: client.fullName || "",
+      email: client.email || "",
+      phoneNumber: client.phoneNumber || "",
     });
-  }, [user]);
+  }, [client]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -50,40 +44,29 @@ export default function EditUserForm({ user }: EditUserFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const toastId = toast.loading("Mise à jour de l'utilisateur...");
+    const toastId = toast.loading("Mise à jour du client...");
 
     try {
-      const res = await fetch(`/api/users/${formData.userId}`, {
+      const res = await fetch(`/api/clients/${client.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userName: formData.userName,
-          userEmail: formData.userEmail,
-          userPhone: formData.userPhone,
-          userDescription: formData.userDescription,
-        }),
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
       if (!res.ok)
         throw new Error(data.error || "Erreur lors de la mise à jour.");
 
-      toast.success("Utilisateur mis à jour avec succès !", { id: toastId });
-
-      // Réinitialisation avec les nouvelles données utilisateur
-      setFormData({
-        userId: user.clerkUserId,
-        userName: user.name || "",
-        userEmail: user.email || "",
-        userPhone: user.phoneNumber || "",
-        userDescription: user.description || "",
-      });
+      toast.success("Client mis à jour avec succès !", { id: toastId });
 
       // Highlight + icône ✅
       window.scrollTo({ top: 0, behavior: "smooth" });
       setHighlight(true);
       setShowCheck(true);
       setTimeout(() => setShowCheck(false), 2000);
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message || "Erreur inconnue.", { id: toastId });
@@ -102,44 +85,34 @@ export default function EditUserForm({ user }: EditUserFormProps) {
         className={`${styles.form} ${highlight ? styles.highlight : ""}`}
       >
         <div className={styles.field}>
-          <label htmlFor="userName">Nom</label>
+          <label htmlFor="fullName">Nom</label>
           <input
-            id="userName"
+            id="fullName"
             type="text"
-            name="userName"
-            value={formData.userName}
+            name="fullName"
+            value={formData.fullName}
             onChange={handleChange}
             disabled={loading}
           />
         </div>
         <div className={styles.field}>
-          <label htmlFor="userEmail">Email</label>
+          <label htmlFor="email">Email</label>
           <input
-            id="userEmail"
+            id="email"
             type="email"
-            name="userEmail"
-            value={formData.userEmail}
+            name="email"
+            value={formData.email}
             onChange={handleChange}
             disabled={loading}
           />
         </div>
         <div className={styles.field}>
-          <label htmlFor="userPhone">Téléphone</label>
+          <label htmlFor="phoneNumber">Téléphone</label>
           <input
-            id="userPhone"
+            id="phoneNumber"
             type="tel"
-            name="userPhone"
-            value={formData.userPhone}
-            onChange={handleChange}
-            disabled={loading}
-          />
-        </div>
-        <div className={styles.field}>
-          <label htmlFor="userDescription">Description</label>
-          <textarea
-            id="userDescription"
-            name="userDescription"
-            value={formData.userDescription}
+            name="phoneNumber"
+            value={formData.phoneNumber}
             onChange={handleChange}
             disabled={loading}
           />

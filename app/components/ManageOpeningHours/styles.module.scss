@@ -1,0 +1,80 @@
+.container_manage_hours {
+  background: #f9fafb;
+  border-radius: 1.5rem;
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  margin: 2rem auto;
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #1e293b;
+  }
+}
+
+.hours_container {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  padding: 2rem 2.5rem;
+  max-width: 600px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hour_row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.day_name {
+  min-width: 120px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.hours_container select {
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  font-size: 1rem;
+  color: #374151;
+  outline: none;
+  transition: border 0.2s;
+  cursor: pointer;
+}
+
+.hours_container select:focus {
+  border-color: #0070f3;
+}
+
+.hours_container button {
+  margin-top: 1.5rem;
+  align-self: flex-end;
+  background: #0070f3;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.hours_container button:disabled {
+  background: #b3c6e0;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc2626;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}

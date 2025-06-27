@@ -237,7 +237,42 @@ export async function demoteAdminToUser(userId: string) {
 }
 
 // Fonction pour lister tous les utilisateurs (admin seulement)
-export async function getAllUsers() {
+// export async function getAllUsers() {
+//   try {
+//     const isAdmin = await isCurrentUserAdmin();
+//     if (!isAdmin) {
+//       throw new Error(
+//         "❌ Accès refusé: seuls les administrateurs peuvent voir la liste des utilisateurs"
+//       );
+//     }
+
+//     const users = await prisma.user.findMany({
+//       include: {
+//         role: true,
+//         bookings: {
+//           select: {
+//             id: true,
+//             createdAt: true,
+//             status: true,
+//           },
+//         },
+//       },
+//       orderBy: {
+//         createdAt: "desc",
+//       },
+//     });
+
+//     return users.map((user) => ({
+//       ...user,
+//       bookingsCount: user.bookings.length,
+//       lastBooking: user.bookings[0]?.createdAt || null,
+//     }));
+//   } catch (error) {
+//     console.error("❌ Erreur lors de la récupération des utilisateurs:", error);
+//     throw error;
+//   }
+// }
+export async function getAllUsers(page = 1, limit = 10) {
   try {
     const isAdmin = await isCurrentUserAdmin();
     if (!isAdmin) {
@@ -246,33 +281,124 @@ export async function getAllUsers() {
       );
     }
 
-    const users = await prisma.user.findMany({
-      include: {
-        role: true,
-        bookings: {
-          select: {
-            id: true,
-            createdAt: true,
-            status: true,
+    const skip = (page - 1) * limit;
+
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        skip,
+        take: limit,
+        include: {
+          role: true,
+          bookings: {
+            select: {
+              id: true,
+              createdAt: true,
+              status: true,
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.user.count(),
+    ]);
 
-    return users.map((user) => ({
+    const usersWithComputed = users.map((user) => ({
       ...user,
       bookingsCount: user.bookings.length,
       lastBooking: user.bookings[0]?.createdAt || null,
     }));
+
+    return {
+      users: usersWithComputed,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   } catch (error) {
     console.error("❌ Erreur lors de la récupération des utilisateurs:", error);
     throw error;
   }
 }
+// Fonction pour récupérer tous les clients (admin seulement)
+// export async function getAllClients() {
+//   try {
+//     const isAdmin = await isCurrentUserAdmin();
+//     if (!isAdmin) {
+//       throw new Error("Accès refusé : admin uniquement");
+//     }
+//     const clients = await prisma.client.findMany({
+//       include: {
+//         bookings: {
+//           select: {
+//             id: true,
+//             createdAt: true,
+//             status: true,
+//           },
+//         },
+//       },
+//       orderBy: { createdAt: "desc" },
+//     });
+//     return clients.map((client) => ({
+//       ...client,
+//       bookingsCount: client.bookings.length,
+//       lastBooking: client.bookings[0]?.createdAt || null,
+//     }));
+//   } catch (error) {
+//     console.error("Erreur lors de la récupération des clients:", error);
+//     throw error;
+//   }
+// }
+export async function getAllClients(page = 1, limit = 10) {
+  try {
+    const isAdmin = await isCurrentUserAdmin();
+    if (!isAdmin) {
+      throw new Error("Accès refusé : admin uniquement");
+    }
+    const skip = (page - 1) * limit;
 
+    const [clients, total] = await Promise.all([
+      prisma.client.findMany({
+        skip,
+        take: limit,
+        include: {
+          bookings: {
+            select: {
+              id: true,
+              createdAt: true,
+              status: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.client.count(),
+    ]);
+
+    const clientsWithComputed = clients.map((client) => ({
+      ...client,
+      bookingsCount: client.bookings.length,
+      lastBooking: client.bookings[0]?.createdAt || null,
+    }));
+
+    return {
+      clients: clientsWithComputed,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  } catch (error) {
+    console.error("Erreur lors de la récupération des clients:", error);
+    throw error;
+  }
+}
 // Fonction pour vérifier et synchroniser les rôles administrateurs
 export async function syncAdminRoles() {
   try {

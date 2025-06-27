@@ -116,11 +116,9 @@ button {
   transition:
     background-color 0.3s ease,
     transform 0.3s ease;
-  margin-top: 1rem;
-  margin-right: 1rem;
+  margin: 7px;
   max-width: 20rem;
   height: auto;
-  font-size: 1.8rem;
 
   &:hover {
     background-color: #74aed6;

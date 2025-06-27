@@ -268,9 +268,11 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
     z-index: 10;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease-in-out;
+    max-height: 100vh;
+    overflow-y: auto;
 
     a {
-      color: $blanc;
+      color: $bleu-turquoise;
       text-decoration: none;
       font-weight: bold;
       font-size: 1.1rem;
@@ -297,7 +299,7 @@ $transparent-white: rgba(255, 255, 255, 0.85); // Blanc semi-transparent
   .publicLinks a {
     display: inline-block;
     padding: 0.8rem 1.4rem;
-    margin-top: 1rem;
+    margin-top: 0.3rem;
     background: transparent;
     font-weight: lighter;
     color: $blanc;

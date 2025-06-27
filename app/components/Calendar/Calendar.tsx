@@ -422,15 +422,6 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
         setDate(selectedDate);
         setStartTime(null);
         setEndTime(null);
-
-        // SUPPRIMÉ : Le toast "Date sélectionnée". La date est affichée directement dans le récapitulatif.
-        // toast.success(
-        //   `Date sélectionnée : ${format(selectedDate, "dd/MM/yyyy")}`,
-        //   {
-        //     duration: 2000,
-        //     icon: "📅",
-        //   }
-        // );
       } catch (error) {
         console.error("Erreur lors de la sélection du jour:", error);
         toast.error("Erreur lors de la sélection du jour", {
@@ -467,7 +458,6 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
 
   return (
     <div className="calendar_container">
-      {/* Barre d'étapes */}
       <div
         className="steps_bar"
         role="list"

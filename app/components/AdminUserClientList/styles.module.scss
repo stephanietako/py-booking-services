@@ -1,0 +1,116 @@
+.container {
+  background: #fff;
+  padding: 2.5rem 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    letter-spacing: -1px;
+    color: #1e293b;
+  }
+
+  .subtitle {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 2.5rem 0 1rem 0;
+    color: #2563eb;
+  }
+
+  .tableWrapper {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #f9fafb;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.04);
+  }
+
+  .table th,
+  .table td {
+    padding: 1.1rem 1.2rem;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    font-size: 1rem;
+  }
+
+  .table th {
+    background: #f3f4f6;
+    font-weight: 700;
+    color: #1e293b;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .table tr {
+    transition: background 0.15s;
+  }
+
+  .table tr:hover {
+    background: #e0e7ff;
+  }
+
+  .image {
+    border-radius: 9999px;
+    box-shadow: 0 1px 4px rgba(37, 99, 235, 0.08);
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.7rem;
+  }
+
+  .link {
+    color: #2563eb;
+    background: #e0e7ff;
+    padding: 0.35rem 0.9rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    display: block;
+    font-weight: 500;
+    transition:
+      background 0.15s,
+      color 0.15s;
+
+    &:hover {
+      background: #2563eb;
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+
+  .searchInput {
+    width: 100%;
+    padding: 0.7rem 1.2rem;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 0.7rem;
+    outline: none;
+    background: #f3f4f6;
+    transition:
+      border 0.15s,
+      box-shadow 0.15s;
+
+    &:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.13);
+      background: #fff;
+    }
+  }
+}

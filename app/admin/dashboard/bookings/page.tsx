@@ -1,7 +1,7 @@
 // app/admin/dashboard/bookings/page.tsx
 import { auth } from "@clerk/nextjs/server";
 import { getRole } from "@/actions/actions";
-import { getAllBookings } from "@/actions/bookings";
+import { getAllBookingsAdmin } from "@/actions/bookings";
 import { redirect } from "next/navigation";
 import AdminBookingsPanel from "@/app/components/AdminBookingsPanel/AdminBookingsPanel";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
@@ -19,7 +19,7 @@ const AdminBookingsPage = async () => {
     return null;
   }
 
-  const bookings = await getAllBookings(userId);
+  const bookings = await getAllBookingsAdmin();
 
   return (
     <Wrapper>

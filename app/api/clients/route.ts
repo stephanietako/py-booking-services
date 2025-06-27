@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllUsers } from "@/actions/actions";
+import { getAllClients } from "@/actions/actions";
 
 export async function GET(req: NextRequest) {
   try {
@@ -7,12 +7,12 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
 
-    const { users, pagination } = await getAllUsers(page, limit);
+    const { clients, pagination } = await getAllClients(page, limit);
 
-    return NextResponse.json({ users, pagination });
+    return NextResponse.json({ clients, pagination });
   } catch {
     return NextResponse.json(
-      { users: [], error: "Erreur lors du chargement des utilisateurs" },
+      { clients: [], error: "Erreur lors du chargement des clients" },
       { status: 500 }
     );
   }

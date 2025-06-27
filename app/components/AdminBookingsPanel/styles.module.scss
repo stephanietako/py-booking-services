@@ -7,6 +7,7 @@
   height: 100%;
   border-radius: 30px;
   margin-top: 10vh;
+  flex-wrap: wrap;
 }
 
 .panelContainer {
@@ -14,15 +15,14 @@
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
   padding: 2rem;
-  max-width: 800px;
+  max-width: 100%;
   justify-content: center;
   align-items: center;
 }
 
 .title {
   color: #003080;
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 1.2rem;
   margin-bottom: 2rem;
   text-align: left;
 }
@@ -34,9 +34,41 @@
   font-size: 1.1rem;
 }
 
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+
+  label {
+    font-weight: 600;
+    color: #003080;
+    select {
+      cursor: pointer;
+      margin: 0.7rem 0;
+      padding: 0.3em 0.7em;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      background: #f5f6fa;
+      font-size: 1em;
+      color: #003080;
+      transition: border 0.2s;
+      &:focus {
+        border: 1.5px solid #25fde9;
+        outline: none;
+      }
+    }
+  }
+}
+
 .list {
-  list-style: none;
-  padding: 0;
+  display: flex;
+  width: 100%;
+  height: auto;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
 
   .item {
     background: #f5f6fa;
@@ -47,6 +79,14 @@
     justify-content: space-between;
     align-items: flex-start;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    transition:
+      box-shadow 0.2s,
+      background 0.2s;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(20, 233, 247, 0.13);
+      background: #e5fafd;
+    }
 
     .details {
       flex: 1;
@@ -88,6 +128,32 @@
   }
 }
 
+.status {
+  display: inline-block;
+  padding: 0.2em 0.8em;
+  border-radius: 12px;
+  font-size: 0.95em;
+  font-weight: 600;
+  margin-left: 0.5em;
+  &.pending {
+    background: #ffe066;
+    color: #7a5d00;
+  }
+  &.approved {
+    background: #d3f9d8;
+    color: #228b22;
+  }
+  &.rejected,
+  &.cancelled {
+    background: #ffeaea;
+    color: #dc2626;
+  }
+  &.paid {
+    background: #e0f7fa;
+    color: #00796b;
+  }
+}
+
 @media (max-width: 600px) {
   .panelContainer {
     padding: 1rem;
@@ -100,6 +166,25 @@
         margin-left: 0;
         flex-direction: row;
         gap: 0.5rem;
+      }
+    }
+  }
+}
+@media (max-width: 400px) {
+  .filters {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .list {
+    .item {
+      flex-direction: column;
+      align-items: flex-start;
+      .details {
+        width: 100%;
+      }
+      .actions {
+        width: 100%;
+        justify-content: space-between;
       }
     }
   }

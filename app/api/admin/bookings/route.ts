@@ -7,6 +7,22 @@ type OptionInput = {
   quantity: number;
 };
 
+export async function GET() {
+  try {
+    const bookings = await prisma.booking.findMany({
+      include: {
+        client: true,
+        user: true,
+        service: true,
+        bookingOptions: { include: { option: true } },
+      },
+      orderBy: { startTime: "desc" },
+    });
+    return NextResponse.json(bookings);
+  } catch {
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+  }
+}
 export async function POST(req: NextRequest) {
   try {
     const {

@@ -3,13 +3,10 @@ import React from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getRole } from "@/actions/actions";
-//import { getBookings } from "@/actions/bookings";
-
-import ListUser from "@/app/components/ListUser/ListUser";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 import { SignOutButton } from "@clerk/nextjs";
 //import BookingList from "@/app/components/BookingList/BookingList";
-import AdminUserList from "@/app/components/AdminUserList/AdminUserList";
+import AdminUserClientList from "@/app/components/AdminUserClientList/AdminUserClientList";
 
 export default async function AdminDashboardPage() {
   const { userId } = await auth();
@@ -27,18 +24,14 @@ export default async function AdminDashboardPage() {
   return (
     <Wrapper>
       <section>
-        <div className="dashboard_user_container__section">
-          <div className="dashboard_user_container__bloc">
+        <div className="admin_dashboard_container">
+          <div className="admin_dashboard_container__bloc">
             <SignOutButton />
           </div>
-          <div className="dashboard_user_container__content">
-            <ListUser />
-            <AdminUserList />
+          <div className="admin_dashboard_container__content">
+            <AdminUserClientList />
           </div>
           <br />
-          {/* <div>
-            <BookingList initialBookings={initialBookings} />
-          </div> */}
         </div>
       </section>
     </Wrapper>

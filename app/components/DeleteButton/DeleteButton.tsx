@@ -1,36 +1,42 @@
 import React from "react";
 
 type DeleteButtonProps = {
-  id: string;
+  id: string | number;
+  type: "user" | "client";
+  onDeleted?: () => void;
   className?: string;
 };
 
-const DeleteButton: React.FC<DeleteButtonProps> = ({ id }) => {
+const DeleteButton: React.FC<DeleteButtonProps> = ({
+  id,
+  type,
+  onDeleted,
+  className,
+}) => {
   const handleDelete = async () => {
+    if (!confirm("Supprimer cet élément ?")) return;
     try {
-      const response = await fetch(`/api/deleteUser`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      });
-
+      const response = await fetch(
+        `/api/${type === "user" ? "users" : "clients"}/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (response.ok) {
-        window.location.reload();
+        if (onDeleted) onDeleted();
       } else {
-        // const errorData = await response.json();
-        console.error("erreur");
+        alert("Erreur lors de la suppression.");
       }
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error(error);
+      alert("Erreur lors de la suppression.");
     }
   };
 
   return (
-    <form onSubmit={handleDelete}>
-      <button type="submit">Delete User</button>
-    </form>
+    <button type="button" onClick={handleDelete} className={className}>
+      Supprimer
+    </button>
   );
 };
 
