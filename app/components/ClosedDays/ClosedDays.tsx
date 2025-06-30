@@ -96,7 +96,6 @@ const ClosedDays: React.FC = () => {
   if (!isDataLoaded) {
     return (
       <div className="closed_days_container">
-        <h2>Gérer les jours fermés</h2>
         <p>Chargement du calendrier...</p>
       </div>
     );

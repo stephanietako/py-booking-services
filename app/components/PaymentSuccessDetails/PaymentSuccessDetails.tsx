@@ -91,10 +91,10 @@ export default function PaymentSuccessDetails({
   return (
     <div className={styles.booking_details}>
       <div className={styles.booking_summary}>
-        <h2>📧 Récapitulatif de votre réservation</h2>
+        <h3>📧 Récapitulatif de votre réservation</h3>
 
         <div className={styles.customer_info}>
-          <h3>👤 Informations client</h3>
+          <h4>👤 Informations client</h4>
           <p>
             <strong>Nom:</strong> {customerName}
           </p>
@@ -109,7 +109,7 @@ export default function PaymentSuccessDetails({
         </div>
 
         <div className={styles.service_info}>
-          <h3>🚤 Service réservé</h3>
+          <h4>🚤 Service réservé</h4>
           <p>
             <strong>{booking.service?.name}</strong>
           </p>
@@ -133,7 +133,7 @@ export default function PaymentSuccessDetails({
 
         {booking.bookingOptions.length > 0 && (
           <div className={styles.options_info}>
-            <h3>🎯 Options sélectionnées</h3>
+            <h4>🎯 Options sélectionnées</h4>
             {booking.bookingOptions.map(({ label, quantity, amount, id }) => (
               <div key={id} className={styles.option_item}>
                 <p>
@@ -145,7 +145,7 @@ export default function PaymentSuccessDetails({
         )}
 
         <div className={styles.payment_info}>
-          <h3>💳 Détails du paiement</h3>
+          <h4>💳 Détails du paiement</h4>
           <p>
             <strong>Montant du bateau:</strong> {booking.boatAmount}€
           </p>
@@ -163,7 +163,7 @@ export default function PaymentSuccessDetails({
         </div>
 
         <div className={styles.next_steps}>
-          <h3>📝 Prochaines étapes</h3>
+          <h4>📝 Prochaines étapes</h4>
           <ul>
             <li>✅ Votre paiement a été confirmé</li>
             <li>📧 Un email de confirmation va vous être envoyé</li>

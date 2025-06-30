@@ -41,6 +41,9 @@ const ServiceList = () => {
   const [requiresCaptain, setRequiresCaptain] = useState(true);
   const [comment, setComment] = useState("");
   const [withCaptain, setWithCaptain] = useState<boolean | null>(null);
+  // Limites de quantité
+  const MAX_QUANTITY = 10;
+  const MAX_QUANTITY_PADDLE = 1;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,10 +95,19 @@ const ServiceList = () => {
   }, []);
 
   const handleOptionQuantityChange = (option: OptionType, quantity: number) => {
+    // Si option paddle, limite max = 1, sinon max = 10
+    const maxQuantity =
+      option.name === "paddle-supplementaire"
+        ? MAX_QUANTITY_PADDLE
+        : MAX_QUANTITY;
+
+    const limitedQty = Math.min(Math.max(quantity, 0), maxQuantity);
+
     const newSelectedOptions = { ...selectedOptions };
-    if (quantity > 0) {
+
+    if (limitedQty > 0) {
       newSelectedOptions[option.id] = {
-        quantity,
+        quantity: limitedQty,
         unitPrice: option.unitPrice,
         label: option.label,
       };
@@ -267,7 +279,6 @@ const ServiceList = () => {
                     <br />
                     <FormattedDescription text={service.description || ""} />
                   </div>
-
                   <div className={styles.service_item__stats}>
                     <span>
                       <p>Montant location bateau:</p>
@@ -291,7 +302,6 @@ const ServiceList = () => {
                       </p>
                     </div>
                   )}
-
                   <h2>Options supplémentaires (à régler sur place)</h2>
                   <p className={styles.notice} style={{ color: "whitesmoke" }}>
                     Les options sélectionnées sont à régler à bord le jour de
@@ -318,10 +328,29 @@ const ServiceList = () => {
                               <label htmlFor={`quantity-${option.id}`}>
                                 Quantité:
                               </label>
+                              {/* <input
+                                type="number"
+                                id={`quantity-${option.id}`}
+                                min="0"
+                                defaultValue={
+                                  selectedOptions[option.id]?.quantity || 0
+                                }
+                                onChange={(e) =>
+                                  handleOptionQuantityChange(
+                                    option,
+                                    parseInt(e.target.value)
+                                  )
+                                }
+                              /> */}
                               <input
                                 type="number"
                                 id={`quantity-${option.id}`}
                                 min="0"
+                                max={
+                                  option.name === "paddle-supplementaire"
+                                    ? 1
+                                    : 10
+                                }
                                 defaultValue={
                                   selectedOptions[option.id]?.quantity || 0
                                 }
@@ -373,7 +402,6 @@ const ServiceList = () => {
                       </span>
                     </label>
                   </div>
-
                   <div className={styles.meal_option}>
                     <label>
                       Commander un repas traiteur:
@@ -389,6 +417,19 @@ const ServiceList = () => {
                       contactera pour vous présenter le menu et les prix. Le
                       paiement s&apos;effectuera à bord.
                     </p>
+                  </div>
+
+                  <div className={styles.cgu_notice}>
+                    En réservant, vous acceptez nos{" "}
+                    <a
+                      href="/assets/pdf/cgu.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.cgu_link}
+                    >
+                      Conditions Générales d’Utilisation
+                    </a>
+                    .
                   </div>
                   {Object.values(selectedOptions).length > 0 || !withCaptain ? (
                     <div className={styles.options_subtotal}>

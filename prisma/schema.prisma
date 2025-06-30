@@ -64,6 +64,7 @@ model Option {
   createdAt      DateTime        @default(now())
   bookingOptions BookingOption[]
   description    String?
+  maxQuantity    Int?
 }
 
 model BookingOption {

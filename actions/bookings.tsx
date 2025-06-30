@@ -101,7 +101,6 @@ export async function createBooking(
 
       if (!user) throw new Error("Utilisateur introuvable.");
 
-      // ✅ CORRECTION: Vérification explicite de l'email
       if (!user.email) {
         throw new Error("Email utilisateur manquant dans la base de données.");
       }
@@ -117,7 +116,6 @@ export async function createBooking(
         customerName
       );
     } else if (fullName && email && phoneNumber) {
-      // ✅ CORRECTION: Vérification explicite des paramètres guest
       if (!email || !fullName) {
         throw new Error("Email et nom complet obligatoires pour les invités.");
       }
@@ -158,7 +156,6 @@ export async function createBooking(
       );
     }
 
-    // ✅ CORRECTION: Double vérification avant de continuer
     if (!customerEmail || !customerName) {
       throw new Error("Email ou nom client manquant après traitement.");
     }
@@ -213,9 +210,6 @@ export async function createBooking(
       selectedOptions: selectedOptionsForCalc,
     });
 
-    console.log("📧 Email qui sera stocké dans booking:", customerEmail);
-    console.log("👤 Nom qui sera stocké:", customerName);
-
     const booking = await prisma.booking.create({
       data: {
         clientId: clientData?.id,
@@ -248,8 +242,6 @@ export async function createBooking(
         service: true,
       },
     });
-
-    console.log("✅ Booking créé avec email:", booking.email);
 
     let stripeCustomerId: string;
 
@@ -304,18 +296,10 @@ export async function createBooking(
           where: { id: clientData.id },
           data: { stripeCustomerId },
         });
-
-        console.log("✅ Customer Stripe créé pour client:", stripeCustomerId);
       }
     } else {
       throw new Error("Impossible de déterminer le client pour Stripe");
     }
-
-    console.log("🔍 DEBUG - Variables avant createStripeCheckoutSession:");
-    console.log("🔍 booking.id:", booking.id);
-    console.log("🔍 booking.email:", booking.email); // ✅ Ajout de ce log
-    console.log("🔍 stripeCustomerId:", stripeCustomerId);
-    console.log("🔍 typeof stripeCustomerId:", typeof stripeCustomerId);
 
     const checkoutUrl = await createStripeCheckoutSession(
       booking.id,
@@ -358,7 +342,7 @@ export async function createBooking(
 // Mettre à jour une réservation
 export async function updateBooking(
   bookingId: string,
-  data: Prisma.BookingUpdateInput & { serviceId?: string } // Ajout de serviceId optionnel à l'interface de data
+  data: Prisma.BookingUpdateInput & { serviceId?: string }
 ) {
   try {
     const { startTime, endTime, reservedAt } = data;

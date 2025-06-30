@@ -83,7 +83,6 @@ const ManageOpeningHours: React.FC = () => {
   if (isLoading) {
     return (
       <div>
-        <h2>Gérer les horaires d&apos;ouverture</h2>
         <p>Chargement des horaires...</p>
       </div>
     );

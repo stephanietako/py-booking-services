@@ -84,6 +84,7 @@ export interface Option {
   createdAt: Date;
   description?: string | null;
   unitPrice: number;
+  maxQuantity?: number | null;
 }
 
 export interface BookingOption {

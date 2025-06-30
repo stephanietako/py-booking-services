@@ -22,8 +22,8 @@ export default async function PaymentSuccess({
   if (token) {
     return (
       <div className={styles.container}>
-        <h1 className={styles.succes__title}>🎉 Paiement confirmé</h1>
-        <p>Merci pour votre réservation !</p>
+        <h3 className={styles.succes__title}>🎉 Paiement confirmé</h3>
+        <p>Merci pour votre réservation</p>
         <Suspense fallback={<p>Chargement des détails de la réservation...</p>}>
           <PaymentSuccessDetails token={token} />
         </Suspense>

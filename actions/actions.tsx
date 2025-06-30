@@ -6,8 +6,7 @@ import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
 import { Option, Service } from "@/types";
 import { auth } from "@clerk/nextjs/server";
-//import { AppError } from "@/lib/errors";
-import { revalidatePath } from "next/cache";
+
 const priceCache = new Map<string, number>();
 
 ////////ADMIN//////////
@@ -59,7 +58,6 @@ export async function addUserToDatabase(
 ) {
   const normalizedEmail = email.toLowerCase().trim();
 
-  // ✅ Correction: Attendre la promesse
   const isAdmin = await isAdminEmail(normalizedEmail);
 
   console.log("🎯 addUserToDatabase appelée avec:", {
@@ -67,11 +65,10 @@ export async function addUserToDatabase(
     name,
     clerkUserId,
     phoneNumber,
-    isAdmin, // ✅ Maintenant c'est un boolean
+    isAdmin,
   });
 
   try {
-    // Récupérer ou créer les rôles
     const [userRole, adminRole] = await Promise.all([
       prisma.role.upsert({
         where: { name: "user" },
@@ -85,7 +82,6 @@ export async function addUserToDatabase(
       }),
     ]);
 
-    // Déterminer le rôle
     const roleId = isAdmin ? adminRole.id : userRole.id;
     const roleName = isAdmin ? "admin" : "user";
 
@@ -159,119 +155,8 @@ export async function addUserToDatabase(
     throw error;
   }
 }
-// Fonction pour promouvoir un utilisateur en admin
-export async function promoteUserToAdmin(userId: string) {
-  try {
-    // Vérifier que l'utilisateur actuel est admin
-    const isAdmin = await isCurrentUserAdmin();
-    if (!isAdmin) {
-      throw new Error(
-        "❌ Accès refusé: seuls les administrateurs peuvent promouvoir des utilisateurs"
-      );
-    }
 
-    // Récupérer le rôle admin
-    const adminRole = await prisma.role.findUnique({
-      where: { name: "admin" },
-    });
-
-    if (!adminRole) {
-      throw new Error("❌ Rôle administrateur introuvable");
-    }
-
-    // Mettre à jour l'utilisateur
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: { roleId: adminRole.id },
-      include: { role: true },
-    });
-
-    console.log("✅ Utilisateur promu administrateur:", updatedUser.email);
-    revalidatePath("/admin");
-
-    return updatedUser;
-  } catch (error) {
-    console.error("❌ Erreur lors de la promotion:", error);
-    throw error;
-  }
-}
-
-// Fonction pour rétrograder un admin en utilisateur
-export async function demoteAdminToUser(userId: string) {
-  try {
-    // Vérifier que l'utilisateur actuel est admin
-    const isAdmin = await isCurrentUserAdmin();
-    if (!isAdmin) {
-      throw new Error(
-        "❌ Accès refusé: seuls les administrateurs peuvent rétrograder des utilisateurs"
-      );
-    }
-
-    // Récupérer le rôle user
-    const userRole = await prisma.role.findUnique({
-      where: { name: "user" },
-    });
-
-    if (!userRole) {
-      throw new Error("❌ Rôle utilisateur introuvable");
-    }
-
-    // Mettre à jour l'utilisateur
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: { roleId: userRole.id },
-      include: { role: true },
-    });
-
-    console.log(
-      "✅ Administrateur rétrogradé en utilisateur:",
-      updatedUser.email
-    );
-    revalidatePath("/admin");
-
-    return updatedUser;
-  } catch (error) {
-    console.error("❌ Erreur lors de la rétrogradation:", error);
-    throw error;
-  }
-}
-
-// Fonction pour lister tous les utilisateurs (admin seulement)
-// export async function getAllUsers() {
-//   try {
-//     const isAdmin = await isCurrentUserAdmin();
-//     if (!isAdmin) {
-//       throw new Error(
-//         "❌ Accès refusé: seuls les administrateurs peuvent voir la liste des utilisateurs"
-//       );
-//     }
-
-//     const users = await prisma.user.findMany({
-//       include: {
-//         role: true,
-//         bookings: {
-//           select: {
-//             id: true,
-//             createdAt: true,
-//             status: true,
-//           },
-//         },
-//       },
-//       orderBy: {
-//         createdAt: "desc",
-//       },
-//     });
-
-//     return users.map((user) => ({
-//       ...user,
-//       bookingsCount: user.bookings.length,
-//       lastBooking: user.bookings[0]?.createdAt || null,
-//     }));
-//   } catch (error) {
-//     console.error("❌ Erreur lors de la récupération des utilisateurs:", error);
-//     throw error;
-//   }
-// }
+// Fonction pour récupérer tous les utilisateurs (admin seulement)
 export async function getAllUsers(page = 1, limit = 10) {
   try {
     const isAdmin = await isCurrentUserAdmin();
@@ -324,35 +209,8 @@ export async function getAllUsers(page = 1, limit = 10) {
     throw error;
   }
 }
+
 // Fonction pour récupérer tous les clients (admin seulement)
-// export async function getAllClients() {
-//   try {
-//     const isAdmin = await isCurrentUserAdmin();
-//     if (!isAdmin) {
-//       throw new Error("Accès refusé : admin uniquement");
-//     }
-//     const clients = await prisma.client.findMany({
-//       include: {
-//         bookings: {
-//           select: {
-//             id: true,
-//             createdAt: true,
-//             status: true,
-//           },
-//         },
-//       },
-//       orderBy: { createdAt: "desc" },
-//     });
-//     return clients.map((client) => ({
-//       ...client,
-//       bookingsCount: client.bookings.length,
-//       lastBooking: client.bookings[0]?.createdAt || null,
-//     }));
-//   } catch (error) {
-//     console.error("Erreur lors de la récupération des clients:", error);
-//     throw error;
-//   }
-// }
 export async function getAllClients(page = 1, limit = 10) {
   try {
     const isAdmin = await isCurrentUserAdmin();
@@ -399,57 +257,7 @@ export async function getAllClients(page = 1, limit = 10) {
     throw error;
   }
 }
-// Fonction pour vérifier et synchroniser les rôles administrateurs
-export async function syncAdminRoles() {
-  try {
-    console.log("🔄 Synchronisation des rôles administrateurs...");
 
-    // Récupérer le rôle admin
-    const adminRole = await prisma.role.upsert({
-      where: { name: "admin" },
-      update: {},
-      create: { name: "admin" },
-    });
-
-    // Récupérer tous les utilisateurs avec des emails admin
-    const usersToPromote = await prisma.user.findMany({
-      where: {
-        email: {
-          in: ADMIN_EMAILS.map((email) => email.toLowerCase()),
-        },
-        roleId: {
-          not: adminRole.id,
-        },
-      },
-    });
-
-    if (usersToPromote.length > 0) {
-      await prisma.user.updateMany({
-        where: {
-          id: {
-            in: usersToPromote.map((user) => user.id),
-          },
-        },
-        data: {
-          roleId: adminRole.id,
-        },
-      });
-
-      console.log(
-        `✅ ${usersToPromote.length} utilisateur(s) promu(s) administrateur(s)`
-      );
-    }
-
-    return {
-      success: true,
-      promotedCount: usersToPromote.length,
-      adminEmails: ADMIN_EMAILS,
-    };
-  } catch (error) {
-    console.error("❌ Erreur lors de la synchronisation:", error);
-    throw error;
-  }
-}
 // Fonction pour récupérer un service par son ID
 export async function getServiceById(
   serviceId: string
@@ -731,6 +539,7 @@ export async function deleteOption(bookingOptionId: string) {
     throw new Error("Impossible de supprimer l'option.");
   }
 }
+
 // creer un service avec l'image etc ...
 export async function createService(
   name: string,

@@ -7,6 +7,7 @@ import Head from "next/head";
 import { getOpeningAndClosedDays } from "@/actions/openingActions";
 import { DayInput } from "@/types";
 import { useState, useEffect } from "react";
+import Spinner from "./components/Spinner/Spinner";
 
 interface OpeningAndClosedDays {
   days: DayInput[];
@@ -42,7 +43,7 @@ const Home = () => {
       <Wrapper>
         <main>
           <Hero />
-          <p>Chargement des horaires...</p>
+          <Spinner />
         </main>
       </Wrapper>
     );

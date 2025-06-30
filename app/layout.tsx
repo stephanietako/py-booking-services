@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import "./globals.css";
 import Footer from "./components/Footer/Footer";
+import CookieConsentAndLoader from "./components/CookieConsentAndLoader/CookieConsentAndLoader";
 
 const roboto = Roboto({
   variable: "--roboto",
@@ -46,6 +47,7 @@ export default function RootLayout({
         >
           <Toaster position="top-center" />
           {children}
+          <CookieConsentAndLoader />
           <div className="scroll">
             <ScrollToTop />
           </div>

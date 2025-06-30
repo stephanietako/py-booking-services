@@ -7,7 +7,7 @@ import { escapeHtml } from "@/utils/escapeHtml";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
-const domainUrl = process.env.DOMAIN_URL || "https://votre-domaine.com";
+const domainUrl = process.env.DOMAIN_URL || "http://localhost:3000";
 
 export async function POST(req: Request) {
   try {
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
       })[],
       phoneNumber:
         booking.client?.phoneNumber || booking.user?.phoneNumber || "—",
-      transactions: [], // à remplir si tu les charges
+      transactions: [],
       totalPayableOnBoardCalculated: totalPayableOnBoard,
       clientFullName:
         booking.client?.fullName || booking.user?.name || "Client",
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
     const pdfBuffer = await generateInvoice(bookingWithDetails);
     const pdfBase64 = Buffer.from(pdfBuffer).toString("base64");
 
-    const adminEmail = process.env.ADMIN_EMAILS || "gabeshine@live.fr";
+    const adminEmail = process.env.ADMIN_EMAIL || fromEmail;
     const fileName = `facture-booking-${booking.id}.pdf`;
 
     const formatter = new Intl.NumberFormat("fr-FR", {
@@ -145,7 +145,7 @@ export async function POST(req: Request) {
       </div>
     `;
 
-    // ➤ Envoi à l'admin
+    // Envoi à l'admin
     await resend.emails.send({
       from: fromEmail,
       to: adminEmail,
@@ -160,7 +160,7 @@ export async function POST(req: Request) {
       ],
     });
 
-    // ➤ Envoi au client si demandé
+    // Envoi au client si demandé
     if (sendToClient && clientEmail.includes("@")) {
       await resend.emails.send({
         from: fromEmail,
@@ -181,7 +181,7 @@ export async function POST(req: Request) {
         ],
       });
 
-      // ➤ Mise à jour du flag `invoiceSent`
+      // Mise à jour du flag `invoiceSent`
       await prisma.booking.update({
         where: { id: booking.id },
         data: { invoiceSent: true },

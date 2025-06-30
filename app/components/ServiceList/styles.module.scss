@@ -188,6 +188,25 @@
   margin-left: 2.5rem; /* Ajuster la marge pour l'alignement */
 }
 
+.cgu_notice {
+  font-size: 0.97em;
+  color: #003080;
+  margin: 1.2em 0 0.5em 0;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.cgu_link {
+  color: #25fde9;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.cgu_link:hover,
+.cgu_link:focus {
+  color: #003080;
+  text-decoration: underline;
+}
 /* Subtotal */
 .options_subtotal {
   font-weight: bold;
