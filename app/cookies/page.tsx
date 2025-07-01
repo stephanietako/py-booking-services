@@ -1,4 +1,3 @@
-// app/cookies/page.tsx
 import React from "react";
 import Wrapper from "../components/Wrapper/Wrapper";
 
@@ -21,12 +20,19 @@ const page = () => {
             color: "#1e293b",
             fontSize: "1.05rem",
             lineHeight: 1.7,
+            fontFamily: "Arial, sans-serif",
+            textAlign: "justify",
           }}
         >
-          <h2 style={{ textAlign: "center", marginBottom: "2rem" }}>
+          <h2
+            style={{
+              textAlign: "center",
+              marginBottom: "2rem",
+              fontSize: "1.8rem",
+            }}
+          >
             Politique des Cookies
           </h2>
-
           <h3>Introduction</h3>
           <p>
             Bienvenue sur notre site de location de bateaux

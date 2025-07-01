@@ -1,4 +1,4 @@
-// export default Navbar;
+// components/Navbar/Navbar.tsx
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
@@ -186,6 +186,9 @@ const Navbar: React.FC = () => {
                   </Link>
                   <Link href="/admin/dashboard/opening" onClick={toggleMenu}>
                     Ouverture
+                  </Link>
+                  <Link href="/admin/hero-settings" onClick={toggleMenu}>
+                    Média Accueil
                   </Link>
                 </div>
               </details>

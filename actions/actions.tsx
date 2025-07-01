@@ -4,8 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
 import mime from "mime";
-import { Option, Service } from "@/types";
+import { HeroConfigData, Option, Service } from "@/types";
 import { auth } from "@clerk/nextjs/server";
+import { getHeroConfig } from "@/lib/hero-utils";
 
 const priceCache = new Map<string, number>();
 
@@ -311,7 +312,8 @@ export async function getOptions() {
 export async function addOptionToService(
   amount: number,
   unitPrice: number,
-  description: string
+  description: string,
+  maxQuantity: number = 10
 ): Promise<Option> {
   const createdOption = await prisma.option.create({
     data: {
@@ -319,6 +321,7 @@ export async function addOptionToService(
       unitPrice,
       name: description,
       label: description,
+      maxQuantity,
     },
   });
 
@@ -565,4 +568,8 @@ export async function createService(
       currency: "EUR",
     },
   });
+}
+//
+export async function fetchHeroConfigAction(): Promise<HeroConfigData> {
+  return await getHeroConfig();
 }

@@ -122,6 +122,24 @@ const Footer: React.FC = () => {
                   <li>
                     <Link href="/cookies">Politique de cookies</Link>
                   </li>
+
+                  <li>
+                    <button
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        color: "blue",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        localStorage.removeItem("cookie-consent");
+                        document.cookie = `cookie-consent=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                        window.location.reload();
+                      }}
+                    >
+                      Modifier mes préférences cookies
+                    </button>
+                  </li>
                 </ul>
               </div>
 

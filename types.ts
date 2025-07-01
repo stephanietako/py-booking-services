@@ -305,3 +305,9 @@ export interface VerifyTokenResponse {
 
 // ✅ Réexportation des types Prisma pour éviter l'erreur :
 export type { BookingStatus, PaymentStatus } from "@prisma/client";
+
+// Interface pour les données de configuration du Hero
+export interface HeroConfigData {
+  mediaUrl: string;
+  mediaType: "image" | "video";
+}

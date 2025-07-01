@@ -758,26 +758,43 @@ export async function addOptionToBooking(
   optionId: string,
   quantity: number
 ) {
+  const bookingIdNum = parseInt(bookingId, 10);
   try {
     const option = await prisma.option.findUnique({ where: { id: optionId } });
     if (!option) throw new Error("❌ Option introuvable.");
+
+    if (option.maxQuantity != null) {
+      const existingQuantity = await prisma.bookingOption.aggregate({
+        where: { optionId },
+        _sum: { quantity: true },
+      });
+
+      const totalReserved = existingQuantity._sum.quantity ?? 0;
+
+      if (totalReserved + quantity > option.maxQuantity) {
+        const remaining = option.maxQuantity - totalReserved;
+        throw new Error(
+          `❌ Il ne reste que ${remaining} "${option.label}" disponibles.`
+        );
+      }
+    }
 
     const subtotal = option.amount * quantity;
 
     const [created] = await prisma.$transaction([
       prisma.bookingOption.create({
         data: {
-          bookingId: parseInt(bookingId, 10),
+          bookingId: bookingIdNum,
           optionId: option.id,
           quantity,
           unitPrice: option.amount,
-          amount: option.amount * quantity, // Ajout de la propriété amount ici
+          amount: subtotal,
           label: option.label,
           description: option.description ?? "",
         },
       }),
       prisma.booking.update({
-        where: { id: parseInt(bookingId, 10) },
+        where: { id: bookingIdNum },
         data: {
           totalAmount: option.payableOnline
             ? { increment: subtotal }
@@ -792,6 +809,8 @@ export async function addOptionToBooking(
     return created;
   } catch (error) {
     console.error("❌ Erreur lors de l'ajout de l'option :", error);
-    throw new Error("Impossible d'ajouter l'option.");
+    throw new Error(
+      error instanceof Error ? error.message : "Erreur inconnue."
+    );
   }
 }

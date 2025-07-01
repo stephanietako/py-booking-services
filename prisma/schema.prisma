@@ -176,3 +176,11 @@ enum PaymentStatus {
   FAILED
   REFUNDED
 }
+
+model HeroConfig {
+  id        String   @id @default(cuid())
+  mediaUrl  String? // Nullable
+  mediaType String   @default("image")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

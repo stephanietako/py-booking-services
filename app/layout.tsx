@@ -6,6 +6,8 @@ import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import "./globals.css";
 import Footer from "./components/Footer/Footer";
 import CookieConsentAndLoader from "./components/CookieConsentAndLoader/CookieConsentAndLoader";
+import Script from "next/script";
+import { GA_TRACKING_ID } from "@/lib/gtag";
 
 const roboto = Roboto({
   variable: "--roboto",
@@ -42,12 +44,34 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="fr">
+        <head>
+          {/* Google Analytics */}
+          {GA_TRACKING_ID && (
+            <>
+              <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+                strategy="afterInteractive"
+              />
+              <Script id="google-analytics" strategy="afterInteractive">
+                {`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${GA_TRACKING_ID}', {
+          page_path: window.location.pathname,
+        });
+      `}
+              </Script>
+            </>
+          )}
+        </head>
         <body
           className={`${roboto.variable} ${montserrat.variable} ${gloria.variable}`}
         >
           <Toaster position="top-center" />
           {children}
           <CookieConsentAndLoader />
+
           <div className="scroll">
             <ScrollToTop />
           </div>

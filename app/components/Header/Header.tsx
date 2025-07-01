@@ -46,10 +46,7 @@ const Header: React.FC<HeaderProps> = ({ days, closedDays }) => {
         />
 
         <div className={styles.logo_title_wrapper}>
-          <div
-            className={styles.logo_container}
-            // style={{ position: "relative", width: "170px", height: "170px" }}
-          >
+          <div className={styles.logo_container}>
             <Image
               src={logo || placeholder}
               alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
