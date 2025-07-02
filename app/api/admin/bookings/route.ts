@@ -53,7 +53,6 @@ export async function POST(req: NextRequest) {
       };
     } = await req.json();
 
-    // Validation de base
     if (!clerkUserId || !serviceId || !reservedAt || !startTime || !endTime) {
       return NextResponse.json(
         { error: "Champs requis manquants" },

@@ -11,8 +11,6 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  console.log("🔍 ClerkUserId:", clerkUserId);
-
   try {
     // Récupérer l'utilisateur interne à partir du clerkUserId
     let user = await prisma.user.findUnique({
@@ -21,9 +19,7 @@ export async function GET() {
 
     // Si l'utilisateur n'existe pas, gérer la création/mise à jour
     if (!user) {
-      console.log(
-        "⚠️ Utilisateur non trouvé par clerkUserId, vérification par email..."
-      );
+      console.log("⚠️ Utilisateur non trouvé, tentative de création...");
 
       // Récupérer les infos depuis Clerk
       const clerkUser = await currentUser();
@@ -50,10 +46,7 @@ export async function GET() {
       });
 
       if (existingUser) {
-        // Mettre à jour le clerkUserId de l'utilisateur existant
-        console.log(
-          "✅ Utilisateur trouvé par email, mise à jour du clerkUserId..."
-        );
+        console.log("⚠️ Utilisateur existant trouvé, mise à jour...");
         user = await prisma.user.update({
           where: { id: existingUser.id },
           data: { clerkUserId },
@@ -141,7 +134,7 @@ export async function GET() {
       },
     });
 
-    console.log("✅ Bookings trouvés:");
+    console.log("✅ Bookings trouvés");
     return NextResponse.json(bookings);
   } catch (error) {
     console.error("❌ Erreur dans GET bookings/profile:", error);

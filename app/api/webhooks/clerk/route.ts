@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         });
         console.log("📧 Email existant:", existingEmailUser ? "OUI" : "NON");
 
-        // NOUVEAU: Gérer le conflit d'email
+        //  Gérer le conflit d'email
         if (
           existingEmailUser &&
           existingEmailUser.clerkUserId !== clerkUserId
@@ -81,9 +81,7 @@ export async function POST(req: NextRequest) {
             "📧 Email existant avec clerkUserId:",
             existingEmailUser.clerkUserId
           );
-          console.log("🆕 Nouveau clerkUserId:", clerkUserId);
 
-          // Option 1: Mettre à jour l'utilisateur existant avec le nouveau clerkUserId
           console.log(
             "🔄 Mise à jour de l'utilisateur existant avec le nouveau clerkUserId..."
           );

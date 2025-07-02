@@ -79,7 +79,6 @@ const ManageOpeningHours: React.FC = () => {
     }
   };
 
-  // Affichage de chargement pour éviter l'hydratation avec des données vides
   if (isLoading) {
     return (
       <div>

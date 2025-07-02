@@ -1,5 +1,4 @@
 //app/components/AdminDashboard.tsx
-
 "use client";
 
 import { FC } from "react";

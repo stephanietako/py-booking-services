@@ -69,9 +69,13 @@ export default function RootLayout({
           className={`${roboto.variable} ${montserrat.variable} ${gloria.variable}`}
         >
           <Toaster position="top-center" />
+          {/* Conteneur du widget */}
+          <div
+            id="google_translate_element"
+            style={{ position: "fixed", top: 10, right: 10, zIndex: 9999 }}
+          ></div>
           {children}
           <CookieConsentAndLoader />
-
           <div className="scroll">
             <ScrollToTop />
           </div>

@@ -94,28 +94,6 @@ const ServiceList = () => {
     fetchOptions();
   }, []);
 
-  // const handleOptionQuantityChange = (option: OptionType, quantity: number) => {
-  //   // Si option paddle, limite max = 1, sinon max = 10
-  //   const maxQuantity =
-  //     option.name === "paddle-supplementaire"
-  //       ? MAX_QUANTITY_PADDLE
-  //       : MAX_QUANTITY;
-
-  //   const limitedQty = Math.min(Math.max(quantity, 0), maxQuantity);
-
-  //   const newSelectedOptions = { ...selectedOptions };
-
-  //   if (limitedQty > 0) {
-  //     newSelectedOptions[option.id] = {
-  //       quantity: limitedQty,
-  //       unitPrice: option.unitPrice,
-  //       label: option.label,
-  //     };
-  //   } else {
-  //     delete newSelectedOptions[option.id];
-  //   }
-  //   setSelectedOptions(newSelectedOptions);
-  // };
   const handleOptionQuantityChange = (option: OptionType, quantity: number) => {
     // Limites sur quantité selon option
     const maxQuantity =
@@ -350,20 +328,7 @@ const ServiceList = () => {
                               <label htmlFor={`quantity-${option.id}`}>
                                 Quantité:
                               </label>
-                              {/* <input
-                                type="number"
-                                id={`quantity-${option.id}`}
-                                min="0"
-                                defaultValue={
-                                  selectedOptions[option.id]?.quantity || 0
-                                }
-                                onChange={(e) =>
-                                  handleOptionQuantityChange(
-                                    option,
-                                    parseInt(e.target.value)
-                                  )
-                                }
-                              /> */}
+
                               <input
                                 type="number"
                                 id={`quantity-${option.id}`}

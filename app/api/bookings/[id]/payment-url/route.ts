@@ -20,7 +20,7 @@ export const GET = async (
   }
 
   try {
-    // 🔍 Récupérer la réservation avec les infos client/utilisateur
+    // Récupérer la réservation avec les infos client/utilisateur
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: {
@@ -36,7 +36,7 @@ export const GET = async (
       );
     }
 
-    // 📧 Déterminer l'email du client
+    // Déterminer l'email du client
     const customerEmail = booking.client?.email || booking.user?.email;
 
     if (!customerEmail) {
@@ -46,7 +46,7 @@ export const GET = async (
       );
     }
 
-    // 💳 Récupérer ou créer le customer Stripe
+    // Récupérer ou créer le customer Stripe
     let stripeCustomerId: string;
 
     // Vérifier si un customer Stripe existe déjà
@@ -101,7 +101,7 @@ export const GET = async (
       }
     }
 
-    // ✅ Appeler la fonction avec les 3 paramètres requis
+    // Appeler la fonction avec les 3 paramètres requis
     const url = await createStripeCheckoutSession(bookingId, stripeCustomerId);
 
     return NextResponse.json({ url });

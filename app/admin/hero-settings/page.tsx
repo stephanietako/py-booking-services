@@ -1,3 +1,4 @@
+// app/admin/hero-settings/page.tsx
 import { auth } from "@clerk/nextjs/server";
 import HeroMediaUploadForm from "@/app/components/HeroMediaUploadForm/HeroMediaUploadForm";
 import { getHeroConfig } from "@/lib/hero-utils";

@@ -1,3 +1,4 @@
+// app/api/admin/bookings/sendReservationDetails/route.ts
 import { NextResponse, type NextRequest } from "next/server";
 import { requestConfirmationEmail } from "@/lib/emails/requestConfirmation";
 import { sendEmail } from "@/lib/email/send";

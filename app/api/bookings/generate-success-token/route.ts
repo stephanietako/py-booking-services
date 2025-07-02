@@ -7,7 +7,6 @@ const secret = process.env.JWT_SECRET;
 
 export async function POST(req: Request) {
   try {
-    // On retire bookingId du destructuring, car il ne sera plus passé par défaut
     const { sessionId } = await req.json();
 
     if (!sessionId) {
@@ -34,8 +33,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Le statut 'PAID' devrait déjà être mis à jour par le webhook,
-    // mais une vérification ici est une bonne pratique.
     if (booking.paymentStatus !== "PAID") {
       console.warn(
         "⚠️ Paiement non confirmé (statut PENDING) pour la réservation:",

@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { getRole } from "@/actions/actions";
 import Wrapper from "@/app/components/Wrapper/Wrapper";
 import { SignOutButton } from "@clerk/nextjs";
-//import BookingList from "@/app/components/BookingList/BookingList";
 import AdminUserClientList from "@/app/components/AdminUserClientList/AdminUserClientList";
 
 export default async function AdminDashboardPage() {
@@ -18,8 +17,6 @@ export default async function AdminDashboardPage() {
   if (userRole?.name !== "admin") {
     redirect("/");
   }
-
-  //const initialBookings = await getBookings(undefined);
 
   return (
     <Wrapper>

@@ -1,3 +1,4 @@
+// app/components/AdminBookingsPanel/AdminBookingsPanel.tsx
 "use client";
 
 import { useState, useMemo } from "react";

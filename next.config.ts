@@ -1,28 +1,3 @@
-// import type { NextConfig } from "next";
-
-// const nextConfig: NextConfig = {
-//   reactStrictMode: true,
-//   images: {
-//     remotePatterns: [
-//       {
-//         protocol: "https",
-//         hostname: "img.clerk.com",
-//         pathname: "**",
-//       },
-//       {
-//         protocol: "https",
-//         hostname: "nvxgkcpklrpibhprbhzb.supabase.co",
-//         pathname: "**",
-//       },
-//     ],
-//   },
-//   eslint: {
-//     dirs: ["pages, components", "lib"], // Vérifie les répertoires où ESLint doit s'exécuter
-//   },
-
-// };
-
-// export default nextConfig;
 // next.config.ts
 import type { NextConfig } from "next";
 
@@ -38,13 +13,12 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "nvxgkcpklrpibhprbhzb.supabase.co",
-        // port: "", // Laissez vide comme vous l'avez fait
-        pathname: "/storage/v1/object/public/**", // <-- Simplifiez juste pour le test
+        pathname: "/storage/v1/object/public/**",
       },
     ],
   },
   eslint: {
-    dirs: ["pages", "components", "lib"], // Corrigé: chaque dossier séparé
+    dirs: ["pages", "components", "lib"],
   },
 };
 

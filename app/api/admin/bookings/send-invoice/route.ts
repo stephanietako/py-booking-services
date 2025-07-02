@@ -1,3 +1,4 @@
+// app/api/admin/bookings/send-invoice/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateInvoice } from "@/lib/pdf/generateInvoice";
@@ -6,8 +7,10 @@ import { BookingOption, Option, BookingWithDetails } from "@/types";
 import { escapeHtml } from "@/utils/escapeHtml";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
-const domainUrl = process.env.DOMAIN_URL || "http://localhost:3000";
+const fromEmail = process.env.RESEND_FROM_EMAIL || "support@yachting-day.com"; // Ou 'contact@yachting-day.com'
+const domainUrl = process.env.DOMAIN_URL || "https://www.yachting-day.com/";
+const replyToEmail =
+  process.env.GMAIL_REPLY_TO_EMAIL || "yachtingday@gmail.com";
 
 export async function POST(req: Request) {
   try {
@@ -158,6 +161,7 @@ export async function POST(req: Request) {
           contentType: "application/pdf",
         },
       ],
+      replyTo: replyToEmail, // Ajout de l'adresse de réponse pour l'admin
     });
 
     // Envoi au client si demandé
@@ -179,6 +183,7 @@ export async function POST(req: Request) {
             contentType: "application/pdf",
           },
         ],
+        replyTo: replyToEmail, // Ajout de l'adresse de réponse pour le client
       });
 
       // Mise à jour du flag `invoiceSent`

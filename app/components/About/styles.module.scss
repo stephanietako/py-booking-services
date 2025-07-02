@@ -15,7 +15,7 @@
 
     .logo_container {
       position: absolute;
-      left: calc(50% - 283px); // décale à gauche du centre
+      left: calc(50% - 283px);
       top: 50%;
       transform: translateY(-50%);
       width: 120px;
@@ -37,11 +37,11 @@
     border-radius: 10px;
     transition:
       transform 0.3s ease,
-      box-shadow 0.3s ease; /* Transition plus fluide pour l'élévation */
+      box-shadow 0.3s ease;
 
     &:hover {
-      transform: translateY(-5px); /* Effet de survol pour le container */
-      box-shadow: 0 8px 24px rgba(229, 231, 238, 0.2); /* Ombre plus marquée */
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(229, 231, 238, 0.2);
     }
 
     .content {
@@ -54,13 +54,12 @@
       flex: 1;
       padding: 2rem;
       background-color: #fff;
-      //background: linear-gradient(180deg, #e3f7ff, #ffffff);
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: box-shadow 0.3s ease; /* Ajout de la transition uniquement sur l'ombre */
+      transition: box-shadow 0.3s ease;
 
       &:hover {
-        box-shadow: 0 8px 24px rgba(223, 224, 230, 0.2); /* Ombre plus marquée au survol */
+        box-shadow: 0 8px 24px rgba(223, 224, 230, 0.2);
       }
     }
 
@@ -82,8 +81,8 @@
           box-shadow 0.3s ease;
 
         &:hover {
-          transform: scale(1.05); /* Zoom de l'image au survol */
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus marquée */
+          transform: scale(1.05);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
       }
 
@@ -97,8 +96,8 @@
           box-shadow 0.3s ease;
 
         &:hover {
-          transform: scale(1.05); /* Zoom de l'image au survol */
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus marquée */
+          transform: scale(1.05);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
       }
     }
@@ -122,8 +121,8 @@
         transform 0.3s ease;
 
       &:hover {
-        transform: translateY(-5px); /* Légère élévation au survol */
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
       }
 
       p {
@@ -139,7 +138,7 @@
         }
 
         &:hover {
-          color: #003080; /* Changement de couleur du texte au survol */
+          color: #003080;
         }
       }
     }
@@ -241,7 +240,7 @@
     .logo_title_wrapper {
       .logo_container {
         position: absolute;
-        left: calc(50% - 192px); // décale à gauche du centre
+        left: calc(50% - 192px);
         top: 50%;
         transform: translateY(-50%);
         width: 100px;

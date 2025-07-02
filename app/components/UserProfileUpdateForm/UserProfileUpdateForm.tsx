@@ -43,34 +43,6 @@ const UserProfileUpdateForm: React.FC<UserProfileUpdateFormProps> = ({
     fetchUserData();
   }, [userId]);
 
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const res = await fetch(`/api/getUser`, {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({ userId }),
-  //       });
-
-  //       const result = await res.json();
-
-  //       if (res.ok) {
-  //         setFormData({
-  //           name: result.name,
-  //           email: result.email,
-  //           description: result.description || "",
-  //         });
-  //       } else {
-  //         setMessage("error fetching user data");
-  //       }
-  //     } catch (error) {
-  //       console.error("Impossible de récupérer les données", error);
-  //       setMessage("error fetching user data");
-  //     }
-  //   };
-  //   fetchUserData();
-  // }, [userId]);
-
   // Mettre à jour l'état du formulaire lors de la saisie de l'utilisateur
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -82,34 +54,6 @@ const UserProfileUpdateForm: React.FC<UserProfileUpdateFormProps> = ({
     }));
   };
 
-  // Gérer la soumission du formulaire
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const res = await fetch(`/api/updateUser`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         userId,
-  //         userDescription: formData.description,
-  //       }),
-  //     });
-
-  //     const result = await res.json();
-
-  //     if (res.ok) {
-  //       setMessage("User data updated successfully!");
-  //     } else {
-  //       setMessage(result.error || "Failed to update user data.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting form", error);
-  //     setMessage("Error submitting form.");
-  //   }
-  // };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -143,8 +87,7 @@ const UserProfileUpdateForm: React.FC<UserProfileUpdateFormProps> = ({
   return (
     <form className="form" onSubmit={handleSubmit}>
       {message && <p className="message">{message}</p>}
-      {/* Champ caché pour l'ID de l'utilisateur */}
-      {/* <input type="hidden" name="id" value={userId} /> */}
+
       <div className="form_bloc">
         <label className="label" htmlFor="name">
           Nom
@@ -164,15 +107,7 @@ const UserProfileUpdateForm: React.FC<UserProfileUpdateFormProps> = ({
         <label className="label" htmlFor="email">
           Email
         </label>
-        {/* <input
-          className="input"
-          type="text"
-          id="email"
-          name="email"
-          disabled
-          value={formData.email}
-          onChange={handleChange}
-        /> */}
+
         <input readOnly className="input" value={formData.email} />
       </div>
       <div className="form_bloc">

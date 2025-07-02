@@ -86,10 +86,7 @@ export default function VerifyBookingContainer() {
         const { url } = await stripeRes.json();
         stripeUrl = url;
       }
-      console.log(
-        "LOG 5 (VerifyBookingContainer): stripeUrl après appel payment-url =",
-        stripeUrl
-      ); // <--- AJOUTEZ CETTE LIGNE
+
       const sendDetailsRes = await fetch(
         `/api/admin/bookings/sendReservationDetails`,
         {

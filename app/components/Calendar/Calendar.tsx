@@ -1,3 +1,4 @@
+// app/components/Calendar/Calendar.tsx
 "use client";
 
 import React, { FC, useEffect, useState, useMemo, useCallback } from "react";
@@ -9,7 +10,7 @@ import {
   isBefore,
   isAfter,
   differenceInMinutes,
-} from "date-fns"; // Importe differenceInMinutes
+} from "date-fns";
 import toast from "react-hot-toast";
 import { DayInput } from "@/types";
 import { getOpeningTimes, filterAvailableTimes } from "@/utils/helpers";
@@ -506,7 +507,6 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
         />
       ) : (
         <div className="time_selection_area">
-          {/* Affichage du message de chargement/erreur directement dans l'UI */}
           {isLoadingBookings && (
             <p className="loading-message">
               Chargement des créneaux disponibles...
@@ -526,7 +526,6 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
                     const inRange = isInRange(time);
                     const isBooked = isTimeBooked(time);
 
-                    // Logique de désactivation améliorée
                     let isDisabled = false;
                     let disabledReason = "";
 

@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import styles from "./styles.module.scss";
 
-import type { BookingWithDetails } from "@/types"; // adapte le chemin si besoin
+import type { BookingWithDetails } from "@/types";
 
 interface PaymentSuccessDetailsProps {
   token: string;

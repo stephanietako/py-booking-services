@@ -567,7 +567,7 @@
 
   .react-calendar {
     width: 100%;
-    max-width: 318px; /* Limite la largeur pour éviter le débordement sur de très petits écrans */
+    max-width: 318px;
     padding: 0.8rem;
     font-size: 0.8rem;
   }
@@ -581,11 +581,11 @@
   .react-calendar__navigation__label {
     font-size: 0.85rem;
     padding: 0.25rem 0.6rem;
-    width: auto; /* Permet à la largeur de s'ajuster */
+    width: auto;
   }
 
   .react-calendar__month-view__days {
-    gap: 0.3rem; /* Réduit l'espacement entre les jours */
+    gap: 0.3rem;
   }
 
   .react-calendar__month-view__weekdays {
@@ -594,8 +594,8 @@
   }
 
   .react-calendar__tile {
-    padding: 6px; /* Réduit le padding des jours */
-    min-height: 40px; /* Ajuste la hauteur minimale */
+    padding: 6px;
+    min-height: 40px;
     font-size: 0.8rem;
   }
 

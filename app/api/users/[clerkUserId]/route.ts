@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 
-// ✅ Utilise les params de Next.js 15 avec await
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ clerkUserId: string }> }

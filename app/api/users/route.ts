@@ -1,3 +1,4 @@
+// api/clients/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getAllUsers } from "@/actions/actions";
 

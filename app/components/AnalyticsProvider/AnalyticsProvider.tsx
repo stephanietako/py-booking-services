@@ -1,4 +1,4 @@
-// components/AnalyticsProvider.tsx - Version corrigée
+// components/AnalyticsProvider.tsx
 "use client";
 
 import { useAnalytics } from "@/app/hooks/useAnalytics";

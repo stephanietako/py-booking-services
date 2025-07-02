@@ -44,7 +44,7 @@ export default function HeroMediaUploadForm() {
     formData.append("file", selectedFile);
 
     try {
-      // APPEL CLIENT VERS API ROUTE : C'est la bonne manière !
+      // APPEL CLIENT VERS API ROUTE
       const res = await fetch("/api/admin/upload", {
         method: "POST",
         body: formData,
@@ -84,7 +84,6 @@ export default function HeroMediaUploadForm() {
   };
 
   return (
-    // ... (Ton JSX existant du formulaire)
     <div className={styles.heroUploadWrapper}>
       <h2 className={styles.heroUploadTitle}>Changer le Média Hero</h2>
       <div className={styles.fileInputContainer}>

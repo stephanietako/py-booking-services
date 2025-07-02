@@ -17,15 +17,15 @@
 
 .twoColumns {
   display: flex;
-  gap: 2rem; /* Espacement entre les colonnes */
+  gap: 2rem;
 }
 
 .leftBlock {
-  flex: 1; /* Prend une part égale de l'espace */
+  flex: 1;
 }
 
 .rightBlock {
-  flex: 1; /* Prend une part égale de l'espace */
+  flex: 1;
 }
 
 .label {

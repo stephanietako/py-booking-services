@@ -1201,6 +1201,7 @@ input[type="time"] {
   height: 100%;
   margin-top: 3rem;
 }
+
 /* //////////////RESPONSIVE///////////// */
 @media (prefers-color-scheme: dark) {
   html {

@@ -2,25 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAllClients } from "@/actions/actions";
 
-// export async function GET(
-//   _req: NextRequest,
-//   { params }: { params: Promise<{ id: string }> }
-// ) {
-//   const { id } = await params;
-//   try {
-//     const client = await prisma.client.findUnique({
-//       where: { id: Number(id) },
-//     });
-//     if (!client) {
-//       return NextResponse.json({ error: "Client non trouvé" }, { status: 404 });
-//     }
-//     return NextResponse.json({ client });
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
-//   }
-// }
-
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
