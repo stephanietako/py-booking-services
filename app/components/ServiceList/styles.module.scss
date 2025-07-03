@@ -159,7 +159,6 @@
         content: "";
         display: block;
         width: 0.8rem;
-
         background-size: contain;
         background-repeat: no-repeat;
       }
@@ -175,7 +174,7 @@
 .meal_option_description {
   font-size: 0.8em;
   color: #ccc;
-  margin-left: 2.5rem; /* Ajuster la marge pour l'alignement */
+  margin-left: 2.5rem;
   margin-top: 0.2rem;
   p {
     color: whitesmoke;
@@ -190,7 +189,7 @@
 
 .cgu_notice {
   font-size: 0.97em;
-  color: #003080;
+  color: whitesmoke;
   margin: 1.2em 0 0.5em 0;
   text-align: left;
   line-height: 1.5;

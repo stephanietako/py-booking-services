@@ -45,7 +45,7 @@ export default function BookingDetailsDisplay({
       : totalOptionsPayableOnBoard;
   const finalTotalAmount =
     bookingDetails.boatAmount + totalPayableOnBoardWithCaptain;
-
+  ////////
   return (
     <div className={styles.bookingDetailsContainer}>
       <h1 className={styles.title}>Réservation Vérifiée !</h1>

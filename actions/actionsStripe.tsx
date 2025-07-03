@@ -83,10 +83,7 @@ export async function createStripeCheckoutSession(
       data: { stripeSessionId: session.id },
     });
 
-    console.log(`✅ Session Stripe créée avec métadonnées:`, {
-      bookingId: bookingId.toString(),
-      sessionId: session.id,
-    });
+    console.log("Stripe Checkout Session créée avec succès");
 
     return session.url;
   } catch (error) {

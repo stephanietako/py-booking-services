@@ -151,6 +151,10 @@ export interface BookingWithDetails extends Omit<Booking, "bookingOptions"> {
   clientEmail?: string;
   clientPhoneNumber?: string;
   totalPayableOnBoardCalculated?: number;
+  captainPrice?: number;
+  withCaptain: boolean;
+  captain?: User | null;
+  totalPayableOnBoard?: number;
 }
 
 export interface Day {

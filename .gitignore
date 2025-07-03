@@ -38,14 +38,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Ignore les dossiers de migrations
-prisma/migrations/
-
-# Ignore les fichiers de sortie de Prisma
-node_modules/
 # Prisma
-prisma/migrations/
 prisma/.generated/
 prisma/.cache/
-prisma/schema.prisma
-prisma/seed.ts

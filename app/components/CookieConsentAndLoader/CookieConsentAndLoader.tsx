@@ -13,6 +13,7 @@ export default function CookieConsentAndLoader() {
   const [consent, setConsent] = useState<ConsentStatus>("unset");
   const [isLoading, setIsLoading] = useState(true);
 
+  // Récupère le consentement stocké en localStorage ou dans les cookies
   const getStoredConsent = (): ConsentStatus => {
     try {
       const stored = localStorage.getItem(
@@ -33,12 +34,14 @@ export default function CookieConsentAndLoader() {
     return "unset";
   };
 
+  // Initialisation : lire le consentement
   useEffect(() => {
     const storedConsent = getStoredConsent();
     setConsent(storedConsent);
     setIsLoading(false);
   }, []);
 
+  // Charge les services tiers ou les nettoie selon le consentement
   useEffect(() => {
     if (consent === "accepted") {
       loadThirdPartyServices();
@@ -48,10 +51,18 @@ export default function CookieConsentAndLoader() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [consent]);
 
+  // Charge Stripe et Google Analytics
   const loadThirdPartyServices = async () => {
     try {
       const { loadStripe } = await import("@stripe/stripe-js");
-      await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
+      const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+
+      if (!stripeKey) {
+        console.error("Clé Stripe manquante !");
+        return;
+      }
+
+      await loadStripe(stripeKey);
 
       await waitForGtag();
       window.gtag("consent", "update", { analytics_storage: "granted" });
@@ -75,6 +86,7 @@ export default function CookieConsentAndLoader() {
       check();
     });
 
+  // Supprime certains cookies tiers en cas de refus
   const cleanupThirdPartyCookies = () => {
     const cookiesToDelete = ["_stripe_sid", "_stripe_mid", "_ga", "_gid"];
     cookiesToDelete.forEach((cookieName) => {
@@ -83,24 +95,31 @@ export default function CookieConsentAndLoader() {
     });
   };
 
+  // Gère l'acceptation ou le refus du consentement
   const handleConsent = (value: "accepted" | "rejected") => {
     try {
       setConsent(value);
       localStorage.setItem(LOCAL_STORAGE_KEY, value);
+
       const expirationDate = new Date();
       expirationDate.setFullYear(expirationDate.getFullYear() + 1);
+
       const secureAttr =
         window.location.protocol === "https:" ? " Secure;" : "";
-      document.cookie = `${COOKIE_NAME}=${value}; expires=${expirationDate.toUTCString()}; path=/; SameSite=Lax;${secureAttr}`;
+
+      document.cookie = `${COOKIE_NAME}=${value}; expires=${expirationDate.toUTCString()}; max-age=31536000; path=/; SameSite=Lax;${secureAttr}`;
 
       window.dispatchEvent(
-        new CustomEvent("cookieConsentChanged", { detail: { consent: value } })
+        new CustomEvent("cookieConsentChanged", {
+          detail: { consent: value },
+        })
       );
     } catch (error) {
       console.error("Erreur lors de la sauvegarde du consentement:", error);
     }
   };
 
+  // Ne rien afficher pendant le chargement ou si déjà consenti/refusé
   if (isLoading || consent !== "unset") return null;
 
   return (
@@ -117,9 +136,9 @@ export default function CookieConsentAndLoader() {
         <p id="cookie-description" className={styles.message}>
           Ce site utilise des cookies pour améliorer votre expérience et
           analyser notre trafic. Les cookies techniques sont nécessaires au
-          fonctionnement du site.
+          fonctionnement du site.{" "}
           <a
-            href="/politique-cookies"
+            href="/cookies"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.link}
