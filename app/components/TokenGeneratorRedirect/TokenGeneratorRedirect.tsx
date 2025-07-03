@@ -17,7 +17,7 @@ export default function TokenGeneratorRedirect({
     const generateTokenAndRedirect = async () => {
       try {
         const baseUrl =
-          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+          process.env.NEXT_PUBLIC_BASE_URL || "https://www.yachting-day.com";
 
         // 📞 Appel à ton API pour générer le token
         const response = await fetch(

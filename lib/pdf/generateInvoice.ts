@@ -11,8 +11,9 @@ export async function generateInvoice(
 
   let y: number;
 
-  // Chargement et dessin du logo
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  // Chargement du logo
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://www.yachting-day.com";
   const logoUrl = `${baseUrl}/assets/logo/logo-new.png`;
 
   try {

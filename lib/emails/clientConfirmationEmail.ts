@@ -100,7 +100,7 @@ export function buildClientConfirmationEmail(
   const html = `
   <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
     <div style="text-align: center; margin-bottom: 30px;">
-      <img src="http://localhost:3000/assets/logo/logo-new.png" alt="Yachting Day Logo" width="180" style="max-width: 100%; height: auto;">
+      <img src="https://www.yachting-day.com/assets/logo/logo-new.png" alt="Yachting Day Logo" width="180" style="max-width: 100%; height: auto;">
     </div>
     <h2 style="color: #005ea2; text-align: center; margin-bottom: 25px;">Bonjour ${fullName},</h2>
     <p style="font-size: 16px;">
