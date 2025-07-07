@@ -339,6 +339,336 @@ export async function createBooking(
     throw new Error("Erreur lors de la création de la réservation.");
   }
 }
+// Fonction pour créer une réservation (celle que vous avez demandée avec les logs)
+// export async function createBooking(
+//   userId: string | null,
+//   serviceId: string,
+//   selectedDate: string,
+//   startTime: string,
+//   endTime: string,
+//   options: { optionId: string; quantity: number }[],
+//   withCaptain: boolean = false,
+//   mealOption: boolean = false,
+//   fullName?: string,
+//   email?: string,
+//   phoneNumber?: string,
+//   comment?: string
+// ): Promise<{ booking: Booking; token?: string }> {
+//   try {
+//     const start = new Date(startTime);
+//     const end = new Date(endTime);
+//     const reservedAt = new Date(selectedDate);
+
+//     console.log("DEBUG: createBooking appelée avec serviceId:", serviceId);
+//     console.log(
+//       "DEBUG: reservedAt (date de la réservation):",
+//       reservedAt.toISOString()
+//     );
+
+//     if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
+//       throw new Error("Heures de début/fin invalides.");
+//     }
+
+//     const existingBookings = await prisma.booking.findMany({
+//       where: {
+//         serviceId,
+//         reservedAt,
+//         NOT: {
+//           OR: [{ endTime: { lte: start } }, { startTime: { gte: end } }],
+//         },
+//       },
+//     });
+
+//     if (existingBookings.length > 0) {
+//       throw new Error("Le créneau horaire est déjà réservé.");
+//     }
+
+//     let clientData = null;
+//     let actualUserId: string | undefined = undefined;
+//     let customerEmail: string;
+//     let customerName: string;
+
+//     if (userId) {
+//       const user = await prisma.user.findUnique({
+//         where: { clerkUserId: userId },
+//         select: {
+//           id: true,
+//           email: true,
+//           name: true,
+//           stripeCustomerId: true,
+//         },
+//       });
+
+//       if (!user) throw new Error("Utilisateur introuvable.");
+
+//       if (!user.email) {
+//         throw new Error("Email utilisateur manquant dans la base de données.");
+//       }
+
+//       actualUserId = user.id;
+//       customerEmail = user.email;
+//       customerName = user.name;
+
+//       console.log(
+//         "👤 Utilisateur connecté - Email:",
+//         customerEmail,
+//         "Nom:",
+//         customerName
+//       );
+//     } else if (fullName && email && phoneNumber) {
+//       if (!email || !fullName) {
+//         throw new Error("Email et nom complet obligatoires pour les invités.");
+//       }
+
+//       const existingClient = await prisma.client.findUnique({
+//         where: { email },
+//       });
+
+//       if (existingClient) {
+//         clientData = existingClient;
+//         if (
+//           existingClient.fullName !== fullName ||
+//           existingClient.phoneNumber !== phoneNumber
+//         ) {
+//           clientData = await prisma.client.update({
+//             where: { id: existingClient.id },
+//             data: { fullName, phoneNumber },
+//           });
+//         }
+//       } else {
+//         clientData = await prisma.client.create({
+//           data: { fullName, email, phoneNumber },
+//         });
+//       }
+
+//       customerEmail = email;
+//       customerName = fullName;
+
+//       console.log(
+//         "👥 Client invité - Email:",
+//         customerEmail,
+//         "Nom:",
+//         customerName
+//       );
+//     } else {
+//       throw new Error(
+//         "Informations d'utilisateur/client manquantes pour la réservation."
+//       );
+//     }
+
+//     if (!customerEmail || !customerName) {
+//       throw new Error("Email ou nom client manquant après traitement.");
+//     }
+
+//     const service = await prisma.service.findUnique({
+//       where: { id: serviceId },
+//       include: { pricingRules: true },
+//     });
+//     if (!service) {
+//       console.error("DEBUG: Service introuvable pour ID:", serviceId);
+//       throw new Error("Service introuvable.");
+//     }
+//     console.log("DEBUG: Service trouvé:", service.name, "ID:", service.id);
+//     console.log("DEBUG: defaultPrice du service:", service.defaultPrice);
+//     console.log(
+//       "DEBUG: Nombre de pricingRules pour ce service:",
+//       service.pricingRules.length
+//     );
+//     console.log(
+//       "DEBUG: PricingRules du service:",
+//       service.pricingRules.map((r) => ({
+//         start: r.startDate.toISOString(),
+//         end: r.endDate.toISOString(),
+//         price: r.price,
+//       }))
+//     );
+
+//     const rule = service.pricingRules.find((r) => {
+//       const isMatch = reservedAt >= r.startDate && reservedAt <= r.endDate;
+//       console.log(
+//         `DEBUG: Vérification règle: ${r.startDate.toISOString()} <= ${reservedAt.toISOString()} <= ${r.endDate.toISOString()} -> ${isMatch}, Prix: ${r.price}`
+//       );
+//       return isMatch;
+//     });
+
+//     const boatAmount = rule?.price ?? service.defaultPrice;
+
+//     console.log("DEBUG: Règle trouvée:", rule ? rule.price : "Aucune");
+//     console.log(
+//       "DEBUG: Prix final du bateau (boatAmount) calculé:",
+//       boatAmount
+//     );
+
+//     const optionDetails = await prisma.option.findMany({
+//       where: { id: { in: options.map((opt) => opt.optionId) } },
+//     });
+
+//     const bookingOptionsData = options.map((opt) => {
+//       const optionMeta = optionDetails.find((o) => o.id === opt.optionId);
+//       if (!optionMeta) throw new Error("Option invalide.");
+
+//       const subtotal = optionMeta.unitPrice * opt.quantity;
+
+//       return {
+//         quantity: opt.quantity,
+//         unitPrice: optionMeta.unitPrice,
+//         amount: subtotal,
+//         label: optionMeta.label,
+//         description: optionMeta.description ?? "",
+//         option: { connect: { id: opt.optionId } },
+//       };
+//     });
+
+//     const selectedOptionsForCalc = options.map((opt) => {
+//       const optionMeta = optionDetails.find((o) => o.id === opt.optionId);
+//       if (!optionMeta) throw new Error("Option invalide.");
+
+//       return {
+//         unitPrice: optionMeta.unitPrice,
+//         quantity: opt.quantity,
+//         label: optionMeta.label,
+//         payableAtBoard: optionMeta.payableAtBoard ?? false,
+//       };
+//     });
+
+//     const { totalAmount, payableOnBoard } = calculateBookingTotal({
+//       basePrice: boatAmount,
+//       withCaptain,
+//       captainPrice: service.captainPrice ?? 350,
+//       selectedOptions: selectedOptionsForCalc,
+//     });
+
+//     const booking = await prisma.booking.create({
+//       data: {
+//         clientId: clientData?.id,
+//         userId: actualUserId,
+//         description: comment || "",
+//         serviceId,
+//         reservedAt,
+//         startTime: start,
+//         endTime: end,
+//         expiresAt: new Date(end.getTime() + 24 * 60 * 60 * 1000),
+//         status: "PENDING",
+//         paymentStatus: "PENDING",
+//         approvedByAdmin: false,
+//         withCaptain,
+//         boatAmount,
+//         totalAmount,
+//         payableOnBoard,
+//         stripePaymentLink: "",
+//         email: customerEmail,
+//         mealOption,
+//         updatedAt: new Date(),
+//         bookingOptions: {
+//           create: bookingOptionsData,
+//         },
+//       },
+//       include: {
+//         bookingOptions: { include: { option: true } },
+//         client: true,
+//         user: true,
+//         service: true,
+//       },
+//     });
+
+//     console.log(
+//       "DEBUG: Réservation créée avec boatAmount:",
+//       booking.boatAmount
+//     );
+
+//     let stripeCustomerId: string;
+
+//     if (actualUserId) {
+//       const user = await prisma.user.findUnique({
+//         where: { id: actualUserId },
+//         select: { stripeCustomerId: true },
+//       });
+
+//       if (user?.stripeCustomerId) {
+//         stripeCustomerId = user.stripeCustomerId;
+//       } else {
+//         const stripeCustomer = await stripe.customers.create({
+//           email: customerEmail,
+//           name: customerName,
+//           metadata: {
+//             userId: actualUserId,
+//             source: "booking_app",
+//           },
+//         });
+//         stripeCustomerId = stripeCustomer.id;
+
+//         await prisma.user.update({
+//           where: { id: actualUserId },
+//           data: { stripeCustomerId },
+//         });
+
+//         console.log(
+//           "✅ Customer Stripe créé pour utilisateur:",
+//           stripeCustomerId
+//         );
+//       }
+//     } else if (clientData) {
+//       if (clientData.stripeCustomerId) {
+//         stripeCustomerId = clientData.stripeCustomerId;
+//       } else {
+//         const stripeCustomer = await stripe.customers.create({
+//           email: customerEmail,
+//           name: customerName,
+//           metadata: {
+//             clientId: clientData.id.toString(),
+//             source: "booking_app",
+//           },
+//         });
+//         stripeCustomerId = stripeCustomer.id;
+
+//         await prisma.client.update({
+//           where: { id: clientData.id },
+//           data: { stripeCustomerId },
+//         });
+//       }
+//     } else {
+//       throw new Error("Impossible de déterminer le client pour Stripe");
+//     }
+
+//     const checkoutUrl = await createStripeCheckoutSession(
+//       booking.id,
+//       stripeCustomerId
+//     );
+
+//     const updatedBooking = await prisma.booking.update({
+//       where: { id: booking.id },
+//       data: {
+//         stripePaymentLink: checkoutUrl,
+//       },
+//       include: {
+//         bookingOptions: { include: { option: true } },
+//         client: true,
+//         user: true,
+//         service: true,
+//       },
+//     });
+
+//     let token: string | undefined;
+//     if (updatedBooking?.id) {
+//       token = await generateBookingToken(
+//         updatedBooking.id,
+//         updatedBooking.clientId ?? undefined,
+//         updatedBooking.userId ?? undefined
+//       );
+//     }
+
+//     console.log(
+//       "🎉 Booking finalisé - Email destinataire:",
+//       updatedBooking.email
+//     );
+
+//     return { booking: updatedBooking, token };
+//   } catch (err) {
+//     console.error("❌ Erreur createBooking:", err);
+//     throw new Error("Erreur lors de la création de la réservation.");
+//   }
+// }
+
 // Mettre à jour une réservation
 export async function updateBooking(
   bookingId: string,
