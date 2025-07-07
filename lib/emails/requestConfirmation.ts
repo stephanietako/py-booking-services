@@ -44,7 +44,7 @@ export function requestConfirmationEmail(
   params: RequestConfirmationEmailParams
 ) {
   const subject = `Votre demande de réservation #${params.bookingId} a bien été reçue !`;
-  const logoUrl = `${process.env.NEXT_PUBLIC_BASE_URL || ""}/assets/logo/logo-new.png`;
+  const domainUrl = process.env.DOMAIN_URL || "https://www.yachting-day.com/";
   const currency = "EUR";
 
   const formatter = new Intl.NumberFormat("fr-FR", {
@@ -83,7 +83,7 @@ export function requestConfirmationEmail(
 
   const html = `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-      <img src="${logoUrl}" alt="Yachting Day" width="180" style="display: block; margin: 0 auto 30px;" />
+      <img src="${domainUrl}/assets/logo/logo-new.png" alt="Yachting Day" width="150" style="display: block; margin-bottom: 20px;" />
       <h2 style="color: #0056b3; text-align: center;">Bonjour ${params.clientName},</h2>
       <p>Nous avons bien reçu votre demande de réservation <strong>#${params.bookingId}</strong> pour le service <strong>${params.serviceName}</strong>.</p>
       <p>Notre équipe est en train de la traiter. Vous recevrez prochainement un email de confirmation avec un lien de paiement si votre demande est validée.</p>

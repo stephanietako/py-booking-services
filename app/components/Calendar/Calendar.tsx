@@ -18,7 +18,7 @@ import { now } from "@/app/constants/config";
 import { getBookedTimes } from "@/actions/bookings";
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.scss";
-import Link from "next/link";
+//import Link from "next/link";
 
 const DynamicCalendar = React.memo(
   dynamic(() => import("react-calendar"), { ssr: false })
@@ -636,7 +636,7 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
             </button>
           </div>
           {/* Bouton Maintenance pour les test reservation */}
-          <Link
+          {/* <Link
             href={`/reservation/test-service?start=${startTime?.toISOString()}&end=${endTime?.toISOString()}`}
             className="button"
             style={{
@@ -651,7 +651,7 @@ const Calendar: FC<CalendarProps> = ({ days, closedDays }) => {
             }}
           >
             MAINTENANCE: TEST
-          </Link>
+          </Link> */}
         </div>
       )}
     </div>
