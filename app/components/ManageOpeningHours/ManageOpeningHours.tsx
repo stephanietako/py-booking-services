@@ -1,13 +1,15 @@
+// // app/components/ManageOpeningHours/ManageOpeningHours.tsx
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { FC, useState, useEffect, useMemo } from "react";
 import { getOpeningHours, updateOpeningHours } from "@/actions/openingActions";
-import { DayInput } from "@/types";
+import { DayInput } from "@/types"; // Assurez-vous que DayInput correspond à votre modèle Day de Prisma
 import {
   Service_opening_time,
   Service_closing_time,
   Interval,
 } from "@/app/constants/config";
+import { toast } from "react-hot-toast"; // Import de react-hot-toast
 // Styles
 import styles from "./styles.module.scss";
 
@@ -25,7 +27,7 @@ const generateTimeSlots = () => {
   return slots;
 };
 
-const ManageOpeningHours: React.FC = () => {
+const ManageOpeningHours: FC = () => {
   const [openingHrs, setOpeningHrs] = useState<DayInput[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,11 +43,13 @@ const ManageOpeningHours: React.FC = () => {
 
   useEffect(() => {
     async function fetchData() {
+      setIsLoading(true);
+      setError(null); // Réinitialiser l'erreur à chaque chargement
       try {
-        setIsLoading(true);
         const data = await getOpeningHours();
         setOpeningHrs(data);
-      } catch {
+      } catch (err) {
+        console.error("Erreur au chargement des horaires:", err);
         setError("Erreur lors du chargement des horaires.");
       } finally {
         setIsLoading(false);
@@ -69,19 +73,31 @@ const ManageOpeningHours: React.FC = () => {
   const saveOpeningHrs = async () => {
     setIsSaving(true);
     setError(null);
+    const toastId = toast.loading("Sauvegarde des horaires...", {
+      ariaProps: { role: "status", "aria-live": "polite" },
+    });
     try {
       await updateOpeningHours(openingHrs);
-      alert("Horaires mis à jour avec succès !");
-    } catch {
+      toast.success("Horaires mis à jour avec succès !", {
+        id: toastId,
+        ariaProps: { role: "status", "aria-live": "polite" },
+      });
+    } catch (err) {
+      console.error("Erreur lors de la sauvegarde des horaires:", err);
       setError("Erreur lors de la sauvegarde des horaires.");
+      toast.error("Erreur lors de la sauvegarde des horaires.", {
+        id: toastId,
+        ariaProps: { role: "alert", "aria-live": "assertive" },
+      });
     } finally {
       setIsSaving(false);
+      // toast.dismiss(toastId); // Le toast success/error dismiss lui-même le loading toast
     }
   };
 
   if (isLoading) {
     return (
-      <div>
+      <div className={styles.loading_container}>
         <p>Chargement des horaires...</p>
       </div>
     );
@@ -105,6 +121,7 @@ const ManageOpeningHours: React.FC = () => {
                 handleChange(day.dayOfWeek, "openTime", e.target.value)
               }
               disabled={isSaving}
+              aria-label={`Heure d'ouverture pour ${day.name}`}
             >
               {timeSlots.map((timeSlot) => (
                 <option key={timeSlot} value={timeSlot}>
@@ -120,6 +137,7 @@ const ManageOpeningHours: React.FC = () => {
                 handleChange(day.dayOfWeek, "closeTime", e.target.value)
               }
               disabled={isSaving}
+              aria-label={`Heure de fermeture pour ${day.name}`}
             >
               {timeSlots.map((timeSlot) => (
                 <option key={timeSlot} value={timeSlot}>
@@ -131,8 +149,12 @@ const ManageOpeningHours: React.FC = () => {
         ))}
 
         {/* Bouton pour sauvegarder les horaires */}
-        <button onClick={saveOpeningHrs} disabled={isSaving}>
-          Sauvegarder
+        <button
+          onClick={saveOpeningHrs}
+          disabled={isSaving}
+          className={styles.save_button}
+        >
+          {isSaving ? "Sauvegarde en cours..." : "Sauvegarder"}
         </button>
       </div>
     </div>
