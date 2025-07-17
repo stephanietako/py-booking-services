@@ -59,7 +59,7 @@ export default function CreateServicePage() {
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
-        className="w-full p-2 border"
+        className="create_service_input"
       />
       <textarea
         placeholder="Description"
@@ -74,7 +74,7 @@ export default function CreateServicePage() {
         value={price}
         onChange={(e) => setPrice(Number(e.target.value))}
         required
-        className="w-full p-2 border"
+        className="create_service_input"
       />
       <input
         type="number"
@@ -82,7 +82,7 @@ export default function CreateServicePage() {
         value={defaultPrice}
         onChange={(e) => setDefaultPrice(Number(e.target.value))}
         required
-        className="w-full p-2 border"
+        className="create_service_input"
       />
       <input
         type="file"
@@ -93,7 +93,7 @@ export default function CreateServicePage() {
       <button
         type="submit"
         disabled={uploading}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
+        className="create_service_button"
       >
         {uploading ? "Chargement..." : "Créer le service"}
       </button>
