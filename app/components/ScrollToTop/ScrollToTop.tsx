@@ -32,7 +32,7 @@ const ScrollToTop: React.FC = () => {
       className={`${styles.scrollToTopButton} ${isVisible ? styles.visible : ""}`}
       onClick={scrollToTop}
     >
-      <Image src={scrollIcon} alt="Scroll to top" width={20} height={25} />
+      <Image src={scrollIcon} alt="Scroll to top" width={35} height={35} />
     </button>
   );
 };

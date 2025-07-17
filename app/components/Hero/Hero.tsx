@@ -1,45 +1,8 @@
-// import React from "react";
-// import Image from "next/image";
-// import backgroundImg from "@/public/assets/images/hero.webp"; // Importation de l'image de fond
-// // Styles
-// import styles from "./styles.module.scss";
-
-// export const dynamic = "force-dynamic";
-
-// const Hero: React.FC = () => {
-//   return (
-//     <div className={styles.heroWrapper}>
-//       <Image
-//         src={backgroundImg}
-//         alt="Yachting Day location de bateau Cap Camarat 12.5 WA – modèle 2021 port de cavalaire-sur-mer et maintenance nautique"
-//         className={styles.heroImage}
-//         priority
-//         fill
-//         placeholder="blur"
-//       />
-//       <div className={styles.heroContent}>
-//         <div className={styles.hero_container}>
-//           <div className={styles.hero_bloc}>
-//             <div className={styles.hero_text}>
-//               <h1>Location De Bateau Cavalaire-Sur-Mer</h1>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Hero;
-// components/Hero/Hero.tsx
-
-// components/Hero/Hero.tsx
-// components/Hero/Hero.tsx
-"use client";
-
+// app/components/Hero/Hero.tsx
 import React from "react";
 import Image from "next/image";
 import defaultHeroImg from "@/public/assets/images/hero.webp";
+// Styles
 import styles from "./styles.module.scss";
 
 interface HeroProps {
@@ -51,10 +14,7 @@ const Hero: React.FC<HeroProps> = ({ mediaUrl, mediaType }) => {
   const finalMediaUrl = mediaUrl || defaultHeroImg.src;
   const finalMediaType = mediaType || "image";
 
-  // Détermine la source de l'image pour le composant Image
-  // Si c'est l'image par défaut (importée statiquement), utilise l'objet complet
-  // Sinon, si c'est une URL externe (de Supabase), utilise juste l'URL et désactive le blur pour cette image
-  const imageSrc = mediaUrl ? mediaUrl : defaultHeroImg; // Ceci permet de passer l'objet StaticImageData ou la string URL
+  const imageSrc = mediaUrl ? mediaUrl : defaultHeroImg;
 
   return (
     <div className={styles.heroWrapper}>

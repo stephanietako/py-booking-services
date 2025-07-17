@@ -1,4 +1,4 @@
-// UserProfileUpdateForm.tsx
+// app/components/UserProfileUpdateForm/UserProfileUpdateForm.tsx
 "use client";
 
 import { FormState } from "@/types";

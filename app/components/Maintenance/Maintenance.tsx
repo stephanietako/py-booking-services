@@ -1,3 +1,4 @@
+// app/components/Maintenance/Maintenance.tsx
 import React from "react";
 import Image from "next/image";
 import boat from "@/public/assets/images/boat-cote1.jpg";

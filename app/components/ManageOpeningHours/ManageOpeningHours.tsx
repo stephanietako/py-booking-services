@@ -1,15 +1,15 @@
-// // app/components/ManageOpeningHours/ManageOpeningHours.tsx
+// app/components/ManageOpeningHours/ManageOpeningHours.tsx
 "use client";
 
 import { FC, useState, useEffect, useMemo } from "react";
 import { getOpeningHours, updateOpeningHours } from "@/actions/openingActions";
-import { DayInput } from "@/types"; // Assurez-vous que DayInput correspond à votre modèle Day de Prisma
+import { DayInput } from "@/types";
 import {
   Service_opening_time,
   Service_closing_time,
   Interval,
 } from "@/app/constants/config";
-import { toast } from "react-hot-toast"; // Import de react-hot-toast
+import { toast } from "react-hot-toast";
 // Styles
 import styles from "./styles.module.scss";
 

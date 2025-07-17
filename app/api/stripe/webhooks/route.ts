@@ -16,12 +16,6 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   console.log("🔄 Webhook Stripe reçu");
-  console.log("🔍 STRIPE_SECRET_KEY défini:", !!process.env.STRIPE_SECRET_KEY);
-  console.log(
-    "🔍 STRIPE_WEBHOOK_SECRET défini:",
-    !!process.env.STRIPE_WEBHOOK_SECRET
-  );
-  console.log("🔍 URL appelée:", request.url);
 
   try {
     const body = await request.text();

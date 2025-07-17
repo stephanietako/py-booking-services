@@ -1,4 +1,4 @@
-// ServiceList.tsx
+// app/components/ServiceList/ServiceList.tsx
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
@@ -10,6 +10,7 @@ import { useUser } from "@clerk/nextjs";
 import { format, formatISO, parseISO } from "date-fns";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
+// Styles
 import styles from "./styles.module.scss";
 import FormattedDescription from "../FormattedDescription/FormattedDescription";
 import "react-phone-number-input/style.css";

@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
       const bookingId = decoded.bookingId;
 
-      // ✅  Ajout de l'include pour transactions
+      //  Ajout de l'include pour transactions
       const booking = await prisma.booking.findUnique({
         where: { id: bookingId },
         include: {
@@ -65,13 +65,13 @@ export async function POST(req: Request) {
         );
       }
 
-      // ✅ Sélection du numéro de téléphone
+      // Sélection du numéro de téléphone
       const resolvedPhoneNumber =
         booking.user?.phoneNumber?.trim() ||
         booking.client?.phoneNumber?.trim() ||
         "";
 
-      // ✅ Construction de la réponse qui correspond exactement au type BookingWithDetails
+      // Construction de la réponse qui correspond exactement au type BookingWithDetails
       const bookingWithDetails: BookingWithDetails = {
         id: booking.id,
         status: booking.status,

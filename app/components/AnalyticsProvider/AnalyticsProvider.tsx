@@ -1,6 +1,4 @@
 // components/AnalyticsProvider.tsx
-"use client";
-
 import { useAnalytics } from "@/app/hooks/useAnalytics";
 import { JSX, ReactNode } from "react";
 

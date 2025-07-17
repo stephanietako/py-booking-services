@@ -1,4 +1,5 @@
 // app/about/page.tsx
+"use client";
 import About from "@/app/components/About/About";
 import React from "react";
 import Wrapper from "../components/Wrapper/Wrapper";

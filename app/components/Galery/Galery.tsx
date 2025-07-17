@@ -1,3 +1,4 @@
+// app/components/Galery/Galery.tsx
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";

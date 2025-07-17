@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
-// Importe tes styles SCSS, le chemin est ok
+// Styles
 import styles from "./styles.module.scss";
 
 export default function HeroMediaUploadForm() {

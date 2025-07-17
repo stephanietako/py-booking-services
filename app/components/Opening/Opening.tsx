@@ -1,3 +1,4 @@
+// app/components/Opening/Opening.tsx
 "use client";
 
 import { FC, useState } from "react";

@@ -1,6 +1,7 @@
+// app/components/Header/Header.tsx
 "use client";
 
-import React, { useState } from "react"; // Ajout de useEffect
+import React, { useState } from "react";
 import Calendar from "../Calendar/Calendar";
 import { DayInput } from "@/types";
 import Image from "next/image";

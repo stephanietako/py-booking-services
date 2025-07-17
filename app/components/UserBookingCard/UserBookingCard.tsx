@@ -1,4 +1,4 @@
-// UserBookingCard.tsx
+// app/components/UserBookingCard/UserBookingCard.tsx
 import React from "react";
 import { Booking } from "@/types";
 import { format } from "date-fns";

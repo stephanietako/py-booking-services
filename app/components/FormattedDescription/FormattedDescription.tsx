@@ -1,3 +1,7 @@
+// app/components/FormattedDescription/FormattedDescription.tsx
+"use client";
+import React from "react";
+// Styles
 import styles from "./styles.module.scss";
 
 type Props = {

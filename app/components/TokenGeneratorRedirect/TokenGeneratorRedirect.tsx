@@ -1,8 +1,8 @@
 // app/components/TokenGeneratorRedirect/TokenGeneratorRedirect.tsx
-"use client"; // 👈 Très important : indique que c'est un Client Component
+"use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation"; // Pour la redirection côté client
+import { useRouter } from "next/navigation";
 
 interface TokenGeneratorRedirectProps {
   sessionId: string;
@@ -11,7 +11,7 @@ interface TokenGeneratorRedirectProps {
 export default function TokenGeneratorRedirect({
   sessionId,
 }: TokenGeneratorRedirectProps) {
-  const router = useRouter(); // Initialise le hook useRouter
+  const router = useRouter();
 
   useEffect(() => {
     const generateTokenAndRedirect = async () => {
@@ -19,7 +19,7 @@ export default function TokenGeneratorRedirect({
         const baseUrl =
           process.env.NEXT_PUBLIC_BASE_URL || "https://www.yachting-day.com";
 
-        // 📞 Appel à ton API pour générer le token
+        //  Appel API pour générer le token
         const response = await fetch(
           `${baseUrl}/api/bookings/generate-success-token`,
           {
@@ -34,7 +34,7 @@ export default function TokenGeneratorRedirect({
 
         if (response.ok) {
           const { token: newToken } = await response.json();
-          // ✅ Redirection côté client avec le token généré
+          //  Redirection côté client avec le token généré
           router.replace(`/payment/success?token=${newToken}`);
         } else {
           console.error(
@@ -59,7 +59,6 @@ export default function TokenGeneratorRedirect({
     }
   }, [sessionId, router]); // Déclenche la logique quand sessionId ou router changent
 
-  // Message affiché pendant que le token est généré et la redirection se prépare
   return (
     <div
       style={{

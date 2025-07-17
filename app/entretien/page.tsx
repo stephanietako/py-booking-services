@@ -1,3 +1,5 @@
+// app/entretien/page.tsx
+"use client";
 import React from "react";
 import Maintenance from "../components/Maintenance/Maintenance";
 import Wrapper from "../components/Wrapper/Wrapper";

@@ -1,3 +1,4 @@
+// app/components/VerifyBookingContainer/VerifyBookingContainer.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { BookingWithDetails } from "@/types";

@@ -1,3 +1,4 @@
+// app/admin/dashboard/edit-client/[id]/page.tsx
 import EditClientForm from "@/app/components/EditClientForm/EditClientForm";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";

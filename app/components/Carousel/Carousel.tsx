@@ -1,3 +1,4 @@
+// app/components/Carousel/Carousel.tsx
 "use client";
 
 import type React from "react";

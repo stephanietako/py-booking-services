@@ -1,3 +1,5 @@
+// app/components/Wrapper/Wrapper.tsx
+import React from "react";
 import Navbar from "../Navbar/Navbar";
 
 type WrapperProps = {

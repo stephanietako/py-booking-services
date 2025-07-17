@@ -1,10 +1,11 @@
+// app/components/PaymentSuccessDetails/PaymentSuccessDetails.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+// Styles
 import styles from "./styles.module.scss";
-
 import type { BookingWithDetails } from "@/types";
 
 interface PaymentSuccessDetailsProps {
