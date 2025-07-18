@@ -267,306 +267,316 @@ const ServiceList = () => {
   return (
     <Wrapper>
       <section>
-        <div className={styles.service_list}>
-          <li className={styles.service_item}>
-            <div className={styles.service_item__content}>
-              {/* COLONNE GAUCHE */}
-              <div className={styles.left_column}>
-                <div className={styles.service_item__details}>
-                  <div className={styles.service_item__infos}>
-                    <h1 className={styles.service_item__title}>
-                      {service.name}
-                    </h1>
-                    <br />
-                    <FormattedDescription text={service.description || ""} />
-                  </div>
-                  <div className={styles.service_item__stats}>
-                    <span>
-                      <p>Montant location bateau:</p>
-                      {baseServicePrice !== null
-                        ? new Intl.NumberFormat("fr-FR", {
-                            style: "currency",
-                            currency: service.currency || "EUR",
-                          }).format(baseServicePrice)
-                        : "Chargement du prix..."}
-                    </span>
-                  </div>
-                  {startTime && endTime && (
-                    <div className={styles.selected_times}>
-                      <p>
-                        🗓 Réservation prévue le{" "}
-                        <strong>
-                          {format(parseISO(startTime), "dd/MM/yyyy")} de{" "}
-                          {format(parseISO(startTime), "HH:mm")} à{" "}
-                          {format(parseISO(endTime), "HH:mm")}
-                        </strong>
+        <div className={styles.service_list__container}>
+          <div className={styles.service_list}>
+            <li className={styles.service_item}>
+              <div className={styles.service_item__content}>
+                {/* COLONNE GAUCHE */}
+                <div className={styles.left_column}>
+                  <div className={styles.service_item__details}>
+                    <div className={styles.service_item__infos}>
+                      <h1 className={styles.service_item__title}>
+                        {service.name}
+                      </h1>
+                      <br />
+                      <FormattedDescription text={service.description || ""} />
+                    </div>
+                    <div className={styles.service_item__stats}>
+                      <span>
+                        <p>Montant location bateau:</p>
+                        {baseServicePrice !== null
+                          ? new Intl.NumberFormat("fr-FR", {
+                              style: "currency",
+                              currency: service.currency || "EUR",
+                            }).format(baseServicePrice)
+                          : "Chargement du prix..."}
+                      </span>
+                    </div>
+                    {startTime && endTime && (
+                      <div className={styles.selected_times}>
+                        <p>
+                          🗓 Réservation prévue le{" "}
+                          <strong>
+                            {format(parseISO(startTime), "dd/MM/yyyy")} de{" "}
+                            {format(parseISO(startTime), "HH:mm")} à{" "}
+                            {format(parseISO(endTime), "HH:mm")}
+                          </strong>
+                        </p>
+                      </div>
+                    )}
+                    <h2 className={styles.title}>
+                      Options supplémentaires (à régler sur place)
+                    </h2>
+                    <p
+                      className={styles.notice}
+                      style={{ color: "whitesmoke" }}
+                    >
+                      Les options sélectionnées sont à régler à bord le jour de
+                      votre réservation.
+                    </p>
+                    <div className={styles.options_list}>
+                      {availableOptions
+                        .filter(
+                          (option) =>
+                            option.label.toLowerCase() !== "capitaine à bord"
+                        )
+                        .map((option) => (
+                          <div key={option.id} className={styles.option_item}>
+                            <span>
+                              {option.label} (
+                              {new Intl.NumberFormat("fr-FR", {
+                                style: "currency",
+                                currency: service?.currency || "EUR",
+                              }).format(option.unitPrice)}
+                              / unité)
+                            </span>
+                            {option.payableAtBoard && (
+                              <div>
+                                <label htmlFor={`quantity-${option.id}`}>
+                                  Quantité:
+                                </label>
+
+                                <input
+                                  type="number"
+                                  id={`quantity-${option.id}`}
+                                  min="0"
+                                  max={
+                                    option.name === "paddle-supplementaire"
+                                      ? 1
+                                      : 10
+                                  }
+                                  defaultValue={
+                                    selectedOptions[option.id]?.quantity || 0
+                                  }
+                                  onChange={(e) =>
+                                    handleOptionQuantityChange(
+                                      option,
+                                      parseInt(e.target.value)
+                                    )
+                                  }
+                                />
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                    <div className={styles.captain_radio_group}>
+                      <label className={styles.captain_radio_label}>
+                        <input
+                          type="radio"
+                          name="captain"
+                          className={styles.captain_radio_input}
+                          checked={withCaptain === true}
+                          onChange={() => setWithCaptain(true)}
+                        />
+                        J&apos;ai mon propre capitaine
+                        <span className={styles.tooltip}>
+                          <span className={styles.tooltip_icon}>?</span>
+                          <span className={styles.tooltip_text}>
+                            Vous devrez fournir un diplôme professionnel valide
+                            avant le départ.
+                          </span>
+                        </span>
+                      </label>
+                      <label className={styles.captain_radio_label}>
+                        <input
+                          type="radio"
+                          name="captain"
+                          className={styles.captain_radio_input}
+                          checked={withCaptain === false}
+                          onChange={() => setWithCaptain(false)}
+                        />
+                        Je sollicite votre capitaine (350 € à régler à bord)
+                        <span className={styles.tooltip}>
+                          <span className={styles.tooltip_icon}>?</span>
+                          <span className={styles.tooltip_text}>
+                            Un capitaine professionnel vous sera attribué.
+                            Tarif : 350 € à régler à bord.
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                    <div className={styles.meal_option}>
+                      <label>
+                        Commander un repas traiteur:
+                        <input
+                          type="checkbox"
+                          checked={mealOption}
+                          onChange={handleMealOptionChange}
+                        />
+                      </label>
+                      <p className={styles.meal_option_description}>
+                        Cochez cette case si vous souhaitez commander un repas
+                        via notre traiteur partenaire. L&apos;administrateur
+                        vous contactera pour vous présenter le menu et les prix.
+                        Le paiement s&apos;effectuera à bord.
                       </p>
                     </div>
-                  )}
-                  <h2>Options supplémentaires (à régler sur place)</h2>
-                  <p className={styles.notice} style={{ color: "whitesmoke" }}>
-                    Les options sélectionnées sont à régler à bord le jour de
-                    votre réservation.
-                  </p>
-                  <div className={styles.options_list}>
-                    {availableOptions
-                      .filter(
-                        (option) =>
-                          option.label.toLowerCase() !== "capitaine à bord"
-                      )
-                      .map((option) => (
-                        <div key={option.id} className={styles.option_item}>
-                          <span>
-                            {option.label} (
-                            {new Intl.NumberFormat("fr-FR", {
-                              style: "currency",
-                              currency: service?.currency || "EUR",
-                            }).format(option.unitPrice)}
-                            / unité)
-                          </span>
-                          {option.payableAtBoard && (
-                            <div>
-                              <label htmlFor={`quantity-${option.id}`}>
-                                Quantité:
-                              </label>
 
-                              <input
-                                type="number"
-                                id={`quantity-${option.id}`}
-                                min="0"
-                                max={
-                                  option.name === "paddle-supplementaire"
-                                    ? 1
-                                    : 10
-                                }
-                                defaultValue={
-                                  selectedOptions[option.id]?.quantity || 0
-                                }
-                                onChange={(e) =>
-                                  handleOptionQuantityChange(
-                                    option,
-                                    parseInt(e.target.value)
-                                  )
-                                }
-                              />
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                  </div>
-                  <div className={styles.captain_radio_group}>
-                    <label className={styles.captain_radio_label}>
-                      <input
-                        type="radio"
-                        name="captain"
-                        className={styles.captain_radio_input}
-                        checked={withCaptain === true}
-                        onChange={() => setWithCaptain(true)}
-                      />
-                      J&apos;ai mon propre capitaine
-                      <span className={styles.tooltip}>
-                        <span className={styles.tooltip_icon}>?</span>
-                        <span className={styles.tooltip_text}>
-                          Vous devrez fournir un diplôme professionnel valide
-                          avant le départ.
-                        </span>
-                      </span>
-                    </label>
-                    <label className={styles.captain_radio_label}>
-                      <input
-                        type="radio"
-                        name="captain"
-                        className={styles.captain_radio_input}
-                        checked={withCaptain === false}
-                        onChange={() => setWithCaptain(false)}
-                      />
-                      Je sollicite votre capitaine (350 € à régler à bord)
-                      <span className={styles.tooltip}>
-                        <span className={styles.tooltip_icon}>?</span>
-                        <span className={styles.tooltip_text}>
-                          Un capitaine professionnel vous sera attribué. Tarif :
-                          350 € à régler à bord.
-                        </span>
-                      </span>
-                    </label>
-                  </div>
-                  <div className={styles.meal_option}>
-                    <label>
-                      Commander un repas traiteur:
-                      <input
-                        type="checkbox"
-                        checked={mealOption}
-                        onChange={handleMealOptionChange}
-                      />
-                    </label>
-                    <p className={styles.meal_option_description}>
-                      Cochez cette case si vous souhaitez commander un repas via
-                      notre traiteur partenaire. L&apos;administrateur vous
-                      contactera pour vous présenter le menu et les prix. Le
-                      paiement s&apos;effectuera à bord.
-                    </p>
-                  </div>
-
-                  <div className={styles.cgu_notice}>
-                    En réservant, vous acceptez nos{" "}
-                    <a
-                      href="/assets/pdf/cgu.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.cgu_link}
-                    >
-                      Conditions Générales d’Utilisation
-                    </a>
-                    .
-                  </div>
-                  {Object.values(selectedOptions).length > 0 || !withCaptain ? (
-                    <div className={styles.options_subtotal}>
-                      Sous-total (options{" "}
-                      {Object.values(selectedOptions).length > 0 &&
-                        "+ capitaine si sollicité"}
-                      ):{" "}
-                      {new Intl.NumberFormat("fr-FR", {
-                        style: "currency",
-                        currency: service?.currency || "EUR",
-                      }).format(displayedSubtotal)}
-                      {!withCaptain &&
-                        Object.values(selectedOptions).length === 0 &&
-                        requiresCaptain && (
-                          <span>(incluant le capitaine si sollicité)</span>
-                        )}
-                    </div>
-                  ) : (
-                    <div className={styles.options_subtotal}>
-                      Sous-total des options :{" "}
-                      {new Intl.NumberFormat("fr-FR", {
-                        style: "currency",
-                        currency: service?.currency || "EUR",
-                      }).format(currentOptionsSubtotal)}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* COLONNE DROITE */}
-              <div className={styles.bloc__right_column}>
-                <div className={styles.right_column}>
-                  <div className={styles.comment_section}>
-                    <label htmlFor="comment">
-                      Commentaire (ex : enfant à bord, personne à mobilité
-                      réduite, demande particulière) :
-                      <span
-                        style={{
-                          fontSize: "0.9em",
-                          color: "#888",
-                          marginLeft: 8,
-                        }}
+                    <div className={styles.cgu_notice}>
+                      En réservant, vous acceptez nos{" "}
+                      <a
+                        href="/assets/pdf/cgu.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.cgu_link}
                       >
-                        (500 caractères maximum)
-                      </span>
-                    </label>
-                    <textarea
-                      id="comment"
-                      value={comment}
-                      onChange={(e) => {
-                        if (e.target.value.length <= 500)
-                          setComment(e.target.value);
-                      }}
-                      maxLength={500}
-                      placeholder="Votre message pour l'administrateur..."
-                      rows={3}
-                      style={{ width: "100%", marginBottom: "1rem" }}
-                    />
-                    <span style={{ fontSize: "0.9em", color: "#888" }}>
-                      {comment.length}/500 caractères saisis
-                    </span>
-                  </div>
-                  {!user && (
-                    <div className={styles.anonymous_booking_form}>
-                      <h2>Informations de réservation</h2>
-                      <label htmlFor="fullName">
-                        Nom complet :
-                        <span
-                          style={{
-                            fontSize: "0.9em",
-                            color: "#888",
-                            marginLeft: 8,
-                          }}
-                        ></span>
-                      </label>
-                      <input
-                        type="text"
-                        id="fullName"
-                        value={clientInfo.fullName}
-                        onChange={(e) =>
-                          setClientInfo({
-                            ...clientInfo,
-                            fullName: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                      <label htmlFor="email">
-                        Email :
-                        <span
-                          style={{
-                            fontSize: "0.9em",
-                            color: "#888",
-                            marginLeft: 8,
-                          }}
-                        ></span>
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        value={clientInfo.email}
-                        onChange={(e) =>
-                          setClientInfo({
-                            ...clientInfo,
-                            email: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                      <label htmlFor="phoneNumber">
-                        Téléphone :
-                        <span
-                          style={{
-                            fontSize: "0.9em",
-                            color: "#888",
-                            marginLeft: 8,
-                          }}
-                        ></span>
-                      </label>
-                      <PhoneInput
-                        international
-                        defaultCountry="FR"
-                        value={clientInfo.phoneNumber}
-                        onChange={(value) =>
-                          setClientInfo({
-                            ...clientInfo,
-                            phoneNumber: value || "",
-                          })
-                        }
-                        id="phoneNumber"
-                        name="phoneNumber"
-                        required
-                      />
+                        Conditions Générales d’Utilisation
+                      </a>
+                      .
                     </div>
-                  )}
+                    {Object.values(selectedOptions).length > 0 ||
+                    !withCaptain ? (
+                      <div className={styles.options_subtotal}>
+                        Sous-total (options{" "}
+                        {Object.values(selectedOptions).length > 0 &&
+                          "+ capitaine si sollicité"}
+                        ):{" "}
+                        {new Intl.NumberFormat("fr-FR", {
+                          style: "currency",
+                          currency: service?.currency || "EUR",
+                        }).format(displayedSubtotal)}
+                        {!withCaptain &&
+                          Object.values(selectedOptions).length === 0 &&
+                          requiresCaptain && (
+                            <span>(incluant le capitaine si sollicité)</span>
+                          )}
+                      </div>
+                    ) : (
+                      <div className={styles.options_subtotal}>
+                        Sous-total des options :{" "}
+                        {new Intl.NumberFormat("fr-FR", {
+                          style: "currency",
+                          currency: service?.currency || "EUR",
+                        }).format(currentOptionsSubtotal)}
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-                  <button
-                    onClick={handleBooking}
-                    disabled={isBooking || baseServicePrice === null}
-                    className={isBooking ? styles.loading : ""}
-                  >
-                    {isBooking
-                      ? "Réservation en cours..."
-                      : "Réserver ce service"}
-                  </button>
+                {/* COLONNE DROITE */}
+                <div className={styles.bloc__right_column}>
+                  <div className={styles.right_column}>
+                    <div className={styles.comment_section}>
+                      <label htmlFor="comment">
+                        Commentaire (ex : enfant à bord, personne à mobilité
+                        réduite, demande particulière) :
+                        <span
+                          style={{
+                            fontSize: "0.9em",
+                            color: "#888",
+                            marginLeft: 8,
+                          }}
+                        >
+                          (500 caractères maximum)
+                        </span>
+                      </label>
+                      <textarea
+                        id="comment"
+                        value={comment}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 500)
+                            setComment(e.target.value);
+                        }}
+                        maxLength={500}
+                        placeholder="Votre message pour l'administrateur..."
+                        rows={3}
+                        style={{ width: "100%", marginBottom: "1rem" }}
+                      />
+                      <span style={{ fontSize: "0.9em", color: "#888" }}>
+                        {comment.length}/500 caractères saisis
+                      </span>
+                    </div>
+                    {!user && (
+                      <div className={styles.anonymous_booking_form}>
+                        <h2 className={styles.title}>
+                          Informations de réservation
+                        </h2>
+                        <label htmlFor="fullName">
+                          Nom complet :
+                          <span
+                            style={{
+                              fontSize: "0.9em",
+                              color: "#888",
+                              marginLeft: 8,
+                            }}
+                          ></span>
+                        </label>
+                        <input
+                          type="text"
+                          id="fullName"
+                          value={clientInfo.fullName}
+                          onChange={(e) =>
+                            setClientInfo({
+                              ...clientInfo,
+                              fullName: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                        <label htmlFor="email">
+                          Email :
+                          <span
+                            style={{
+                              fontSize: "0.9em",
+                              color: "#888",
+                              marginLeft: 8,
+                            }}
+                          ></span>
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          value={clientInfo.email}
+                          onChange={(e) =>
+                            setClientInfo({
+                              ...clientInfo,
+                              email: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                        <label htmlFor="phoneNumber">
+                          Téléphone :
+                          <span
+                            style={{
+                              fontSize: "0.9em",
+                              color: "#888",
+                              marginLeft: 8,
+                            }}
+                          ></span>
+                        </label>
+                        <PhoneInput
+                          international
+                          defaultCountry="FR"
+                          value={clientInfo.phoneNumber}
+                          onChange={(value) =>
+                            setClientInfo({
+                              ...clientInfo,
+                              phoneNumber: value || "",
+                            })
+                          }
+                          id="phoneNumber"
+                          name="phoneNumber"
+                          required
+                        />
+                      </div>
+                    )}
+
+                    <button
+                      onClick={handleBooking}
+                      disabled={isBooking || baseServicePrice === null}
+                      className={isBooking ? styles.loading : ""}
+                    >
+                      {isBooking
+                        ? "Réservation en cours..."
+                        : "Réserver ce service"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </li>
+            </li>
+          </div>
         </div>
       </section>
     </Wrapper>
