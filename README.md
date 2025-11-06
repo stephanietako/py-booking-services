@@ -1,38 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <img src="public/assets/logo/hippo.png" alt="Yachting Day Logo" width="200"/>
+  
+  # Yachting Day
+  ### Plateforme de réservation et location de bateaux avec services à bord
+  
+  ![Next.js](https://img.shields.io/badge/Next.js-15.5.6-black?style=flat-square&logo=next.js)
+  ![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue?style=flat-square&logo=typescript)
+  ![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=flat-square&logo=react)
+  ![Prisma](https://img.shields.io/badge/Prisma-6.8.2-2D3748?style=flat-square&logo=prisma)
+  ![Stripe](https://img.shields.io/badge/Stripe-18.2.1-008CDD?style=flat-square&logo=stripe)
+</div>
 
-## Getting Started
+---
 
-First, run the development server:
+## 📖 À propos
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Yachting Day** est une plateforme web full-stack de réservation et location de bateaux. Elle démontre une maîtrise technique du développement moderne avec **Next.js 15**, **TypeScript**, **Prisma** et des intégrations tierces (**Clerk**, **Stripe**, **Google Maps**).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Fonctionnalités clés
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 🚤 Réservation de bateaux avec sélection de dates et créneaux horaires
+- 👨‍✈️ Services à bord : capitaine, hôtesse, équipements nautiques
+- 💳 Paiement sécurisé via Stripe
+- 👤 Authentification via Clerk (social login, magic links, OTP)
+- 📧 Emails transactionnels et génération de PDF (contrats, factures)
+- 🗺️ Carte interactive Google Maps
+- 📄 Pages légales conformes RGPD (CGU, Cookies)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Stack technique
 
-To learn more about Next.js, take a look at the following resources:
+### Core
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Next.js 15.5.6** : App Router, Server Actions, Turbopack, API Routes
+- **TypeScript 5.8.3** : strict mode, path aliases (`@/*`)
+- **React 19.1.0** : Server/Client Components, hooks
+- **Prisma 6.8.2** : ORM type-safe, migrations, seed scripts
+- **PostgreSQL** (Supabase 2.49.4)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Authentification & Paiement
 
-## Deploy on Vercel
+- **Clerk 6.34.4** : authentification complète, webhooks
+- **Stripe 18.2.1** : paiements sécurisés, webhooks
+- **jsonwebtoken 9.0.2** : tokens personnalisés
+- **svix 1.67.0** : vérification signatures webhooks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### UI/UX & Formulaires
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# py-booking-services
-# py-booking-services
+- **Framer Motion 12.9.4** : animations
+- **react-hot-toast 2.5.2** : notifications
+- **react-icons 5.5.0** : icônes
+- **SCSS Modules** (Sass 1.87.0) : styles scoped
+- **react-phone-number-input**, **react-select**, **react-calendar**
+
+### Services tiers
+
+- **Google Maps API** (@googlemaps/js-api-loader 1.16.8)
+- **Resend 4.5.0** + **@react-email** : emails transactionnels
+- **pdf-lib 1.17.1** : génération PDF
+- **Sharp 0.33.5** : optimisation images
+
+### Dates & Outils
+
+- **date-fns 4.1.0** + **date-fns-tz 3.2.0**
+- **ESLint 9.39.1**, **tsx 4.19.4**, **ts-node 10.9.2**
+
+---
+
+## 🎯 Techniques implémentées
+
+### Architecture & Performance
+
+✅ Server/Client Components  
+✅ Server Actions  
+✅ Code splitting automatique  
+✅ Optimisation images (Sharp)  
+✅ Turbopack en développement
+
+### Sécurité
+
+✅ Vérification signatures webhooks (Svix)  
+✅ Conformité PCI DSS (Stripe)  
+✅ JWT tokens personnalisés  
+✅ Variables d'environnement sécurisées
+
+### Base de données
+
+✅ Prisma ORM type-safe  
+✅ Migrations versionnées  
+✅ Seed scripts pour données test
+
+### UX/UI
+
+✅ Design responsive (mobile, tablette, desktop)  
+✅ Animations fluides  
+✅ Notifications toast  
+✅ États de chargement personnalisés
+
+---
+
+## 🚀 Compétences démontrées
+
+**Full-Stack** : Next.js 15, TypeScript, React 19, Prisma, PostgreSQL  
+**Intégrations** : Clerk, Stripe, Google Maps, Resend  
+**Sécurité** : Webhooks, JWT, validation de paiements  
+**UI/UX** : Design responsive, animations, notifications  
+**DevOps** : TypeScript strict, migrations DB, ESLint
+
+---
+
+## 📧 Contact
+
+Pour démonstration ou opportunités professionnelles :  
+📩 **takodevcreation@gmail.com**
+
+---
+
+<div align="center">
+  
+**Tous droits réservés © 2025 Yachting Day**  
+Développé par Tako Dev avec ❤️
+
+</div>
