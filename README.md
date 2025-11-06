@@ -15,12 +15,12 @@
 
 ## 📖 À propos
 
-**Yachting Day** est une plateforme web full-stack de réservation et location de bateaux. Elle démontre une maîtrise technique du développement moderne avec **Next.js 15**, **TypeScript**, **Prisma** et des intégrations tierces (**Clerk**, **Stripe**, **Google Maps**).
+**Yachting Day** est une plateforme web full-stack de réservation et location d'un bateau. Elle démontre une maîtrise technique du développement moderne avec **Next.js 15**, **TypeScript**, **Prisma** et des intégrations tierces (**Clerk**, **Stripe**, **Google Maps**).
 
 ### Fonctionnalités clés
 
 - 🚤 Réservation de bateaux avec sélection de dates et créneaux horaires
-- 👨‍✈️ Services à bord : capitaine, équipements nautiques, possibilité de commander une collation via un traiteur partenaire, ...
+- 👨‍✈️ Services à bord personnalisables : capitaine, équipements nautiques, collation via traiteur partenaire
 - 💳 Paiement sécurisé via Stripe
 - 👤 Authentification via Clerk
 - 📧 Emails transactionnels et génération de PDF
