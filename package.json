@@ -45,7 +45,6 @@
     "@types/google.maps": "^3.58.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/lodash": "^4.17.14",
-    "@types/mime": "^4.0.0",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^20.17.16",
     "@types/react": "^19",
