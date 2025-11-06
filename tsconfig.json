@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2020", // Next.js 15 recommande cette version
-    "module": "ESNext", // Important pour utiliser les imports ES
-    "moduleResolution": "node", // Doit être "node" pour que Next.js fonctionne correctement avec les modules
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "jsx": "preserve", // Important pour Next.js et JSX
+    "jsx": "preserve",
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
@@ -15,9 +15,8 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "isolatedModules": true,
-    "baseUrl": ".", // Ajouté ici
+    "baseUrl": ".",
     "paths": {
-      // Ajouté ici
       "@/*": ["./*"]
     },
     "plugins": [
