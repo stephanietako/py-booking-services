@@ -20,10 +20,10 @@
 ### Fonctionnalités clés
 
 - 🚤 Réservation de bateaux avec sélection de dates et créneaux horaires
-- 👨‍✈️ Services à bord : capitaine, hôtesse, équipements nautiques
+- 👨‍✈️ Services à bord : capitaine, équipements nautiques, possibilité de commander une collation via un traiteur partenaire, ...
 - 💳 Paiement sécurisé via Stripe
-- 👤 Authentification via Clerk (social login, magic links, OTP)
-- 📧 Emails transactionnels et génération de PDF (contrats, factures)
+- 👤 Authentification via Clerk
+- 📧 Emails transactionnels et génération de PDF
 - 🗺️ Carte interactive Google Maps
 - 📄 Pages légales conformes RGPD (CGU, Cookies)
 
