@@ -19,7 +19,7 @@
 
 ### Fonctionnalités clés
 
-- 🚤 Réservation de bateaux avec sélection de dates et créneaux horaires
+- 🚤 Réservation d'un bateau avec sélection de dates et créneaux horaires
 - 👨‍✈️ Services à bord personnalisables : capitaine, équipements nautiques, collation via traiteur partenaire
 - 💳 Paiement sécurisé via Stripe
 - 👤 Authentification via Clerk
